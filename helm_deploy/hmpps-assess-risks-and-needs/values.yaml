@@ -1,5 +1,5 @@
 ---
-generic-service:
+service:
   nameOverride: hmpps-assess-risks-and-needs
 
   replicaCount: 4
