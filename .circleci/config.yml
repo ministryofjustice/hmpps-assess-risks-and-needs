@@ -62,7 +62,7 @@ workflows:
 #          env: "preprod"
 #          context:
 #            - hmpps-common-vars
-#            - hmpps-template-kotlin-preprod
+#            - hmpps-assess-risks-and-needs-preprod
 #          requires:
 #            - request-preprod-approval
 #      - request-prod-approval:
@@ -75,7 +75,7 @@ workflows:
 #          slack_notification: true
 #          context:
 #            - hmpps-common-vars
-#            - hmpps-template-kotlin-prod
+#            - hmpps-assess-risks-and-needs-prod
 #          requires:
 #            - request-prod-approval
 

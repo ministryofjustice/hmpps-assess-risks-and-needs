@@ -1,18 +1,18 @@
 ---
 generic-service:
-  nameOverride: hmpps-template-kotlin
+  nameOverride: hmpps-assess-risks-and-needs
 
   replicaCount: 4
 
   image:
-    repository: quay.io/hmpps/hmpps-template-kotlin
+    repository: quay.io/hmpps/hmpps-assess-risks-and-needs
     tag: app_version    # override at deployment time
     port: 8080
 
   ingress:
     enabled: true
     host: app-hostname.local    # override per environment
-    tlsSecretName: hmpps-template-kotlin-cert
+    tlsSecretName: hmpps-assess-risks-and-needs-cert
     path: /
 
   # Environment variables to load into the deployment
@@ -28,7 +28,7 @@ generic-service:
   #     [name of environment variable as seen by app]: [key of kubernetes secret to load]
 
   namespace_secrets:
-    hmpps-template-kotlin:
+    hmpps-assess-risks-and-needs:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
 
   allowlist:
@@ -40,4 +40,4 @@ generic-service:
     cloudplatform-live1-3: "35.177.252.54/32"
 
 generic-prometheus-alerts:
-  targetApplication: hmpps-template-kotlin
+  targetApplication: hmpps-assess-risks-and-needs
