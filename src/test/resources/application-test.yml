@@ -1,6 +1,19 @@
-server:
-  shutdown: immediate
 
-management.endpoint:
-  health.cache.time-to-live: 0
-  info.cache.time-to-live: 0
+server:
+  tomcat:
+    remoteip:
+      remote-ip-header: x-forwarded-for
+      protocol-header: x-forwarded-proto
+
+spring:
+  datasource:
+    url: 'jdbc:h2:mem:testdb;INIT=create domain if not exists jsonb as text;Mode=PostgreSQL'
+    type: com.zaxxer.hikari.HikariDataSource
+  jpa:
+    show_sql: true
+  flyway:
+    enabled: true
+
+graceful:
+  shutdown:
+    enabled: false
