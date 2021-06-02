@@ -1,10 +1,10 @@
 info.app:
-  name: HMPPS Template Kotlin
+  name: Hmpps Assess Risks And Needs
   version: 1.0
 
 spring:
   application:
-    name: hmpps-template-kotlin
+    name: hmpps-assess-risks-and-needs
   codec:
     max-in-memory-size: 10MB
 
