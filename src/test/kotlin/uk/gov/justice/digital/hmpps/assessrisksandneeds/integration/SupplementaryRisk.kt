@@ -132,7 +132,7 @@ class SupplementaryRisk : IntegrationTestBase() {
   @DisplayName("Craete new supplementary risk")
   inner class PostNewSupplementaryRisk {
 
-    private val requestBody = SupplementaryRiskDto(source = Source.INTERVENTION_REFERRAL, sourceId = "1234", crn = crn)
+    private val requestBody = SupplementaryRiskDto(source = Source.INTERVENTION_REFERRAL, sourceId = "1234", crn = crn, riskSummaryComments = "Comments")
 
     @Test
     fun `access forbidden when no authority`() {
