@@ -30,4 +30,3 @@ dependencies {
     exclude(module = "mockito-core")
   }
 }
-
