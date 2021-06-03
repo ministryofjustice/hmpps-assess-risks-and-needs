@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities
 
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
@@ -34,12 +33,12 @@ class SupplementaryRiskEntity(
   val createdDate: LocalDateTime? = null,
 
   @Column(name = "CREATED_BY_USER_TYPE")
-  val cratedByUserType: UserType? = null,
+  val createdByUserType: String? = null,
 
   @Column(name = "CREATED_BY")
-  val cratedBy: UserType? = null,
+  val createdBy: String? = null,
 
   @Column(name = "RISK_COMMENTS")
-  val riskComments: String? = null,
+  val riskComments: String,
 
 )
