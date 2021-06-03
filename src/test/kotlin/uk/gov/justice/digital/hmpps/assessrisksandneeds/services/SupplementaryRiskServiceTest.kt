@@ -63,7 +63,7 @@ class SupplementaryRiskServiceTest {
   }
 
   @Test
-  fun `get supplementary risk data by existing source and sourceId throw Exception when risk not found`() {
+  fun `get supplementary risk data by existing source and sourceId throws Exception when risk not found`() {
     val source = "INTERVENTION_REFERRAL"
     val sourceId = "123"
     every {
@@ -76,7 +76,65 @@ class SupplementaryRiskServiceTest {
     val exception = assertThrows<EntityNotFoundException> {
       supplementaryRiskService.getRiskBySourceAndSourceId(Source.INTERVENTION_REFERRAL, sourceId)
     }
-    assertEquals("Error retrieving Supplementary Risk for source:INTERVENTION_REFERRAL and sourceId:123", exception.message)
+    assertEquals(
+      "Error retrieving Supplementary Risk for source:INTERVENTION_REFERRAL and sourceId:123",
+      exception.message
+    )
+  }
+
+  @Test
+  fun `get supplementary risk data by existing supplementaryRiskUuid`() {
+    val supplementaryRiskUuid = UUID.randomUUID()
+    val source = "INTERVENTION_REFERRAL"
+    val sourceId = "123"
+    val crn = "CRN123"
+    val createdDate = LocalDateTime.now()
+    val createdByUserType = "DELIUS"
+    val createdBy = "Arnold G."
+    val riskComments = "risk comments bla bla"
+    every {
+      supplementaryRiskRepository.findBySupplementaryRiskUuid(
+        supplementaryRiskUuid
+      )
+    } returns SupplementaryRiskEntity(
+      123L, supplementaryRiskUuid, source, sourceId, crn,
+      createdDate, createdByUserType, createdBy, riskComments
+    )
+
+    val riskBySourceAndSourceId =
+      supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskUuid)
+
+    assertThat(riskBySourceAndSourceId).isEqualTo(
+      SupplementaryRiskDto(
+        supplementaryRiskUuid,
+        Source.INTERVENTION_REFERRAL,
+        sourceId,
+        crn,
+        createdBy,
+        UserType.DELIUS,
+        createdDate,
+        riskComments
+      )
+    )
+  }
+
+  @Test
+  fun `get supplementary risk data by supplementaryRiskUuid throws Exception when risk not found`() {
+    val supplementaryRiskUuid = UUID.randomUUID()
+
+    every {
+      supplementaryRiskRepository.findBySupplementaryRiskUuid(
+        supplementaryRiskUuid
+      )
+    } returns null
+
+    val exception = assertThrows<EntityNotFoundException> {
+      supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskUuid)
+    }
+    assertEquals(
+      "Error retrieving Supplementary Risk for supplementaryRiskUuid:$supplementaryRiskUuid",
+      exception.message
+    )
   }
 
   @Test

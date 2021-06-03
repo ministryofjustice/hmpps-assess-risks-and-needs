@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.SupplementaryRiskEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
+import java.util.*
 
 @Service
 class SupplementaryRiskService(
@@ -28,6 +29,12 @@ class SupplementaryRiskService(
     log.info("Get all supplementary risk data by crn:$crn")
     val supplementaryRiskEntities = supplementaryRiskRepository.findAllByCrn(crn)
     return supplementaryRiskEntities.toSupplementaryRiskDtos("for crn:$crn")
+  }
+
+  fun getRiskBySupplementaryRiskUuid(supplementaryRiskUuid: UUID): SupplementaryRiskDto {
+    log.info("Get supplementary risk data by supplementaryRiskUuid:$supplementaryRiskUuid")
+    val supplementaryRiskEntity = supplementaryRiskRepository.findBySupplementaryRiskUuid(supplementaryRiskUuid)
+    return supplementaryRiskEntity.toSupplementaryRiskDto("for supplementaryRiskUuid:$supplementaryRiskUuid")
   }
 
   fun SupplementaryRiskEntity?.toSupplementaryRiskDto(message: String): SupplementaryRiskDto {
