@@ -29,4 +29,5 @@ dependencies {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(module = "mockito-core")
   }
+  testImplementation("com.ninja-squad:springmockk:3.0.1")
 }
