@@ -132,7 +132,7 @@ class SupplementaryRisk : IntegrationTestBase() {
   @DisplayName("Craete new supplementary risk")
   inner class PostNewSupplementaryRisk {
 
-    val requestBody = SupplementaryRiskDto(source = Source.INTERVENTION_REFERRAL, sourceId = "1234", crn = crn, riskSummaryComments = "mmmmm")
+    private val requestBody = SupplementaryRiskDto(source = Source.INTERVENTION_REFERRAL, sourceId = "1234", crn = crn)
 
     @Test
     fun `access forbidden when no authority`() {
@@ -161,6 +161,16 @@ class SupplementaryRisk : IntegrationTestBase() {
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isForbidden
+    }
+
+    @Test
+    fun `access allowed when role and scope supplied`() {
+      webTestClient.post().uri("/risks/supplementary")
+        .header("Content-Type", "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("write")))
+        .bodyValue(requestBody)
+        .exchange()
+        .expectStatus().is5xxServerError
     }
   }
 }
