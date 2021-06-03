@@ -15,15 +15,15 @@ spring:
 
   datasource:
     url: 'jdbc:h2:mem:testdb;INIT=create domain if not exists jsonb as text;Mode=PostgreSQL'
-    h2:
-      console:
-        enabled: true
-    jpa:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
       hibernate:
-        ddl-auto: none
-      properties:
-        hibernate:
-          show_sql: false
+        show_sql: false
 
   profiles:
     group:
@@ -61,9 +61,6 @@ management:
     info:
       cache:
         time-to-live: 2000ms
-
-appinsights:
-  instrumentationkey:
 
 azure:
   application-insights:
