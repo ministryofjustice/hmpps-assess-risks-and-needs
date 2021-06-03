@@ -47,7 +47,7 @@ enum class UserType {
 
   companion object {
     fun fromString(enumValue: String?): UserType {
-      return UserType.values().firstOrNull { it.name == enumValue }
+      return values().firstOrNull { it.name == enumValue }
         ?: throw IllegalArgumentException("Unknown User Type $enumValue")
     }
   }
