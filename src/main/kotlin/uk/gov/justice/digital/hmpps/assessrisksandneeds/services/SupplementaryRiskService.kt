@@ -24,6 +24,12 @@ class SupplementaryRiskService(
     return supplementaryRiskEntity.toSupplementaryRiskDto("for source:$source and sourceId:$sourceId")
   }
 
+  fun getRisksByCrn(crn: String): List<SupplementaryRiskDto> {
+    log.info("Get all supplementary risk data by crn:$crn")
+    val supplementaryRiskEntities = supplementaryRiskRepository.findAllByCrn(crn)
+    return supplementaryRiskEntities.toSupplementaryRiskDtos("for crn:$crn")
+  }
+
   fun SupplementaryRiskEntity?.toSupplementaryRiskDto(message: String): SupplementaryRiskDto {
     if (this == null) throw EntityNotFoundException("Error retrieving Supplementary Risk $message")
     return SupplementaryRiskDto(
@@ -36,5 +42,9 @@ class SupplementaryRiskService(
       this.createdDate,
       this.riskComments
     )
+  }
+
+  fun List<SupplementaryRiskEntity>.toSupplementaryRiskDtos(message: String): List<SupplementaryRiskDto> {
+    return this.map { it.toSupplementaryRiskDto(message) }
   }
 }

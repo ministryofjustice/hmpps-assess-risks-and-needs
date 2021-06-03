@@ -7,4 +7,5 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.Supplementa
 @Repository
 interface SupplementaryRiskRepository : JpaRepository<SupplementaryRiskEntity, Long> {
   fun findBySourceAndSourceId(source: String, sourceId: String): SupplementaryRiskEntity?
+  fun findAllByCrn(crn: String): List<SupplementaryRiskEntity>
 }

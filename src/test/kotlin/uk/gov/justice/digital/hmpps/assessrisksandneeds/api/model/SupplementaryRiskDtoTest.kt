@@ -37,7 +37,8 @@ class SupplementaryRiskDtoTest {
   fun `test User Type from from unknown String user type throws Exception`() {
 
     val exception = assertThrows<IllegalArgumentException> {
-      UserType.fromString("BLABLA")    }
+      UserType.fromString("BLABLA")
+    }
     Assertions.assertEquals(
       "Unknown User Type BLABLA",
       exception.message

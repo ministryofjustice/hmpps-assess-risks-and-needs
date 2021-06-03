@@ -78,4 +78,57 @@ class SupplementaryRiskServiceTest {
     }
     assertEquals("Error retrieving Supplementary Risk for source:INTERVENTION_REFERRAL and sourceId:123", exception.message)
   }
+
+  @Test
+  fun `get all risks data by existing crn`() {
+    val supplementaryRiskUuid = UUID.randomUUID()
+    val supplementaryRiskUuid2 = UUID.randomUUID()
+    val source = "INTERVENTION_REFERRAL"
+    val sourceId = "123"
+    val crn = "CRN123"
+    val createdDate = LocalDateTime.now()
+    val createdByUserType = "DELIUS"
+    val createdBy = "Arnold G."
+    val riskComments = "risk comments bla bla"
+    every {
+      supplementaryRiskRepository.findAllByCrn(
+        crn
+      )
+    } returns listOf(
+      SupplementaryRiskEntity(
+        123L, supplementaryRiskUuid, source, sourceId, crn,
+        createdDate, createdByUserType, createdBy, riskComments
+      ),
+      SupplementaryRiskEntity(
+        124L, supplementaryRiskUuid2, source, sourceId, crn,
+        createdDate, createdByUserType, createdBy, riskComments
+      )
+    )
+
+    val risksByCrn =
+      supplementaryRiskService.getRisksByCrn(crn)
+
+    assertThat(risksByCrn).containsExactly(
+      SupplementaryRiskDto(
+        supplementaryRiskUuid,
+        Source.INTERVENTION_REFERRAL,
+        sourceId,
+        crn,
+        createdBy,
+        UserType.DELIUS,
+        createdDate,
+        riskComments
+      ),
+      SupplementaryRiskDto(
+        supplementaryRiskUuid2,
+        Source.INTERVENTION_REFERRAL,
+        sourceId,
+        crn,
+        createdBy,
+        UserType.DELIUS,
+        createdDate,
+        riskComments
+      )
+    )
+  }
 }
