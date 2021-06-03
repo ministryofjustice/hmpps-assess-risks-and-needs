@@ -7,6 +7,9 @@ generic-service:
   ingress:
     host: assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
 
+  env:
+    OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+
   namespace_secrets:
     hmpps-assess-risks-and-needs-dev-rds-instance:
       DATABASE_USERNAME: "database_username"
