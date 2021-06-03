@@ -7,7 +7,7 @@ import java.util.UUID
 data class SupplementaryRiskDto(
 
   @Schema(description = "Supplementary Risk ID", example = "78beac68-884c-4784-9bea-fd8088f52a47")
-  val supplementaryRiskId: UUID? = null,
+  val supplementaryRiskId: UUID = UUID.randomUUID(),
 
   @Schema(description = "Source of Risk", example = "INTERVENTION_REFERRAL")
   val source: Source,
@@ -25,10 +25,10 @@ data class SupplementaryRiskDto(
   val createdByUserType: UserType?,
 
   @Schema(description = "Created At", example = "")
-  val createdDate: LocalDateTime?,
+  val createdDate: LocalDateTime = LocalDateTime.now(),
 
   @Schema(description = "Risk Summary Comments", example = "Free text up to 4000 characters")
-  val riskSummaryComments: String?,
+  val riskSummaryComments: String,
 )
 
 enum class Source {

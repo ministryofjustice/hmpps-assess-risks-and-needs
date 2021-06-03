@@ -30,7 +30,7 @@ class SupplementaryRiskEntity(
   val crn: String? = null,
 
   @Column(name = "CREATED_DATE")
-  val createdDate: LocalDateTime? = null,
+  val createdDate: LocalDateTime,
 
   @Column(name = "CREATED_BY_USER_TYPE")
   val createdByUserType: String? = null,
