@@ -123,7 +123,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .expectStatus().isOk
         .expectBody<List<SupplementaryRiskDto>>()
         .consumeWith {
-          Assertions.assertThat(it.responseBody).contains(
+          Assertions.assertThat(it.responseBody).containsExactly(
             SupplementaryRiskDto(
               UUID.fromString("5e020e78-a81c-407f-bc78-e5f284e237e5"),
               Source.INTERVENTION_REFERRAL,
@@ -131,13 +131,13 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "X123456",
               "Gary C",
               UserType.INTERVENTIONS_PROVIDER,
-              LocalDateTime.of(2019, 11, 14, 9, 6),
+              LocalDateTime.of(2019, 11, 14, 9, 7),
               "risk to self"
             ),
             SupplementaryRiskDto(
               UUID.fromString("6e020e78-a81c-407f-bc78-e5f284e237e5"),
               Source.INTERVENTION_REFERRAL,
-              "7e020e78-a81c-407f-bc78-e5f284e237e5",
+              "7e020e78-a81c-407f-bc78-e5f284e237e9",
               "X123456",
               "Gary C",
               UserType.INTERVENTIONS_PROVIDER,

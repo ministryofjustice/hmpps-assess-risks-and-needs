@@ -9,5 +9,5 @@ import java.util.UUID
 interface SupplementaryRiskRepository : JpaRepository<SupplementaryRiskEntity, Long> {
   fun findBySourceAndSourceId(source: String, sourceId: String): SupplementaryRiskEntity?
   fun findBySupplementaryRiskUuid(supplementaryRiskUuid: UUID): SupplementaryRiskEntity?
-  fun findAllByCrn(crn: String): List<SupplementaryRiskEntity>
+  fun findAllByCrnOrderByCreatedByDesc(crn: String): List<SupplementaryRiskEntity>
 }
