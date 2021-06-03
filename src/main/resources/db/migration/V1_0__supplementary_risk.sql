@@ -1,4 +1,4 @@
-create table if not exists supplementary_risk
+CREATE TABLE IF NOT EXISTS supplementary_risk
 (
     supplementary_risk_id       serial     primary key,
     supplementary_risk_uuid     uuid       not null unique,
