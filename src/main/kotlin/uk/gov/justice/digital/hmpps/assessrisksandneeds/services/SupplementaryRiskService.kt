@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.SupplementaryRiskEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
-import java.util.*
+import java.util.UUID
 
 @Service
 class SupplementaryRiskService(

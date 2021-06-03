@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.Supplementa
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("Supplementary Risk Service Tests")

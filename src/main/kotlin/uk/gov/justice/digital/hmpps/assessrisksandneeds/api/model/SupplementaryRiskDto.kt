@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class SupplementaryRiskDto(
 
