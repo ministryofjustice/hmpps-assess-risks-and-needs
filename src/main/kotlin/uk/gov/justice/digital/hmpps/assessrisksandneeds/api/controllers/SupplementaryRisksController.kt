@@ -85,7 +85,7 @@ class SupplementaryRisksController(
   fun createSupplementaryRisk(
     @Parameter(description = "Supplementary Risk", required = true)
     @RequestBody supplementaryRisk: SupplementaryRiskDto
-  ) {
-    TODO()
+  ): SupplementaryRiskDto {
+    return supplementaryRiskService.createNewSupplementaryRisk(supplementaryRisk)
   }
 }

@@ -204,7 +204,16 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
   @DisplayName("Craete new supplementary risk")
   inner class PostNewSupplementaryRisk {
 
-    private val requestBody = SupplementaryRiskDto(source = Source.INTERVENTION_REFERRAL, sourceId = "1234", crn = crn, riskSummaryComments = "Comments")
+    private val requestBody = SupplementaryRiskDto(
+      UUID.fromString("8e020e78-a81c-407f-bc78-e5f284e237e5"),
+      Source.INTERVENTION_REFERRAL,
+      "8e020e78-a81c-407f-bc78-e5f284e237e8",
+      "X123457",
+      "Tom C",
+      UserType.DELIUS,
+      LocalDateTime.of(2019, 11, 14, 9, 7),
+      "risk to others"
+    )
 
     @Test
     fun `access forbidden when no authority`() {
@@ -242,7 +251,21 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("write")))
         .bodyValue(requestBody)
         .exchange()
-        .expectStatus().is5xxServerError
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          Assertions.assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              UUID.fromString("8e020e78-a81c-407f-bc78-e5f284e237e5"),
+              Source.INTERVENTION_REFERRAL,
+              "8e020e78-a81c-407f-bc78-e5f284e237e8",
+              "X123457",
+              "Tom C",
+              UserType.DELIUS,
+              LocalDateTime.of(2019, 11, 14, 9, 7),
+              "risk to others"
+            )
+          )
+        }
     }
   }
 }
