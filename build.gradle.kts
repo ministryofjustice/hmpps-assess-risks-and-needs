@@ -21,6 +21,7 @@ dependencies {
   implementation("com.zaxxer:HikariCP:4.0.3")
   implementation("org.postgresql:postgresql")
   runtimeOnly("com.h2database:h2:1.4.200")
+  runtimeOnly("org.flywaydb:flyway-core:7.8.1")
   testRuntimeOnly("com.h2database:h2:1.4.200")
   testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 

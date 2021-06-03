@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
-import java.util.UUID
 
 @RestController
 class SupplementaryRisksController {
 
-  @RequestMapping(path = ["/risks/supplementary/{sourceId}"], method = [RequestMethod.GET])
+  @RequestMapping(path = ["/risks/supplementary/{sourceType}/{sourceId}"], method = [RequestMethod.GET])
   @Operation(description = "Gets supplementary risk for a given source")
   @ApiResponses(
     value = [
@@ -26,7 +26,9 @@ class SupplementaryRisksController {
   )
   fun getSupplementaryRisk(
     @Parameter(description = "Source ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
-    @PathVariable sourceId: UUID
+    @PathVariable sourceId: String,
+    @Parameter(description = "Source Type", required = true, example = "INTERVENTIONS_REFERRAL")
+    @PathVariable sourceType: Source
   ) {
     TODO()
   }

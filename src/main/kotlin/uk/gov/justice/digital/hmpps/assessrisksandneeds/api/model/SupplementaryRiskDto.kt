@@ -20,10 +20,17 @@ data class SupplementaryRiskDto(
   @Schema(description = "User Id", example = "78beac68-884c-4784-9bea-fd8088f52a47")
   val userId: String?,
 
+  @Schema(description = "User Type", example = "DELIUS")
+  val userType: UserType?,
+
   @Schema(description = "Risk Summary Comments", example = "Free text up to 4000 characters")
   val riskSummaryComments: String?,
 )
 
 enum class Source {
   INTERVENTION_REFERRAL
+}
+
+enum class UserType {
+  DELIUS, INTERVENTIONS_PROVIDER
 }
