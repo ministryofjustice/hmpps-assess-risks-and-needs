@@ -37,6 +37,10 @@ class SupplementaryRiskService(
     return supplementaryRiskEntity.toSupplementaryRiskDto("for supplementaryRiskUuid:$supplementaryRiskUuid")
   }
 
+  fun createNewSupplementaryRisk(supplementaryRiskDto: SupplementaryRiskDto): SupplementaryRiskDto {
+    return supplementaryRiskRepository.save(supplementaryRiskDto.toSupplementaryRiskEntity()).toSupplementaryRiskDto("")
+  }
+
   fun SupplementaryRiskEntity?.toSupplementaryRiskDto(message: String): SupplementaryRiskDto {
     if (this == null) throw EntityNotFoundException("Error retrieving Supplementary Risk $message")
     return SupplementaryRiskDto(
@@ -48,6 +52,19 @@ class SupplementaryRiskService(
       UserType.fromString(this.createdByUserType),
       this.createdDate,
       this.riskComments
+    )
+  }
+
+  fun SupplementaryRiskDto.toSupplementaryRiskEntity(): SupplementaryRiskEntity {
+    return SupplementaryRiskEntity(
+      supplementaryRiskUuid = this.supplementaryRiskId,
+      source = this.source.name,
+      sourceId = this.sourceId,
+      crn = this.crn,
+      createdBy = this.createdByUser,
+      createdByUserType = this.createdByUserType?.name,
+      createdDate = this.createdDate,
+      riskComments = this.riskComments
     )
   }
 

@@ -189,4 +189,37 @@ class SupplementaryRiskServiceTest {
       )
     )
   }
+
+  @Test
+  fun `create supplementary risk data`() {
+    val supplementaryRiskUuid = UUID.randomUUID()
+    val source = "INTERVENTION_REFERRAL"
+    val sourceId = "123"
+    val crn = "CRN123"
+    val createdDate = LocalDateTime.now()
+    val createdByUserType = "DELIUS"
+    val createdBy = "Arnold G."
+    val riskComments = "risk comments bla bla"
+    val riskEntity = SupplementaryRiskEntity(
+      123L, supplementaryRiskUuid, source, sourceId, crn,
+      createdDate, createdByUserType, createdBy, riskComments
+    )
+    every {
+      supplementaryRiskRepository.save(any())
+    } returns riskEntity
+
+    val supplementaryRiskDto = SupplementaryRiskDto(
+      supplementaryRiskUuid,
+      Source.INTERVENTION_REFERRAL,
+      sourceId,
+      crn,
+      createdBy,
+      UserType.DELIUS,
+      createdDate,
+      riskComments
+    )
+    val risk = supplementaryRiskService.createNewSupplementaryRisk(supplementaryRiskDto)
+
+    assertThat(risk).isEqualTo(supplementaryRiskDto)
+  }
 }
