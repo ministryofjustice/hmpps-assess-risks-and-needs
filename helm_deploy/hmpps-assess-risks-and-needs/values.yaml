@@ -30,6 +30,8 @@ service:
   namespace_secrets:
     hmpps-assess-risks-and-needs:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
+      API_CLIENT_ID: "API_CLIENT_ID"
+      API_CLIENT_SECRET: "API_CLIENT_SECRET"
 
   allowlist:
     office: "217.33.148.210/32"
