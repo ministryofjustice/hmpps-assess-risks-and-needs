@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,6 +26,7 @@ class SupplementaryRisksController {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
+  @PreAuthorize("hasRole('RISK_SUMMARY') and hasScope('read')")
   fun getSupplementaryRiskBySource(
     @Parameter(description = "Source ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
     @PathVariable sourceId: String,
@@ -43,6 +45,7 @@ class SupplementaryRisksController {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
+  @PreAuthorize("hasRole('RISK_SUMMARY') and hasScope('read')")
   fun getSupplementaryRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "X123456")
     @PathVariable crn: String
@@ -59,6 +62,7 @@ class SupplementaryRisksController {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
+  @PreAuthorize("hasRole('RISK_SUMMARY') and hasScope('read')")
   fun getSupplementaryRiskById(
     @Parameter(description = "Supplementary ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
     @PathVariable supplementaryRiskId: UUID
@@ -74,6 +78,7 @@ class SupplementaryRisksController {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
+  @PreAuthorize("hasRole('RISK_SUMMARY') and hasScope('write')")
   fun createSupplementaryRisk(
     @Parameter(description = "Supplementary Risk", required = true)
     @RequestBody supplementaryRisk: SupplementaryRiskDto
