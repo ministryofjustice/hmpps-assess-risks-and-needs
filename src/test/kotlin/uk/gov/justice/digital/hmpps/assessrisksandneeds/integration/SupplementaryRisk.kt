@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import java.util.UUID
 
 @AutoConfigureWebTestClient
@@ -124,6 +125,42 @@ class SupplementaryRisk : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
         .exchange()
         .expectStatus().is5xxServerError
+    }
+  }
+
+  @Nested
+  @DisplayName("Craete new supplementary risk")
+  inner class PostNewSupplementaryRisk {
+
+    val requestBody = SupplementaryRiskDto(source = Source.INTERVENTION_REFERRAL, sourceId = "1234", crn = crn)
+
+    @Test
+    fun `access forbidden when no authority`() {
+      webTestClient.post().uri("/risks/supplementary")
+        .header("Content-Type", "application/json")
+        .bodyValue(requestBody)
+        .exchange()
+        .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `access forbidden when no role`() {
+      webTestClient.post().uri("/risks/supplementary")
+        .header("Content-Type", "application/json")
+        .headers(setAuthorisation())
+        .bodyValue(requestBody)
+        .exchange()
+        .expectStatus().isForbidden
+    }
+
+    @Test
+    fun `access forbidden when no read scope`() {
+      webTestClient.post().uri("/risks/supplementary")
+        .header("Content-Type", "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
+        .bodyValue(requestBody)
+        .exchange()
+        .expectStatus().isForbidden
     }
   }
 }

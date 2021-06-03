@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.assessments.config
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.config
 
 import org.springframework.core.convert.converter.Converter
 import org.springframework.security.authentication.AbstractAuthenticationToken
