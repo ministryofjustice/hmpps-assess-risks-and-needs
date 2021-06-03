@@ -1,21 +1,39 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
+import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.context.jdbc.SqlConfig
+import org.springframework.test.context.jdbc.SqlGroup
+import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
+import java.time.LocalDateTime
 import java.util.UUID
 
 @AutoConfigureWebTestClient
 @DisplayName("Supplementary Risk Tests")
-class SupplementaryRisk : IntegrationTestBase() {
+@SqlGroup(
+  Sql(
+    scripts = ["classpath:supplementaryrisk/before-test.sql"],
+    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
+  ),
+  Sql(
+    scripts = ["classpath:supplementaryrisk/after-test.sql"],
+    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
+    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+  )
+)
+class SupplementaryRiskControllerTest : IntegrationTestBase() {
 
-  private val supplementaryRiskUuid = UUID.randomUUID()
+  private val supplementaryRiskUuid = "2e020e78-a81c-407f-bc78-e5f284e237e5"
   private val crn = "X123456"
   private val sourceType = Source.INTERVENTION_REFERRAL
-  private val sourceId = UUID.randomUUID()
+  private val sourceId = "7e020e78-a81c-407f-bc78-e5f284e237e9"
 
   @Nested
   @DisplayName("Get by Supplementary Risk ID Security")
@@ -50,7 +68,22 @@ class SupplementaryRisk : IntegrationTestBase() {
       webTestClient.get().uri("/risks/supplementary/$supplementaryRiskUuid")
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
         .exchange()
-        .expectStatus().is5xxServerError
+        .expectStatus().isOk
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          Assertions.assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              UUID.fromString(supplementaryRiskUuid),
+              Source.INTERVENTION_REFERRAL,
+              "182987872",
+              "",
+              "Gary cooper",
+              UserType.DELIUS,
+              LocalDateTime.of(2019, 11, 14, 9, 0),
+              "risk for children"
+            )
+          )
+        }
     }
   }
 
@@ -83,11 +116,36 @@ class SupplementaryRisk : IntegrationTestBase() {
     }
 
     @Test
-    fun `access allowed when role and scope supplied`() {
+    fun `get all risks by crn`() {
       webTestClient.get().uri("/risks/supplementary/crn/$crn")
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
         .exchange()
-        .expectStatus().is5xxServerError
+        .expectStatus().isOk
+        .expectBody<List<SupplementaryRiskDto>>()
+        .consumeWith {
+          Assertions.assertThat(it.responseBody).containsExactly(
+            SupplementaryRiskDto(
+              UUID.fromString("5e020e78-a81c-407f-bc78-e5f284e237e5"),
+              Source.INTERVENTION_REFERRAL,
+              "7e020e78-a81c-407f-bc78-e5f284e237e5",
+              "X123456",
+              "Gary C",
+              UserType.INTERVENTIONS_PROVIDER,
+              LocalDateTime.of(2019, 11, 14, 9, 7),
+              "risk to self"
+            ),
+            SupplementaryRiskDto(
+              UUID.fromString("6e020e78-a81c-407f-bc78-e5f284e237e5"),
+              Source.INTERVENTION_REFERRAL,
+              "7e020e78-a81c-407f-bc78-e5f284e237e9",
+              "X123456",
+              "Gary C",
+              UserType.INTERVENTIONS_PROVIDER,
+              LocalDateTime.of(2019, 11, 14, 9, 6),
+              "risk to self"
+            )
+          )
+        }
     }
   }
 
@@ -120,11 +178,25 @@ class SupplementaryRisk : IntegrationTestBase() {
     }
 
     @Test
-    fun `access allowed when role and scope supplied`() {
+    fun `get by source type and source Id`() {
       webTestClient.get().uri("/risks/supplementary/$sourceType/$sourceId")
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
         .exchange()
-        .expectStatus().is5xxServerError
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          Assertions.assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              UUID.fromString("6e020e78-a81c-407f-bc78-e5f284e237e5"),
+              Source.INTERVENTION_REFERRAL,
+              "7e020e78-a81c-407f-bc78-e5f284e237e9",
+              "X123456",
+              "Gary C",
+              UserType.INTERVENTIONS_PROVIDER,
+              LocalDateTime.of(2019, 11, 14, 9, 6),
+              "risk to self"
+            )
+          )
+        }
     }
   }
 
@@ -132,7 +204,16 @@ class SupplementaryRisk : IntegrationTestBase() {
   @DisplayName("Craete new supplementary risk")
   inner class PostNewSupplementaryRisk {
 
-    private val requestBody = SupplementaryRiskDto(source = Source.INTERVENTION_REFERRAL, sourceId = "1234", crn = crn, riskSummaryComments = "Comments")
+    private val requestBody = SupplementaryRiskDto(
+      UUID.fromString("8e020e78-a81c-407f-bc78-e5f284e237e5"),
+      Source.INTERVENTION_REFERRAL,
+      "8e020e78-a81c-407f-bc78-e5f284e237e8",
+      "X123457",
+      "Tom C",
+      UserType.DELIUS,
+      LocalDateTime.of(2019, 11, 14, 9, 7),
+      "risk to others"
+    )
 
     @Test
     fun `access forbidden when no authority`() {
@@ -170,7 +251,21 @@ class SupplementaryRisk : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("write")))
         .bodyValue(requestBody)
         .exchange()
-        .expectStatus().is5xxServerError
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          Assertions.assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              UUID.fromString("8e020e78-a81c-407f-bc78-e5f284e237e5"),
+              Source.INTERVENTION_REFERRAL,
+              "8e020e78-a81c-407f-bc78-e5f284e237e8",
+              "X123457",
+              "Tom C",
+              UserType.DELIUS,
+              LocalDateTime.of(2019, 11, 14, 9, 7),
+              "risk to others"
+            )
+          )
+        }
     }
   }
 }

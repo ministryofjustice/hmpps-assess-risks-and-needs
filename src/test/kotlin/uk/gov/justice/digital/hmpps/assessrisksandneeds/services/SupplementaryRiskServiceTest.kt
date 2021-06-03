@@ -149,7 +149,7 @@ class SupplementaryRiskServiceTest {
     val createdBy = "Arnold G."
     val riskComments = "risk comments bla bla"
     every {
-      supplementaryRiskRepository.findAllByCrn(
+      supplementaryRiskRepository.findAllByCrnOrderByCreatedByDesc(
         crn
       )
     } returns listOf(

@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SupplementaryRiskService
 import java.util.UUID
 
 @RestController
-class SupplementaryRisksController {
+class SupplementaryRisksController(
+  val supplementaryRiskService: SupplementaryRiskService
+) {
 
   @RequestMapping(path = ["/risks/supplementary/{sourceType}/{sourceId}"], method = [RequestMethod.GET])
   @Operation(description = "Gets supplementary risk for a given source")
@@ -32,8 +35,8 @@ class SupplementaryRisksController {
     @PathVariable sourceId: String,
     @Parameter(description = "Source Type", required = true, example = "INTERVENTION_REFERRAL")
     @PathVariable sourceType: Source
-  ) {
-    TODO()
+  ): SupplementaryRiskDto {
+    return supplementaryRiskService.getRiskBySourceAndSourceId(sourceType, sourceId)
   }
 
   @RequestMapping(path = ["/risks/supplementary/crn/{crn}"], method = [RequestMethod.GET])
@@ -49,8 +52,8 @@ class SupplementaryRisksController {
   fun getSupplementaryRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "X123456")
     @PathVariable crn: String
-  ) {
-    TODO()
+  ): List<SupplementaryRiskDto> {
+    return supplementaryRiskService.getRisksByCrn(crn)
   }
 
   @RequestMapping(path = ["/risks/supplementary/{supplementaryRiskId}"], method = [RequestMethod.GET])
@@ -66,8 +69,8 @@ class SupplementaryRisksController {
   fun getSupplementaryRiskById(
     @Parameter(description = "Supplementary ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
     @PathVariable supplementaryRiskId: UUID
-  ) {
-    TODO()
+  ): SupplementaryRiskDto {
+    return supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskId)
   }
 
   @RequestMapping(path = ["/risks/supplementary"], method = [RequestMethod.POST])
@@ -82,7 +85,7 @@ class SupplementaryRisksController {
   fun createSupplementaryRisk(
     @Parameter(description = "Supplementary Risk", required = true)
     @RequestBody supplementaryRisk: SupplementaryRiskDto
-  ) {
-    TODO()
+  ): SupplementaryRiskDto {
+    return supplementaryRiskService.createNewSupplementaryRisk(supplementaryRisk)
   }
 }

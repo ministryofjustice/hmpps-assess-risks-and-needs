@@ -27,7 +27,7 @@ class SupplementaryRiskService(
 
   fun getRisksByCrn(crn: String): List<SupplementaryRiskDto> {
     log.info("Get all supplementary risk data by crn:$crn")
-    val supplementaryRiskEntities = supplementaryRiskRepository.findAllByCrn(crn)
+    val supplementaryRiskEntities = supplementaryRiskRepository.findAllByCrnOrderByCreatedByDesc(crn)
     return supplementaryRiskEntities.toSupplementaryRiskDtos("for crn:$crn")
   }
 
