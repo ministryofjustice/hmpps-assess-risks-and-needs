@@ -19,7 +19,7 @@ generic-service:
   env:
     JAVA_OPTS: "-Xmx512m"
     SERVER_PORT: "8080"
-    SPRING_PROFILES_ACTIVE: "logstash"
+    SPRING_PROFILES_ACTIVE: "logstash, postgres"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
