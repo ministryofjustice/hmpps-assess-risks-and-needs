@@ -24,7 +24,6 @@ class SupplementaryRiskService(
     return supplementaryRiskEntity.toSupplementaryRiskDto("for source:$source and sourceId:$sourceId")
   }
 
-
   fun SupplementaryRiskEntity?.toSupplementaryRiskDto(message: String): SupplementaryRiskDto {
     if (this == null) throw EntityNotFoundException("Error retrieving Supplementary Risk $message")
     return SupplementaryRiskDto(

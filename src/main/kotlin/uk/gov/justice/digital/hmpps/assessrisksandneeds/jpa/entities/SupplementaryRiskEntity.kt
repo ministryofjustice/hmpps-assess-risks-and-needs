@@ -36,4 +36,4 @@ class SupplementaryRiskEntity(
   @Column(name = "RISK_COMMENTS")
   val riskComments: String? = null,
 
-  )
+)
