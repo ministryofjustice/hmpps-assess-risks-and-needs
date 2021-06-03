@@ -31,10 +31,3 @@ dependencies {
   }
 }
 
-tasks {
-  compileKotlin {
-    kotlinOptions {
-      jvmTarget = "16"
-    }
-  }
-}
