@@ -7,5 +7,5 @@ generic-service:
   ingress:
     host: hmpps-assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
 
-  generic-prometheus-alerts:
-    alertSeverity: digital-prison-service-dev
+generic-prometheus-alerts:
+  alertSeverity: digital-prison-service-dev
