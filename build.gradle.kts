@@ -13,8 +13,10 @@ dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("org.apache.commons:commons-lang3")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("org.apache.commons:commons-lang3")
   implementation("org.springdoc:springdoc-openapi-ui:1.5.8")
   implementation("org.springdoc:springdoc-openapi-data-rest:1.5.8")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.5.8")
@@ -24,7 +26,7 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-core:7.8.1")
   testRuntimeOnly("com.h2database:h2:1.4.200")
   testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-
+  testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(module = "mockito-core")

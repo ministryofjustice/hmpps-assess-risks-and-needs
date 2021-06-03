@@ -64,7 +64,7 @@ class SupplementaryRiskService(
       createdBy = this.createdByUser,
       createdByUserType = this.createdByUserType?.name,
       createdDate = this.createdDate,
-      riskComments = this.riskComments
+      riskComments = this.riskSummaryComments
     )
   }
 
