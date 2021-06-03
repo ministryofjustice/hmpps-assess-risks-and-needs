@@ -13,22 +13,22 @@ data class SupplementaryRiskDto(
   val source: Source,
 
   @Schema(description = "Source Id", example = "78beac68-884c-4784-9bea-fd8088f52a47 or 1989823")
-  val sourceId: String?,
+  val sourceId: String? = null,
 
   @Schema(description = "Offender CRN", example = "DX12340A")
-  val crn: String?,
+  val crn: String? = null,
 
   @Schema(description = "Created By User", example = "Paul Newman")
-  val createdByUser: String?,
+  val createdByUser: String? = null,
 
   @Schema(description = "Created By User Type", example = "DELIUS")
-  val createdByUserType: UserType?,
+  val createdByUserType: UserType? = null,
 
   @Schema(description = "Created At", example = "")
-  val createdDate: LocalDateTime?,
+  val createdDate: LocalDateTime = LocalDateTime.now(),
 
   @Schema(description = "Risk Summary Comments", example = "Free text up to 4000 characters")
-  val riskComments: String,
+  val riskSummaryComments: String,
 )
 
 enum class Source {
