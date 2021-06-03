@@ -1,8 +1,11 @@
 ---
 # Per environment values which override defaults in hmpps-assess-risks-and-needs/values.yaml
 
-service:
+generic-service:
   replicaCount: 2
 
   ingress:
     host: hmpps-assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
+
+generic-prometheus-alerts:
+  alertSeverity: digital-prison-service-dev
