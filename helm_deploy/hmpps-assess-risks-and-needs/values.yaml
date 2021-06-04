@@ -34,7 +34,7 @@ generic-service:
       API_CLIENT_SECRET: "API_CLIENT_SECRET"
 
     sentry:
-      SENTRY_DSN: "SERVICE_DSN"
+      SENTRY_DSN: "sentry_dsn"
 
   allowlist:
     office: "217.33.148.210/32"
