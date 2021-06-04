@@ -261,7 +261,7 @@ class SupplementaryRiskServiceTest {
     }
 
     assertEquals(
-      "Duplicate supplementary found for source: $source with sourceId: $sourceId",
+      "Duplicate supplementary risk found for source: $source with sourceId: $sourceId",
       exception.message
     )
   }

@@ -47,7 +47,7 @@ class SupplementaryRiskService(
       val existingRisk = supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
       if (existingRisk != null)
         throw DuplicateSourceRecordFound(
-          "Duplicate supplementary found for source: $source with sourceId: $sourceId",
+          "Duplicate supplementary risk found for source: $source with sourceId: $sourceId",
           existingRisk.toSupplementaryRiskDto("for source: $source and sourceId: $sourceId")
         )
       return supplementaryRiskRepository.save(this.toSupplementaryRiskEntity())
@@ -71,7 +71,6 @@ class SupplementaryRiskService(
 
   fun SupplementaryRiskDto.toSupplementaryRiskEntity(): SupplementaryRiskEntity {
     return SupplementaryRiskEntity(
-      supplementaryRiskUuid = this.supplementaryRiskId,
       source = this.source.name,
       sourceId = this.sourceId,
       crn = this.crn,
