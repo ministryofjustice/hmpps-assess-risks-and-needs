@@ -63,7 +63,7 @@ class SupplementaryRiskService(
       this.sourceId,
       this.crn,
       this.createdBy,
-      UserType.fromString(this.createdByUserType),
+      this.createdByUserType.lowercase(),
       this.createdDate,
       this.riskComments
     )
@@ -75,7 +75,7 @@ class SupplementaryRiskService(
       sourceId = this.sourceId,
       crn = this.crn,
       createdBy = this.createdByUser,
-      createdByUserType = this.createdByUserType.value,
+      createdByUserType = UserType.fromString(this.createdByUserType).name,
       createdDate = this.createdDate,
       riskComments = this.riskSummaryComments
     )

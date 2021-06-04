@@ -21,8 +21,8 @@ data class SupplementaryRiskDto(
   @Schema(description = "Created By User", example = "Paul Newman")
   val createdByUser: String,
 
-  @Schema(description = "Created By User Type", example = "DELIUS")
-  val createdByUserType: UserType,
+  @Schema(description = "Created By User Type", example = "delius")
+  val createdByUserType: String,
 
   @Schema(description = "Created At", example = "")
   val createdDate: LocalDateTime = LocalDateTime.now(),
