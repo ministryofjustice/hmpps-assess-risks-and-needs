@@ -22,8 +22,8 @@ class SupplementaryRiskService(
   fun getRiskBySourceAndSourceId(source: Source, sourceId: String): SupplementaryRiskDto {
     log.info("Get supplementary risk data by source: $source and sourceId: $sourceId")
     val supplementaryRiskEntity = supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
-    return supplementaryRiskEntity.toSupplementaryRiskDto("for source:$source and sourceId: $sourceId")
-      .also { log.info("returning supplementary risk records found for source:$source and sourceId: $sourceId") }
+    return supplementaryRiskEntity.toSupplementaryRiskDto("for source: $source and sourceId: $sourceId")
+      .also { log.info("returning supplementary risk records found for source: $source and sourceId: $sourceId") }
   }
 
   fun getRisksByCrn(crn: String): List<SupplementaryRiskDto> {

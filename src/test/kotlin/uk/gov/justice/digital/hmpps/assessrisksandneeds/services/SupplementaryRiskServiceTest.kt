@@ -77,7 +77,7 @@ class SupplementaryRiskServiceTest {
       supplementaryRiskService.getRiskBySourceAndSourceId(Source.INTERVENTION_REFERRAL, sourceId)
     }
     assertEquals(
-      "Error retrieving Supplementary Risk for source:INTERVENTION_REFERRAL and sourceId:123",
+      "Error retrieving Supplementary Risk for source: INTERVENTION_REFERRAL and sourceId: 123",
       exception.message
     )
   }
@@ -132,7 +132,7 @@ class SupplementaryRiskServiceTest {
       supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskUuid)
     }
     assertEquals(
-      "Error retrieving Supplementary Risk for supplementaryRiskUuid:$supplementaryRiskUuid",
+      "Error retrieving Supplementary Risk for supplementaryRiskUuid: $supplementaryRiskUuid",
       exception.message
     )
   }
