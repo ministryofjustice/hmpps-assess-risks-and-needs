@@ -18,4 +18,5 @@ generic-service:
       DATABASE_ENDPOINT: "rds_instance_endpoint"
 
 generic-prometheus-alerts:
+  enabled: true
   alertSeverity: digital-prison-service-dev
