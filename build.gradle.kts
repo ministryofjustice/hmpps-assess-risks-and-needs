@@ -11,7 +11,8 @@ configurations {
 
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-
+  implementation("io.sentry:sentry-spring-boot-starter:5.0.0")
+  implementation("io.sentry:sentry-logback:5.0.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-security")
