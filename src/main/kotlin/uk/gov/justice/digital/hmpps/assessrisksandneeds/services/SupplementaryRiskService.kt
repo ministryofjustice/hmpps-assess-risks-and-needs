@@ -20,25 +20,32 @@ class SupplementaryRiskService(
   }
 
   fun getRiskBySourceAndSourceId(source: Source, sourceId: String): SupplementaryRiskDto {
-    log.info("Get supplementary risk data by source:$source and sourceId:$sourceId")
+    log.info("Get supplementary risk data by source: $source and sourceId: $sourceId")
     val supplementaryRiskEntity = supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
-    return supplementaryRiskEntity.toSupplementaryRiskDto("for source:$source and sourceId:$sourceId")
+    return supplementaryRiskEntity.toSupplementaryRiskDto("for source:$source and sourceId: $sourceId")
+      .also { log.info("returning supplementary risk records found for source:$source and sourceId: $sourceId") }
   }
 
   fun getRisksByCrn(crn: String): List<SupplementaryRiskDto> {
-    log.info("Get all supplementary risk data by crn:$crn")
+    log.info("Get all supplementary risk data by crn: $crn")
     val supplementaryRiskEntities = supplementaryRiskRepository.findAllByCrnOrderByCreatedByDesc(crn)
-    return supplementaryRiskEntities.toSupplementaryRiskDtos("for crn:$crn")
+    return supplementaryRiskEntities.toSupplementaryRiskDtos("for crn: $crn")
+      .also { log.info("${it.size} supplementary risk records found for crn: $crn") }
   }
 
   fun getRiskBySupplementaryRiskUuid(supplementaryRiskUuid: UUID): SupplementaryRiskDto {
-    log.info("Get supplementary risk data by supplementaryRiskUuid:$supplementaryRiskUuid")
+    log.info("Get supplementary risk data by supplementaryRiskUuid: $supplementaryRiskUuid")
     val supplementaryRiskEntity = supplementaryRiskRepository.findBySupplementaryRiskUuid(supplementaryRiskUuid)
-    return supplementaryRiskEntity.toSupplementaryRiskDto("for supplementaryRiskUuid:$supplementaryRiskUuid")
+    return supplementaryRiskEntity.toSupplementaryRiskDto("for supplementaryRiskUuid: $supplementaryRiskUuid")
+      .also { log.info("returning supplementary risk records found for risk ID: $supplementaryRiskUuid") }
   }
 
   fun createNewSupplementaryRisk(supplementaryRiskDto: SupplementaryRiskDto): SupplementaryRiskDto {
-    return supplementaryRiskRepository.save(supplementaryRiskDto.toSupplementaryRiskEntity()).toSupplementaryRiskDto("")
+    with(supplementaryRiskDto) {
+      log.info("Create new supplementary risk for crn: $crn")
+      return supplementaryRiskRepository.save(this.toSupplementaryRiskEntity())
+        .toSupplementaryRiskDto("for crn: $crn").also { log.info("Supplementary risk record created for crn: $crn") }
+    }
   }
 
   fun SupplementaryRiskEntity?.toSupplementaryRiskDto(message: String): SupplementaryRiskDto {
