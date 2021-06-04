@@ -42,12 +42,12 @@ enum class Source {
   }
 }
 
-enum class UserType {
-  DELIUS, INTERVENTIONS_PROVIDER;
+enum class UserType(val value: String) {
+  DELIUS("delius"), AUTH("auth"), NOMIS("nomis");
 
   companion object {
     fun fromString(enumValue: String?): UserType {
-      return values().firstOrNull { it.name == enumValue }
+      return values().firstOrNull { it.value == enumValue }
         ?: throw IllegalArgumentException("Unknown User Type $enumValue")
     }
   }

@@ -33,7 +33,7 @@ class SupplementaryRiskServiceTest {
     val sourceId = "123"
     val crn = "CRN123"
     val createdDate = LocalDateTime.now()
-    val createdByUserType = "DELIUS"
+    val createdByUserType = "delius"
     val createdBy = "Arnold G."
     val riskComments = "risk comments bla bla"
     every {
@@ -90,7 +90,7 @@ class SupplementaryRiskServiceTest {
     val sourceId = "123"
     val crn = "CRN123"
     val createdDate = LocalDateTime.now()
-    val createdByUserType = "DELIUS"
+    val createdByUserType = "delius"
     val createdBy = "Arnold G."
     val riskComments = "risk comments bla bla"
     every {
@@ -146,7 +146,7 @@ class SupplementaryRiskServiceTest {
     val sourceId = "123"
     val crn = "CRN123"
     val createdDate = LocalDateTime.now()
-    val createdByUserType = "DELIUS"
+    val createdByUserType = "delius"
     val createdBy = "Arnold G."
     val riskComments = "risk comments bla bla"
     every {
@@ -198,7 +198,7 @@ class SupplementaryRiskServiceTest {
     val sourceId = "123"
     val crn = "CRN123"
     val createdDate = LocalDateTime.now()
-    val createdByUserType = "DELIUS"
+    val createdByUserType = "delius"
     val createdBy = "Arnold G."
     val riskComments = "risk comments bla bla"
     val riskEntity = SupplementaryRiskEntity(
@@ -234,7 +234,7 @@ class SupplementaryRiskServiceTest {
     val sourceId = "123"
     val crn = "CRN123"
     val createdDate = LocalDateTime.now()
-    val createdByUserType = "DELIUS"
+    val createdByUserType = "delius"
     val createdBy = "Arnold G."
     val riskComments = "risk comments bla bla"
     val riskEntity = SupplementaryRiskEntity(
