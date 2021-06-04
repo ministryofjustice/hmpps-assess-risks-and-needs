@@ -74,6 +74,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -135,6 +144,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation())
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -143,6 +161,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -197,6 +224,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation())
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -262,6 +298,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -272,6 +317,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
