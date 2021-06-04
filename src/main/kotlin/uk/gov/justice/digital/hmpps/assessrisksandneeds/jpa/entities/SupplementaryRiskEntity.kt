@@ -18,25 +18,25 @@ class SupplementaryRiskEntity(
   val supplementaryRiskId: Long? = null,
 
   @Column(name = "SUPPLEMENTARY_RISK_UUID")
-  val supplementaryRiskUuid: UUID = UUID.randomUUID(),
+  val supplementaryRiskUuid: UUID? = UUID.randomUUID(),
 
   @Column(name = "RISK_SOURCE")
   val source: String,
 
   @Column(name = "SOURCE_ID")
-  val sourceId: String? = null,
+  val sourceId: String,
 
   @Column(name = "CRN")
-  val crn: String? = null,
+  val crn: String,
 
   @Column(name = "CREATED_DATE")
   val createdDate: LocalDateTime,
 
   @Column(name = "CREATED_BY_USER_TYPE")
-  val createdByUserType: String? = null,
+  val createdByUserType: String,
 
   @Column(name = "CREATED_BY")
-  val createdBy: String? = null,
+  val createdBy: String,
 
   @Column(name = "RISK_COMMENTS")
   val riskComments: String,
