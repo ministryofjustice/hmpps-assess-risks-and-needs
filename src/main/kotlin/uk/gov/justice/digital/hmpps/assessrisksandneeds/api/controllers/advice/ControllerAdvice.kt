@@ -54,7 +54,7 @@ class ControllerAdvice {
   @ResponseStatus(HttpStatus.FORBIDDEN)
   fun handle(e: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse?> {
     log.error("AccessDeniedException: {}", e.message)
-    return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.detailMessage), HttpStatus.FORBIDDEN)
+    return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.message), HttpStatus.FORBIDDEN)
   }
 
   @ExceptionHandler(DuplicateSourceRecordFound::class)
