@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -10,6 +10,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlConfig
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.web.reactive.server.expectBody
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
@@ -32,6 +33,8 @@ import java.util.UUID
 class SupplementaryRiskControllerTest : IntegrationTestBase() {
 
   private val supplementaryRiskUuid = "2e020e78-a81c-407f-bc78-e5f284e237e5"
+  private val invalidSupplementaryRiskUuid = "2e020e78-a80a-407f-bc78-e5f284e237e5"
+
   private val crn = "X123456"
   private val sourceType = Source.INTERVENTION_REFERRAL
   private val sourceId = "7e020e78-a81c-407f-bc78-e5f284e237e9"
@@ -54,6 +57,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation())
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -62,6 +74,32 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
+    }
+
+    @Test
+    fun `not found when supplementary risk uuid doesn't exists`() {
+      webTestClient.get().uri("/risks/supplementary/$invalidSupplementaryRiskUuid")
+        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
+        .exchange()
+        .expectStatus().isNotFound
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 404,
+              developerMessage = "Error retrieving Supplementary Risk for supplementaryRiskUuid: 2e020e78-a80a-407f-bc78-e5f284e237e5"
+            )
+          )
+        }
     }
 
     @Test
@@ -72,7 +110,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .expectStatus().isOk
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
-          Assertions.assertThat(it.responseBody).isEqualTo(
+          assertThat(it.responseBody).isEqualTo(
             SupplementaryRiskDto(
               UUID.fromString(supplementaryRiskUuid),
               Source.INTERVENTION_REFERRAL,
@@ -106,6 +144,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation())
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -114,6 +161,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -124,7 +180,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .expectStatus().isOk
         .expectBody<List<SupplementaryRiskDto>>()
         .consumeWith {
-          Assertions.assertThat(it.responseBody).containsExactly(
+          assertThat(it.responseBody).containsExactly(
             SupplementaryRiskDto(
               UUID.fromString("5e020e78-a81c-407f-bc78-e5f284e237e5"),
               Source.INTERVENTION_REFERRAL,
@@ -168,6 +224,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation())
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -185,7 +250,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .exchange()
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
-          Assertions.assertThat(it.responseBody).isEqualTo(
+          assertThat(it.responseBody).isEqualTo(
             SupplementaryRiskDto(
               UUID.fromString("6e020e78-a81c-407f-bc78-e5f284e237e5"),
               Source.INTERVENTION_REFERRAL,
@@ -233,6 +298,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -243,6 +317,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
     }
 
     @Test
@@ -254,7 +337,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .exchange()
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
-          Assertions.assertThat(it.responseBody).isEqualTo(
+          assertThat(it.responseBody).isEqualTo(
             SupplementaryRiskDto(
               UUID.fromString("8e020e78-a81c-407f-bc78-e5f284e237e5"),
               Source.INTERVENTION_REFERRAL,
@@ -287,7 +370,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .expectStatus().isEqualTo(HttpStatus.CONFLICT)
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
-          Assertions.assertThat(it.responseBody).isEqualTo(
+          assertThat(it.responseBody).isEqualTo(
             SupplementaryRiskDto(
               supplementaryRiskId = UUID.fromString("4e020e78-a81c-407f-bc78-e5f284e237e5"),
               source = Source.INTERVENTION_REFERRAL,

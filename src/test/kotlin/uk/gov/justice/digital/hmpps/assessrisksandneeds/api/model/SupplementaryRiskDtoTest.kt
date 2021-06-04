@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -20,7 +20,7 @@ class SupplementaryRiskDtoTest {
     val exception = assertThrows<IllegalArgumentException> {
       Source.fromString("UNKNOWN")
     }
-    Assertions.assertEquals(
+    assertEquals(
       "Unknown Source UNKNOWN",
       exception.message
     )
@@ -39,7 +39,7 @@ class SupplementaryRiskDtoTest {
     val exception = assertThrows<IllegalArgumentException> {
       UserType.fromString("BLABLA")
     }
-    Assertions.assertEquals(
+    assertEquals(
       "Unknown User Type BLABLA",
       exception.message
     )
