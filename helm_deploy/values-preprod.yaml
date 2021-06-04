@@ -20,4 +20,3 @@ generic-service:
 
 generic-prometheus-alerts:
   enabled: false
-  alertSeverity: digital-prison-service-dev

@@ -20,4 +20,4 @@ generic-service:
 
 generic-prometheus-alerts:
   enabled: true
-  alertSeverity: digital-prison-service-dev
+  alertSeverity: hmpps-assess-risks-and-needs
