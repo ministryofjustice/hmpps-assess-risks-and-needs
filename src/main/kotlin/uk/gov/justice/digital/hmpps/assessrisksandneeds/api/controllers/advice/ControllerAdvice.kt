@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
 @ControllerAdvice
 class ControllerAdvice {

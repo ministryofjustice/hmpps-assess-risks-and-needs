@@ -370,7 +370,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .expectStatus().isEqualTo(HttpStatus.CONFLICT)
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
-          Assertions.assertThat(it.responseBody).isEqualTo(
+          assertThat(it.responseBody).isEqualTo(
             SupplementaryRiskDto(
               supplementaryRiskId = UUID.fromString("4e020e78-a81c-407f-bc78-e5f284e237e5"),
               source = Source.INTERVENTION_REFERRAL,
