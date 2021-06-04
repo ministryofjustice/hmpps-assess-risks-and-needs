@@ -5,7 +5,7 @@ generic-service:
   replicaCount: 2
 
   ingress:
-    host: assess-risks-and-needs-prod.hmpps.service.justice.gov.uk
+    host: assess-risks-and-needs.hmpps.service.justice.gov.uk
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
