@@ -28,9 +28,9 @@ class SupplementaryRiskDtoTest {
 
   @Test
   fun `test User Type from known String user type returns Source`() {
-    val userType = UserType.fromString("INTERVENTIONS_PROVIDER")
+    val userType = UserType.fromString("delius")
 
-    assertThat(userType).isEqualTo(UserType.INTERVENTIONS_PROVIDER)
+    assertThat(userType).isEqualTo(UserType.DELIUS)
   }
 
   @Test

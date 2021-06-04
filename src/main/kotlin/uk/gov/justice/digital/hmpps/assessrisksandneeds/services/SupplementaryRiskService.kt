@@ -75,7 +75,7 @@ class SupplementaryRiskService(
       sourceId = this.sourceId,
       crn = this.crn,
       createdBy = this.createdByUser,
-      createdByUserType = this.createdByUserType.name,
+      createdByUserType = this.createdByUserType.value,
       createdDate = this.createdDate,
       riskComments = this.riskSummaryComments
     )

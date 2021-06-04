@@ -187,7 +187,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "7e020e78-a81c-407f-bc78-e5f284e237e5",
               "X123456",
               "Gary C",
-              UserType.INTERVENTIONS_PROVIDER,
+              UserType.DELIUS,
               LocalDateTime.of(2019, 11, 14, 9, 7),
               "risk to self"
             ),
@@ -197,7 +197,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "7e020e78-a81c-407f-bc78-e5f284e237e9",
               "X123456",
               "Gary C",
-              UserType.INTERVENTIONS_PROVIDER,
+              UserType.DELIUS,
               LocalDateTime.of(2019, 11, 14, 9, 6),
               "risk to self"
             )
@@ -257,7 +257,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "7e020e78-a81c-407f-bc78-e5f284e237e9",
               "X123456",
               "Gary C",
-              UserType.INTERVENTIONS_PROVIDER,
+              UserType.DELIUS,
               LocalDateTime.of(2019, 11, 14, 9, 6),
               "risk to self"
             )
@@ -381,7 +381,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               createdByUser = "Gary C",
               riskSummaryComments = "risk to self",
               createdDate = LocalDateTime.of(2019, 11, 14, 9, 5),
-              createdByUserType = UserType.INTERVENTIONS_PROVIDER,
+              createdByUserType = UserType.DELIUS,
             )
           )
         }
