@@ -9,6 +9,7 @@ generic-service:
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
+    SENTRY_ENVIRONMENT: "preprod"
 
   namespace_secrets:
     hmpps-assess-risks-and-needs-preprod-rds-instance:
