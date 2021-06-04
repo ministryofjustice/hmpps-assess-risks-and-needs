@@ -13,7 +13,6 @@ import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -117,7 +116,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "182987872",
               "X123458",
               "Gary cooper",
-              UserType.DELIUS,
+              "delius",
               LocalDateTime.of(2019, 11, 14, 9, 0),
               "risk for children"
             )
@@ -187,7 +186,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "7e020e78-a81c-407f-bc78-e5f284e237e5",
               "X123456",
               "Gary C",
-              UserType.DELIUS,
+              "delius",
               LocalDateTime.of(2019, 11, 14, 9, 7),
               "risk to self"
             ),
@@ -197,7 +196,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "7e020e78-a81c-407f-bc78-e5f284e237e9",
               "X123456",
               "Gary C",
-              UserType.DELIUS,
+              "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
               "risk to self"
             )
@@ -257,7 +256,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "7e020e78-a81c-407f-bc78-e5f284e237e9",
               "X123456",
               "Gary C",
-              UserType.DELIUS,
+              "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
               "risk to self"
             )
@@ -276,7 +275,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
       "8e020e78-a81c-407f-bc78-e5f284e237e8",
       "X123457",
       "Tom C",
-      UserType.DELIUS,
+      "delius",
       LocalDateTime.of(2019, 11, 14, 9, 7),
       "risk to others"
     )
@@ -344,7 +343,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "8e020e78-a81c-407f-bc78-e5f284e237e8",
               "X123457",
               "Tom C",
-              UserType.DELIUS,
+              "delius",
               LocalDateTime.of(2019, 11, 14, 9, 7),
               "risk to others"
             )
@@ -361,7 +360,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         crn = "X123457",
         riskSummaryComments = "risk to others",
         createdByUser = "Gary C",
-        createdByUserType = UserType.DELIUS
+        createdByUserType = "delius"
       )
 
       webTestClient.post().uri("/risks/supplementary")
@@ -381,7 +380,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               createdByUser = "Gary C",
               riskSummaryComments = "risk to self",
               createdDate = LocalDateTime.of(2019, 11, 14, 9, 5),
-              createdByUserType = UserType.DELIUS,
+              createdByUserType = "delius",
             )
           )
         }

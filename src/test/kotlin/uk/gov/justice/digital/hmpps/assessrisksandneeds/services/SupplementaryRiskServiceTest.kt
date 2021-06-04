@@ -11,7 +11,6 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.SupplementaryRiskEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
@@ -56,7 +55,7 @@ class SupplementaryRiskServiceTest {
         sourceId,
         crn,
         createdBy,
-        UserType.DELIUS,
+        "delius",
         createdDate,
         riskComments
       )
@@ -112,7 +111,7 @@ class SupplementaryRiskServiceTest {
         sourceId,
         crn,
         createdBy,
-        UserType.DELIUS,
+        "delius",
         createdDate,
         riskComments
       )
@@ -174,7 +173,7 @@ class SupplementaryRiskServiceTest {
         sourceId,
         crn,
         createdBy,
-        UserType.DELIUS,
+        "delius",
         createdDate,
         riskComments
       ),
@@ -184,7 +183,7 @@ class SupplementaryRiskServiceTest {
         sourceId,
         crn,
         createdBy,
-        UserType.DELIUS,
+        "delius",
         createdDate,
         riskComments
       )
@@ -218,7 +217,7 @@ class SupplementaryRiskServiceTest {
       sourceId,
       crn,
       createdBy,
-      UserType.DELIUS,
+      "delius",
       createdDate,
       riskComments
     )
@@ -251,7 +250,7 @@ class SupplementaryRiskServiceTest {
       sourceId,
       crn,
       createdBy,
-      UserType.DELIUS,
+      "delius",
       createdDate,
       riskComments
     )
