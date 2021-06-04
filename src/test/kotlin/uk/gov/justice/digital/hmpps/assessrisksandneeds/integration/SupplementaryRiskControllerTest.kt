@@ -271,7 +271,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
   inner class PostNewSupplementaryRisk {
 
     private val requestBody = SupplementaryRiskDto(
-      UUID.fromString("8e020e78-a81c-407f-bc78-e5f284e237e5"),
+      null,
       Source.INTERVENTION_REFERRAL,
       "8e020e78-a81c-407f-bc78-e5f284e237e8",
       "X123457",
@@ -339,7 +339,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         .consumeWith {
           assertThat(it.responseBody).isEqualTo(
             SupplementaryRiskDto(
-              UUID.fromString("8e020e78-a81c-407f-bc78-e5f284e237e5"),
+              supplementaryRiskId = it.responseBody?.supplementaryRiskId,
               Source.INTERVENTION_REFERRAL,
               "8e020e78-a81c-407f-bc78-e5f284e237e8",
               "X123457",
