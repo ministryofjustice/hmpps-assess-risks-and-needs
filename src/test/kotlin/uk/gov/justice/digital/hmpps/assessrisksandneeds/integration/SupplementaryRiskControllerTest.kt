@@ -359,7 +359,9 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         source = Source.INTERVENTION_REFERRAL,
         sourceId = "3e020e78-a81c-407f-bc78-e5f284e237e5",
         crn = "X123457",
-        riskSummaryComments = "risk to others"
+        riskSummaryComments = "risk to others",
+        createdByUser = "Gary C",
+        createdByUserType = UserType.DELIUS
       )
 
       webTestClient.post().uri("/risks/supplementary")

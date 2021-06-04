@@ -7,22 +7,22 @@ import java.util.UUID
 data class SupplementaryRiskDto(
 
   @Schema(description = "Supplementary Risk ID", example = "78beac68-884c-4784-9bea-fd8088f52a47")
-  val supplementaryRiskId: UUID = UUID.randomUUID(),
+  val supplementaryRiskId: UUID? = null,
 
   @Schema(description = "Source of Risk", example = "INTERVENTION_REFERRAL")
   val source: Source,
 
   @Schema(description = "Source Id", example = "78beac68-884c-4784-9bea-fd8088f52a47 or 1989823")
-  val sourceId: String? = null,
+  val sourceId: String,
 
   @Schema(description = "Offender CRN", example = "DX12340A")
-  val crn: String? = null,
+  val crn: String,
 
   @Schema(description = "Created By User", example = "Paul Newman")
-  val createdByUser: String? = null,
+  val createdByUser: String,
 
   @Schema(description = "Created By User Type", example = "DELIUS")
-  val createdByUserType: UserType? = null,
+  val createdByUserType: UserType,
 
   @Schema(description = "Created At", example = "")
   val createdDate: LocalDateTime = LocalDateTime.now(),

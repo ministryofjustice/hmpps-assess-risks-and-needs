@@ -44,7 +44,7 @@ class SupplementaryRiskService(
   fun createNewSupplementaryRisk(supplementaryRiskDto: SupplementaryRiskDto): SupplementaryRiskDto {
     with(supplementaryRiskDto) {
       log.info("Create new supplementary risk for crn: $crn")
-      val existingRisk = sourceId?.let { supplementaryRiskRepository.findBySourceAndSourceId(source.name, it) }
+      val existingRisk = supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
       if (existingRisk != null)
         throw DuplicateSourceRecordFound(
           "Duplicate supplementary found for source: $source with sourceId: $sourceId",
@@ -76,7 +76,7 @@ class SupplementaryRiskService(
       sourceId = this.sourceId,
       crn = this.crn,
       createdBy = this.createdByUser,
-      createdByUserType = this.createdByUserType?.name,
+      createdByUserType = this.createdByUserType.name,
       createdDate = this.createdDate,
       riskComments = this.riskSummaryComments
     )
