@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
 
 @ControllerAdvice
 class ControllerAdvice {
@@ -45,6 +47,13 @@ class ControllerAdvice {
   fun handle(e: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse?> {
     log.error("AccessDeniedException: {}", e.message)
     return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.message), HttpStatus.FORBIDDEN)
+  }
+
+  @ExceptionHandler(DuplicateSourceRecordFound::class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  fun handle(e: DuplicateSourceRecordFound): ResponseEntity<SupplementaryRiskDto?> {
+    log.error("DuplicateSourceRecordFound: {}", e.message)
+    return ResponseEntity(e.supplementaryRiskDto, HttpStatus.CONFLICT)
   }
 
   @ExceptionHandler(Exception::class)
