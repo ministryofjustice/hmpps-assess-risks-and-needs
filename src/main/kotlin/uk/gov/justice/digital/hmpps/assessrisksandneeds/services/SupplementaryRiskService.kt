@@ -71,7 +71,6 @@ class SupplementaryRiskService(
 
   fun SupplementaryRiskDto.toSupplementaryRiskEntity(): SupplementaryRiskEntity {
     return SupplementaryRiskEntity(
-      supplementaryRiskUuid = this.supplementaryRiskId,
       source = this.source.name,
       sourceId = this.sourceId,
       crn = this.crn,

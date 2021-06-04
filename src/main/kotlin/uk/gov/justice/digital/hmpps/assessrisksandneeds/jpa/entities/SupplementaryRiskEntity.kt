@@ -18,7 +18,7 @@ class SupplementaryRiskEntity(
   val supplementaryRiskId: Long? = null,
 
   @Column(name = "SUPPLEMENTARY_RISK_UUID")
-  val supplementaryRiskUuid: UUID? = UUID.randomUUID(),
+  val supplementaryRiskUuid: UUID = UUID.randomUUID(),
 
   @Column(name = "RISK_SOURCE")
   val source: String,
