@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryR
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.SupplementaryRiskEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.time.LocalDateTime
 import java.util.UUID
@@ -205,6 +206,9 @@ class SupplementaryRiskServiceTest {
       createdDate, createdByUserType, createdBy, riskComments
     )
     every {
+      supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId)
+    } returns null
+    every {
       supplementaryRiskRepository.save(any())
     } returns riskEntity
 
@@ -221,5 +225,44 @@ class SupplementaryRiskServiceTest {
     val risk = supplementaryRiskService.createNewSupplementaryRisk(supplementaryRiskDto)
 
     assertThat(risk).isEqualTo(supplementaryRiskDto)
+  }
+
+  @Test
+  fun `throw exception when supplementary risk data already exists for source`() {
+    val supplementaryRiskUuid = UUID.randomUUID()
+    val source = "INTERVENTION_REFERRAL"
+    val sourceId = "123"
+    val crn = "CRN123"
+    val createdDate = LocalDateTime.now()
+    val createdByUserType = "DELIUS"
+    val createdBy = "Arnold G."
+    val riskComments = "risk comments bla bla"
+    val riskEntity = SupplementaryRiskEntity(
+      123L, supplementaryRiskUuid, source, sourceId, crn,
+      createdDate, createdByUserType, createdBy, riskComments
+    )
+    every {
+      supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId)
+    } returns riskEntity
+
+    val supplementaryRiskDto = SupplementaryRiskDto(
+      supplementaryRiskUuid,
+      Source.INTERVENTION_REFERRAL,
+      sourceId,
+      crn,
+      createdBy,
+      UserType.DELIUS,
+      createdDate,
+      riskComments
+    )
+
+    val exception = assertThrows<DuplicateSourceRecordFound> {
+      supplementaryRiskService.createNewSupplementaryRisk(supplementaryRiskDto)
+    }
+
+    assertEquals(
+      "Duplicate supplementary found for source: $source with sourceId: $sourceId",
+      exception.message
+    )
   }
 }

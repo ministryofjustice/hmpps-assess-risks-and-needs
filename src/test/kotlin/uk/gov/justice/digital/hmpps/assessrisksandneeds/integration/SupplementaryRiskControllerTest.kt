@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlConfig
 import org.springframework.test.context.jdbc.SqlGroup
@@ -76,7 +77,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               UUID.fromString(supplementaryRiskUuid),
               Source.INTERVENTION_REFERRAL,
               "182987872",
-              "",
+              "X123458",
               "Gary cooper",
               UserType.DELIUS,
               LocalDateTime.of(2019, 11, 14, 9, 0),
@@ -201,7 +202,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
   }
 
   @Nested
-  @DisplayName("Craete new supplementary risk")
+  @DisplayName("Create new supplementary risk")
   inner class PostNewSupplementaryRisk {
 
     private val requestBody = SupplementaryRiskDto(
@@ -263,6 +264,39 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               UserType.DELIUS,
               LocalDateTime.of(2019, 11, 14, 9, 7),
               "risk to others"
+            )
+          )
+        }
+    }
+
+    @Test
+    fun `409 returned when record for source already exists`() {
+
+      val requestBody = SupplementaryRiskDto(
+        source = Source.INTERVENTION_REFERRAL,
+        sourceId = "3e020e78-a81c-407f-bc78-e5f284e237e5",
+        crn = "X123457",
+        riskSummaryComments = "risk to others"
+      )
+
+      webTestClient.post().uri("/risks/supplementary")
+        .header("Content-Type", "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("write")))
+        .bodyValue(requestBody)
+        .exchange()
+        .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          Assertions.assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              supplementaryRiskId = UUID.fromString("4e020e78-a81c-407f-bc78-e5f284e237e5"),
+              source = Source.INTERVENTION_REFERRAL,
+              sourceId = "3e020e78-a81c-407f-bc78-e5f284e237e5",
+              crn = "X123457",
+              createdByUser = "Gary C",
+              riskSummaryComments = "risk to self",
+              createdDate = LocalDateTime.of(2019, 11, 14, 9, 5),
+              createdByUserType = UserType.INTERVENTIONS_PROVIDER,
             )
           )
         }

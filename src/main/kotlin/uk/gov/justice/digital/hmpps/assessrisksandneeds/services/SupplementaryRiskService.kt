@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryR
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.SupplementaryRiskEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.util.UUID
 
@@ -43,6 +44,12 @@ class SupplementaryRiskService(
   fun createNewSupplementaryRisk(supplementaryRiskDto: SupplementaryRiskDto): SupplementaryRiskDto {
     with(supplementaryRiskDto) {
       log.info("Create new supplementary risk for crn: $crn")
+      val existingRisk = sourceId?.let { supplementaryRiskRepository.findBySourceAndSourceId(source.name, it) }
+      if (existingRisk != null)
+        throw DuplicateSourceRecordFound(
+          "Duplicate supplementary found for source: $source with sourceId: $sourceId",
+          existingRisk.toSupplementaryRiskDto("for source: $source and sourceId: $sourceId")
+        )
       return supplementaryRiskRepository.save(this.toSupplementaryRiskEntity())
         .toSupplementaryRiskDto("for crn: $crn").also { log.info("Supplementary risk record created for crn: $crn") }
     }
