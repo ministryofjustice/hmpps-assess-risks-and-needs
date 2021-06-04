@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
 
@@ -19,6 +20,13 @@ class ControllerAdvice {
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
+  @ExceptionHandler(EntityNotFoundException::class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  fun handle(e: EntityNotFoundException): ResponseEntity<ErrorResponse?> {
+    log.info("EntityNotFoundException: {}", e.message)
+    return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
   }
 
   @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -46,7 +54,7 @@ class ControllerAdvice {
   @ResponseStatus(HttpStatus.FORBIDDEN)
   fun handle(e: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse?> {
     log.error("AccessDeniedException: {}", e.message)
-    return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.message), HttpStatus.FORBIDDEN)
+    return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.detailMessage), HttpStatus.FORBIDDEN)
   }
 
   @ExceptionHandler(DuplicateSourceRecordFound::class)
