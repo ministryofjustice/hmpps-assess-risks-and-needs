@@ -33,6 +33,12 @@ generic-service:
       API_CLIENT_ID: "API_CLIENT_ID"
       API_CLIENT_SECRET: "API_CLIENT_SECRET"
 
+    hmpps-assess-risks-and-needs-rds-instance:
+      DATABASE_USERNAME: "database_username"
+      DATABASE_PASSWORD: "database_password"
+      DATABASE_NAME: "database_name"
+      DATABASE_ENDPOINT: "rds_instance_endpoint"
+
     sentry:
       SENTRY_DSN: "sentry_dsn"
 
