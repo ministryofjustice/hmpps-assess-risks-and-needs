@@ -6,7 +6,7 @@ enum class ResponseDto(val value: String) {
   companion object {
     fun fromString(enumValue: String?): ResponseDto {
       return values().firstOrNull { it.value == enumValue }
-        ?: throw IllegalArgumentException("Unknown Responsee $enumValue")
+        ?: throw IllegalArgumentException("Unknown Response $enumValue")
     }
   }
 }
