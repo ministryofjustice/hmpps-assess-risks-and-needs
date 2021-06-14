@@ -27,7 +27,7 @@ internal class SecurityJsonViewControllerAdvice() : AbstractMappingJacksonRespon
       val authorities = SecurityContextHolder.getContext().authentication.authorities
       val jsonViews = authorities.stream()
         .map { obj: GrantedAuthority -> obj.authority }
-        .filter { it.startsWith("ROLE_") }
+        .filter { it.equals(View.Role.ROLE_CRS_PROVIDER.name) || it.equals(View.Role.ROLE_PROBATION.name) }
         .map<Any>(View.Role::valueOf)
         .map<Any>(View.MAPPING::get)
         .collect(Collectors.toList())
@@ -35,11 +35,6 @@ internal class SecurityJsonViewControllerAdvice() : AbstractMappingJacksonRespon
         bodyContainer.serializationView = jsonViews[0] as Class<*>?
         return
       }
-      throw IllegalArgumentException(
-        "Ambiguous @JsonView declaration for roles " +
-          authorities.stream()
-            .map { obj: GrantedAuthority -> obj.getAuthority() }.collect(Collectors.joining(","))
-      )
     }
   }
 }
