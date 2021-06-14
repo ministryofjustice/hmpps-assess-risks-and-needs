@@ -21,8 +21,8 @@ internal class SecurityJsonViewControllerAdvice() : AbstractMappingJacksonRespon
     request: ServerHttpRequest?,
     response: ServerHttpResponse?
   ) {
-    if (SecurityContextHolder.getContext().authentication != null
-      && SecurityContextHolder.getContext().authentication.authorities != null
+    if (SecurityContextHolder.getContext().authentication != null &&
+      SecurityContextHolder.getContext().authentication.authorities != null
     ) {
       val authorities = SecurityContextHolder.getContext().authentication.authorities
       val jsonViews = authorities.stream()
@@ -36,9 +36,9 @@ internal class SecurityJsonViewControllerAdvice() : AbstractMappingJacksonRespon
         return
       }
       throw IllegalArgumentException(
-        "Ambiguous @JsonView declaration for roles "
-          + authorities.stream()
-          .map { obj: GrantedAuthority -> obj.getAuthority() }.collect(Collectors.joining(","))
+        "Ambiguous @JsonView declaration for roles " +
+          authorities.stream()
+            .map { obj: GrantedAuthority -> obj.getAuthority() }.collect(Collectors.joining(","))
       )
     }
   }

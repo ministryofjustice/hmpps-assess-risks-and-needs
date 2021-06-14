@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-
-
 class View {
   open class CrsProvider
   class Probation : CrsProvider()
@@ -18,6 +16,4 @@ class View {
   enum class Role {
     ROLE_PROBATION, ROLE_CRS_PROVIDER
   }
-
 }
-
