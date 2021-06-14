@@ -5,12 +5,13 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskToSelfRoshDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 
 @AutoConfigureWebTestClient
 @DisplayName("Risk Tests")
@@ -62,10 +63,10 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskToSelfRoshDto>()
+      .expectBody<RoshRiskToSelfDto>()
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
-          RiskToSelfRoshDto(
+          RoshRiskToSelfDto(
             RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
             RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
             RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
@@ -82,10 +83,10 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskToSelfRoshDto>()
+      .expectBody<RoshRiskToSelfDto>()
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
-          RiskToSelfRoshDto(
+          RoshRiskToSelfDto(
             RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
             RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
             RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
@@ -125,6 +126,42 @@ class RiskControllerTest : IntegrationTestBase() {
             RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
             RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
             RiskDto(null, null, null),
+          )
+        )
+      }
+  }
+
+  @Test
+  fun `get all risks by crn for external provider`() {
+    webTestClient.get().uri("/risks/crn/$crn")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          AllRoshRiskDto(
+            RoshRiskToSelfDto(
+              RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+              RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
+              RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
+              RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+              RiskDto(null, null, null),
+            ),
+            OtherRoshRisksDto(
+              RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
+              RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+              RiskDto(null, null, null)
+            ),
+            RiskRoshSummaryDto(
+              "whoisAtRisk",
+              "natureOfRisk",
+              "riskImminence",
+              "riskIncreaseFactors",
+              "riskMitigationFactors",
+              mapOf(RiskLevel.HIGH to listOf("children")),
+              mapOf(RiskLevel.MEDIUM to listOf("known adult"))
+            )
           )
         )
       }
