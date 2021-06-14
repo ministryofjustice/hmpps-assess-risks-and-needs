@@ -47,7 +47,7 @@ data class RiskRoshSummaryDto(
       "}"
   )
   @JsonView(View.CrsProvider::class)
-  val riskInCommunity: Map<RiskLevel, List<String>>,
+  val riskInCommunity: Map<RiskLevel, List<String>> = hashMapOf(),
 
   @Schema(
     description = "Assess the risk of serious harm the offender poses on the basis that they could be released imminently back into the community." +
@@ -59,8 +59,8 @@ data class RiskRoshSummaryDto(
       "    \"low\": [\"children\",\"public\"]" +
       "}"
   )
-  @JsonView(View.CrsProvider::class)
-  val riskInCustody: Map<RiskLevel, List<String>>
+  @JsonView(View.Probation::class)
+  val riskInCustody: Map<RiskLevel, List<String>> = hashMapOf(),
 
 )
 

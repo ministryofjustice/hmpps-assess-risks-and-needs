@@ -24,8 +24,7 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).containsExactly(
           RiskRoshSummaryDto(
-            riskInCommunity = mapOf(RiskLevel.HIGH to listOf("children")),
-            riskInCustody = mapOf(RiskLevel.MEDIUM to listOf("known adult"))
+            riskInCommunity = mapOf(RiskLevel.HIGH to listOf("children"))
           )
         )
       }
