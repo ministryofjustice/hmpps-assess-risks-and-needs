@@ -19,7 +19,7 @@ data class RoshRiskToSelfDto(
 
   @Schema(description = "Coping in hostel setting")
   @JsonView(View.CrsProvider::class)
-  val hotelSetting: RiskDto?,
+  val hostelSetting: RiskDto?,
 
   @Schema(description = "Vulnerability")
   @JsonView(View.CrsProvider::class)
