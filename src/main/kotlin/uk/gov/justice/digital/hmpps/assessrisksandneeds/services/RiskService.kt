@@ -21,7 +21,7 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
   fun getRoshRisksByCrn(crn: String): AllRoshRiskDto {
     log.info("Get Rosh Risk for crn $crn")
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
-    log.info("Section answers for crn $crn $sectionsAnswers")
+    log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
     return AllRoshRiskDto(
       RoshRiskToSelfDto(
         RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
