@@ -15,9 +15,21 @@ spring:
 
   security:
     oauth2:
+      client:
+        registration:
+          assessment-api-client:
+            client-name: assessment-api-client
+            client-id: ${assessment-api-id:sentence-plan-api-client}
+            client-secret: ${assessment-api-client-secret:clientsecret}
+            client-authentication-method: basic
+            authorization-grant-type: client_credentials
+            provider: oauth-service
+        provider:
+          oauth-service:
+            token-uri: ${oauth.endpoint.url:http://localhost:9091/auth}/oauth/token
       resourceserver:
         jwt:
-          issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
+          issuer-uri: ${oauth.endpoint.url:http://localhost:9091/auth}/issuer
 
   datasource:
     url: 'jdbc:h2:mem:testdb;INIT=create domain if not exists jsonb as text;Mode=PostgreSQL'
@@ -49,6 +61,12 @@ server:
   shutdown: graceful
   error:
     include-message: always
+web:
+  client:
+    connect-timeout-ms: 100000
+    read-timeout-ms: 50000
+    write-timeout-ms: 5000
+    byte-buffer-size: 20971520
 
 management:
   endpoints:
@@ -86,3 +104,6 @@ logging:
   uris:
     exclude:
       regex: /health|/info|/ping|/swagger.*|/webjars/.*|/v2/api-docs
+
+assessment-api:
+  base-url: http://localhost:9004

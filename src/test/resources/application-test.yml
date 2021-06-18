@@ -23,3 +23,6 @@ spring:
 graceful:
   shutdown:
     enabled: false
+
+assessment-api:
+  base-url: http://localhost:9004

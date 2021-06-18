@@ -4,18 +4,19 @@ services:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
-    container_name: oauth
+    container_name: hmpps-assess-risk-and-needs-oauth
     ports:
-      - "9090:9090"
+      - "9091:9091"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090/auth/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9091/auth/health"]
     environment:
-      - SERVER_PORT=9090
+      - SERVER_PORT=9091
       - SPRING_PROFILES_ACTIVE=dev
 
   postgres:
     image: postgres
     restart: always
+    container_name: hmpps-assess-risk-and-needs-postgres
     ports:
       - 5432:5432
     networks:
