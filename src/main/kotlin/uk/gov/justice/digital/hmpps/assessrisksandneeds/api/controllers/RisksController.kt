@@ -41,7 +41,10 @@ class RisksController {
       "riskIncreaseFactors",
       "riskMitigationFactors",
       mapOf(RiskLevel.HIGH to listOf("children")),
-      mapOf(RiskLevel.MEDIUM to listOf("known adult"))
+      mapOf(
+        RiskLevel.MEDIUM to listOf("known adult"),
+        RiskLevel.VERY_HIGH to listOf("public", "staff")
+      )
     )
   }
 
@@ -60,10 +63,10 @@ class RisksController {
     @PathVariable crn: String,
   ): RoshRiskToSelfDto {
     return RoshRiskToSelfDto(
-      RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
       RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
       RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
       RiskDto(null, null, null),
     )
   }
@@ -84,7 +87,7 @@ class RisksController {
   ): OtherRoshRisksDto {
     return OtherRoshRisksDto(
       RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
       RiskDto(null, null, null),
     )
   }
@@ -105,15 +108,15 @@ class RisksController {
   ): AllRoshRiskDto {
     return AllRoshRiskDto(
       RoshRiskToSelfDto(
-        RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+        RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
         RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
         RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-        RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+        RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
         RiskDto(null, null, null),
       ),
       OtherRoshRisksDto(
         RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-        RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+        RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
         RiskDto(null, null, null)
       ),
       RiskRoshSummaryDto(

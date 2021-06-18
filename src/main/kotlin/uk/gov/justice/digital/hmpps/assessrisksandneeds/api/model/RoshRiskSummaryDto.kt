@@ -68,7 +68,7 @@ enum class RiskLevel(
 
   val value: String
 ) {
-  HIGH("High"), MEDIUM("Medium"), LOW("Low");
+  VERY_HIGH("Very High"), HIGH("High"), MEDIUM("Medium"), LOW("Low");
 
   companion object {
     fun fromString(enumValue: String?): RiskLevel {
