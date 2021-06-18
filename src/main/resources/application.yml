@@ -19,8 +19,8 @@ spring:
         registration:
           assessment-api-client:
             client-name: assessment-api-client
-            client-id: ${assessment-api-id:sentence-plan-api-client}
-            client-secret: ${assessment-api-client-secret:clientsecret}
+            client-id: ${api.client.id:sentence-plan-api-client}
+            client-secret: ${api.client.secret:clientsecret}
             client-authentication-method: basic
             authorization-grant-type: client_credentials
             provider: oauth-service
