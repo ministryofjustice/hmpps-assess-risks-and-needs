@@ -15,6 +15,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.apache.commons:commons-lang3")
   implementation("org.springdoc:springdoc-openapi-ui:1.5.8")
   implementation("org.springdoc:springdoc-openapi-data-rest:1.5.8")
@@ -31,4 +32,5 @@ dependencies {
     exclude(module = "mockito-core")
   }
   testImplementation("com.ninja-squad:springmockk:3.0.1")
+  testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
 }

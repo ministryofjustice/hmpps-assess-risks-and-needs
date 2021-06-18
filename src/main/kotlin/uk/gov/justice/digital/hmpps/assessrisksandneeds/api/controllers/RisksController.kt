@@ -16,9 +16,10 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
 
 @RestController
-class RisksController {
+class RisksController(private val riskService: RiskService) {
 
   @RequestMapping(path = ["/risks/crn/{crn}/summary"], method = [RequestMethod.GET])
   @Operation(description = "Gets rosh summary for crn")
@@ -41,7 +42,10 @@ class RisksController {
       "riskIncreaseFactors",
       "riskMitigationFactors",
       mapOf(RiskLevel.HIGH to listOf("children")),
-      mapOf(RiskLevel.MEDIUM to listOf("known adult"))
+      mapOf(
+        RiskLevel.MEDIUM to listOf("known adult"),
+        RiskLevel.VERY_HIGH to listOf("public", "staff")
+      )
     )
   }
 
@@ -60,10 +64,10 @@ class RisksController {
     @PathVariable crn: String,
   ): RoshRiskToSelfDto {
     return RoshRiskToSelfDto(
-      RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
       RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
       RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
       RiskDto(null, null, null),
     )
   }
@@ -84,7 +88,7 @@ class RisksController {
   ): OtherRoshRisksDto {
     return OtherRoshRisksDto(
       RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
+      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
       RiskDto(null, null, null),
     )
   }
@@ -98,33 +102,11 @@ class RisksController {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
   fun getRoshRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
   ): AllRoshRiskDto {
-    return AllRoshRiskDto(
-      RoshRiskToSelfDto(
-        RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
-        RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-        RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-        RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
-        RiskDto(null, null, null),
-      ),
-      OtherRoshRisksDto(
-        RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-        RiskDto(ResponseDto.DONTKNOW, "Previous concerns", "Current concerns"),
-        RiskDto(null, null, null)
-      ),
-      RiskRoshSummaryDto(
-        "whoisAtRisk",
-        "natureOfRisk",
-        "riskImminence",
-        "riskIncreaseFactors",
-        "riskMitigationFactors",
-        mapOf(RiskLevel.HIGH to listOf("children")),
-        mapOf(RiskLevel.MEDIUM to listOf("known adult"))
-      )
-    )
+    return riskService.getRoshRisksByCrn(crn)
   }
 }
