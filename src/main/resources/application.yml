@@ -26,10 +26,10 @@ spring:
             provider: oauth-service
         provider:
           oauth-service:
-            token-uri: ${oauth.endpoint.url:http://localhost:9091/auth}/oauth/token
+            token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
       resourceserver:
         jwt:
-          issuer-uri: ${oauth.endpoint.url:http://localhost:9091/auth}/issuer
+          issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
 
   datasource:
     url: 'jdbc:h2:mem:testdb;INIT=create domain if not exists jsonb as text;Mode=PostgreSQL'

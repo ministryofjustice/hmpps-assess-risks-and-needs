@@ -32,4 +32,5 @@ dependencies {
     exclude(module = "mockito-core")
   }
   testImplementation("com.ninja-squad:springmockk:3.0.1")
+  testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
 }

@@ -6,11 +6,11 @@ services:
       - hmpps
     container_name: hmpps-assess-risk-and-needs-oauth
     ports:
-      - "9091:9091"
+      - "9090:9090"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9091/auth/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9090/auth/health"]
     environment:
-      - SERVER_PORT=9091
+      - SERVER_PORT=9090
       - SPRING_PROFILES_ACTIVE=dev
 
   postgres:
@@ -26,6 +26,14 @@ services:
       POSTGRES_PASSWORD: dev
     tmpfs:
       - /var/lib/postgresql
+
+  wiremock:
+    image: rodolpheche/wiremock
+    container_name: hmpps-assess-risk-and-needs-wiremock
+    ports:
+      - "9080:8080"
+    volumes:
+      - ./wiremock:/home/wiremock
 
 networks:
   hmpps:
