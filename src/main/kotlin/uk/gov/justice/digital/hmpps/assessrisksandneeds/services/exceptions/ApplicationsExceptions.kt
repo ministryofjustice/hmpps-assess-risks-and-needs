@@ -43,4 +43,3 @@ class ExternalApiUnknownException(
   val url: String,
   val client: ExternalService
 ) : RuntimeException(msg)
-

@@ -32,7 +32,8 @@ class AssessmentApiRestClient {
       "/assessments/crn/$crn/sections/answers?assessmentStatus=COMPLETE&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1"
     return webClient
       .post(
-        path, setOf(
+        path,
+        setOf(
           SectionHeader.ROSH_SCREENING.name,
           SectionHeader.ROSH_FULL_ANALYSIS.name,
           SectionHeader.ROSH_SUMMARY.name
