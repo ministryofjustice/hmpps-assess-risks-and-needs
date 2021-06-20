@@ -16,12 +16,6 @@ class AssessmentApiRestClient {
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
-
-    enum class SectionHeader {
-      ROSH_SCREENING,
-      ROSH_FULL_ANALYSIS,
-      ROSH_SUMMARY,
-    }
   }
 
   fun getRoshSectionsForCompletedLastYearAssessment(
@@ -34,9 +28,9 @@ class AssessmentApiRestClient {
       .post(
         path,
         setOf(
-          SectionHeader.ROSH_SCREENING.name,
-          SectionHeader.ROSH_FULL_ANALYSIS.name,
-          SectionHeader.ROSH_SUMMARY.name
+          uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SCREENING.name,
+          uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_FULL_ANALYSIS.name,
+          uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SUMMARY.name
         )
       )
       .retrieve()

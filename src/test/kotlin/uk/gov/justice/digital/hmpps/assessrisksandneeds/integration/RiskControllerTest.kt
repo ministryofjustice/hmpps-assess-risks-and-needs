@@ -67,10 +67,10 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
+            RiskDto(ResponseDto.DK, null, null),
+            RiskDto(ResponseDto.NO, null, null),
+            RiskDto(ResponseDto.YES, null, null),
+            RiskDto(ResponseDto.DK, null, null),
             RiskDto(null, null, null),
           )
         )
@@ -87,10 +87,10 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
+            RiskDto(ResponseDto.DK, null, null),
+            RiskDto(ResponseDto.NO, null, null),
+            RiskDto(ResponseDto.YES, null, null),
+            RiskDto(ResponseDto.DK, null, null),
             RiskDto(null, null, null),
           )
         )
@@ -107,7 +107,7 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           OtherRoshRisksDto(
-            null, null, null
+            null, null, null, null
           )
         )
       }
@@ -123,9 +123,10 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           OtherRoshRisksDto(
-            RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(null, null, null),
+            ResponseDto.YES,
+            ResponseDto.DK,
+            null,
+            ResponseDto.YES,
           )
         )
       }
@@ -142,16 +143,17 @@ class RiskControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           AllRoshRiskDto(
             RoshRiskToSelfDto(
-              RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
+              RiskDto(ResponseDto.DK, null, null),
+              RiskDto(ResponseDto.NO, null, null),
+              RiskDto(ResponseDto.YES, null, null),
+              RiskDto(ResponseDto.DK, null, null),
               RiskDto(null, null, null),
             ),
             OtherRoshRisksDto(
-              RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-              RiskDto(null, null, null)
+              ResponseDto.YES,
+              ResponseDto.DK,
+              null,
+              ResponseDto.YES,
             ),
             RiskRoshSummaryDto(
               "whoisAtRisk",

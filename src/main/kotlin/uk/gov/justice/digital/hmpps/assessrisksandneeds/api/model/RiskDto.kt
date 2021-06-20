@@ -6,7 +6,7 @@ data class RiskDto(
   @Schema(description = "is there any risk", example = "Yes, No, Don't know, null")
   val risk: ResponseDto? = null,
   @Schema(description = "Previous concerns", example = "Risk of self harms concerns due to ...")
-  val previous: String? = null,
+  val previous: ResponseDto? = null,
   @Schema(description = "Current concerns", example = "Risk of self harms concerns due to ...")
-  val current: String? = null,
+  val current: ResponseDto? = null,
 )

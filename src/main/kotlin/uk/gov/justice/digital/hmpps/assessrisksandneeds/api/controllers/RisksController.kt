@@ -10,12 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
 
 @RestController
@@ -34,19 +28,8 @@ class RisksController(private val riskService: RiskService) {
   fun getRiskSummaryByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
-  ): RiskRoshSummaryDto {
-    return RiskRoshSummaryDto(
-      "whoisAtRisk",
-      "natureOfRisk",
-      "riskImminence",
-      "riskIncreaseFactors",
-      "riskMitigationFactors",
-      mapOf(RiskLevel.HIGH to listOf("children")),
-      mapOf(
-        RiskLevel.MEDIUM to listOf("known adult"),
-        RiskLevel.VERY_HIGH to listOf("public", "staff")
-      )
-    )
+  ) {
+    return riskService.getRoshRiskSummaryByCrn(crn)
   }
 
   @RequestMapping(path = ["/risks/crn/{crn}/self"], method = [RequestMethod.GET])
@@ -62,14 +45,8 @@ class RisksController(private val riskService: RiskService) {
   fun getRiskToSelfByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
-  ): RoshRiskToSelfDto {
-    return RoshRiskToSelfDto(
-      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-      RiskDto(null, null, null),
-    )
+  ) {
+    return riskService.getRoshRisksToSelfByCrn(crn)
   }
 
   @RequestMapping(path = ["/risks/crn/{crn}/other"], method = [RequestMethod.GET])
@@ -85,12 +62,8 @@ class RisksController(private val riskService: RiskService) {
   fun getOtherRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
-  ): OtherRoshRisksDto {
-    return OtherRoshRisksDto(
-      RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-      RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-      RiskDto(null, null, null),
-    )
+  ) {
+    return riskService.getOtherRoshRisk(crn)
   }
 
   @RequestMapping(path = ["/risks/crn/{crn}"], method = [RequestMethod.GET])
