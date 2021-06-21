@@ -27,10 +27,12 @@ class AssessmentApiRestClient {
     return webClient
       .post(
         path,
-        setOf(
-          uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SCREENING.name,
-          uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_FULL_ANALYSIS.name,
-          uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SUMMARY.name
+        SectionCodesDto(
+          setOf(
+            uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SCREENING,
+            uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_FULL_ANALYSIS,
+            uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SUMMARY
+          )
         )
       )
       .retrieve()

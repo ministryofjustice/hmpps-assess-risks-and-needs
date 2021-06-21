@@ -17,7 +17,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
       )
         .withRequestBody(
           WireMock.equalToJson(
-            "[\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]",
+            "{ \"sectionCodes\": [\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]}",
             true,
             true
           )
@@ -38,7 +38,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
       )
         .withRequestBody(
           WireMock.equalToJson(
-            "[\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]",
+            "{ \"sectionCodes\": [\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]}",
             true,
             true
           )
