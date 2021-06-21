@@ -62,7 +62,7 @@ data class RiskRoshSummaryDto(
   @JsonView(View.Probation::class)
   val riskInCustody: Map<RiskLevel, List<String>> = hashMapOf(),
 
-  )
+)
 
 enum class RiskLevel(
 

@@ -80,7 +80,8 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
       "Known Adult" to knowAdult,
       "Staff" to staff,
       "Prisoners" to prisoners
-    ).groupBy({ it.second }, { it.first })  }
+    ).groupBy({ it.second }, { it.first })
+  }
 
   private fun getRiskInCommunity(roshSumAnswers: Collection<QuestionAnswerDto>?): Map<RiskLevel, List<String>> {
     val children = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.1.1")?.staticText)
@@ -142,5 +143,4 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
   private fun findAnswer(answers: Collection<QuestionAnswerDto>?, question: String): QuestionAnswerDto? {
     return answers?.find { q -> q.refQuestionCode.equals(question) }
   }
-
 }
