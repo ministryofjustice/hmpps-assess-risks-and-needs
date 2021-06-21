@@ -62,17 +62,17 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
       findAnswer(roshSumAnswers, "SUM3")?.freeFormText,
       findAnswer(roshSumAnswers, "SUM4")?.freeFormText,
       findAnswer(roshSumAnswers, "SUM5")?.freeFormText,
-      getRiskInCommunity(roshSumAnswers),
-      getRiskInCustody(roshSumAnswers)
+      roshSumAnswers.toRiskInCommunity(),
+      roshSumAnswers.toRiskInCustody()
     )
   }
 
-  private fun getRiskInCustody(roshSumAnswers: Collection<QuestionAnswerDto>?): Map<RiskLevel, List<String>> {
-    val children = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.1.2")?.staticText)
-    val public = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.2.2")?.staticText)
-    val knowAdult = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.3.2")?.staticText)
-    val staff = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.4.2")?.staticText)
-    val prisoners = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.5.2")?.staticText)
+  private fun Collection<QuestionAnswerDto>?.toRiskInCustody(): Map<RiskLevel, List<String>> {
+    val children = RiskLevel.fromString(findAnswer(this, "SUM6.1.2")?.staticText)
+    val public = RiskLevel.fromString(findAnswer(this, "SUM6.2.2")?.staticText)
+    val knowAdult = RiskLevel.fromString(findAnswer(this, "SUM6.3.2")?.staticText)
+    val staff = RiskLevel.fromString(findAnswer(this, "SUM6.4.2")?.staticText)
+    val prisoners = RiskLevel.fromString(findAnswer(this, "SUM6.5.2")?.staticText)
 
     return listOf(
       "Children" to children,
@@ -83,11 +83,11 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     ).groupBy({ it.second }, { it.first })
   }
 
-  private fun getRiskInCommunity(roshSumAnswers: Collection<QuestionAnswerDto>?): Map<RiskLevel, List<String>> {
-    val children = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.1.1")?.staticText)
-    val public = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.2.1")?.staticText)
-    val knowAdult = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.3.1")?.staticText)
-    val staff = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.4.1")?.staticText)
+  private fun Collection<QuestionAnswerDto>?.toRiskInCommunity(): Map<RiskLevel, List<String>> {
+    val children = RiskLevel.fromString(findAnswer(this, "SUM6.1.1")?.staticText)
+    val public = RiskLevel.fromString(findAnswer(this, "SUM6.2.1")?.staticText)
+    val knowAdult = RiskLevel.fromString(findAnswer(this, "SUM6.3.1")?.staticText)
+    val staff = RiskLevel.fromString(findAnswer(this, "SUM6.4.1")?.staticText)
     return listOf(
       "Children" to children,
       "Public" to public,
