@@ -28,9 +28,33 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             .withBody(assessmentJson)
         )
     )
+
+    stubFor(
+      WireMock.post(
+        WireMock.urlEqualTo(
+          "/assessments/crn/RANDOMCRN/sections/answers?assessmentStatus=COMPLETE" +
+            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1"
+        )
+      )
+        .withRequestBody(
+          WireMock.equalToJson(
+            "[\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]",
+            true,
+            true
+          )
+        )
+        .willReturn(
+          WireMock.aResponse()
+            .withBody(crnNotFoundJson)
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+        )
+    )
   }
 
   companion object {
+    val crnNotFoundJson =
+      """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
 
     val assessmentJson =
 

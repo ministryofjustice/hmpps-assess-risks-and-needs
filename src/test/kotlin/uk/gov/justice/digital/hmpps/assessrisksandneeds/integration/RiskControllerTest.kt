@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
@@ -104,6 +105,23 @@ class RiskControllerTest : IntegrationTestBase() {
             RiskDto(ResponseDto.YES, null, ResponseDto.YES),
             RiskDto(ResponseDto.YES, null, ResponseDto.YES),
             RiskDto(ResponseDto.YES, null, null),
+          )
+        )
+      }
+  }
+
+  @Test
+  fun `get risk for unknown crn returns not found`() {
+    webTestClient.get().uri("/risks/crn/RANDOMCRN")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ErrorResponse>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          ErrorResponse(
+            status = 404,
+            developerMessage = "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN"
           )
         )
       }
