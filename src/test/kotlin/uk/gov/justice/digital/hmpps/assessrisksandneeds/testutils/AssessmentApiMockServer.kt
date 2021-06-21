@@ -95,8 +95,8 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "R4.3",
                 "questionText": "Concerns in respect of breach of trust",
-                "refAnswerCode": "YES",
-                "staticText": "Yes"
+                "refAnswerCode": "DK",
+                "staticText": "Don't know"
             },
             {
                 "refQuestionCode": "R4.4",
@@ -199,27 +199,27 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "SUM1",
                 "questionText": "Who is at risk",
-                "freeFormText": "jhsjakhskj"
+                "freeFormText": "whoisAtRisk"
             },
             {
                 "refQuestionCode": "SUM2",
                 "questionText": "What is the nature of the risk",
-                "freeFormText": "dskklsdj"
+                "freeFormText": "natureOfRisk"
             },
             {
                 "refQuestionCode": "SUM3",
                 "questionText": "When is the risk likely to be greatest\nConsider the timescale and indicate whether risk is immediate or not.  Consider the risks in custody as well as on release.\n",
-                "freeFormText": "dsjlkjlkfdj"
+                "freeFormText": "riskImminence"
             },
             {
                 "refQuestionCode": "SUM4",
                 "questionText": "What circumstances are likely to increase risk\nDescribe factors, actions, events which might increase level of risk, now and in the future\n",
-                "freeFormText": "dfkjklfdjlkfj"
+                "freeFormText": "riskIncreaseFactors"
             },
             {
                 "refQuestionCode": "SUM5",
                 "questionText": "What factors are likely to reduce the risk\nDescribe factors, actions, and events which may reduce or contain the level of risk. What has previously stopped him / her?  ",
-                "freeFormText": "fdjhjdkhkfhk"
+                "freeFormText": "riskMitigationFactors"
             },
             {
                 "refQuestionCode": "SUM6.1.1",

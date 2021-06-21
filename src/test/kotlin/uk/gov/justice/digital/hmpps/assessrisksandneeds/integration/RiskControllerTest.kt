@@ -29,7 +29,11 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RiskRoshSummaryDto(
-            riskInCommunity = mapOf(RiskLevel.HIGH to listOf("children"))
+            riskInCommunity = mapOf(
+              RiskLevel.LOW to listOf("Children", "Known Adult"),
+              RiskLevel.MEDIUM to listOf("Public"),
+              RiskLevel.HIGH to listOf("Staff")
+            )
           )
         )
       }
@@ -50,8 +54,16 @@ class RiskControllerTest : IntegrationTestBase() {
             "riskImminence",
             "riskIncreaseFactors",
             "riskMitigationFactors",
-            mapOf(RiskLevel.HIGH to listOf("children")),
-            mapOf(RiskLevel.MEDIUM to listOf("known adult"), RiskLevel.VERY_HIGH to listOf("public", "staff"))
+            mapOf(
+              RiskLevel.LOW to listOf("Children", "Known Adult"),
+              RiskLevel.MEDIUM to listOf("Public"),
+              RiskLevel.HIGH to listOf("Staff")
+            ),
+            mapOf(
+              RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+              RiskLevel.HIGH to listOf("Prisoners"),
+              RiskLevel.VERY_HIGH to listOf("Staff")
+            )
           )
         )
       }
@@ -67,11 +79,11 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.DK, null, null),
-            RiskDto(ResponseDto.NO, null, null),
+            RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
             RiskDto(ResponseDto.YES, null, null),
-            RiskDto(ResponseDto.DK, null, null),
-            RiskDto(null, null, null),
           )
         )
       }
@@ -87,11 +99,11 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.DK, null, null),
-            RiskDto(ResponseDto.NO, null, null),
+            RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
             RiskDto(ResponseDto.YES, null, null),
-            RiskDto(ResponseDto.DK, null, null),
-            RiskDto(null, null, null),
           )
         )
       }
@@ -124,8 +136,8 @@ class RiskControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           OtherRoshRisksDto(
             ResponseDto.YES,
+            ResponseDto.YES,
             ResponseDto.DK,
-            null,
             ResponseDto.YES,
           )
         )
@@ -143,16 +155,16 @@ class RiskControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           AllRoshRiskDto(
             RoshRiskToSelfDto(
-              RiskDto(ResponseDto.DK, null, null),
-              RiskDto(ResponseDto.NO, null, null),
+              RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
+              RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
+              RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+              RiskDto(ResponseDto.YES, null, ResponseDto.YES),
               RiskDto(ResponseDto.YES, null, null),
-              RiskDto(ResponseDto.DK, null, null),
-              RiskDto(null, null, null),
             ),
             OtherRoshRisksDto(
               ResponseDto.YES,
+              ResponseDto.YES,
               ResponseDto.DK,
-              null,
               ResponseDto.YES,
             ),
             RiskRoshSummaryDto(
@@ -161,8 +173,16 @@ class RiskControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
-              mapOf(RiskLevel.HIGH to listOf("children")),
-              mapOf(RiskLevel.MEDIUM to listOf("known adult"))
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Known Adult"),
+                RiskLevel.MEDIUM to listOf("Public"),
+                RiskLevel.HIGH to listOf("Staff")
+              ),
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+                RiskLevel.HIGH to listOf("Prisoners"),
+                RiskLevel.VERY_HIGH to listOf("Staff")
+              )
             )
           )
         )

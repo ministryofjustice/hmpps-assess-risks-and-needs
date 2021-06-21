@@ -62,12 +62,40 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
       findAnswer(roshSumAnswers, "SUM3")?.freeFormText,
       findAnswer(roshSumAnswers, "SUM4")?.freeFormText,
       findAnswer(roshSumAnswers, "SUM5")?.freeFormText,
-      mapOf(RiskLevel.HIGH to listOf("children")),
-      mapOf(RiskLevel.MEDIUM to listOf("known adult"))
+      getRiskInCommunity(roshSumAnswers),
+      getRiskInCustody(roshSumAnswers)
     )
   }
 
-  private fun  SectionAnswersDto?.toOtherRoshRisksDto(): OtherRoshRisksDto {
+  private fun getRiskInCustody(roshSumAnswers: Collection<QuestionAnswerDto>?): Map<RiskLevel, List<String>> {
+    val children = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.1.2")?.staticText)
+    val public = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.2.2")?.staticText)
+    val knowAdult = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.3.2")?.staticText)
+    val staff = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.4.2")?.staticText)
+    val prisoners = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.5.2")?.staticText)
+
+    return listOf(
+      "Children" to children,
+      "Public" to public,
+      "Known Adult" to knowAdult,
+      "Staff" to staff,
+      "Prisoners" to prisoners
+    ).groupBy({ it.second }, { it.first })  }
+
+  private fun getRiskInCommunity(roshSumAnswers: Collection<QuestionAnswerDto>?): Map<RiskLevel, List<String>> {
+    val children = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.1.1")?.staticText)
+    val public = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.2.1")?.staticText)
+    val knowAdult = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.3.1")?.staticText)
+    val staff = RiskLevel.fromString(findAnswer(roshSumAnswers, "SUM6.4.1")?.staticText)
+    return listOf(
+      "Children" to children,
+      "Public" to public,
+      "Known Adult" to knowAdult,
+      "Staff" to staff
+    ).groupBy({ it.second }, { it.first })
+  }
+
+  private fun SectionAnswersDto?.toOtherRoshRisksDto(): OtherRoshRisksDto {
     val roshAnswers = this?.sections?.get(SectionHeader.ROSH_SCREENING.value)
     return OtherRoshRisksDto(
       ResponseDto.fromString(findAnswer(roshAnswers, "R4.1")?.staticText),

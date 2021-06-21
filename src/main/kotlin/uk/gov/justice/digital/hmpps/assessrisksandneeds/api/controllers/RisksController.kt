@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
 
 @RestController
@@ -28,7 +31,7 @@ class RisksController(private val riskService: RiskService) {
   fun getRiskSummaryByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
-  ) {
+  ): RiskRoshSummaryDto {
     return riskService.getRoshRiskSummaryByCrn(crn)
   }
 
@@ -45,7 +48,7 @@ class RisksController(private val riskService: RiskService) {
   fun getRiskToSelfByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
-  ) {
+  ): RoshRiskToSelfDto {
     return riskService.getRoshRisksToSelfByCrn(crn)
   }
 
@@ -62,7 +65,7 @@ class RisksController(private val riskService: RiskService) {
   fun getOtherRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
-  ) {
+  ): OtherRoshRisksDto {
     return riskService.getOtherRoshRisk(crn)
   }
 
