@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 
 @Component
 class AssessmentApiRestClient {
@@ -29,9 +30,9 @@ class AssessmentApiRestClient {
         path,
         SectionCodesDto(
           setOf(
-            uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SCREENING,
-            uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_FULL_ANALYSIS,
-            uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader.ROSH_SUMMARY
+            SectionHeader.ROSH_SCREENING,
+            SectionHeader.ROSH_FULL_ANALYSIS,
+            SectionHeader.ROSH_SUMMARY
           )
         )
       )
