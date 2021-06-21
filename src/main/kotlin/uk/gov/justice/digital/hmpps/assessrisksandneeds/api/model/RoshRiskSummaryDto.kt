@@ -41,9 +41,9 @@ data class RiskRoshSummaryDto(
     description = "Assess the risk of serious harm the offender poses in the community",
     example = " " +
       "{" +
-      "    \"high \": [\"children\",\"public\",\"know adult\"]," +
-      "    \"medium\": [ \"staff\"]," +
-      "    \"low\": [\"prisoners\"]" +
+      "    \"HIGH \": [\"Children\",\"Public\",\"Know adult\"]," +
+      "    \"MEDIUM\": [ \"Staff\"]," +
+      "    \"LOW\": [\"Prisoners\"]" +
       "}"
   )
   @JsonView(View.CrsProvider::class)
@@ -54,9 +54,9 @@ data class RiskRoshSummaryDto(
       "Assess both the risk of serious harm the offender presents now, in custody, and the risk they could present to others whilst in a custodial setting.",
     example = " " +
       "{" +
-      "    \"high \": [\"know adult\"]," +
-      "    \"medium\": [ \"staff\", \"prisoners\"]," +
-      "    \"low\": [\"children\",\"public\"]" +
+      "    \"HIGH \": [\"Know adult\"]," +
+      "    \"VERY_HIGH\": [ \"Staff\", \"Prisoners\"]," +
+      "    \"LOW\": [\"Children\",\"Public\"]" +
       "}"
   )
   @JsonView(View.Probation::class)

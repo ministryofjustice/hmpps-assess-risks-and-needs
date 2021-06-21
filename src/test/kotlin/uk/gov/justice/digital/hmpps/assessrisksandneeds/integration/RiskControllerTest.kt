@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
@@ -29,7 +30,11 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RiskRoshSummaryDto(
-            riskInCommunity = mapOf(RiskLevel.HIGH to listOf("children"))
+            riskInCommunity = mapOf(
+              RiskLevel.LOW to listOf("Children", "Known Adult"),
+              RiskLevel.MEDIUM to listOf("Public"),
+              RiskLevel.HIGH to listOf("Staff")
+            )
           )
         )
       }
@@ -50,8 +55,16 @@ class RiskControllerTest : IntegrationTestBase() {
             "riskImminence",
             "riskIncreaseFactors",
             "riskMitigationFactors",
-            mapOf(RiskLevel.HIGH to listOf("children")),
-            mapOf(RiskLevel.MEDIUM to listOf("known adult"), RiskLevel.VERY_HIGH to listOf("public", "staff"))
+            mapOf(
+              RiskLevel.LOW to listOf("Children", "Known Adult"),
+              RiskLevel.MEDIUM to listOf("Public"),
+              RiskLevel.HIGH to listOf("Staff")
+            ),
+            mapOf(
+              RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+              RiskLevel.HIGH to listOf("Prisoners"),
+              RiskLevel.VERY_HIGH to listOf("Staff")
+            )
           )
         )
       }
@@ -67,11 +80,11 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(null, null, null),
+            RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, null),
           )
         )
       }
@@ -87,11 +100,28 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(null, null, null),
+            RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+            RiskDto(ResponseDto.YES, null, null),
+          )
+        )
+      }
+  }
+
+  @Test
+  fun `get risk for unknown crn returns not found`() {
+    webTestClient.get().uri("/risks/crn/RANDOMCRN")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ErrorResponse>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          ErrorResponse(
+            status = 404,
+            developerMessage = "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN"
           )
         )
       }
@@ -107,7 +137,7 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           OtherRoshRisksDto(
-            null, null, null
+            null, null, null, null
           )
         )
       }
@@ -123,9 +153,10 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           OtherRoshRisksDto(
-            RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-            RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-            RiskDto(null, null, null),
+            ResponseDto.YES,
+            ResponseDto.YES,
+            ResponseDto.DK,
+            ResponseDto.YES,
           )
         )
       }
@@ -142,16 +173,17 @@ class RiskControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           AllRoshRiskDto(
             RoshRiskToSelfDto(
-              RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.NO, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-              RiskDto(null, null, null),
+              RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
+              RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
+              RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+              RiskDto(ResponseDto.YES, null, ResponseDto.YES),
+              RiskDto(ResponseDto.YES, null, null),
             ),
             OtherRoshRisksDto(
-              RiskDto(ResponseDto.YES, "Previous concerns", "Current concerns"),
-              RiskDto(ResponseDto.DK, "Previous concerns", "Current concerns"),
-              RiskDto(null, null, null)
+              ResponseDto.YES,
+              ResponseDto.YES,
+              ResponseDto.DK,
+              ResponseDto.YES,
             ),
             RiskRoshSummaryDto(
               "whoisAtRisk",
@@ -159,8 +191,16 @@ class RiskControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
-              mapOf(RiskLevel.HIGH to listOf("children")),
-              mapOf(RiskLevel.MEDIUM to listOf("known adult"))
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Known Adult"),
+                RiskLevel.MEDIUM to listOf("Public"),
+                RiskLevel.HIGH to listOf("Staff")
+              ),
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+                RiskLevel.HIGH to listOf("Prisoners"),
+                RiskLevel.VERY_HIGH to listOf("Staff")
+              )
             )
           )
         )

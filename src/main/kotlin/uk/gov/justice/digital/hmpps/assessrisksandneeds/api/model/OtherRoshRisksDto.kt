@@ -6,13 +6,17 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class OtherRoshRisksDto(
   @Schema(description = "Escape / abscond")
   @JsonView(View.Probation::class)
-  val escapeOrAbscond: RiskDto?,
+  val escapeOrAbscond: ResponseDto?,
 
   @Schema(description = "Control issues / disruptive behaviour")
   @JsonView(View.Probation::class)
-  val controlIssuesDisruptiveBehaviour: RiskDto?,
+  val controlIssuesDisruptiveBehaviour: ResponseDto?,
 
   @Schema(description = "Concerns in respect of breach of trust")
   @JsonView(View.Probation::class)
-  val breachOfTrust: RiskDto?
+  val breachOfTrust: ResponseDto?,
+
+  @Schema(description = "Risks to other prisoners")
+  @JsonView(View.Probation::class)
+  val riskToOtherPrisoners: ResponseDto?
 )

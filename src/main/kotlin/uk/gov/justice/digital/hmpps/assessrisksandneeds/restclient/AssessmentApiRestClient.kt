@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 
 @Component
 class AssessmentApiRestClient {
@@ -16,12 +17,6 @@ class AssessmentApiRestClient {
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
-
-    enum class SectionHeader {
-      ROSH_SCREENING,
-      ROSH_FULL_ANALYSIS,
-      ROSH_SUMMARY,
-    }
   }
 
   fun getRoshSectionsForCompletedLastYearAssessment(
@@ -33,10 +28,12 @@ class AssessmentApiRestClient {
     return webClient
       .post(
         path,
-        setOf(
-          SectionHeader.ROSH_SCREENING.name,
-          SectionHeader.ROSH_FULL_ANALYSIS.name,
-          SectionHeader.ROSH_SUMMARY.name
+        SectionCodesDto(
+          setOf(
+            SectionHeader.ROSH_SCREENING,
+            SectionHeader.ROSH_FULL_ANALYSIS,
+            SectionHeader.ROSH_SUMMARY
+          )
         )
       )
       .retrieve()

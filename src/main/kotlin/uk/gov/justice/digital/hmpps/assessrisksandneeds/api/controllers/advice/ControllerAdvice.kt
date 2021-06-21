@@ -14,6 +14,11 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiAuthorisationException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiInvalidRequestException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiUnknownException
 
 @ControllerAdvice
 class ControllerAdvice {
@@ -62,6 +67,56 @@ class ControllerAdvice {
   fun handle(e: DuplicateSourceRecordFound): ResponseEntity<SupplementaryRiskDto?> {
     log.error("DuplicateSourceRecordFound: {}", e.message)
     return ResponseEntity(e.supplementaryRiskDto, HttpStatus.CONFLICT)
+  }
+
+  @ExceptionHandler(ExternalApiEntityNotFoundException::class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  fun handle(e: ExternalApiEntityNotFoundException): ResponseEntity<ErrorResponse?> {
+    log.info(
+      "ApiClientEntityNotFoundException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
+      e.message
+    )
+    return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
+  }
+
+  @ExceptionHandler(ExternalApiUnknownException::class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  fun handle(e: ExternalApiUnknownException): ResponseEntity<ErrorResponse?> {
+    log.error(
+      "ExternalClientUnknownException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
+      e.message
+    )
+    return ResponseEntity(ErrorResponse(status = 500, developerMessage = e.message), HttpStatus.INTERNAL_SERVER_ERROR)
+  }
+
+  @ExceptionHandler(ExternalApiInvalidRequestException::class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  fun handle(e: ExternalApiInvalidRequestException): ResponseEntity<ErrorResponse?> {
+    log.error(
+      "InvalidRequestException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
+      e.message
+    )
+    return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
+  }
+
+  @ExceptionHandler(ExternalApiAuthorisationException::class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  fun handle(e: ExternalApiAuthorisationException): ResponseEntity<ErrorResponse?> {
+    log.error(
+      "ApiClientAuthorisationException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
+      e.message
+    )
+    return ResponseEntity(ErrorResponse(status = 401, developerMessage = e.message), HttpStatus.UNAUTHORIZED)
+  }
+
+  @ExceptionHandler(ExternalApiForbiddenException::class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  fun handle(e: ExternalApiForbiddenException): ResponseEntity<ErrorResponse?> {
+    log.error(
+      "ApiForbiddenException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
+      e.message
+    )
+    return ResponseEntity(ErrorResponse(status = 401, developerMessage = e.message), HttpStatus.UNAUTHORIZED)
   }
 
   @ExceptionHandler(Exception::class)

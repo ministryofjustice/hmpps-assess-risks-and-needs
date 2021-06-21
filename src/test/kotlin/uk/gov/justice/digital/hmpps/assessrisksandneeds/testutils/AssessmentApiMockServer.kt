@@ -17,7 +17,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
       )
         .withRequestBody(
           WireMock.equalToJson(
-            "[\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]",
+            "{ \"sectionCodes\": [\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]}",
             true,
             true
           )
@@ -28,9 +28,33 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             .withBody(assessmentJson)
         )
     )
+
+    stubFor(
+      WireMock.post(
+        WireMock.urlEqualTo(
+          "/assessments/crn/RANDOMCRN/sections/answers?assessmentStatus=COMPLETE" +
+            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1"
+        )
+      )
+        .withRequestBody(
+          WireMock.equalToJson(
+            "{ \"sectionCodes\": [\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]}",
+            true,
+            true
+          )
+        )
+        .willReturn(
+          WireMock.aResponse()
+            .withBody(crnNotFoundJson)
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+        )
+    )
   }
 
   companion object {
+    val crnNotFoundJson =
+      """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
 
     val assessmentJson =
 
@@ -95,8 +119,8 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "R4.3",
                 "questionText": "Concerns in respect of breach of trust",
-                "refAnswerCode": "YES",
-                "staticText": "Yes"
+                "refAnswerCode": "DK",
+                "staticText": "Don't know"
             },
             {
                 "refQuestionCode": "R4.4",
@@ -199,27 +223,27 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "SUM1",
                 "questionText": "Who is at risk",
-                "freeFormText": "jhsjakhskj"
+                "freeFormText": "whoisAtRisk"
             },
             {
                 "refQuestionCode": "SUM2",
                 "questionText": "What is the nature of the risk",
-                "freeFormText": "dskklsdj"
+                "freeFormText": "natureOfRisk"
             },
             {
                 "refQuestionCode": "SUM3",
                 "questionText": "When is the risk likely to be greatest\nConsider the timescale and indicate whether risk is immediate or not.  Consider the risks in custody as well as on release.\n",
-                "freeFormText": "dsjlkjlkfdj"
+                "freeFormText": "riskImminence"
             },
             {
                 "refQuestionCode": "SUM4",
                 "questionText": "What circumstances are likely to increase risk\nDescribe factors, actions, events which might increase level of risk, now and in the future\n",
-                "freeFormText": "dfkjklfdjlkfj"
+                "freeFormText": "riskIncreaseFactors"
             },
             {
                 "refQuestionCode": "SUM5",
                 "questionText": "What factors are likely to reduce the risk\nDescribe factors, actions, and events which may reduce or contain the level of risk. What has previously stopped him / her?  ",
-                "freeFormText": "fdjhjdkhkfhk"
+                "freeFormText": "riskMitigationFactors"
             },
             {
                 "refQuestionCode": "SUM6.1.1",
