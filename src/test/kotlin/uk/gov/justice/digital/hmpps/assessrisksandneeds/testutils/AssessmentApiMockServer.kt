@@ -166,7 +166,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "FA33",
                 "questionText": "Describe circumstances, relevant issues and needs regarding current concerns (refer to sections 1-12 for indicators, particularly Section 10)",
-                "freeFormText": "jjhjdsjkhdkjshkjdhksjhdk"
+                "freeFormText": "Suicide and/or Self-harm current concerns"
             },
             {
                 "refQuestionCode": "FA34",
@@ -200,8 +200,63 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "FA40",
                 "questionText": "Are there any current concerns about coping in hostel settings",
+                "refAnswerCode": "NO",
+                "staticText": "No"
+            },
+            {
+                "refQuestionCode": "FA41",
+                "questionText": "Describe circumstances, relevant issues and needs",
+                "freeFormText": "Coping in custody / hostel setting current concerns"
+            },
+            {
+                "refQuestionCode": "FA42",
+                "questionText": "Are there any previous concerns about coping in custody",
                 "refAnswerCode": "YES",
                 "staticText": "Yes"
+            },
+            {
+                "refQuestionCode": "FA43",
+                "questionText": "Are there any previous concerns about coping in hostel settings",
+                "refAnswerCode": "NO",
+                "staticText": "No"
+            },
+            {
+                "refQuestionCode": "FA44",
+                "questionText": "Describe circumstances, relevant issues and needs",
+                "freeFormText": "Coping in custody / hostel setting previous concerns"
+            },
+            {
+                "refQuestionCode": "FA45",
+                "questionText": "Are there any current concerns about vulnerability (eg victimisation, being bullied, assaulted, exploited)",
+                "refAnswerCode": "YES",
+                "staticText": "Yes"
+            },
+            {
+                "refQuestionCode": "FA45.t",
+                "questionText": "Describe circumstances, relevant issues and needs",
+                "freeFormText": "Vulnerability current concerns free text"
+            },
+            {
+                "refQuestionCode": "FA47",
+                "questionText": "Have there been any previous concerns about vulnerability (eg victimisation, being bullied, assaulted, exploited)",
+                "refAnswerCode": "YES",
+                "staticText": "Yes"
+            },
+            {
+                "refQuestionCode": "FA47.t",
+                "questionText": "Describe circumstances, relevant issues and needs",
+                "freeFormText": "Vulnerability previous concerns free text"
+            },
+            {
+                "refQuestionCode": "FA49",
+                "questionText": " Do any of the above (R8.1 - 8.3) indicate a risk of serious harm to others.  If YES complete the risk of serious harm analysis, R6",
+                "refAnswerCode": "YES",
+                "staticText": "Yes"
+            },
+            {
+                "refQuestionCode": "FA49.t",
+                "questionText": "Describe circumstances, relevant issues and needs",
+                "freeFormText": "Risk of serious harm free text"
             },
             {
                 "refQuestionCode": "FA5",
