@@ -80,11 +80,31 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, null, null),
+            suicide = RiskDto(
+              risk = ResponseDto.NO,
+              previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Suicide and/or Self-harm current concerns"
+            ),
+            selfHarm = RiskDto(
+              risk = ResponseDto.YES,
+              previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Suicide and/or Self-harm current concerns"
+            ),
+            custody = RiskDto(
+              risk = ResponseDto.YES,
+              previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Coping in custody / hostel setting current concerns"
+            ),
+            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.NO, current = ResponseDto.NO),
+            vulnerability = RiskDto(
+              risk = ResponseDto.YES,
+              previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Vulnerability current concerns free text"
+            ),
           )
         )
       }
@@ -100,11 +120,30 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskToSelfDto(
-            RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, null, ResponseDto.YES),
-            RiskDto(ResponseDto.YES, null, null),
+            suicide = RiskDto(
+              risk = ResponseDto.NO,
+              previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Suicide and/or Self-harm current concerns"
+            ),
+            selfHarm = RiskDto(
+              risk = ResponseDto.YES,
+              previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Suicide and/or Self-harm current concerns"
+            ),
+            custody = RiskDto(
+              risk = ResponseDto.YES,
+              previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Coping in custody / hostel setting current concerns"
+            ),
+            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.NO, current = ResponseDto.NO),
+            vulnerability = RiskDto(
+              risk = ResponseDto.YES, previous = ResponseDto.YES,
+              current = ResponseDto.YES,
+              currentConcernsText = "Vulnerability current concerns free text"
+            ),
           )
         )
       }
@@ -153,10 +192,10 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           OtherRoshRisksDto(
-            ResponseDto.YES,
-            ResponseDto.YES,
-            ResponseDto.DK,
-            ResponseDto.YES,
+            escapeOrAbscond = ResponseDto.YES,
+            controlIssuesDisruptiveBehaviour = ResponseDto.YES,
+            breachOfTrust = ResponseDto.DK,
+            riskToOtherPrisoners = ResponseDto.YES,
           )
         )
       }
@@ -173,11 +212,31 @@ class RiskControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           AllRoshRiskDto(
             RoshRiskToSelfDto(
-              RiskDto(ResponseDto.NO, ResponseDto.YES, ResponseDto.YES),
-              RiskDto(ResponseDto.YES, ResponseDto.YES, ResponseDto.YES),
-              RiskDto(ResponseDto.YES, null, ResponseDto.YES),
-              RiskDto(ResponseDto.YES, null, ResponseDto.YES),
-              RiskDto(ResponseDto.YES, null, null),
+              suicide = RiskDto(
+                risk = ResponseDto.NO,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Suicide and/or Self-harm current concerns"
+              ),
+              selfHarm = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Suicide and/or Self-harm current concerns"
+              ),
+              custody = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Coping in custody / hostel setting current concerns"
+              ),
+              hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.NO, current = ResponseDto.NO),
+              vulnerability = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Vulnerability current concerns free text"
+              ),
             ),
             OtherRoshRisksDto(
               ResponseDto.YES,
