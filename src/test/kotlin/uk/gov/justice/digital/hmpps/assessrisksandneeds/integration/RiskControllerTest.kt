@@ -95,6 +95,7 @@ class RiskControllerTest : IntegrationTestBase() {
             custody = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
+              previousConcernsText = "Coping in custody / hostel setting previous concerns",
               current = ResponseDto.YES,
               currentConcernsText = "Coping in custody / hostel setting current concerns"
             ),
@@ -102,6 +103,7 @@ class RiskControllerTest : IntegrationTestBase() {
             vulnerability = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
+              previousConcernsText = "Vulnerability previous concerns free text",
               current = ResponseDto.YES,
               currentConcernsText = "Vulnerability current concerns free text"
             ),
@@ -135,12 +137,15 @@ class RiskControllerTest : IntegrationTestBase() {
             custody = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
+              previousConcernsText = "Coping in custody / hostel setting previous concerns",
               current = ResponseDto.YES,
               currentConcernsText = "Coping in custody / hostel setting current concerns"
             ),
             hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.NO, current = ResponseDto.NO),
             vulnerability = RiskDto(
-              risk = ResponseDto.YES, previous = ResponseDto.YES,
+              risk = ResponseDto.YES,
+              previous = ResponseDto.YES,
+              previousConcernsText = "Vulnerability previous concerns free text",
               current = ResponseDto.YES,
               currentConcernsText = "Vulnerability current concerns free text"
             ),
@@ -227,6 +232,7 @@ class RiskControllerTest : IntegrationTestBase() {
               custody = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
+                previousConcernsText = "Coping in custody / hostel setting previous concerns",
                 current = ResponseDto.YES,
                 currentConcernsText = "Coping in custody / hostel setting current concerns"
               ),
@@ -234,6 +240,7 @@ class RiskControllerTest : IntegrationTestBase() {
               vulnerability = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
+                previousConcernsText = "Vulnerability previous concerns free text",
                 current = ResponseDto.YES,
                 currentConcernsText = "Vulnerability current concerns free text"
               ),

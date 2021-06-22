@@ -25,9 +25,9 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
     return AllRoshRiskDto(
-      roshRiskToSelfDto(sectionsAnswers),
-      sectionsAnswers.toOtherRoshRisksDto(),
-      sectionsAnswers.toRiskRoshSummaryDto()
+      riskToSelf = sectionsAnswers.toRoshRiskToSelfDto(),
+      otherRisks = sectionsAnswers.toOtherRoshRisksDto(),
+      summary = sectionsAnswers.toRiskRoshSummaryDto()
     )
   }
 
@@ -43,7 +43,7 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
 
-    return roshRiskToSelfDto(sectionsAnswers)
+    return sectionsAnswers.toRoshRiskToSelfDto()
   }
 
   fun getRoshRiskSummaryByCrn(crn: String): RiskRoshSummaryDto {
@@ -111,63 +111,93 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     )
   }
 
-  private fun roshRiskToSelfDto(
-    sectionsAnswers: SectionAnswersDto?
-  ): RoshRiskToSelfDto {
-    val roshFullAnswers = sectionsAnswers?.sections?.get(SectionHeader.ROSH_FULL_ANALYSIS.value)
-    val roshAnswers = sectionsAnswers?.sections?.get(SectionHeader.ROSH_SCREENING.value)
-    val selfHarmCurrentRisk = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.SELF_HARM_CURRENT_RISK)
-    val suicideCurrentRisk = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.SUICIDE_CURRENT_RISK)
-    val custodyCurrentRisk = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.CUSTODY_CURRENT_RISK)
+  private fun SectionAnswersDto?.toRoshRiskToSelfDto(): RoshRiskToSelfDto {
+    val roshFullAnswers = this?.sections?.get(SectionHeader.ROSH_FULL_ANALYSIS.value)
+    val roshAnswers = this?.sections?.get(SectionHeader.ROSH_SCREENING.value)
+    val selfHarmCurrentRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.SELF_HARM_CURRENT_RISK)
+    val suicideCurrentRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.SUICIDE_CURRENT_RISK)
+    val custodyCurrentRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.CUSTODY_CURRENT_RISK)
     val hostelSettingCurrentRisk =
-      getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.HOSTEL_SETTING_CURRENT_RISK)
-    val vulnerabilityCurrentRisk = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.VULNERABILITY_CURRENT_RISK)
+      roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.HOSTEL_SETTING_CURRENT_RISK)
+    val vulnerabilityCurrentRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.VULNERABILITY_CURRENT_RISK)
+    val suicidePreviousRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.SUICIDE_PREVIOUS_RISK)
+
+    val selfHarmPreviousRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.SELF_HARM_PREVIOUS_RISK)
+    val custodyPreviousRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.CUSTODY_PREVIOUS_RISK)
+    val hostelSettingPreviousRisk =
+      roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.HOSTEL_SETTING_PREVIOUS_RISK)
+    val vulnerabilityPreviousRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.VULNERABILITY_PREVIOUS_RISK)
     return RoshRiskToSelfDto(
       suicide = RiskDto(
-        risk = getResponseForQuestion(roshAnswers, RoshQuestionCodes.SUICIDE_RISK),
-        previous = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.SUICIDE_PREVIOUS_RISK),
+        risk = roshAnswers.toResponseForQuestion(RoshQuestionCodes.SUICIDE_RISK),
+        previous = suicidePreviousRisk,
+        previousConcernsText = findConcernsFreeText(
+          suicidePreviousRisk,
+          roshFullAnswers,
+          RoshQuestionCodes.SUICIDE_SELF_HARM_PREVIOUS_RISK_TEXT
+        ),
         current = suicideCurrentRisk,
-        currentConcernsText = getConcernsFreeText(
+        currentConcernsText = findConcernsFreeText(
           suicideCurrentRisk,
           roshFullAnswers,
           RoshQuestionCodes.SUICIDE_SELF_HARM_CURRENT_RISK_TEXT
         )
       ),
       selfHarm = RiskDto(
-        risk = getResponseForQuestion(roshAnswers, RoshQuestionCodes.SELF_HARM_RISK),
-        previous = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.SELF_HARM_PREVIOUS_RISK),
+        risk = roshAnswers.toResponseForQuestion(RoshQuestionCodes.SELF_HARM_RISK),
+        previous = selfHarmPreviousRisk,
+        previousConcernsText = findConcernsFreeText(
+          selfHarmPreviousRisk,
+          roshFullAnswers,
+          RoshQuestionCodes.SUICIDE_SELF_HARM_PREVIOUS_RISK_TEXT
+        ),
         current = selfHarmCurrentRisk,
-        currentConcernsText = getConcernsFreeText(
+        currentConcernsText = findConcernsFreeText(
           selfHarmCurrentRisk,
           roshFullAnswers,
           RoshQuestionCodes.SUICIDE_SELF_HARM_CURRENT_RISK_TEXT
         )
       ),
       custody = RiskDto(
-        risk = getResponseForQuestion(roshAnswers, RoshQuestionCodes.CUSTODY_RISK),
-        previous = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.CUSTODY_PREVIOUS_RISK),
+        risk = roshAnswers.toResponseForQuestion(RoshQuestionCodes.CUSTODY_RISK),
+        previous = custodyPreviousRisk,
+        previousConcernsText = findConcernsFreeText(
+          custodyPreviousRisk,
+          roshFullAnswers,
+          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_PREVIOUS_RISK_TEXT
+        ),
         current = custodyCurrentRisk,
-        currentConcernsText = getConcernsFreeText(
+        currentConcernsText = findConcernsFreeText(
           custodyCurrentRisk,
           roshFullAnswers,
           RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_CURRENT_RISK_TEXT
         )
       ),
       hostelSetting = RiskDto(
-        risk = getResponseForQuestion(roshAnswers, RoshQuestionCodes.CUSTODY_RISK),
-        previous = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.HOSTEL_SETTING_PREVIOUS_RISK),
+        risk = roshAnswers.toResponseForQuestion(RoshQuestionCodes.CUSTODY_RISK),
+        previous = hostelSettingPreviousRisk,
+        previousConcernsText = findConcernsFreeText(
+          hostelSettingPreviousRisk,
+          roshFullAnswers,
+          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_PREVIOUS_RISK_TEXT
+        ),
         current = hostelSettingCurrentRisk,
-        currentConcernsText = getConcernsFreeText(
+        currentConcernsText = findConcernsFreeText(
           hostelSettingCurrentRisk,
           roshFullAnswers,
           RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_CURRENT_RISK_TEXT
         )
       ),
       vulnerability = RiskDto(
-        risk = getResponseForQuestion(roshAnswers, RoshQuestionCodes.VULNERABILITY_RISK),
-        previous = getResponseForQuestion(roshFullAnswers, RoshQuestionCodes.VULNERABILITY_PREVIOUS_RISK),
+        risk = roshAnswers.toResponseForQuestion(RoshQuestionCodes.VULNERABILITY_RISK),
+        previous = vulnerabilityPreviousRisk,
+        previousConcernsText = findConcernsFreeText(
+          vulnerabilityPreviousRisk,
+          roshFullAnswers,
+          RoshQuestionCodes.VULNERABILITY_PREVIOUS_RISK_TEXT
+        ),
         current = vulnerabilityCurrentRisk,
-        currentConcernsText = getConcernsFreeText(
+        currentConcernsText = findConcernsFreeText(
           vulnerabilityCurrentRisk,
           roshFullAnswers,
           RoshQuestionCodes.VULNERABILITY_CURRENT_RISK_TEXT
@@ -176,15 +206,15 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     )
   }
 
-  private fun getResponseForQuestion(answers: Collection<QuestionAnswerDto>?, questionCode: RoshQuestionCodes) =
+  private fun Collection<QuestionAnswerDto>?.toResponseForQuestion(questionCode: RoshQuestionCodes) =
     ResponseDto.fromString(
       findAnswer(
         questionCode,
-        answers
+        this
       )?.staticText
     )
 
-  private fun getConcernsFreeText(
+  private fun findConcernsFreeText(
     riskResponse: ResponseDto?,
     answers: Collection<QuestionAnswerDto>?,
     questionCode: RoshQuestionCodes
