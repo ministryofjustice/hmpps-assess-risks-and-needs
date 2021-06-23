@@ -29,7 +29,7 @@ class SupplementaryRisksController(
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
   fun getSupplementaryRiskBySource(
     @Parameter(description = "Source ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
     @PathVariable sourceId: String,
@@ -48,7 +48,7 @@ class SupplementaryRisksController(
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasRole('ROLE_PROBATION') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
   fun getSupplementaryRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "X123456")
     @PathVariable crn: String
@@ -65,7 +65,7 @@ class SupplementaryRisksController(
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
   fun getSupplementaryRiskById(
     @Parameter(description = "Supplementary ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
     @PathVariable supplementaryRiskId: UUID
@@ -81,7 +81,7 @@ class SupplementaryRisksController(
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasRole('ROLE_PROBATION') and hasAuthority('SCOPE_write')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'RISK_SUMMARY') and hasAuthority('SCOPE_write')")
   fun createSupplementaryRisk(
     @Parameter(description = "Supplementary Risk", required = true)
     @RequestBody supplementaryRisk: SupplementaryRiskDto
