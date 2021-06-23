@@ -70,7 +70,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `access forbidden when no read scope`() {
       webTestClient.get().uri("/risks/supplementary/$supplementaryRiskUuid")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf()))
         .exchange()
         .expectStatus().isForbidden
         .expectBody<ErrorResponse>()
@@ -87,7 +87,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `not found when supplementary risk uuid doesn't exists`() {
       webTestClient.get().uri("/risks/supplementary/$invalidSupplementaryRiskUuid")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
         .exchange()
         .expectStatus().isNotFound
         .expectBody<ErrorResponse>()
@@ -102,9 +102,32 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `access allowed when role and scope supplied`() {
+    fun `access allowed when role ROLE_PROBATION and scope supplied`() {
       webTestClient.get().uri("/risks/supplementary/$supplementaryRiskUuid")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+        .exchange()
+        .expectStatus().isOk
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              UUID.fromString(supplementaryRiskUuid),
+              Source.INTERVENTION_REFERRAL,
+              "182987872",
+              "X123458",
+              "Gary cooper",
+              "delius",
+              LocalDateTime.of(2019, 11, 14, 9, 0),
+              "risk for children"
+            )
+          )
+        }
+    }
+
+    @Test
+    fun `access allowed when role ROLE_CRS_PROVIDER and scope supplied`() {
+      webTestClient.get().uri("/risks/supplementary/$supplementaryRiskUuid")
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
         .exchange()
         .expectStatus().isOk
         .expectBody<SupplementaryRiskDto>()
@@ -157,7 +180,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `access forbidden when no read scope`() {
       webTestClient.get().uri("/risks/supplementary/crn/$crn")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf()))
         .exchange()
         .expectStatus().isForbidden
         .expectBody<ErrorResponse>()
@@ -174,7 +197,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `get all risks by crn`() {
       webTestClient.get().uri("/risks/supplementary/crn/$crn")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
         .exchange()
         .expectStatus().isOk
         .expectBody<List<SupplementaryRiskDto>>()
@@ -202,6 +225,14 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
             )
           )
         }
+    }
+
+    @Test
+    fun `get all risks by crn is forbidden for ROLE_CRS_PROVIDER`() {
+      webTestClient.get().uri("/risks/supplementary/crn/$crn")
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+        .exchange()
+        .expectStatus().isForbidden
     }
   }
 
@@ -237,15 +268,37 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `access forbidden when no read scope`() {
       webTestClient.get().uri("/risks/supplementary/$sourceType/$sourceId")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf()))
         .exchange()
         .expectStatus().isForbidden
     }
 
     @Test
-    fun `get by source type and source Id`() {
+    fun `get by source type and source Id allowed for ROLE_CRS_PROVIDER`() {
       webTestClient.get().uri("/risks/supplementary/$sourceType/$sourceId")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+        .exchange()
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              UUID.fromString("6e020e78-a81c-407f-bc78-e5f284e237e5"),
+              Source.INTERVENTION_REFERRAL,
+              "7e020e78-a81c-407f-bc78-e5f284e237e9",
+              "X123456",
+              "Gary C",
+              "delius",
+              LocalDateTime.of(2019, 11, 14, 9, 6),
+              "risk to self"
+            )
+          )
+        }
+    }
+
+    @Test
+    fun `get by source type and source Id allowed for ROLE_PROBATION`() {
+      webTestClient.get().uri("/risks/supplementary/$sourceType/$sourceId")
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
         .exchange()
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
@@ -312,7 +365,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     fun `access forbidden when no read scope`() {
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf()))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf()))
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isForbidden
@@ -328,10 +381,10 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `access allowed when role and scope supplied`() {
+    fun `access allowed when role ROLE_PROBATION and scope supplied`() {
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("write")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("write")))
         .bodyValue(requestBody)
         .exchange()
         .expectBody<SupplementaryRiskDto>()
@@ -352,6 +405,25 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `unauthorized for role ROLE_CRS_PROVIDER and scope supplied`() {
+      webTestClient.post().uri("/risks/supplementary")
+        .header("Content-Type", "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("write")))
+        .bodyValue(requestBody)
+        .exchange()
+        .expectStatus().isForbidden
+        .expectBody<ErrorResponse>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            ErrorResponse(
+              status = 403,
+              developerMessage = "Access is denied"
+            )
+          )
+        }
+    }
+
+    @Test
     fun `409 returned when record for source already exists`() {
 
       val requestBody = SupplementaryRiskDto(
@@ -365,7 +437,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
 
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_RISK_SUMMARY"), scopes = listOf("write")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("write")))
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isEqualTo(HttpStatus.CONFLICT)
