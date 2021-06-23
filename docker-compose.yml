@@ -31,7 +31,7 @@ services:
     image: rodolpheche/wiremock
     container_name: hmpps-assess-risk-and-needs-wiremock
     ports:
-      - "9080:8080"
+      - "9004:8080"
     volumes:
       - ./wiremock:/home/wiremock
 
