@@ -2,7 +2,7 @@
   "id": "3e862519-78b0-4449-b2b5-535ee1b81213",
   "request": {
     "method": "POST",
-    "urlPathPattern": "/assessments/crn/*/sections/answers*"
+    "urlPathPattern": "/assessments/crn/(.*)/sections/answers*"
   },
   "response": {
     "headers": {
