@@ -38,6 +38,7 @@ class AssessmentApiRestClient {
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
+        log.error("4xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
           HttpMethod.POST,
@@ -46,6 +47,7 @@ class AssessmentApiRestClient {
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
+        log.error("5xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve Rosh sections for last year completed Assessment for crn $crn",
           HttpMethod.POST,
