@@ -10,42 +10,42 @@ class DuplicateSourceRecordFound(msg: String?, val supplementaryRiskDto: Supplem
 
 // External Services Exceptions
 class ExternalApiEntityNotFoundException(
-  msg: String,
+  msg: String? = "",
   val method: HttpMethod,
   val url: String,
   val client: ExternalService
 ) : RuntimeException(msg)
 
 class ExternalApiAuthorisationException(
-  msg: String,
+  msg: String? = "",
   val method: HttpMethod,
   val url: String,
   val client: ExternalService
 ) : RuntimeException(msg)
 
 class ExternalApiForbiddenException(
-  msg: String,
+  msg: String? = "",
   val method: HttpMethod,
   val url: String,
   val client: ExternalService
 ) : RuntimeException(msg)
 
 class ExternalApiInvalidRequestException(
-  msg: String,
+  msg: String? = "",
   val method: HttpMethod,
   val url: String,
   val client: ExternalService
 ) : RuntimeException(msg)
 
 class ExternalApiUnknownException(
-  msg: String,
+  msg: String? = "",
   val method: HttpMethod,
   val url: String,
   val client: ExternalService
 ) : RuntimeException(msg)
 
 class ExternalApiDuplicateOffenderRecordException(
-  msg: String,
+  msg: String? = "",
   val method: HttpMethod,
   val url: String,
   val client: ExternalService
