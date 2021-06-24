@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Exte
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiInvalidRequestException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiUnknownException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.UserNameNotFoundException
 
 @ControllerAdvice
 class ControllerAdvice {
@@ -53,6 +54,13 @@ class ControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   fun handle(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse?> {
     log.error("HttpMessageNotReadableException: {}", e.message)
+    return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
+  }
+
+  @ExceptionHandler(UserNameNotFoundException::class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  fun handle(e: UserNameNotFoundException): ResponseEntity<ErrorResponse?> {
+    log.error("UserNameNotFoundException: {}", e.message)
     return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 

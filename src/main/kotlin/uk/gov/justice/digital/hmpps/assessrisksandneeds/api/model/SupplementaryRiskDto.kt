@@ -19,7 +19,7 @@ data class SupplementaryRiskDto(
   val crn: String,
 
   @Schema(description = "Created By User", example = "Paul Newman")
-  val createdByUser: String,
+  val createdByUser: String? = null,
 
   @Schema(description = "Created By User Type", example = "delius")
   val createdByUserType: String,
