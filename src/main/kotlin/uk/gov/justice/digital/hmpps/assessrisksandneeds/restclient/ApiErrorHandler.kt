@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientResponse
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiAuthorisationException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiDuplicateOffenderRecordException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiInvalidRequestException
@@ -32,6 +33,10 @@ fun handle4xxError(
     HttpStatus.NOT_FOUND -> {
       clientResponse.bodyToMono(ApiErrorResponse::class.java)
         .map { error -> ExternalApiEntityNotFoundException(error.developerMessage, method, url, client) }
+    }
+    HttpStatus.CONFLICT -> {
+      clientResponse.bodyToMono(ApiErrorResponse::class.java)
+        .map { error -> ExternalApiDuplicateOffenderRecordException(error.developerMessage, method, url, client) }
     }
     else -> handleError(clientResponse, method, url, client)
   }

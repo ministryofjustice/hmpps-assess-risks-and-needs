@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryR
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiAuthorisationException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiDuplicateOffenderRecordException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiInvalidRequestException
@@ -117,6 +118,12 @@ class ControllerAdvice {
       e.message
     )
     return ResponseEntity(ErrorResponse(status = 401, developerMessage = e.message), HttpStatus.UNAUTHORIZED)
+  }
+
+  @ExceptionHandler(ExternalApiDuplicateOffenderRecordException::class)
+  fun handle(e: ExternalApiDuplicateOffenderRecordException): ResponseEntity<ErrorResponse?> {
+    log.error("DuplicateOffenderRecordException: {}", e.message)
+    return ResponseEntity(ErrorResponse(status = 409, developerMessage = e.message, userMessage = e.message), HttpStatus.CONFLICT)
   }
 
   @ExceptionHandler(Exception::class)
