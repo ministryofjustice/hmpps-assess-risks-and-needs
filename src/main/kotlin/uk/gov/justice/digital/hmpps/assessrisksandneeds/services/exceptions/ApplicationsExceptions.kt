@@ -43,3 +43,10 @@ class ExternalApiUnknownException(
   val url: String,
   val client: ExternalService
 ) : RuntimeException(msg)
+
+class ExternalApiDuplicateOffenderRecordException(
+  msg: String,
+  val method: HttpMethod,
+  val url: String,
+  val client: ExternalService
+) : RuntimeException(msg)
