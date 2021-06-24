@@ -286,7 +286,6 @@ class SupplementaryRiskServiceTest {
       supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
     } returns null
 
-
     assertThrows<UserNameNotFoundException> {
       supplementaryRiskService.createNewSupplementaryRisk(
         SupplementaryRiskDto(
