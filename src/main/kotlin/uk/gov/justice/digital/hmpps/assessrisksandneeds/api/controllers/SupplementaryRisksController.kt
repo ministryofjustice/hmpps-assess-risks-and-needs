@@ -81,7 +81,7 @@ class SupplementaryRisksController(
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'RISK_SUMMARY') and hasAuthority('SCOPE_write')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'RISK_SUMMARY')")
   fun createSupplementaryRisk(
     @Parameter(description = "Supplementary Risk", required = true)
     @RequestBody supplementaryRisk: SupplementaryRiskDto

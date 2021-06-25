@@ -362,25 +362,6 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `access forbidden when no read scope`() {
-      webTestClient.post().uri("/risks/supplementary")
-        .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf()))
-        .bodyValue(requestBody)
-        .exchange()
-        .expectStatus().isForbidden
-        .expectBody<ErrorResponse>()
-        .consumeWith {
-          assertThat(it.responseBody).isEqualTo(
-            ErrorResponse(
-              status = 403,
-              developerMessage = "Access is denied"
-            )
-          )
-        }
-    }
-
-    @Test
     fun `access allowed when role ROLE_PROBATION and scope supplied`() {
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
