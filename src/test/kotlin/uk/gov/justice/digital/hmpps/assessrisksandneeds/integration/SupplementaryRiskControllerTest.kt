@@ -364,7 +364,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     fun `access allowed when role ROLE_PROBATION and scope supplied`() {
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(user = "Tom C", roles = listOf("ROLE_PROBATION"), scopes = listOf("write")))
+        .headers(setAuthorisation(user = "Tom C", roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
         .bodyValue(requestBody)
         .exchange()
         .expectBody<SupplementaryRiskDto>()
@@ -417,7 +417,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
 
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("write")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isEqualTo(HttpStatus.CONFLICT)
