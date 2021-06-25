@@ -225,7 +225,6 @@ class SupplementaryRiskServiceTest {
     } returns riskEntity
 
     val supplementaryRiskDto = CreateSupplementaryRiskDto(
-      supplementaryRiskId = supplementaryRiskUuid,
       source = Source.INTERVENTION_REFERRAL,
       sourceId = sourceId,
       crn = crn,
@@ -268,7 +267,6 @@ class SupplementaryRiskServiceTest {
     } returns riskEntity
 
     val supplementaryRiskDto = CreateSupplementaryRiskDto(
-      supplementaryRiskUuid,
       Source.INTERVENTION_REFERRAL,
       sourceId,
       crn,
