@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.SupplementaryRiskEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
@@ -74,7 +75,7 @@ class SupplementaryRiskService(
       source = this.source.name,
       sourceId = this.sourceId,
       crn = this.crn,
-      createdBy = this.createdByUser,
+      createdBy = RequestData.getUserName(),
       createdByUserType = UserType.fromString(this.createdByUserType).name,
       createdDate = this.createdDate,
       riskComments = this.riskSummaryComments

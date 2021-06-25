@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.web.servlet.HandlerInterceptor
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.UserNameNotFoundException
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -20,6 +21,7 @@ class RequestData(excludeUris: String?) : HandlerInterceptor {
     request.setAttribute("startTime", LocalDateTime.now().toString())
     MDC.clear()
     MDC.put(USER_ID_HEADER, initialiseUserId(request))
+    MDC.put(USER_NAME_HEADER, initialiseUserName(request))
 
     if (excludeUriRegex.matcher(request.requestURI).matches()) {
       MDC.put(SKIP_LOGGING, "true")
@@ -52,13 +54,22 @@ class RequestData(excludeUris: String?) : HandlerInterceptor {
     return if (userId.isNullOrEmpty()) null else userId
   }
 
+  private fun initialiseUserName(request: HttpServletRequest): String? {
+    val userName: String? = if (request.userPrincipal != null) request.userPrincipal.name else null
+    return if (userName.isNullOrEmpty()) null else userName
+  }
+
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
-    private const val ANONYMOUS = "anonymous"
     const val SKIP_LOGGING = "skipLogging"
     const val REQUEST_DURATION = "duration"
     const val RESPONSE_STATUS = "status"
     const val USER_ID_HEADER = "userId"
+    const val USER_NAME_HEADER = "userName"
     val isLoggingAllowed: Boolean = "true" != MDC.get(SKIP_LOGGING)
+
+    fun getUserName(): String {
+      return MDC.get(USER_NAME_HEADER) ?: throw UserNameNotFoundException("User name is needed in the authentication context in order to audit.")
+    }
   }
 }

@@ -9,12 +9,15 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData.Companion.USER_NAME_HEADER
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.SupplementaryRiskEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.SupplementaryRiskRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.UserNameNotFoundException
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -192,6 +195,8 @@ class SupplementaryRiskServiceTest {
 
   @Test
   fun `create supplementary risk data`() {
+    MDC.put(USER_NAME_HEADER, "Arnold G.")
+
     val supplementaryRiskUuid = UUID.randomUUID()
     val source = "INTERVENTION_REFERRAL"
     val sourceId = "123"
@@ -201,8 +206,15 @@ class SupplementaryRiskServiceTest {
     val createdBy = "Arnold G."
     val riskComments = "risk comments bla bla"
     val riskEntity = SupplementaryRiskEntity(
-      123L, supplementaryRiskUuid, source, sourceId, crn,
-      createdDate, createdByUserType, createdBy, riskComments
+      supplementaryRiskId = 123L,
+      supplementaryRiskUuid = supplementaryRiskUuid,
+      source = source,
+      sourceId = sourceId,
+      crn = crn,
+      createdDate = createdDate,
+      createdByUserType = createdByUserType,
+      createdBy = createdBy,
+      riskComments = riskComments
     )
     every {
       supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId)
@@ -212,14 +224,14 @@ class SupplementaryRiskServiceTest {
     } returns riskEntity
 
     val supplementaryRiskDto = SupplementaryRiskDto(
-      supplementaryRiskUuid,
-      Source.INTERVENTION_REFERRAL,
-      sourceId,
-      crn,
-      createdBy,
-      "delius",
-      createdDate,
-      riskComments
+      supplementaryRiskId = supplementaryRiskUuid,
+      source = Source.INTERVENTION_REFERRAL,
+      sourceId = sourceId,
+      crn = crn,
+      createdByUser = createdBy,
+      createdByUserType = "delius",
+      createdDate = createdDate,
+      riskSummaryComments = riskComments
     )
     val risk = supplementaryRiskService.createNewSupplementaryRisk(supplementaryRiskDto)
 
@@ -263,5 +275,27 @@ class SupplementaryRiskServiceTest {
       "Duplicate supplementary risk found for source: $source with sourceId: $sourceId",
       exception.message
     )
+  }
+
+  @Test
+  fun `throws UserNameNotFoundException when user name is not in the auth context`() {
+    MDC.clear()
+    val source = Source.INTERVENTION_REFERRAL
+    val sourceId = UUID.randomUUID().toString()
+    every {
+      supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
+    } returns null
+
+    assertThrows<UserNameNotFoundException> {
+      supplementaryRiskService.createNewSupplementaryRisk(
+        SupplementaryRiskDto(
+          source = source,
+          sourceId = sourceId,
+          crn = "XD83873",
+          createdByUserType = "createdByUserType",
+          riskSummaryComments = "comments"
+        )
+      )
+    }
   }
 }

@@ -323,14 +323,13 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
   inner class PostNewSupplementaryRisk {
 
     private val requestBody = SupplementaryRiskDto(
-      null,
-      Source.INTERVENTION_REFERRAL,
-      "8e020e78-a81c-407f-bc78-e5f284e237e8",
-      "X123457",
-      "Tom C",
-      "delius",
-      LocalDateTime.of(2019, 11, 14, 9, 7),
-      "risk to others"
+      supplementaryRiskId = null,
+      source = Source.INTERVENTION_REFERRAL,
+      sourceId = "8e020e78-a81c-407f-bc78-e5f284e237e8",
+      crn = "X123457",
+      createdByUserType = "delius",
+      createdDate = LocalDateTime.of(2019, 11, 14, 9, 7),
+      riskSummaryComments = "risk to others"
     )
 
     @Test
@@ -365,7 +364,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     fun `access allowed when role ROLE_PROBATION and scope supplied`() {
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("write")))
+        .headers(setAuthorisation(user = "Tom C", roles = listOf("ROLE_PROBATION"), scopes = listOf("write")))
         .bodyValue(requestBody)
         .exchange()
         .expectBody<SupplementaryRiskDto>()
