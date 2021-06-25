@@ -47,10 +47,9 @@ abstract class IntegrationTestBase {
     System.setProperty("http.keepAlive", "false")
   }
 
-  internal fun setAuthorisation(user: String = "assess-risks-needs", roles: List<String> = listOf(), scopes: List<String> = listOf()): (HttpHeaders) -> Unit {
+  internal fun setAuthorisation(user: String = "assess-risks-needs", roles: List<String> = listOf()): (HttpHeaders) -> Unit {
     val token = jwtHelper.createJwt(
       subject = user,
-      scope = scopes,
       expiryTime = Duration.ofHours(1L),
       roles = roles
     )

@@ -27,7 +27,7 @@ class RisksController(private val riskService: RiskService) {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getRiskSummaryByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
@@ -44,7 +44,7 @@ class RisksController(private val riskService: RiskService) {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getRiskToSelfByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
@@ -61,7 +61,7 @@ class RisksController(private val riskService: RiskService) {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getOtherRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
@@ -78,7 +78,7 @@ class RisksController(private val riskService: RiskService) {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'RISK_SUMMARY') and hasAuthority('SCOPE_read')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getRoshRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
