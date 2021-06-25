@@ -10,6 +10,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlConfig
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.web.reactive.server.expectBody
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
@@ -364,18 +365,17 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `409 returned when record for source already exists`() {
 
-      val requestBody = SupplementaryRiskDto(
+      val requestBody = CreateSupplementaryRiskDto(
         source = Source.INTERVENTION_REFERRAL,
         sourceId = "3e020e78-a81c-407f-bc78-e5f284e237e5",
         crn = "X123457",
         riskSummaryComments = "risk to others",
-        createdByUser = "Gary C",
         createdByUserType = "delius"
       )
 
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+        .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isEqualTo(HttpStatus.CONFLICT)

@@ -1,10 +1,12 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class SupplementaryRiskDto(
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class CreateSupplementaryRiskDto(
 
   @Schema(description = "Supplementary Risk ID", example = "78beac68-884c-4784-9bea-fd8088f52a47")
   val supplementaryRiskId: UUID? = null,
@@ -17,9 +19,6 @@ data class SupplementaryRiskDto(
 
   @Schema(description = "Offender CRN", example = "DX12340A")
   val crn: String,
-
-  @Schema(description = "Created By User", example = "Paul Newman")
-  val createdByUser: String? = null,
 
   @Schema(description = "Created By User Type", example = "delius")
   val createdByUserType: String,
