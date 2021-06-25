@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SupplementaryRiskService
@@ -84,7 +85,7 @@ class SupplementaryRisksController(
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun createSupplementaryRisk(
     @Parameter(description = "Supplementary Risk", required = true)
-    @RequestBody supplementaryRisk: SupplementaryRiskDto
+    @RequestBody supplementaryRisk: CreateSupplementaryRiskDto
   ): SupplementaryRiskDto {
     return supplementaryRiskService.createNewSupplementaryRisk(supplementaryRisk)
   }

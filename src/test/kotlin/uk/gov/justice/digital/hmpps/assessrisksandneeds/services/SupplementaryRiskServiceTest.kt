@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData.Companion.USER_NAME_HEADER
@@ -223,19 +224,29 @@ class SupplementaryRiskServiceTest {
       supplementaryRiskRepository.save(any())
     } returns riskEntity
 
-    val supplementaryRiskDto = SupplementaryRiskDto(
+    val supplementaryRiskDto = CreateSupplementaryRiskDto(
       supplementaryRiskId = supplementaryRiskUuid,
       source = Source.INTERVENTION_REFERRAL,
       sourceId = sourceId,
       crn = crn,
-      createdByUser = createdBy,
       createdByUserType = "delius",
       createdDate = createdDate,
       riskSummaryComments = riskComments
     )
     val risk = supplementaryRiskService.createNewSupplementaryRisk(supplementaryRiskDto)
 
-    assertThat(risk).isEqualTo(supplementaryRiskDto)
+    assertThat(risk).isEqualTo(
+      SupplementaryRiskDto(
+        supplementaryRiskId = supplementaryRiskUuid,
+        source = Source.INTERVENTION_REFERRAL,
+        sourceId = sourceId,
+        crn = crn,
+        createdByUser = createdBy,
+        createdByUserType = "delius",
+        createdDate = createdDate,
+        riskSummaryComments = riskComments
+      )
+    )
   }
 
   @Test
@@ -256,12 +267,11 @@ class SupplementaryRiskServiceTest {
       supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId)
     } returns riskEntity
 
-    val supplementaryRiskDto = SupplementaryRiskDto(
+    val supplementaryRiskDto = CreateSupplementaryRiskDto(
       supplementaryRiskUuid,
       Source.INTERVENTION_REFERRAL,
       sourceId,
       crn,
-      createdBy,
       "delius",
       createdDate,
       riskComments
@@ -288,7 +298,7 @@ class SupplementaryRiskServiceTest {
 
     assertThrows<UserNameNotFoundException> {
       supplementaryRiskService.createNewSupplementaryRisk(
-        SupplementaryRiskDto(
+        CreateSupplementaryRiskDto(
           source = source,
           sourceId = sourceId,
           crn = "XD83873",

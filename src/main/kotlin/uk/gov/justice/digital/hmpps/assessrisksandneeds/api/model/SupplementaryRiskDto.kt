@@ -30,4 +30,3 @@ data class SupplementaryRiskDto(
   @Schema(description = "Risk Summary Comments", example = "Free text up to 4000 characters")
   val riskSummaryComments: String,
 )
-

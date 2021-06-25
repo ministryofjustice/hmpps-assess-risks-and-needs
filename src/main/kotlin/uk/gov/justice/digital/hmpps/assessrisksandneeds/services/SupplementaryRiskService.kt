@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
@@ -42,7 +43,7 @@ class SupplementaryRiskService(
       .also { log.info("returning supplementary risk records found for risk ID: $supplementaryRiskUuid") }
   }
 
-  fun createNewSupplementaryRisk(supplementaryRiskDto: SupplementaryRiskDto): SupplementaryRiskDto {
+  fun createNewSupplementaryRisk(supplementaryRiskDto: CreateSupplementaryRiskDto): SupplementaryRiskDto {
     with(supplementaryRiskDto) {
       log.info("Create new supplementary risk for crn: $crn")
       val existingRisk = supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
@@ -70,7 +71,7 @@ class SupplementaryRiskService(
     )
   }
 
-  fun SupplementaryRiskDto.toSupplementaryRiskEntity(): SupplementaryRiskEntity {
+  fun CreateSupplementaryRiskDto.toSupplementaryRiskEntity(): SupplementaryRiskEntity {
     return SupplementaryRiskEntity(
       source = this.source.name,
       sourceId = this.sourceId,
