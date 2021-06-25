@@ -68,26 +68,9 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `access forbidden when no read scope`() {
-      webTestClient.get().uri("/risks/supplementary/$supplementaryRiskUuid")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf()))
-        .exchange()
-        .expectStatus().isForbidden
-        .expectBody<ErrorResponse>()
-        .consumeWith {
-          assertThat(it.responseBody).isEqualTo(
-            ErrorResponse(
-              status = 403,
-              developerMessage = "Access is denied"
-            )
-          )
-        }
-    }
-
-    @Test
     fun `not found when supplementary risk uuid doesn't exists`() {
       webTestClient.get().uri("/risks/supplementary/$invalidSupplementaryRiskUuid")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
         .exchange()
         .expectStatus().isNotFound
         .expectBody<ErrorResponse>()
@@ -104,7 +87,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `access allowed when role ROLE_PROBATION and scope supplied`() {
       webTestClient.get().uri("/risks/supplementary/$supplementaryRiskUuid")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
         .exchange()
         .expectStatus().isOk
         .expectBody<SupplementaryRiskDto>()
@@ -127,7 +110,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `access allowed when role ROLE_CRS_PROVIDER and scope supplied`() {
       webTestClient.get().uri("/risks/supplementary/$supplementaryRiskUuid")
-        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
         .exchange()
         .expectStatus().isOk
         .expectBody<SupplementaryRiskDto>()
@@ -178,26 +161,9 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `access forbidden when no read scope`() {
-      webTestClient.get().uri("/risks/supplementary/crn/$crn")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf()))
-        .exchange()
-        .expectStatus().isForbidden
-        .expectBody<ErrorResponse>()
-        .consumeWith {
-          assertThat(it.responseBody).isEqualTo(
-            ErrorResponse(
-              status = 403,
-              developerMessage = "Access is denied"
-            )
-          )
-        }
-    }
-
-    @Test
     fun `get all risks by crn`() {
       webTestClient.get().uri("/risks/supplementary/crn/$crn")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
         .exchange()
         .expectStatus().isOk
         .expectBody<List<SupplementaryRiskDto>>()
@@ -230,7 +196,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `get all risks by crn is forbidden for ROLE_CRS_PROVIDER`() {
       webTestClient.get().uri("/risks/supplementary/crn/$crn")
-        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
         .exchange()
         .expectStatus().isForbidden
     }
@@ -266,17 +232,9 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `access forbidden when no read scope`() {
-      webTestClient.get().uri("/risks/supplementary/$sourceType/$sourceId")
-        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf()))
-        .exchange()
-        .expectStatus().isForbidden
-    }
-
-    @Test
     fun `get by source type and source Id allowed for ROLE_CRS_PROVIDER`() {
       webTestClient.get().uri("/risks/supplementary/$sourceType/$sourceId")
-        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
         .exchange()
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
@@ -298,7 +256,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     @Test
     fun `get by source type and source Id allowed for ROLE_PROBATION`() {
       webTestClient.get().uri("/risks/supplementary/$sourceType/$sourceId")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
         .exchange()
         .expectBody<SupplementaryRiskDto>()
         .consumeWith {
@@ -364,7 +322,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     fun `access allowed when role ROLE_PROBATION and scope supplied`() {
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(user = "Tom C", roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+        .headers(setAuthorisation(user = "Tom C", roles = listOf("ROLE_PROBATION")))
         .bodyValue(requestBody)
         .exchange()
         .expectBody<SupplementaryRiskDto>()
@@ -388,7 +346,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
     fun `unauthorized for role ROLE_CRS_PROVIDER and scope supplied`() {
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("write")))
+        .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isForbidden
@@ -417,7 +375,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
 
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+        .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
         .bodyValue(requestBody)
         .exchange()
         .expectStatus().isEqualTo(HttpStatus.CONFLICT)

@@ -23,7 +23,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get risk summary by crn for external provider`() {
     webTestClient.get().uri("/risks/crn/$crn/summary")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
       .expectBody<RiskRoshSummaryDto>()
@@ -43,7 +43,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get risk summary by crn for probation practitioner`() {
     webTestClient.get().uri("/risks/crn/$crn/summary")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
       .expectBody<RiskRoshSummaryDto>()
@@ -73,7 +73,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get risk to self by crn for external provider`() {
     webTestClient.get().uri("/risks/crn/$crn/self")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
       .expectBody<RoshRiskToSelfDto>()
@@ -115,7 +115,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get risk to self by crn for probation practitioner`() {
     webTestClient.get().uri("/risks/crn/$crn/self")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
       .expectBody<RoshRiskToSelfDto>()
@@ -157,7 +157,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get risk for unknown crn returns not found`() {
     webTestClient.get().uri("/risks/crn/RANDOMCRN")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
       .expectBody<ErrorResponse>()
@@ -174,7 +174,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get other risks by crn for external provider`() {
     webTestClient.get().uri("/risks/crn/$crn/other")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
       .expectBody<OtherRoshRisksDto>()
@@ -190,7 +190,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get other risk by crn for probation practitioner`() {
     webTestClient.get().uri("/risks/crn/$crn/other")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
       .expectBody<OtherRoshRisksDto>()
@@ -209,7 +209,7 @@ class RiskControllerTest : IntegrationTestBase() {
   @Test
   fun `get all risks by crn for external provider`() {
     webTestClient.get().uri("/risks/crn/$crn")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION"), scopes = listOf("read")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
       .expectBody<AllRoshRiskDto>()
