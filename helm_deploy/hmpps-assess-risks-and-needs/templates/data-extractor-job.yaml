@@ -1,3 +1,4 @@
+{{- if .Values.dataExtractor.enabled -}}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -65,3 +66,4 @@ spec:
                   value: eu-west-2
                 - name: SAVE_EVENTS_LOG
                   value: "true"
+{{- end }}
