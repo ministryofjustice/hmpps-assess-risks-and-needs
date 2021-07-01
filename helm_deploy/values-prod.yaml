@@ -15,3 +15,6 @@ generic-service:
 generic-prometheus-alerts:
   enabled: true
   alertSeverity: hmpps-assess-risks-and-needs
+
+dataExtractor:
+  enabled: false

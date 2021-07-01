@@ -14,3 +14,6 @@ generic-service:
 
 generic-prometheus-alerts:
   enabled: false
+
+dataExtractor:
+  enabled: true
