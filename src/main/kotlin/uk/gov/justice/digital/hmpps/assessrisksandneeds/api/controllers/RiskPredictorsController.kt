@@ -15,13 +15,12 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictors
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
 @RestController
-class RiskPredictorsController(private val riskPredictorService : RiskPredictorService) {
+class RiskPredictorsController(private val riskPredictorService: RiskPredictorService) {
   @RequestMapping(path = ["/risks/predictors/{predictorType}"], method = [RequestMethod.POST])
   @Operation(description = "Gets risk predictors for a specific predictor type")
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "404", description = "CRN Not Found"),
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )

@@ -17,12 +17,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictors
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Sex
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
 
 @AutoConfigureWebTestClient
 @DisplayName("Risk Predictors Tests")
@@ -44,12 +41,12 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       hasAnySexualOffences = true,
       isCurrentSexualOffence = true,
       isCurrentOffenceVictimStranger = true,
-      mostRecentSexOffenceDate = LocalDate.now().minusWeeks(3),
+      mostRecentSexualOffenceDate = LocalDate.now().minusWeeks(3),
       totalSexualOffencesInvolvingAnAdult = 5,
       totalSexualOffencesInvolvingAChild = 3,
       totalSexualOffencesInvolvingChildImages = 2,
       totalNonSexualOffences = 2,
-      earliestReleaseDate = LocalDateTime.now().plusMonths(10),
+      earliestReleaseDate = LocalDate.now().plusMonths(10),
       dynamicScoringOffences = DynamicScoringOffences(
         hasCompletedInterview = true,
         committedOffenceUsingWeapon = true,
@@ -95,5 +92,4 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
         )
       }
   }
-
 }

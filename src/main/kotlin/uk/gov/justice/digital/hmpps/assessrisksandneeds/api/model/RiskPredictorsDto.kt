@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import java.math.BigDecimal
 
-
 data class RiskPredictorsDto(
   val rsrScore: Score
 )
