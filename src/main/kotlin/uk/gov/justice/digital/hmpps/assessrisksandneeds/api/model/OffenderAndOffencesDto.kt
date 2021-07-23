@@ -85,7 +85,7 @@ data class OffenderAndOffencesDto(
   val earliestReleaseDate: LocalDate,
 
   @Schema(description = "Offences for dynamic scoring")
-  val dynamicScoringOffences: DynamicScoringOffences
+  val dynamicScoringOffences: DynamicScoringOffences?
 )
 
 data class DynamicScoringOffences(
