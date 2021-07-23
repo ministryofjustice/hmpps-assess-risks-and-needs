@@ -84,36 +84,80 @@ data class OffenderAndOffencesDto(
   @JsonFormat(pattern = "yyyy-MM-dd")
   val earliestReleaseDate: LocalDate,
 
-  @Schema(description = "Offences for dynamic scoring",)
+  @Schema(description = "Offences for dynamic scoring")
   val dynamicScoringOffences: DynamicScoringOffences
 )
 
 data class DynamicScoringOffences(
+  @Schema(description = "Have you completed an interview with the individual?", example = "true")
   val hasCompletedInterview: Boolean,
+
+  @Schema(description = "Did the offence involve carrying or use of a weapon?", example = "true")
   val committedOffenceUsingWeapon: Boolean,
+
+  @Schema(description = "Is the individual living in suitable accommodation?", example = "  NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val hasSuitableAccommodation: ProblemsLevel?,
+
+  @Schema(description = "Is the person unemployed or will be unemployed upon release?", example = "NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING")
   val isUnemployed: EmploymentType?,
+
+  @Schema(description = "What is the person's current relationship with their partner?", example = "In a relationship living together")
   val currentRelationshipWithPartner: String,
+
+  @Schema(description = "Is there evidence that the individual is a perpetrator of domestic abuse?", example = "true")
   val evidenceOfDomesticViolence: Boolean,
+
+  @Schema(description = "Is the individual a victim of domestic abuse?", example = "true")
   val isAVictim: Boolean,
+
+  @Schema(description = "Is the individual a perpetrator of domestic abuse?", example = "true")
   val isAPerpetrator: Boolean,
+
+  @Schema(description = "Is the person's current use of alcohol a problem?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val alcoholUseIssues: ProblemsLevel,
+
+  @Schema(description = "Is there evidence of binge drinking or excessive use of alcohol in the last 6 months?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val bingeDrinkingIssues: ProblemsLevel,
+
+  @Schema(description = "Is impulsivity a problem for the individual?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val impulsivityIssues: ProblemsLevel,
+
+  @Schema(description = "Is temper control a problem for the individual?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val temperControlIssues: ProblemsLevel,
+
+  @Schema(description = "Does the individual have pro-criminal attitudes?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val proCriminalAttitudes: ProblemsLevel,
+
+  @Schema(description = "Previous Offences")
   val previousOffences: PreviousOffences
 )
 
 data class PreviousOffences(
+  @Schema(description = "Murder/attempted murder/threat or conspiracy to murder/manslaughter", example = "true")
   val murderAttempt: Boolean,
+
+  @Schema(description = "Wounding/GBH (Sections 18/20 Offences Against the Person Act 1861)", example = "true")
   val wounding: Boolean,
+
+  @Schema(description = "Aggravated burglary", example = "true")
   val aggravatedBurglary: Boolean,
+
+  @Schema(description = "Arson", example = "true")
   val arson: Boolean,
+
+  @Schema(description = "Criminal damage with intent to endanger life", example = "true")
   val criminalDamage: Boolean,
+
+  @Schema(description = "Kidnapping/false imprisonment", example = "true")
   val kidnapping: Boolean,
+
+  @Schema(description = "Possession of a firearm with intent to endanger life or resist arrest", example = "true")
   val firearmPossession: Boolean,
+
+  @Schema(description = "Robbery", example = "true")
   val robbery: Boolean,
+
+  @Schema(description = "Any other offence involving possession and/or use of weapons", example = "true")
   val offencesWithWeapon: Boolean
 )
 
