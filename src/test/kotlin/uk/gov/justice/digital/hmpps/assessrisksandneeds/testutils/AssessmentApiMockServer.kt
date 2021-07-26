@@ -52,6 +52,23 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
+  fun stubGetRSRPredictorScoring() {
+    stubFor(
+      WireMock.post(
+        WireMock.urlEqualTo(
+          "/risks/predictors/RSR"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(
+              "{\"rsrScore\": {\"type\": \"RSR\",\"score\": \"HIGH\",\"scoreNumeric\": 11.34 }}"
+            )
+        )
+    )
+  }
+
   companion object {
     val crnNotFoundJson =
       """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
