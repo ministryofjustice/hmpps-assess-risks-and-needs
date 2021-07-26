@@ -29,6 +29,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
   fun `calculate rsr predictors returns rsr scoring`() {
 
     val requestBody = OffenderAndOffencesDto(
+      crn = "X1345",
       gender = Gender.MALE,
       dob = LocalDate.now().minusYears(20),
       assessmentDate = LocalDateTime.now(),

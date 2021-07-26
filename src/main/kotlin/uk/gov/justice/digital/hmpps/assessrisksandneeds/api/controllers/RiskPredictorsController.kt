@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
@@ -27,9 +28,9 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getRiskPredictorsByPredictorType(
     @Parameter(description = "Predictor type", required = true, example = "RSR")
-    @PathVariable predictorType: String,
+    @PathVariable predictorType: PredictorType,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
-  ): RiskPredictorsDto {
+  ): RiskPredictorsDto? {
     return riskPredictorService.getPredictorScores(predictorType, offenderAndOffences)
   }
 }
