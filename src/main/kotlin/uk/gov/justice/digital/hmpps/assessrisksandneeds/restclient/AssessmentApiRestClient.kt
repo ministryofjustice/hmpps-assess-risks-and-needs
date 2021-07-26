@@ -43,7 +43,7 @@ class AssessmentApiRestClient {
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
           "4xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: ${
-            it.statusCode().value()
+          it.statusCode().value()
           }"
         )
         handle4xxError(
@@ -56,7 +56,7 @@ class AssessmentApiRestClient {
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
           "5xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: ${
-            it.statusCode().value()
+          it.statusCode().value()
           }"
         )
         handle5xxError(
@@ -84,7 +84,7 @@ class AssessmentApiRestClient {
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
           "4xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: ${
-            it.statusCode().value()
+          it.statusCode().value()
           }"
         )
         handle4xxError(
@@ -97,7 +97,7 @@ class AssessmentApiRestClient {
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
           "5xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: ${
-            it.statusCode().value()
+          it.statusCode().value()
           }"
         )
         handle5xxError(
