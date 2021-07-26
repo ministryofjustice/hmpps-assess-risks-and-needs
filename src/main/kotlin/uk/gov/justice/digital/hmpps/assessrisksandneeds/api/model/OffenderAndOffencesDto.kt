@@ -6,8 +6,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class OffenderAndOffencesDto(
-  @Schema(description = "Sex", example = "MALE, FEMALE")
-  val sex: Sex,
+  @Schema(description = "Gender", example = "MALE, FEMALE")
+  val gender: Gender,
 
   @Schema(description = "date of birth", example = "1980-01-01")
   @JsonFormat(pattern = "yyyy-MM-dd")
@@ -163,14 +163,14 @@ data class PreviousOffences(
 
 data class CurrentOffence(val currentOffenceCode: String, val currentOffenceSubcode: String)
 
-enum class EmploymentType {
-  NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING
+enum class EmploymentType(val score: Int? = null) {
+  NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(2), MISSING
 }
 
-enum class Sex {
+enum class Gender {
   MALE, FEMALE
 }
 
-enum class ProblemsLevel {
-  NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING
+enum class ProblemsLevel(val score: Int? = null) {
+  NO_PROBLEMS(0), SOME_PROBLEMS(1), SIGNIFICANT_PROBLEMS(2), MISSING
 }

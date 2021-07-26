@@ -9,6 +9,7 @@ import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
@@ -16,7 +17,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Sex
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,7 +29,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
   fun `calculate rsr predictors returns rsr scoring`() {
 
     val requestBody = OffenderAndOffencesDto(
-      sex = Sex.MALE,
+      gender = Gender.MALE,
       dob = LocalDate.now().minusYears(20),
       assessmentDate = LocalDateTime.now(),
       currentOffence = CurrentOffence("138", "00"),
