@@ -117,19 +117,19 @@ data class DynamicScoringOffences(
   val isAPerpetrator: Boolean,
 
   @Schema(description = "Is the person's current use of alcohol a problem?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
-  val alcoholUseIssues: ProblemsLevel,
+  val alcoholUseIssues: ProblemsLevel?,
 
   @Schema(description = "Is there evidence of binge drinking or excessive use of alcohol in the last 6 months?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
-  val bingeDrinkingIssues: ProblemsLevel,
+  val bingeDrinkingIssues: ProblemsLevel?,
 
   @Schema(description = "Is impulsivity a problem for the individual?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
-  val impulsivityIssues: ProblemsLevel,
+  val impulsivityIssues: ProblemsLevel?,
 
   @Schema(description = "Is temper control a problem for the individual?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
-  val temperControlIssues: ProblemsLevel,
+  val temperControlIssues: ProblemsLevel?,
 
   @Schema(description = "Does the individual have pro-criminal attitudes?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
-  val proCriminalAttitudes: ProblemsLevel,
+  val proCriminalAttitudes: ProblemsLevel?,
 
   @Schema(description = "Previous Offences")
   val previousOffences: PreviousOffences
