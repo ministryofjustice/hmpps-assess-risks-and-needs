@@ -1,5 +1,7 @@
 # Assess Risks and Needs Service
 
+[![API docs](https://img.shields.io/badge/API_docs-view-85EA2D.svg?logo=swagger)](https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
+
 A Spring Boot app to get Risk and Need for offenders across HMPPS.
 
 [Swagger API documentation is available](https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk/swagger-ui.html)
