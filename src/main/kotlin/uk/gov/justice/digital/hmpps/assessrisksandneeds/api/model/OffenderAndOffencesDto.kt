@@ -98,14 +98,14 @@ data class DynamicScoringOffences(
   @Schema(description = "Did the offence involve carrying or use of a weapon?", example = "true")
   val committedOffenceUsingWeapon: Boolean,
 
-  @Schema(description = "Is the individual living in suitable accommodation?", example = "  NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(description = "Is the individual living in suitable accommodation?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val hasSuitableAccommodation: ProblemsLevel?,
 
   @Schema(description = "Is the person unemployed or will be unemployed upon release?", example = "NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING")
   val isUnemployed: EmploymentType?,
 
-  @Schema(description = "What is the person's current relationship with their partner?", example = "In a relationship living together")
-  val currentRelationshipWithPartner: String,
+  @Schema(description = "What is the person's current relationship with their partner?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  val currentRelationshipWithPartner: ProblemsLevel?,
 
   @Schema(description = "Is there evidence that the individual is a perpetrator of domestic abuse?", example = "true")
   val evidenceOfDomesticViolence: Boolean,

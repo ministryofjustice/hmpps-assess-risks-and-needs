@@ -53,7 +53,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
         committedOffenceUsingWeapon = true,
         hasSuitableAccommodation = ProblemsLevel.MISSING,
         isUnemployed = EmploymentType.NOT_AVAILABLE_FOR_WORK,
-        currentRelationshipWithPartner = "doesnt have partner",
+        currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         evidenceOfDomesticViolence = true,
         isAVictim = true,
         isAPerpetrator = true,
