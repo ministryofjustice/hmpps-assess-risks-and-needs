@@ -132,7 +132,7 @@ data class DynamicScoringOffences(
   val proCriminalAttitudes: ProblemsLevel?,
 
   @Schema(description = "Previous Offences")
-  val previousOffences: PreviousOffences
+  val previousOffences: PreviousOffences?
 )
 
 data class PreviousOffences(
@@ -164,7 +164,7 @@ data class PreviousOffences(
   val offencesWithWeapon: Boolean
 )
 
-data class CurrentOffence(val currentOffenceCode: String, val currentOffenceSubcode: String)
+data class CurrentOffence(val offenceCode: String, val offenceSubcode: String)
 
 enum class EmploymentType(val score: Int? = null) {
   NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(2), MISSING
