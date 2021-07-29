@@ -56,14 +56,27 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.post(
         WireMock.urlEqualTo(
-          "/risks/predictors/RSR"
+          "/offenders/risks/predictors/RSR"
         )
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withBody(
-              "{\"rsrScore\": {\"type\": \"RSR\",\"score\": \"HIGH\",\"scoreNumeric\": 11.34 }}"
+              "{" +
+                "    \"rsrScore\": 11.34," +
+                "    \"rsrBand\": \"High\"," +
+                "    \"scoreType\": \"Static\"," +
+                "    \"validRsrScore\": \"Y\"," +
+                "    \"ospcScore\": 0,\n" +
+                "    \"ospcBand\": \"Not Applicable\"," +
+                "    \"validOspcScore\": \"A\"," +
+                "    \"ospiScore\": 0," +
+                "    \"ospiBand\": \"Not Applicable\"," +
+                "    \"validOspiScore\": \"A\"," +
+                "    \"snsvScore\": 0.31," +
+                "    \"errorCount\": 0" +
+                "}"
             )
         )
     )

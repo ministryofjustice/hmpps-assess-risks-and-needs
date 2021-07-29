@@ -87,13 +87,14 @@ data class OffenderAndOffencesDto(
   @JsonFormat(pattern = "yyyy-MM-dd")
   val earliestReleaseDate: LocalDate,
 
+  @Schema(description = "Have you completed an interview with the individual?", example = "true")
+  val hasCompletedInterview: Boolean,
+
   @Schema(description = "Offences for dynamic scoring")
   val dynamicScoringOffences: DynamicScoringOffences?
 )
 
 data class DynamicScoringOffences(
-  @Schema(description = "Have you completed an interview with the individual?", example = "true")
-  val hasCompletedInterview: Boolean,
 
   @Schema(description = "Did the offence involve carrying or use of a weapon?", example = "true")
   val committedOffenceUsingWeapon: Boolean,

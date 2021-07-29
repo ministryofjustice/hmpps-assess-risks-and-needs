@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 
 @Component
@@ -70,15 +72,18 @@ class AssessmentApiRestClient {
       .block().also { log.info("Retrieved Rosh sections for last year completed Assessment for crn $crn") }
   }
 
-  fun calculatePredictorTypeScoring(predictorType: PredictorType, offenderAndOffences: OffenderAndOffencesDto): RiskPredictorsDto? {
+  fun calculatePredictorTypeScoring(
+    predictorType: PredictorType,
+    offenderAndOffences: OffenderAndOffencesDto
+  ): OasysRSRPredictorsDto? {
 
     log.info("Calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn}")
     val path =
-      "/risks/predictors/$predictorType"
+      "/offenders/risks/predictors/$predictorType"
     return webClient
       .post(
         path,
-        offenderAndOffences
+        offenderAndOffences.toOffenderAndOffencesBodyDto()
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
@@ -107,7 +112,69 @@ class AssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API
         )
       }
-      .bodyToMono(RiskPredictorsDto::class.java)
-      .block().also { log.info("Retrieved calculated $predictorType scoring for offender with crn ${offenderAndOffences.crn}") }
+      .bodyToMono(OasysRSRPredictorsDto::class.java)
+      .block()
+      .also { log.info("Retrieved calculated $predictorType scoring for offender with crn ${offenderAndOffences.crn}") }
+  }
+
+  private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(): OffenderAndOffencesBodyDto {
+    return OffenderAndOffencesBodyDto(
+      this.gender.name,
+      this.dob,
+      this.assessmentDate,
+      this.currentOffence.toCurrentOffenceDto(),
+      this.dateOfFirstSanction,
+      this.ageAtFirstSanction,
+      this.totalOffences,
+      this.totalViolentOffences,
+      this.dateOfCurrentConviction,
+      this.hasAnySexualOffences,
+      this.isCurrentSexualOffence,
+      this.isCurrentOffenceVictimStranger,
+      this.mostRecentSexualOffenceDate,
+      this.totalSexualOffencesInvolvingAnAdult,
+      this.totalSexualOffencesInvolvingAChild,
+      this.totalSexualOffencesInvolvingChildImages,
+      this.totalNonSexualOffences,
+      this.earliestReleaseDate,
+      this.hasCompletedInterview.let { this.dynamicScoringOffences?.toDynamicScoringOffencesBody(this.hasCompletedInterview) }
+    )
+  }
+
+  fun CurrentOffence.toCurrentOffenceDto(): CurrentOffenceBody {
+    return CurrentOffenceBody(this.offenceCode, this.offenceSubcode)
+  }
+
+  fun DynamicScoringOffences.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): DynamicScoringOffencesBody {
+    return DynamicScoringOffencesBody(
+      hasCompletedInterview,
+      this.committedOffenceUsingWeapon,
+      this.hasSuitableAccommodation?.score,
+      this.isUnemployed?.score,
+      this.currentRelationshipWithPartner?.score,
+      this.evidenceOfDomesticViolence,
+      this.isAVictim,
+      this.isAPerpetrator,
+      this.alcoholUseIssues?.score,
+      this.bingeDrinkingIssues?.score,
+      this.impulsivityIssues?.score,
+      this.temperControlIssues?.score,
+      this.proCriminalAttitudes?.score,
+      this.previousOffences?.toPreviousOffencesBody()
+    )
+  }
+
+  fun PreviousOffences.toPreviousOffencesBody(): PreviousOffencesBody {
+    return PreviousOffencesBody(
+      this.murderAttempt,
+      this.wounding,
+      this.aggravatedBurglary,
+      this.arson,
+      this.criminalDamage,
+      this.kidnapping,
+      this.firearmPossession,
+      this.robbery,
+      this.offencesWithWeapon
+    )
   }
 }

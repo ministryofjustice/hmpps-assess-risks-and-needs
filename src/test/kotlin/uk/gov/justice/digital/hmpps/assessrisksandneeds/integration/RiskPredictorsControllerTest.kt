@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -48,8 +49,8 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       totalSexualOffencesInvolvingChildImages = 2,
       totalNonSexualOffences = 2,
       earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
+      hasCompletedInterview = true,
       dynamicScoringOffences = DynamicScoringOffences(
-        hasCompletedInterview = true,
         committedOffenceUsingWeapon = true,
         hasSuitableAccommodation = ProblemsLevel.MISSING,
         isUnemployed = EmploymentType.NOT_AVAILABLE_FOR_WORK,
@@ -86,9 +87,17 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       .consumeWith {
         Assertions.assertThat(it.responseBody).isEqualTo(
           RiskPredictorsDto(
-            Score(
-              PredictorType.RSR, ScoreLevel.HIGH, BigDecimal("11.34")
-            )
+            type = PredictorType.RSR,
+            scoreType = ScoreType.STATIC,
+            rsrScore = Score(
+              level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+            ),
+            ospcScore = Score(
+              level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+            ),
+            ospiScore = Score(
+              level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+            ),
           )
         )
       }
