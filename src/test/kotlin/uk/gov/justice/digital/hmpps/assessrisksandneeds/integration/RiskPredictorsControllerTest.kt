@@ -87,6 +87,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       .consumeWith {
         Assertions.assertThat(it.responseBody).isEqualTo(
           RiskPredictorsDto(
+            algorithmVersion = 3,
             type = PredictorType.RSR,
             scoreType = ScoreType.STATIC,
             rsrScore = Score(

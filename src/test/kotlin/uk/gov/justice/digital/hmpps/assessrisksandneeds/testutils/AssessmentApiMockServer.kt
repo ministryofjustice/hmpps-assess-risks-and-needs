@@ -64,6 +64,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withBody(
               "{" +
+                "    \"algorithmVersion\": 3," +
                 "    \"rsrScore\": 11.34," +
                 "    \"rsrBand\": \"High\"," +
                 "    \"scoreType\": \"Static\"," +
