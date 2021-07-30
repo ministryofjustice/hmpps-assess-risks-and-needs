@@ -129,7 +129,8 @@ class AssessmentApiMockServer : WireMockServer(9004) {
                 "    \"ospiBand\": \"Not Applicable\"," +
                 "    \"validOspiScore\": \"A\"," +
                 "    \"snsvScore\": 0.31," +
-                "    \"errorCount\": 0" +
+                "    \"errorCount\": 0," +
+                "    \"calculationDateAndTime\": \"2021-07-30 16:10:02\"" +
                 "}"
             )
         )

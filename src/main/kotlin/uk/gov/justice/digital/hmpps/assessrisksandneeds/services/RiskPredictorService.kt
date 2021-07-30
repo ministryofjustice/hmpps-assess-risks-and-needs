@@ -22,7 +22,7 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
       assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences)
         ?: throw PredictorCalculationError(errorMessage)
 
-    if (predictorCalculation.errorCount!! > 0) throw PredictorCalculationError("$errorMessage - ${predictorCalculation.errorMessage}")
+    if (predictorCalculation.errorCount > 0) throw PredictorCalculationError("$errorMessage - ${predictorCalculation.errorMessage}")
 
     return predictorCalculation.toRiskPredictorsDto(predictorType)
   }
@@ -31,7 +31,7 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
     return when (predictorType) {
       PredictorType.RSR -> {
         RiskPredictorsDto(
-          algorithmVersion = this.algorithmVersion,
+          createdAt = this.calculationDateAndTime,
           type = predictorType,
           scoreType = ScoreType.findByType(this.scoreType!!),
           rsrScore = Score(

@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOff
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
@@ -114,8 +113,8 @@ class RiskPredictorServiceTest {
       ospiScore = BigDecimal("0"),
       ospiBand = "Not Applicable",
       validOspiScore = "A",
-      snsvScore = BigDecimal("0.31"),
-      errorCount = 0
+      errorCount = 0,
+      calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
     )
 
     val predictorScores = riskPredictorsService.getPredictorScores(
@@ -123,20 +122,22 @@ class RiskPredictorServiceTest {
       offencesAndOffencesDto
     )
 
-    assertThat(predictorScores).isEqualTo(
-      RiskPredictorsDto(
-        algorithmVersion = 3,
-        type = PredictorType.RSR,
-        scoreType = ScoreType.STATIC,
-        rsrScore = Score(
-          level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
-        ),
-        ospcScore = Score(
-          level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-        ),
-        ospiScore = Score(
-          level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-        ),
+    assertThat(predictorScores.createdAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
+    assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
+    assertThat(predictorScores.scoreType).isEqualTo(ScoreType.STATIC)
+    assertThat(predictorScores.rsrScore).isEqualTo(
+      Score(
+        level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+      )
+    )
+    assertThat(predictorScores.ospcScore).isEqualTo(
+      Score(
+        level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+      )
+    )
+    assertThat(predictorScores.ospiScore).isEqualTo(
+      Score(
+        level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
       )
     )
   }
@@ -158,9 +159,9 @@ class RiskPredictorServiceTest {
       ospiScore = BigDecimal("0"),
       ospiBand = "Not Applicable",
       validOspiScore = "A",
-      snsvScore = BigDecimal("0.31"),
       errorCount = 1,
-      errorMessage = "error error error"
+      errorMessage = "error error error",
+      calculationDateAndTime = LocalDateTime.now()
     )
 
     val exception = assertThrows<PredictorCalculationError> {
