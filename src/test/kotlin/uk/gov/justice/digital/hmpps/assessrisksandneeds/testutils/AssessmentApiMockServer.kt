@@ -58,6 +58,59 @@ class AssessmentApiMockServer : WireMockServer(9004) {
         WireMock.urlEqualTo(
           "/offenders/risks/predictors/RSR"
         )
+      ).withRequestBody(
+        WireMock.equalToJson(
+          "{ " +
+            "\"gender\" : \"MALE\"," +
+            "\"dob\" : [ 2001, 1, 1 ]," +
+            "\"assessmentDate\" : [ 2021, 1, 1, 0, 0 ]," +
+            "\"currentOffenceBody\" : {" +
+            "    \"offenceCode\" : \"138\"," +
+            "    \"offenceSubcode\" : \"00\"" +
+            "}," +
+            "\"dateOfFirstSanction\" : [ 2020, 1, 1 ]," +
+            "\"ageAtFirstSanction\" : 19," +
+            "\"totalOffences\" : 10," +
+            "\"totalViolentOffences\" : 8," +
+            "\"dateOfCurrentConviction\" : [ 2020, 12, 18 ]," +
+            "\"hasAnySexualOffences\" : true," +
+            "\"isCurrentSexualOffence\" : true," +
+            "\"isCurrentOffenceVictimStranger\" : true," +
+            "\"mostRecentSexualOffenceDate\" : [ 2020, 12, 11 ]," +
+            "\"totalSexualOffencesInvolvingAnAdult\" : 5," +
+            "\"totalSexualOffencesInvolvingAChild\" : 3," +
+            "\"totalSexualOffencesInvolvingChildImages\" : 2," +
+            "\"totalNonSexualOffences\" : 2," +
+            "\"earliestReleaseDate\" : [ 2021, 11, 1 ]," +
+            "\"dynamicScoringOffencesBody\" : {" +
+            "\"hasCompletedInterview\" : true," +
+            "\"committedOffenceUsingWeapon\" : true," +
+            "\"hasSuitableAccommodation\" : null," +
+            "\"currentRelationshipWithPartner\" : 2," +
+            "\"evidenceOfDomesticViolence\" : true," +
+            "\"alcoholUseIssues\" : 2," +
+            "\"bingeDrinkingIssues\" : 2," +
+            "\"impulsivityIssues\" : 1," +
+            "\"temperControlIssues\" : 2," +
+            "\"proCriminalAttitudes\" : 1," +
+            "\"previousOffencesBody\" : {" +
+            "\"murderAttempt\" : true," +
+            "\"wounding\" : true," +
+            "\"aggravatedBurglary\" : true," +
+            "\"arson\" : true," +
+            "\"criminalDamage\" : true," +
+            "\"kidnapping\" : true," +
+            "\"firearmPossession\" : true," +
+            "\"robbery\" : true," +
+            "\"offencesWithWeapon\" : true" +
+            "}," +
+            "\"avictim\" : false," +
+            "\"aperpetrator\" : false" +
+            "}" +
+            "}",
+          true,
+          true
+        )
       )
         .willReturn(
           WireMock.aResponse()
@@ -69,7 +122,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
                 "    \"rsrBand\": \"High\"," +
                 "    \"scoreType\": \"Static\"," +
                 "    \"validRsrScore\": \"Y\"," +
-                "    \"ospcScore\": 0,\n" +
+                "    \"ospcScore\": 0," +
                 "    \"ospcBand\": \"Not Applicable\"," +
                 "    \"validOspcScore\": \"A\"," +
                 "    \"ospiScore\": 0," +
