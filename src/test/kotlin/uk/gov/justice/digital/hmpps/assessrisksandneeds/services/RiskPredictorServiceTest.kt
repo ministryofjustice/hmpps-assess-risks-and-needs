@@ -122,7 +122,7 @@ class RiskPredictorServiceTest {
       offencesAndOffencesDto
     )
 
-    assertThat(predictorScores.createdAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
+    assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
     assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
     assertThat(predictorScores.scoreType).isEqualTo(ScoreType.STATIC)
     assertThat(predictorScores.rsrScore).isEqualTo(

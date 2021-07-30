@@ -97,7 +97,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
             ospiScore = Score(
               level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
             ),
-            createdAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2)
+            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2)
           )
         )
       }
