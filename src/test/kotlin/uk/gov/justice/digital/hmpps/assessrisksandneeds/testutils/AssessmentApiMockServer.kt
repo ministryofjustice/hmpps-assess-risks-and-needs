@@ -52,6 +52,90 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
+  fun stubGetRSRPredictorScoring() {
+    stubFor(
+      WireMock.post(
+        WireMock.urlEqualTo(
+          "/offenders/risks/predictors/RSR"
+        )
+      ).withRequestBody(
+        WireMock.equalToJson(
+          "{ " +
+            "\"gender\" : \"MALE\"," +
+            "\"dob\" : [ 2001, 1, 1 ]," +
+            "\"assessmentDate\" : [ 2021, 1, 1, 0, 0 ]," +
+            "\"currentOffenceBody\" : {" +
+            "    \"offenceCode\" : \"138\"," +
+            "    \"offenceSubcode\" : \"00\"" +
+            "}," +
+            "\"dateOfFirstSanction\" : [ 2020, 1, 1 ]," +
+            "\"ageAtFirstSanction\" : 19," +
+            "\"totalOffences\" : 10," +
+            "\"totalViolentOffences\" : 8," +
+            "\"dateOfCurrentConviction\" : [ 2020, 12, 18 ]," +
+            "\"hasAnySexualOffences\" : true," +
+            "\"isCurrentSexualOffence\" : true," +
+            "\"isCurrentOffenceVictimStranger\" : true," +
+            "\"mostRecentSexualOffenceDate\" : [ 2020, 12, 11 ]," +
+            "\"totalSexualOffencesInvolvingAnAdult\" : 5," +
+            "\"totalSexualOffencesInvolvingAChild\" : 3," +
+            "\"totalSexualOffencesInvolvingChildImages\" : 2," +
+            "\"totalNonSexualOffences\" : 2," +
+            "\"earliestReleaseDate\" : [ 2021, 11, 1 ]," +
+            "\"dynamicScoringOffencesBody\" : {" +
+            "\"hasCompletedInterview\" : true," +
+            "\"committedOffenceUsingWeapon\" : true," +
+            "\"hasSuitableAccommodation\" : null," +
+            "\"currentRelationshipWithPartner\" : 2," +
+            "\"evidenceOfDomesticViolence\" : true," +
+            "\"alcoholUseIssues\" : 2," +
+            "\"bingeDrinkingIssues\" : 2," +
+            "\"impulsivityIssues\" : 1," +
+            "\"temperControlIssues\" : 2," +
+            "\"proCriminalAttitudes\" : 1," +
+            "\"previousOffencesBody\" : {" +
+            "\"murderAttempt\" : true," +
+            "\"wounding\" : true," +
+            "\"aggravatedBurglary\" : true," +
+            "\"arson\" : true," +
+            "\"criminalDamage\" : true," +
+            "\"kidnapping\" : true," +
+            "\"firearmPossession\" : true," +
+            "\"robbery\" : true," +
+            "\"offencesWithWeapon\" : true" +
+            "}," +
+            "\"avictim\" : false," +
+            "\"aperpetrator\" : false" +
+            "}" +
+            "}",
+          true,
+          true
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(
+              "{" +
+                "    \"algorithmVersion\": 3," +
+                "    \"rsrScore\": 11.34," +
+                "    \"rsrBand\": \"High\"," +
+                "    \"scoreType\": \"Static\"," +
+                "    \"validRsrScore\": \"Y\"," +
+                "    \"ospcScore\": 0," +
+                "    \"ospcBand\": \"Not Applicable\"," +
+                "    \"validOspcScore\": \"A\"," +
+                "    \"ospiScore\": 0," +
+                "    \"ospiBand\": \"Not Applicable\"," +
+                "    \"validOspiScore\": \"A\"," +
+                "    \"snsvScore\": 0.31," +
+                "    \"errorCount\": 0" +
+                "}"
+            )
+        )
+    )
+  }
+
   companion object {
     val crnNotFoundJson =
       """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
