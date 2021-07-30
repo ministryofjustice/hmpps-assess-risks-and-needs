@@ -3,11 +3,11 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-data class OffenderAndOffencesBodyDto(
+data class PredictorsOffenderAndOffencesBodyDto(
   val gender: String,
   val dob: LocalDate,
   val assessmentDate: LocalDateTime,
-  val currentOffenceBody: CurrentOffenceBody,
+  val currentOffence: CurrentOffence,
   val dateOfFirstSanction: LocalDate,
   val ageAtFirstSanction: Int,
   val totalOffences: Int,
@@ -22,10 +22,10 @@ data class OffenderAndOffencesBodyDto(
   val totalSexualOffencesInvolvingChildImages: Int,
   val totalNonSexualOffences: Int,
   val earliestReleaseDate: LocalDate,
-  val dynamicScoringOffencesBody: DynamicScoringOffencesBody?
+  val dynamicScoringOffences: DynamicScoringOffences?
 )
 
-data class DynamicScoringOffencesBody(
+data class DynamicScoringOffences(
   val hasCompletedInterview: Boolean,
   val committedOffenceUsingWeapon: Boolean,
   val hasSuitableAccommodation: Int?,
@@ -39,10 +39,10 @@ data class DynamicScoringOffencesBody(
   val impulsivityIssues: Int?,
   val temperControlIssues: Int?,
   val proCriminalAttitudes: Int?,
-  val previousOffencesBody: PreviousOffencesBody?
+  val previousOffences: PreviousOffences?
 )
 
-data class PreviousOffencesBody(
+data class PreviousOffences(
   val murderAttempt: Boolean,
   val wounding: Boolean,
   val aggravatedBurglary: Boolean,
@@ -54,4 +54,4 @@ data class PreviousOffencesBody(
   val offencesWithWeapon: Boolean
 )
 
-data class CurrentOffenceBody(val offenceCode: String, val offenceSubcode: String)
+data class CurrentOffence(val offenceCode: String, val offenceSubcode: String)
