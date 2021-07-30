@@ -64,7 +64,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"gender\" : \"MALE\"," +
             "\"dob\" : [ 2001, 1, 1 ]," +
             "\"assessmentDate\" : [ 2021, 1, 1, 0, 0 ]," +
-            "\"currentOffenceBody\" : {" +
+            "\"currentOffence\" : {" +
             "    \"offenceCode\" : \"138\"," +
             "    \"offenceSubcode\" : \"00\"" +
             "}," +
@@ -82,7 +82,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"totalSexualOffencesInvolvingChildImages\" : 2," +
             "\"totalNonSexualOffences\" : 2," +
             "\"earliestReleaseDate\" : [ 2021, 11, 1 ]," +
-            "\"dynamicScoringOffencesBody\" : {" +
+            "\"dynamicScoringOffences\" : {" +
             "\"hasCompletedInterview\" : true," +
             "\"committedOffenceUsingWeapon\" : true," +
             "\"hasSuitableAccommodation\" : null," +
@@ -93,7 +93,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"impulsivityIssues\" : 1," +
             "\"temperControlIssues\" : 2," +
             "\"proCriminalAttitudes\" : 1," +
-            "\"previousOffencesBody\" : {" +
+            "\"previousOffences\" : {" +
             "\"murderAttempt\" : true," +
             "\"wounding\" : true," +
             "\"aggravatedBurglary\" : true," +
