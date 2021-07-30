@@ -86,7 +86,6 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       .consumeWith {
         Assertions.assertThat(it.responseBody).isEqualTo(
           RiskPredictorsDto(
-            algorithmVersion = 3,
             type = PredictorType.RSR,
             scoreType = ScoreType.STATIC,
             rsrScore = Score(
@@ -98,6 +97,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
             ospiScore = Score(
               level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
             ),
+            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2)
           )
         )
       }

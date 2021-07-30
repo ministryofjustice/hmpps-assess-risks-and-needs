@@ -1,9 +1,12 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 data class RiskPredictorsDto(
-  val algorithmVersion: Int,
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  val calculatedAt: LocalDateTime,
   val type: PredictorType,
   val scoreType: ScoreType?,
   val rsrScore: Score,

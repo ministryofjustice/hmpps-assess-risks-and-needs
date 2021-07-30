@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
-class OasysRSRPredictorsDto(
+data class OasysRSRPredictorsDto(
   val algorithmVersion: Int,
   val rsrScore: BigDecimal? = null,
   val rsrBand: String? = null,
@@ -14,7 +16,8 @@ class OasysRSRPredictorsDto(
   val ospiScore: BigDecimal? = null,
   val ospiBand: String? = null,
   val validOspiScore: String? = null,
-  val snsvScore: BigDecimal? = null,
-  val errorCount: Int? = null,
+  val errorCount: Int,
   val errorMessage: String? = null,
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  val calculationDateAndTime: LocalDateTime
 )
