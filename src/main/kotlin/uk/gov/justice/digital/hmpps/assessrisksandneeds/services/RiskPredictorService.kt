@@ -17,11 +17,14 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
+    val errorMessage = "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
     val predictorCalculation =
       assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences)
-        ?: throw PredictorCalculationError("Oasys Predictor for offender with CRN ${offenderAndOffences.crn} for $predictorType has failed")
+        ?: throw PredictorCalculationError(errorMessage)
 
-    return predictorCalculation?.toRiskPredictorsDto(predictorType)
+    if (predictorCalculation.errorCount!! > 0) throw PredictorCalculationError("$errorMessage - ${predictorCalculation.errorMessage}")
+
+    return predictorCalculation.toRiskPredictorsDto(predictorType)
   }
 
   private fun OasysRSRPredictorsDto.toRiskPredictorsDto(predictorType: PredictorType): RiskPredictorsDto {
@@ -30,21 +33,21 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
         RiskPredictorsDto(
           algorithmVersion = this.algorithmVersion,
           type = predictorType,
-          scoreType = ScoreType.findByType(this?.scoreType!!),
+          scoreType = ScoreType.findByType(this.scoreType!!),
           rsrScore = Score(
-            level = ScoreLevel.findByType(this?.rsrBand!!),
-            score = this?.rsrScore,
-            isValid = this?.validRsrScore.toBoolean()
+            level = ScoreLevel.findByType(this.rsrBand!!),
+            score = this.rsrScore,
+            isValid = this.validRsrScore.toBoolean()
           ),
           ospcScore = Score(
-            level = ScoreLevel.findByType(this?.ospcBand!!),
-            score = this?.ospcScore,
-            isValid = this?.validOspcScore.toBoolean()
+            level = ScoreLevel.findByType(this.ospcBand!!),
+            score = this.ospcScore,
+            isValid = this.validOspcScore.toBoolean()
           ),
           ospiScore = Score(
-            level = ScoreLevel.findByType(this?.ospiBand!!),
-            score = this?.ospiScore,
-            isValid = this?.validOspiScore.toBoolean()
+            level = ScoreLevel.findByType(this.ospiBand!!),
+            score = this.ospiScore,
+            isValid = this.validOspiScore.toBoolean()
           ),
         )
       }

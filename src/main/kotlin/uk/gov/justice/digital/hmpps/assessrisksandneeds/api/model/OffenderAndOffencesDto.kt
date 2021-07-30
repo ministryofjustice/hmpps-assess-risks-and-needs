@@ -27,9 +27,6 @@ data class OffenderAndOffencesDto(
   @JsonFormat(pattern = "yyyy-MM-dd")
   val dateOfFirstSanction: LocalDate,
 
-  @Schema(description = "Age at first conviction, conditional or absolute discharge in years", example = "19")
-  val ageAtFirstSanction: Int,
-
   @Schema(description = "Total number of sanctions for all offences", example = "10")
   val totalOffences: Int,
 

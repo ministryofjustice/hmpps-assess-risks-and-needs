@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOff
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
+import java.time.temporal.ChronoUnit.YEARS
 
 @Component
 class AssessmentApiRestClient {
@@ -124,7 +125,7 @@ class AssessmentApiRestClient {
       this.assessmentDate,
       this.currentOffence.toCurrentOffenceDto(),
       this.dateOfFirstSanction,
-      this.ageAtFirstSanction,
+      YEARS.between(this.dob, this.dateOfFirstSanction).toInt(),
       this.totalOffences,
       this.totalViolentOffences,
       this.dateOfCurrentConviction,

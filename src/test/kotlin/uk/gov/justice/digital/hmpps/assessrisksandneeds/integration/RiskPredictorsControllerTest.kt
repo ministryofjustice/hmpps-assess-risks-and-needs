@@ -36,7 +36,6 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       assessmentDate = LocalDateTime.of(2021, 1, 1, 0, 0, 0),
       currentOffence = CurrentOffence("138", "00"),
       dateOfFirstSanction = LocalDate.of(2021, 1, 1).minusYears(1),
-      ageAtFirstSanction = 19,
       totalOffences = 10,
       totalViolentOffences = 8,
       dateOfCurrentConviction = LocalDate.of(2021, 1, 1).minusWeeks(2),
