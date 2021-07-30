@@ -142,40 +142,40 @@ class AssessmentApiRestClient {
     )
   }
 
-  fun CurrentOffence.toCurrentOffenceDto(): CurrentOffenceBody {
-    return CurrentOffenceBody(this.offenceCode, this.offenceSubcode)
+  fun CurrentOffence.toCurrentOffenceDto(): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CurrentOffence {
+    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CurrentOffence(offenceCode, offenceSubcode)
   }
 
-  fun DynamicScoringOffences.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): DynamicScoringOffencesBody {
-    return DynamicScoringOffencesBody(
+  fun DynamicScoringOffences.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.DynamicScoringOffences {
+    return DynamicScoringOffences(
       hasCompletedInterview,
-      this.committedOffenceUsingWeapon,
-      this.hasSuitableAccommodation?.score,
-      this.isUnemployed?.score,
-      this.currentRelationshipWithPartner?.score,
-      this.evidenceOfDomesticViolence,
-      this.isAVictim,
-      this.isAPerpetrator,
-      this.alcoholUseIssues?.score,
-      this.bingeDrinkingIssues?.score,
-      this.impulsivityIssues?.score,
-      this.temperControlIssues?.score,
-      this.proCriminalAttitudes?.score,
-      this.previousOffences?.toPreviousOffencesBody()
+      committedOffenceUsingWeapon,
+      hasSuitableAccommodation?.score,
+      isUnemployed?.score,
+      currentRelationshipWithPartner?.score,
+      evidenceOfDomesticViolence,
+      isAVictim,
+      isAPerpetrator,
+      alcoholUseIssues?.score,
+      bingeDrinkingIssues?.score,
+      impulsivityIssues?.score,
+      temperControlIssues?.score,
+      proCriminalAttitudes?.score,
+      previousOffences?.toPreviousOffencesBody()
     )
   }
 
-  fun PreviousOffences.toPreviousOffencesBody(): PreviousOffencesBody {
-    return PreviousOffencesBody(
-      this.murderAttempt,
-      this.wounding,
-      this.aggravatedBurglary,
-      this.arson,
-      this.criminalDamage,
-      this.kidnapping,
-      this.firearmPossession,
-      this.robbery,
-      this.offencesWithWeapon
+  fun PreviousOffences.toPreviousOffencesBody(): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.PreviousOffences {
+    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.PreviousOffences(
+      murderAttempt,
+      wounding,
+      aggravatedBurglary,
+      arson,
+      criminalDamage,
+      kidnapping,
+      firearmPossession,
+      robbery,
+      offencesWithWeapon
     )
   }
 }
