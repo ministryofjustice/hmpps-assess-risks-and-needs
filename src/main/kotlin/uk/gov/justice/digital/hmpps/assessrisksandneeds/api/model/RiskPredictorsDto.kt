@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 data class RiskPredictorsDto(
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  val createdAt: LocalDateTime,
+  val calculatedAt: LocalDateTime,
   val type: PredictorType,
   val scoreType: ScoreType?,
   val rsrScore: Score,
