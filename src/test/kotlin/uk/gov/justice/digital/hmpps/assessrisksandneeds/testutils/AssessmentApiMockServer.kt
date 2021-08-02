@@ -86,6 +86,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"hasCompletedInterview\" : true," +
             "\"committedOffenceUsingWeapon\" : true," +
             "\"hasSuitableAccommodation\" : null," +
+            "\"employment\": 0,"+
             "\"currentRelationshipWithPartner\" : 2," +
             "\"evidenceOfDomesticViolence\" : true," +
             "\"alcoholUseIssues\" : 2," +
