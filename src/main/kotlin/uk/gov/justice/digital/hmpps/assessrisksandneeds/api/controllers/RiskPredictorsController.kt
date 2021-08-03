@@ -30,7 +30,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @Parameter(description = "Predictor type", required = true, example = "RSR")
     @PathVariable predictorType: PredictorType,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
-  ): RiskPredictorsDto? {
+  ): RiskPredictorsDto {
     return riskPredictorService.getPredictorScores(predictorType, offenderAndOffences)
   }
 }

@@ -77,7 +77,6 @@ class AssessmentApiRestClient {
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto
   ): OasysRSRPredictorsDto? {
-    println(offenderAndOffences.toOffenderAndOffencesBodyDto())
     log.info("Calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn}")
     val path =
       "/offenders/risks/predictors/$predictorType"
@@ -151,7 +150,7 @@ class AssessmentApiRestClient {
       hasCompletedInterview,
       committedOffenceUsingWeapon,
       hasSuitableAccommodation?.score,
-      isUnemployed?.score,
+      employment?.score,
       currentRelationshipWithPartner?.score,
       evidenceOfDomesticViolence,
       isAVictim,

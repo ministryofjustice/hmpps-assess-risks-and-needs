@@ -100,7 +100,7 @@ data class DynamicScoringOffences(
   val hasSuitableAccommodation: ProblemsLevel?,
 
   @Schema(description = "Is the person unemployed or will be unemployed upon release?", example = "NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING")
-  val isUnemployed: EmploymentType?,
+  val employment: EmploymentType?,
 
   @Schema(description = "What is the person's current relationship with their partner?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
   val currentRelationshipWithPartner: ProblemsLevel?,

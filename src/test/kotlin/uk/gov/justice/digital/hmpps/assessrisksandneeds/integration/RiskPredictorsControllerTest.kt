@@ -52,7 +52,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       dynamicScoringOffences = DynamicScoringOffences(
         committedOffenceUsingWeapon = true,
         hasSuitableAccommodation = ProblemsLevel.MISSING,
-        isUnemployed = EmploymentType.NOT_AVAILABLE_FOR_WORK,
+        employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
         currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         evidenceOfDomesticViolence = true,
         isAVictim = true,
