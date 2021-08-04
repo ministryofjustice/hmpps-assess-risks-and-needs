@@ -119,7 +119,7 @@ class AssessmentApiRestClient {
 
   private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(): OffenderAndOffencesBodyDto {
     return OffenderAndOffencesBodyDto(
-      this.gender.name,
+      this.gender.value,
       this.dob,
       this.assessmentDate,
       this.currentOffence.toCurrentOffenceDto(),

@@ -96,13 +96,22 @@ data class DynamicScoringOffences(
   @Schema(description = "Did the offence involve carrying or use of a weapon?", example = "true")
   val committedOffenceUsingWeapon: Boolean,
 
-  @Schema(description = "Is the individual living in suitable accommodation?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(
+    description = "Is the individual living in suitable accommodation?",
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+  )
   val hasSuitableAccommodation: ProblemsLevel?,
 
-  @Schema(description = "Is the person unemployed or will be unemployed upon release?", example = "NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING")
+  @Schema(
+    description = "Is the person unemployed or will be unemployed upon release?",
+    example = "NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING"
+  )
   val employment: EmploymentType?,
 
-  @Schema(description = "What is the person's current relationship with their partner?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(
+    description = "What is the person's current relationship with their partner?",
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+  )
   val currentRelationshipWithPartner: ProblemsLevel?,
 
   @Schema(description = "Is there evidence that the individual is a perpetrator of domestic abuse?", example = "true")
@@ -114,19 +123,34 @@ data class DynamicScoringOffences(
   @Schema(description = "Is the individual a perpetrator of domestic abuse?", example = "true")
   val isAPerpetrator: Boolean,
 
-  @Schema(description = "Is the person's current use of alcohol a problem?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(
+    description = "Is the person's current use of alcohol a problem?",
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+  )
   val alcoholUseIssues: ProblemsLevel?,
 
-  @Schema(description = "Is there evidence of binge drinking or excessive use of alcohol in the last 6 months?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(
+    description = "Is there evidence of binge drinking or excessive use of alcohol in the last 6 months?",
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+  )
   val bingeDrinkingIssues: ProblemsLevel?,
 
-  @Schema(description = "Is impulsivity a problem for the individual?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(
+    description = "Is impulsivity a problem for the individual?",
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+  )
   val impulsivityIssues: ProblemsLevel?,
 
-  @Schema(description = "Is temper control a problem for the individual?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(
+    description = "Is temper control a problem for the individual?",
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+  )
   val temperControlIssues: ProblemsLevel?,
 
-  @Schema(description = "Does the individual have pro-criminal attitudes?", example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING")
+  @Schema(
+    description = "Does the individual have pro-criminal attitudes?",
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+  )
   val proCriminalAttitudes: ProblemsLevel?,
 
   @Schema(description = "Previous Offences")
@@ -168,8 +192,8 @@ enum class EmploymentType(val score: Int? = null) {
   NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(2), MISSING
 }
 
-enum class Gender {
-  MALE, FEMALE
+enum class Gender(val value: String) {
+  MALE("M"), FEMALE("F")
 }
 
 enum class ProblemsLevel(val score: Int? = null) {
