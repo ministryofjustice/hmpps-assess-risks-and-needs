@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
@@ -13,16 +15,21 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Pred
 
 @Service
 class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient) {
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   fun getPredictorScores(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
-    val errorMessage = "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
+    val errorMessage =
+      "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
     val predictorCalculation =
       assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences)
         ?: throw PredictorCalculationError(errorMessage)
 
-    if (predictorCalculation.errorCount > 0) throw PredictorCalculationError("$errorMessage - ${predictorCalculation.errorMessage}")
+    if (predictorCalculation.errorCount > 0) log.info("$errorMessage - ${predictorCalculation.errorMessage}")
 
     return predictorCalculation.toRiskPredictorsDto(predictorType)
   }
@@ -49,6 +56,7 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
             score = this.ospiScore,
             isValid = this.validOspiScore.toBoolean()
           ),
+          errors = this.toErrors()
         )
       }
     }
@@ -56,6 +64,10 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
 
   private fun String?.toBoolean(): Boolean {
     return this?.equals(AnswerType.Y.name) == true
+  }
+
+  private fun OasysRSRPredictorsDto.toErrors(): List<String> {
+    return if (this.errorCount > 0) this.errorMessage?.split('.') ?: emptyList() else emptyList()
   }
 
   enum class AnswerType {

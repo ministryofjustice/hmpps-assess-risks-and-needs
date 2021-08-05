@@ -93,9 +93,6 @@ data class OffenderAndOffencesDto(
 
 data class DynamicScoringOffences(
 
-  @Schema(description = "Did the offence involve carrying or use of a weapon?", example = "true")
-  val committedOffenceUsingWeapon: Boolean,
-
   @Schema(
     description = "Is the individual living in suitable accommodation?",
     example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
@@ -154,7 +151,18 @@ data class DynamicScoringOffences(
   val proCriminalAttitudes: ProblemsLevel?,
 
   @Schema(description = "Previous Offences")
-  val previousOffences: PreviousOffences?
+  val previousOffences: PreviousOffences?,
+
+  @Schema(description = "Current Offences")
+  val currentOffences: CurrentOffences?
+)
+
+data class CurrentOffences(
+  @Schema(description = "Possession of a firearm with intent to endanger life or resist arrest", example = "true")
+  val firearmPossession: Boolean,
+
+  @Schema(description = "Any other offence involving possession and/or use of weapons", example = "true")
+  val offencesWithWeapon: Boolean
 )
 
 data class PreviousOffences(
@@ -189,7 +197,7 @@ data class PreviousOffences(
 data class CurrentOffence(val offenceCode: String, val offenceSubcode: String)
 
 enum class EmploymentType(val score: Int? = null) {
-  NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(2), MISSING
+  NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(1), MISSING
 }
 
 enum class Gender(val value: String) {

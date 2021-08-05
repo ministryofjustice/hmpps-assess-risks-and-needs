@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
@@ -50,7 +51,6 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
       hasCompletedInterview = true,
       dynamicScoringOffences = DynamicScoringOffences(
-        committedOffenceUsingWeapon = true,
         hasSuitableAccommodation = ProblemsLevel.MISSING,
         employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
         currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -71,6 +71,10 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
           kidnapping = true,
           firearmPossession = true,
           robbery = true,
+          offencesWithWeapon = true
+        ),
+        currentOffences = CurrentOffences(
+          firearmPossession = true,
           offencesWithWeapon = true
         )
       )

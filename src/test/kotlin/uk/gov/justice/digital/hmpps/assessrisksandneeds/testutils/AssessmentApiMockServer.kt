@@ -84,7 +84,6 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"earliestReleaseDate\" : [ 2021, 11, 1 ]," +
             "\"dynamicScoringOffences\" : {" +
             "\"hasCompletedInterview\" : true," +
-            "\"committedOffenceUsingWeapon\" : true," +
             "\"hasSuitableAccommodation\" : null," +
             "\"employment\": 0," +
             "\"currentRelationshipWithPartner\" : 2," +
@@ -104,6 +103,10 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"firearmPossession\" : true," +
             "\"robbery\" : true," +
             "\"offencesWithWeapon\" : true" +
+            "}," +
+            "\"currentOffences\" : {" +
+            "\"firearmPossession\" : true, " +
+            "\"offencesWithWeapon\" : true " +
             "}," +
             "\"avictim\" : false," +
             "\"aperpetrator\" : false" +

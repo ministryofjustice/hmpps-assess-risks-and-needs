@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
@@ -55,7 +56,6 @@ class RiskPredictorServiceTest {
     earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
     hasCompletedInterview = true,
     dynamicScoringOffences = DynamicScoringOffences(
-      committedOffenceUsingWeapon = true,
       hasSuitableAccommodation = ProblemsLevel.MISSING,
       employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
       currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -76,6 +76,10 @@ class RiskPredictorServiceTest {
         kidnapping = true,
         firearmPossession = true,
         robbery = true,
+        offencesWithWeapon = true
+      ),
+      currentOffences = CurrentOffences(
+        firearmPossession = true,
         offencesWithWeapon = true
       )
     )
@@ -140,36 +144,5 @@ class RiskPredictorServiceTest {
         level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
       )
     )
-  }
-
-  @Test
-  fun `get risk predictors data throws PredictorCalculationError if calculation returns errors`() {
-    val predictorType = PredictorType.RSR
-    every {
-      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
-    } returns OasysRSRPredictorsDto(
-      algorithmVersion = 3,
-      rsrScore = BigDecimal("11.34"),
-      rsrBand = "High",
-      scoreType = "Static",
-      validRsrScore = "Y",
-      ospcScore = BigDecimal("0"),
-      ospcBand = "Not Applicable",
-      validOspcScore = "A",
-      ospiScore = BigDecimal("0"),
-      ospiBand = "Not Applicable",
-      validOspiScore = "A",
-      errorCount = 1,
-      errorMessage = "error error error",
-      calculationDateAndTime = LocalDateTime.now()
-    )
-
-    val exception = assertThrows<PredictorCalculationError> {
-      riskPredictorsService.getPredictorScores(
-        predictorType,
-        offencesAndOffencesDto
-      )
-    }
-    assertThat(exception.message).isEqualTo("Oasys Predictor Calculation failed for offender with CRN ${offencesAndOffencesDto.crn} and $predictorType - error error error")
   }
 }
