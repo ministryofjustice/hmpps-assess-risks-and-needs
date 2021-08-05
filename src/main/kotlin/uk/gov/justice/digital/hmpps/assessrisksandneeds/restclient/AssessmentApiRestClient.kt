@@ -148,7 +148,7 @@ class AssessmentApiRestClient {
   }
 
   fun DynamicScoringOffences.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.DynamicScoringOffences {
-    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.DynamicScoringOffences(
+    return DynamicScoringOffences(
       hasCompletedInterview,
       this.hasSuitableAccommodation?.score,
       this.employment?.score,

@@ -67,7 +67,8 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
   }
 
   private fun OasysRSRPredictorsDto.toErrors(): List<String> {
-    return if (this.errorCount > 0) this.errorMessage?.split('.') ?: emptyList() else emptyList()
+    return if (this.errorCount > 0) this.errorMessage?.split('\n')?.filter { !it.isNullOrBlank() }
+      ?: emptyList() else emptyList()
   }
 
   enum class AnswerType {
