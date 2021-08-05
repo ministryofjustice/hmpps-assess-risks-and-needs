@@ -145,4 +145,44 @@ class RiskPredictorServiceTest {
       )
     )
   }
+
+  @Test
+  fun `should deserialize errors correctly`() {
+    val predictorType = PredictorType.RSR
+    every {
+      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
+    } returns OasysRSRPredictorsDto(
+      algorithmVersion = 3,
+      rsrScore = BigDecimal("11.34"),
+      rsrBand = "High",
+      scoreType = "Static",
+      validRsrScore = "Y",
+      ospcScore = BigDecimal("0"),
+      ospcBand = "Not Applicable",
+      validOspcScore = "A",
+      ospiScore = BigDecimal("0"),
+      ospiBand = "Not Applicable",
+      validOspiScore = "A",
+      errorCount = 9,
+      errorMessage = "Missing detail on previous murder (R1.2).\nMissing detail on previous wounding or gbh (R1.2).\nMissing detail on previous kidnapping (R1.2).\nMissing detail on previous firearm (R1.2).\nMissing detail on previous robbery (R1.2).\nMissing detail on previous aggravated burglary (R1.2).\nMissing detail on previous weapon (R1.2).\nMissing detail on previous criminal damage with intent to endanger life (R1.2).\nMissing detail on previous arson (R1.2).\n",
+      calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
+    )
+
+    val predictorScores = riskPredictorsService.getPredictorScores(
+      predictorType,
+      offencesAndOffencesDto
+    )
+
+    assertThat(predictorScores.errors).containsExactly(
+      "Missing detail on previous murder (R1.2).",
+      "Missing detail on previous wounding or gbh (R1.2).",
+      "Missing detail on previous kidnapping (R1.2).",
+      "Missing detail on previous firearm (R1.2).",
+      "Missing detail on previous robbery (R1.2).",
+      "Missing detail on previous aggravated burglary (R1.2).",
+      "Missing detail on previous weapon (R1.2).",
+      "Missing detail on previous criminal damage with intent to endanger life (R1.2).",
+      "Missing detail on previous arson (R1.2).",
+    )
+  }
 }
