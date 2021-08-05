@@ -18,11 +18,13 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
+
   fun getPredictorScores(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
-    val errorMessage = "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
+    val errorMessage =
+      "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
     val predictorCalculation =
       assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences)
         ?: throw PredictorCalculationError(errorMessage)
@@ -54,6 +56,7 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
             score = this.ospiScore,
             isValid = this.validOspiScore.toBoolean()
           ),
+          errors = this.toErrors()
         )
       }
     }
@@ -63,7 +66,12 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
     return this?.equals(AnswerType.Y.name) == true
   }
 
+  private fun OasysRSRPredictorsDto.toErrors(): List<String> {
+    return if (this.errorCount > 0) this.errorMessage?.split('.') ?: emptyList() else emptyList()
+  }
+
   enum class AnswerType {
     Y, N
   }
 }
+

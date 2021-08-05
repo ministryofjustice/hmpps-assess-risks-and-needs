@@ -11,7 +11,8 @@ data class RiskPredictorsDto(
   val scoreType: ScoreType?,
   val rsrScore: Score,
   val ospcScore: Score,
-  val ospiScore: Score
+  val ospiScore: Score,
+  val errors: List<String> = emptyList()
 )
 
 data class Score(
