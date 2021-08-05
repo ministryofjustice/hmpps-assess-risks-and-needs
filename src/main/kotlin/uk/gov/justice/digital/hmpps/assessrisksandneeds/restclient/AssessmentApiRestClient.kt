@@ -80,10 +80,12 @@ class AssessmentApiRestClient {
     log.info("Calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn}")
     val path =
       "/offenders/risks/predictors/$predictorType"
+    val body = offenderAndOffences.toOffenderAndOffencesBodyDto()
+    log.info("Calculating $predictorType scoring with $body")
     return webClient
       .post(
         path,
-        offenderAndOffences.toOffenderAndOffencesBodyDto()
+        body
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
