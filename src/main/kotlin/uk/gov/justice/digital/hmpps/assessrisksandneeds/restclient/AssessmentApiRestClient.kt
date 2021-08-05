@@ -146,35 +146,42 @@ class AssessmentApiRestClient {
   }
 
   fun DynamicScoringOffences.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.DynamicScoringOffences {
-    return DynamicScoringOffences(
+    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.DynamicScoringOffences(
       hasCompletedInterview,
-      committedOffenceUsingWeapon,
-      hasSuitableAccommodation?.score,
-      employment?.score,
-      currentRelationshipWithPartner?.score,
-      evidenceOfDomesticViolence,
-      isAVictim,
-      isAPerpetrator,
-      alcoholUseIssues?.score,
-      bingeDrinkingIssues?.score,
-      impulsivityIssues?.score,
-      temperControlIssues?.score,
-      proCriminalAttitudes?.score,
-      previousOffences?.toPreviousOffencesBody()
+      this.hasSuitableAccommodation?.score,
+      this.employment?.score,
+      this.currentRelationshipWithPartner?.score,
+      this.evidenceOfDomesticViolence,
+      this.isAVictim,
+      this.isAPerpetrator,
+      this.alcoholUseIssues?.score,
+      this.bingeDrinkingIssues?.score,
+      this.impulsivityIssues?.score,
+      this.temperControlIssues?.score,
+      this.proCriminalAttitudes?.score,
+      this.previousOffences?.toPreviousOffencesBody(),
+      this.currentOffences?.toCurrentOffencesBody()
+    )
+  }
+
+  private fun uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences.toCurrentOffencesBody(): CurrentOffences {
+    return CurrentOffences(
+      this.firearmPossession,
+      this.offencesWithWeapon
     )
   }
 
   fun PreviousOffences.toPreviousOffencesBody(): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.PreviousOffences {
     return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.PreviousOffences(
-      murderAttempt,
-      wounding,
-      aggravatedBurglary,
-      arson,
-      criminalDamage,
-      kidnapping,
-      firearmPossession,
-      robbery,
-      offencesWithWeapon
+      this.murderAttempt,
+      this.wounding,
+      this.aggravatedBurglary,
+      this.arson,
+      this.criminalDamage,
+      this.kidnapping,
+      this.firearmPossession,
+      this.robbery,
+      this.offencesWithWeapon
     )
   }
 }
