@@ -74,4 +74,3 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
     Y, N
   }
 }
-
