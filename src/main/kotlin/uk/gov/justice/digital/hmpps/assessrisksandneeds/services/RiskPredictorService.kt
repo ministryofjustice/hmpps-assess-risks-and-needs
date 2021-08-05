@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
@@ -13,6 +15,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Pred
 
 @Service
 class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient) {
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
   fun getPredictorScores(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto
@@ -22,7 +27,7 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
       assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences)
         ?: throw PredictorCalculationError(errorMessage)
 
-    if (predictorCalculation.errorCount > 0) throw PredictorCalculationError("$errorMessage - ${predictorCalculation.errorMessage}")
+    if (predictorCalculation.errorCount > 0) log.info("$errorMessage - ${predictorCalculation.errorMessage}")
 
     return predictorCalculation.toRiskPredictorsDto(predictorType)
   }

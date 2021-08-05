@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
@@ -55,7 +56,6 @@ class RiskPredictorServiceTest {
     earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
     hasCompletedInterview = true,
     dynamicScoringOffences = DynamicScoringOffences(
-      committedOffenceUsingWeapon = true,
       hasSuitableAccommodation = ProblemsLevel.MISSING,
       employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
       currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -76,6 +76,10 @@ class RiskPredictorServiceTest {
         kidnapping = true,
         firearmPossession = true,
         robbery = true,
+        offencesWithWeapon = true
+      ),
+      currentOffences = CurrentOffences(
+        firearmPossession = true,
         offencesWithWeapon = true
       )
     )

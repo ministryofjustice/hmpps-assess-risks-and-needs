@@ -27,7 +27,6 @@ data class OffenderAndOffencesBodyDto(
 
 data class DynamicScoringOffences(
   val hasCompletedInterview: Boolean,
-  val committedOffenceUsingWeapon: Boolean,
   val hasSuitableAccommodation: Int?,
   val employment: Int?,
   val currentRelationshipWithPartner: Int?,
@@ -39,7 +38,13 @@ data class DynamicScoringOffences(
   val impulsivityIssues: Int?,
   val temperControlIssues: Int?,
   val proCriminalAttitudes: Int?,
-  val previousOffences: PreviousOffences?
+  val previousOffences: PreviousOffences?,
+  val currentOffences: CurrentOffences?
+)
+
+data class CurrentOffences(
+  val firearmPossession: Boolean,
+  val offencesWithWeapon: Boolean
 )
 
 data class PreviousOffences(
