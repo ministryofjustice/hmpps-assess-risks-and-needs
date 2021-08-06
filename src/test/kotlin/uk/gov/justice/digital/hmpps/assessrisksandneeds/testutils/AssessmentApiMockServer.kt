@@ -141,6 +141,62 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
+  fun stubGetLatestNeedsByCrn() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/crn/$crn/needs/latest?period=YEAR&periodUnits=1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(needsJson)
+        )
+    )
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/crn/NOT_FOUND/needs/latest?period=YEAR&periodUnits=1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withBody(crnNotFoundJson)
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/crn/NOT_CURRENT/needs/latest?period=YEAR&periodUnits=1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(notCurrentNeedsJson)
+            .withStatus(404)
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/crn/NO_NEEDS/needs/latest?period=YEAR&periodUnits=1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withBody(emptyNeedsJson)
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+        )
+    )
+  }
+
   companion object {
     val crnNotFoundJson =
       """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
@@ -453,4 +509,135 @@ class AssessmentApiMockServer : WireMockServer(9004) {
 }
       """.trimIndent()
   }
+
+  private val needsJson = """
+    {
+    "needs": [
+      {
+          "section": "ACCOMMODATION",
+          "name": "Accommodation",
+          "overThreshold": false,
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "flaggedAsNeed": false,
+          "severity": "SEVERE",
+          "identifiedAsNeed": true,
+          "needScore" : 2
+      },
+      {
+          "section": "EDUCATION_TRAINING_AND_EMPLOYABILITY",
+          "name": "4 - Education, Training and Employability",
+          "overThreshold": false,
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "flaggedAsNeed": false,
+          "severity": "SEVERE",
+          "identifiedAsNeed": true,
+          "needScore" : 2
+      },
+      {
+          "section": "FINANCIAL_MANAGEMENT_AND_INCOME",
+          "name": "Financial Management and Income",
+          "overThreshold": false,
+          "riskOfHarm": false,
+          "riskOfReoffending": false,
+          "flaggedAsNeed": false,
+          "severity": "NO_NEED",
+          "identifiedAsNeed": false
+      },
+      {
+          "section": "RELATIONSHIPS",
+          "name": "Relationships",
+          "overThreshold": false,
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "flaggedAsNeed": false,
+          "severity": "SEVERE",
+          "identifiedAsNeed": true,
+          "needScore" : 2
+      },
+      {
+          "section": "LIFESTYLE_AND_ASSOCIATES",
+          "name": "Lifestyle and Associates",
+          "overThreshold": false,
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "flaggedAsNeed": false,
+          "severity": "SEVERE",
+          "identifiedAsNeed": true,
+          "needScore" : 2
+      },
+      {
+          "section": "DRUG_MISUSE",
+          "name": "Drug Misuse",
+          "overThreshold": false,
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "flaggedAsNeed": false,
+          "severity": "SEVERE",
+          "identifiedAsNeed": true,
+          "needScore" : 2
+      },
+      {
+          "section": "ALCOHOL_MISUSE",
+          "name": "Alcohol Misuse",
+          "overThreshold": false,
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "flaggedAsNeed": false,
+          "severity": "SEVERE",
+          "identifiedAsNeed": true,
+          "needScore" : 2
+      },
+      {
+          "section": "EMOTIONAL_WELL_BEING",
+          "name": "Emotional Well-Being",
+          "overThreshold": false,
+          "riskOfHarm": false,
+          "riskOfReoffending": false,
+          "flaggedAsNeed": false,
+          "severity": "NO_NEED",
+          "identifiedAsNeed": false
+      }
+    ],
+    "assessedOn": "2021-06-21T15:55:04",
+    "historicStatus": "CURRENT"
+  } """
+
+  private val notCurrentNeedsJson = """
+    {
+    "needs": [
+      {
+          "section": "ACCOMMODATION",
+          "name": "Accommodation",
+          "overThreshold": false,
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "flaggedAsNeed": false,
+          "severity": "SEVERE",
+          "identifiedAsNeed": true,
+          "needScore" : 2
+      },
+      {
+          "section": "EMOTIONAL_WELL_BEING",
+          "name": "Emotional Well-Being",
+          "overThreshold": false,
+          "riskOfHarm": false,
+          "riskOfReoffending": false,
+          "flaggedAsNeed": false,
+          "severity": "NO_NEED",
+          "identifiedAsNeed": false,
+          "needScore" : 0
+      }
+    ],
+    "assessedOn": "2021-06-21T15:55:04",
+    "historicStatus": "HISTORIC"
+  } """
+
+  private val emptyNeedsJson = """
+      {
+      "needs": [],
+      "assessedOn": "2021-06-21T15:55:04",
+      "historicStatus": "CURRENT"
+    } """
 }

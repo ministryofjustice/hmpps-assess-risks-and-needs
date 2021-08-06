@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
@@ -16,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 import java.time.temporal.ChronoUnit.YEARS
 
 @Component
+// offender assessments api
 class AssessmentApiRestClient {
   @Autowired
   @Qualifier("assessmentApiWebClient")
@@ -71,6 +73,39 @@ class AssessmentApiRestClient {
       }
       .bodyToMono(SectionAnswersDto::class.java)
       .block().also { log.info("Retrieved Rosh sections for last year completed Assessment for crn $crn") }
+  }
+
+  fun getNeedsForCompletedLastYearAssessment(
+    crn: String,
+  ): OffenderNeedsDto? {
+    log.info("Retrieving needs for last year completed Assessment for crn $crn")
+    val path =
+      "/assessments/crn/$crn/needs/latest?period=YEAR&periodUnits=1"
+    return webClient
+      .get(
+        path
+      )
+      .retrieve()
+      .onStatus(HttpStatus::is4xxClientError) {
+        log.error("4xx Error retrieving needs for last year completed Assessment for crn $crn code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .onStatus(HttpStatus::is5xxServerError) {
+        log.error("5xx Error retrieving needs for last year completed Assessment for crn $crn code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve needs for last year completed Assessment for crn $crn",
+          HttpMethod.POST,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .bodyToMono(OffenderNeedsDto::class.java)
+      .block().also { log.info("Retrieved needs for last year completed Assessment for crn $crn") }
   }
 
   fun calculatePredictorTypeScoring(
