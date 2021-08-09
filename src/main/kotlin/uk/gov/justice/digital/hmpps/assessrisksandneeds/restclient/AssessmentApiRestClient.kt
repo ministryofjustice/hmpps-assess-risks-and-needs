@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
