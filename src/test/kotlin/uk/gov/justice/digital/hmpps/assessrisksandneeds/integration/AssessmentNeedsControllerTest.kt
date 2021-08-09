@@ -19,7 +19,7 @@ class AssessmentNeedsControllerTest : IntegrationTestBase() {
   @Test
   fun `get criminogenic needs by crn`() {
     val needsDto = webTestClient.get().uri("/needs/crn/$crn")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
       .expectBody<AssessmentNeedsDto>()
@@ -34,7 +34,7 @@ class AssessmentNeedsControllerTest : IntegrationTestBase() {
   @Test
   fun `get criminogenic needs returns not found`() {
     webTestClient.get().uri("/needs/crn/NOT_FOUND")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
   }
