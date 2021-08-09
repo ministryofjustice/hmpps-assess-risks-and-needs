@@ -24,7 +24,7 @@ class AssessmentNeedsController(private val assessmentNeedsService: AssessmentNe
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getCriminogenicNeedsByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,

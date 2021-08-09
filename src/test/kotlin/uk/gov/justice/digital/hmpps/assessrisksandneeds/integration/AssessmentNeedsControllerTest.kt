@@ -39,22 +39,6 @@ class AssessmentNeedsControllerTest : IntegrationTestBase() {
       .expectStatus().isNotFound
   }
 
-  @Test
-  fun `get criminogenic needs returns not found for crn with no needs`() {
-    webTestClient.get().uri("/needs/crn/NO_NEEDS")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
-      .exchange()
-      .expectStatus().isNotFound
-  }
-
-  @Test
-  fun `get criminogenic needs returns not found for crn with needs which are not current`() {
-    webTestClient.get().uri("/needs/crn/NOT_CURRENT")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
-      .exchange()
-      .expectStatus().isNotFound
-  }
-
   private fun unscoredNeeds() = listOf(
     AssessmentNeedDto(
       section = "THINKING_AND_BEHAVIOUR",

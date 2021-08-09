@@ -10,15 +10,18 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsD
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
+const val currentStatus = "CURRENT"
+
 @Service
 class AssessmentNeedsService(private val assessmentClient: AssessmentApiRestClient) {
   fun getAssessmentNeeds(crn: String): AssessmentNeedsDto {
     log.info("Get needs for CRN: $crn")
     val offenderNeeds = assessmentClient.getNeedsForCompletedLastYearAssessment(crn)
-    if (offenderNeeds?.historicStatus != "CURRENT") {
+
+    if (offenderNeeds?.historicStatus != currentStatus) {
       throw EntityNotFoundException("Current needs for CRN: $crn could not be found")
     }
-    if (offenderNeeds.needs.isNullOrEmpty()) {
+    if (offenderNeeds.needs.isEmpty()) {
       throw EntityNotFoundException("No needs found for CRN: $crn")
     }
     log.info("Retrieved ${offenderNeeds.needs.size} needs for CRN: $crn")
