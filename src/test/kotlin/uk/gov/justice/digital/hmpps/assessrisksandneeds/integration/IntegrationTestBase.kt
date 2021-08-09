@@ -33,6 +33,7 @@ abstract class IntegrationTestBase {
     fun startMocks() {
       assessmentApiMockServer.start()
       assessmentApiMockServer.stubGetRoshRisksByCrn()
+      assessmentApiMockServer.stubGetLatestNeedsByCrn()
       assessmentApiMockServer.stubGetRSRPredictorScoring()
     }
 
