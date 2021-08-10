@@ -88,6 +88,8 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"employment\": 0," +
             "\"currentRelationshipWithPartner\" : 2," +
             "\"evidenceOfDomesticViolence\" : true," +
+            "\"isVictim\" : true," +
+            "\"isPerpetrator\" : true," +
             "\"alcoholUseIssues\" : 2," +
             "\"bingeDrinkingIssues\" : 2," +
             "\"impulsivityIssues\" : 1," +
@@ -107,9 +109,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"currentOffences\" : {" +
             "\"firearmPossession\" : true, " +
             "\"offencesWithWeapon\" : true " +
-            "}," +
-            "\"avictim\" : false," +
-            "\"aperpetrator\" : false" +
+            "}" +
             "}" +
             "}",
           true,
