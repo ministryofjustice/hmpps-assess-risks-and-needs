@@ -83,33 +83,33 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"totalNonSexualOffences\" : 2," +
             "\"earliestReleaseDate\" : [ 2021, 11, 1 ]," +
             "\"dynamicScoringOffences\" : {" +
-            "\"hasCompletedInterview\" : true," +
-            "\"hasSuitableAccommodation\" : null," +
-            "\"employment\": 0," +
-            "\"currentRelationshipWithPartner\" : 2," +
-            "\"evidenceOfDomesticViolence\" : true," +
-            "\"alcoholUseIssues\" : 2," +
-            "\"bingeDrinkingIssues\" : 2," +
-            "\"impulsivityIssues\" : 1," +
-            "\"temperControlIssues\" : 2," +
-            "\"proCriminalAttitudes\" : 1," +
-            "\"previousOffences\" : {" +
-            "\"murderAttempt\" : true," +
-            "\"wounding\" : true," +
-            "\"aggravatedBurglary\" : true," +
-            "\"arson\" : true," +
-            "\"criminalDamage\" : true," +
-            "\"kidnapping\" : true," +
-            "\"firearmPossession\" : true," +
-            "\"robbery\" : true," +
-            "\"offencesWithWeapon\" : true" +
-            "}," +
-            "\"currentOffences\" : {" +
-            "\"firearmPossession\" : true, " +
-            "\"offencesWithWeapon\" : true " +
-            "}," +
-            "\"isVictim\" : false," +
-            "\"isPerpetrator\" : false" +
+              "\"hasCompletedInterview\" : true," +
+              "\"hasSuitableAccommodation\" : null," +
+              "\"employment\": 0," +
+              "\"currentRelationshipWithPartner\" : 2," +
+              "\"evidenceOfDomesticViolence\" : true," +
+              "\"isVictim\" : true," +
+              "\"isPerpetrator\" : true," +
+              "\"alcoholUseIssues\" : 2," +
+              "\"bingeDrinkingIssues\" : 2," +
+              "\"impulsivityIssues\" : 1," +
+              "\"temperControlIssues\" : 2," +
+              "\"proCriminalAttitudes\" : 1," +
+              "\"previousOffences\" : {" +
+                "\"murderAttempt\" : true," +
+                "\"wounding\" : true," +
+                "\"aggravatedBurglary\" : true," +
+                "\"arson\" : true," +
+                "\"criminalDamage\" : true," +
+                "\"kidnapping\" : true," +
+                "\"firearmPossession\" : true," +
+                "\"robbery\" : true," +
+                "\"offencesWithWeapon\" : true" +
+              "}," +
+              "\"currentOffences\" : {" +
+                "\"firearmPossession\" : true, " +
+                "\"offencesWithWeapon\" : true " +
+              "}" +
             "}" +
             "}",
           true,
