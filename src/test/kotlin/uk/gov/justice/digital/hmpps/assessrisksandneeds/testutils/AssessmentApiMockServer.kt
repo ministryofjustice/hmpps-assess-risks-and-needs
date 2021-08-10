@@ -108,8 +108,8 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"firearmPossession\" : true, " +
             "\"offencesWithWeapon\" : true " +
             "}," +
-            "\"avictim\" : false," +
-            "\"aperpetrator\" : false" +
+            "\"isVictim\" : false," +
+            "\"isPerpetrator\" : false" +
             "}" +
             "}",
           true,
