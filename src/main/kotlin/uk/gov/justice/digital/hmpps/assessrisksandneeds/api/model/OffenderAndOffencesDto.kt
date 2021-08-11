@@ -112,13 +112,13 @@ data class DynamicScoringOffences(
   val currentRelationshipWithPartner: ProblemsLevel?,
 
   @Schema(description = "Is there evidence that the individual is a perpetrator of domestic abuse?", example = "true")
-  val evidenceOfDomesticViolence: Boolean,
+  val evidenceOfDomesticViolence: Boolean?,
 
   @Schema(description = "Is the individual a victim of domestic abuse?", example = "true")
-  val isVictim: Boolean,
+  val isVictim: Boolean?,
 
   @Schema(description = "Is the individual a perpetrator of domestic abuse?", example = "true")
-  val isPerpetrator: Boolean,
+  val isPerpetrator: Boolean?,
 
   @Schema(
     description = "Is the person's current use of alcohol a problem?",
@@ -159,39 +159,39 @@ data class DynamicScoringOffences(
 
 data class CurrentOffences(
   @Schema(description = "Possession of a firearm with intent to endanger life or resist arrest", example = "true")
-  val firearmPossession: Boolean,
+  val firearmPossession: Boolean?,
 
   @Schema(description = "Any other offence involving possession and/or use of weapons", example = "true")
-  val offencesWithWeapon: Boolean
+  val offencesWithWeapon: Boolean?
 )
 
 data class PreviousOffences(
   @Schema(description = "Murder/attempted murder/threat or conspiracy to murder/manslaughter", example = "true")
-  val murderAttempt: Boolean,
+  val murderAttempt: Boolean?,
 
   @Schema(description = "Wounding/GBH (Sections 18/20 Offences Against the Person Act 1861)", example = "true")
-  val wounding: Boolean,
+  val wounding: Boolean?,
 
   @Schema(description = "Aggravated burglary", example = "true")
-  val aggravatedBurglary: Boolean,
+  val aggravatedBurglary: Boolean?,
 
   @Schema(description = "Arson", example = "true")
-  val arson: Boolean,
+  val arson: Boolean?,
 
   @Schema(description = "Criminal damage with intent to endanger life", example = "true")
-  val criminalDamage: Boolean,
+  val criminalDamage: Boolean?,
 
   @Schema(description = "Kidnapping/false imprisonment", example = "true")
-  val kidnapping: Boolean,
+  val kidnapping: Boolean?,
 
   @Schema(description = "Possession of a firearm with intent to endanger life or resist arrest", example = "true")
-  val firearmPossession: Boolean,
+  val firearmPossession: Boolean?,
 
   @Schema(description = "Robbery", example = "true")
-  val robbery: Boolean,
+  val robbery: Boolean?,
 
   @Schema(description = "Any other offence involving possession and/or use of weapons", example = "true")
-  val offencesWithWeapon: Boolean
+  val offencesWithWeapon: Boolean?
 )
 
 data class CurrentOffence(val offenceCode: String, val offenceSubcode: String)
