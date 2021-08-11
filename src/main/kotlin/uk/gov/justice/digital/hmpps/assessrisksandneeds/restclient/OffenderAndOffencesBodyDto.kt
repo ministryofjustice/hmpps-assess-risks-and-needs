@@ -26,13 +26,13 @@ data class OffenderAndOffencesBodyDto(
 )
 
 data class DynamicScoringOffences(
-  val hasCompletedInterview: Boolean,
+  val hasCompletedInterview: Boolean?,
   val hasSuitableAccommodation: Int?,
   val employment: Int?,
   val currentRelationshipWithPartner: Int?,
-  val evidenceOfDomesticViolence: Boolean,
-  val isVictim: Boolean,
-  val isPerpetrator: Boolean,
+  val evidenceOfDomesticViolence: Boolean?,
+  val isVictim: Boolean?,
+  val isPerpetrator: Boolean?,
   val alcoholUseIssues: Int?,
   val bingeDrinkingIssues: Int?,
   val impulsivityIssues: Int?,
@@ -43,20 +43,20 @@ data class DynamicScoringOffences(
 )
 
 data class CurrentOffences(
-  val firearmPossession: Boolean,
-  val offencesWithWeapon: Boolean
+  val firearmPossession: Boolean?,
+  val offencesWithWeapon: Boolean?
 )
 
 data class PreviousOffences(
-  val murderAttempt: Boolean,
-  val wounding: Boolean,
-  val aggravatedBurglary: Boolean,
-  val arson: Boolean,
-  val criminalDamage: Boolean,
-  val kidnapping: Boolean,
-  val firearmPossession: Boolean,
-  val robbery: Boolean,
-  val offencesWithWeapon: Boolean
+  val murderAttempt: Boolean?,
+  val wounding: Boolean?,
+  val aggravatedBurglary: Boolean?,
+  val arson: Boolean?,
+  val criminalDamage: Boolean?,
+  val kidnapping: Boolean?,
+  val firearmPossession: Boolean?,
+  val robbery: Boolean?,
+  val offencesWithWeapon: Boolean?
 )
 
 data class CurrentOffence(val offenceCode: String, val offenceSubcode: String)
