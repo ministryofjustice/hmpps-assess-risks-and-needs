@@ -41,41 +41,41 @@ data class OffenderAndOffencesDto(
   val hasAnySexualOffences: Boolean,
 
   @Schema(description = "Does the current offence have a sexual motivation?", example = "true")
-  val isCurrentSexualOffence: Boolean,
+  val isCurrentSexualOffence: Boolean?,
 
   @Schema(description = "Does the current offence involve a victim who was a stranger?", example = "true")
-  val isCurrentOffenceVictimStranger: Boolean,
+  val isCurrentOffenceVictimStranger: Boolean?,
 
   @Schema(
     description = "Date of most recent sanction involving a sexual or sexually motivated offence",
     example = "2020-01-01"
   )
   @JsonFormat(pattern = "yyyy-MM-dd")
-  val mostRecentSexualOffenceDate: LocalDate,
+  val mostRecentSexualOffenceDate: LocalDate?,
 
   @Schema(
     description = "Number of previous or current sanctions involving contact adult sexual or sexually motivated offences",
     example = "5"
   )
-  val totalSexualOffencesInvolvingAnAdult: Int,
+  val totalSexualOffencesInvolvingAnAdult: Int?,
 
   @Schema(
     description = "Number of previous or current sanctions involving contact child sexual or sexually motivated offences",
     example = "5"
   )
-  val totalSexualOffencesInvolvingAChild: Int,
+  val totalSexualOffencesInvolvingAChild: Int?,
 
   @Schema(
     description = "Number of previous or current sanctions involving indecent child image sexual or sexually motivated offences",
     example = "5"
   )
-  val totalSexualOffencesInvolvingChildImages: Int,
+  val totalSexualOffencesInvolvingChildImages: Int?,
 
   @Schema(
     description = "Number of previous or current sanctions involving other non-contact sexual or sexually motivated offences",
     example = "5"
   )
-  val totalNonSexualOffences: Int,
+  val totalNonSexualOffences: Int?,
 
   @Schema(
     description = "Date of commencement of community sentence or earliest possible release from custody",
