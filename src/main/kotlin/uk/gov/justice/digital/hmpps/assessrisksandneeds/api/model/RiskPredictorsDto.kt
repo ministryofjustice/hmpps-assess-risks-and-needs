@@ -5,6 +5,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class RiskPredictorsDto(
+  val algorithmVersion: Int,
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   val calculatedAt: LocalDateTime,
   val type: PredictorType,

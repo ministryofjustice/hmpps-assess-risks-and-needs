@@ -38,6 +38,7 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
     return when (predictorType) {
       PredictorType.RSR -> {
         RiskPredictorsDto(
+          algorithmVersion = this.algorithmVersion,
           calculatedAt = this.calculationDateAndTime,
           type = predictorType,
           scoreType = ScoreType.findByType(this.scoreType!!),
