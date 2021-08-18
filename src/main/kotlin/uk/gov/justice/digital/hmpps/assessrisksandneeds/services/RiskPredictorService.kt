@@ -21,7 +21,8 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
 
   fun getPredictorScores(
     predictorType: PredictorType,
-    offenderAndOffences: OffenderAndOffencesDto
+    offenderAndOffences: OffenderAndOffencesDto,
+    final: Boolean
   ): RiskPredictorsDto {
     val errorMessage =
       "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
@@ -30,7 +31,7 @@ class RiskPredictorService(private val assessmentClient: AssessmentApiRestClient
         ?: throw PredictorCalculationError(errorMessage)
 
     if (predictorCalculation.errorCount > 0) log.info("$errorMessage - ${predictorCalculation.errorMessage}")
-
+    //if(final) TODO integrate the repo to save predictions
     return predictorCalculation.toRiskPredictorsDto(predictorType)
   }
 

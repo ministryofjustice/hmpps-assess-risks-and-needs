@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
@@ -29,8 +30,9 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   fun getRiskPredictorsByPredictorType(
     @Parameter(description = "Predictor type", required = true, example = "RSR")
     @PathVariable predictorType: PredictorType,
+    @RequestParam(value = "final", required = true) final: Boolean,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
-    return riskPredictorService.getPredictorScores(predictorType, offenderAndOffences)
+    return riskPredictorService.getPredictorScores(predictorType, offenderAndOffences, final)
   }
 }

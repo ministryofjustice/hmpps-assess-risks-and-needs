@@ -80,7 +80,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       )
     )
 
-    webTestClient.post().uri("/risks/predictors/RSR")
+    webTestClient.post().uri("/risks/predictors/RSR?final=true")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
       .bodyValue(requestBody)

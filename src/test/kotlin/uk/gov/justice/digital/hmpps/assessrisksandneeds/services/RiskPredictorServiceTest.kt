@@ -94,8 +94,9 @@ class RiskPredictorServiceTest {
 
     assertThrows<PredictorCalculationError> {
       riskPredictorsService.getPredictorScores(
-        predictorType,
-        offencesAndOffencesDto
+          predictorType,
+          offencesAndOffencesDto,
+          final
       )
     }
   }
@@ -122,8 +123,9 @@ class RiskPredictorServiceTest {
     )
 
     val predictorScores = riskPredictorsService.getPredictorScores(
-      predictorType,
-      offencesAndOffencesDto
+        predictorType,
+        offencesAndOffencesDto,
+        final
     )
 
     assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
@@ -169,8 +171,9 @@ class RiskPredictorServiceTest {
     )
 
     val predictorScores = riskPredictorsService.getPredictorScores(
-      predictorType,
-      offencesAndOffencesDto
+        predictorType,
+        offencesAndOffencesDto,
+        final
     )
 
     assertThat(predictorScores.errors).containsExactly(
