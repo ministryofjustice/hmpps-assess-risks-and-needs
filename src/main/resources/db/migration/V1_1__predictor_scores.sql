@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS offender_predictors_history
     source_answers                  JSONB,
     created_by                      text            not null,
     created_date                    timestamp       not null,
-    CONSTRAINT unique_source UNIQUE(predictor_trigger_source, source_id)
+    CONSTRAINT predictors_history_unique_source UNIQUE(predictor_trigger_source, source_id)
 );
 
 CREATE INDEX idx_crn ON offender_predictors_history (crn);
