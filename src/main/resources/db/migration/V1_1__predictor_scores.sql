@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS offender_predictors_history
     CONSTRAINT predictors_history_unique_source UNIQUE(predictor_trigger_source, source_id)
 );
 
-CREATE INDEX idx_crn ON offender_predictors_history (crn);
-CREATE INDEX idx_uuid ON offender_predictors_history (offender_predictor_uuid);
+CREATE INDEX idx_offender_predictors_history_crn ON offender_predictors_history (crn);
+CREATE INDEX idx_offender_predictors_history_uuid ON offender_predictors_history (offender_predictor_uuid);
 
 CREATE TABLE IF NOT EXISTS predictors
 (
