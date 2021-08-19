@@ -75,7 +75,7 @@ data class OffenderAndOffencesDto(
     description = "Number of previous or current sanctions involving other non-contact sexual or sexually motivated offences",
     example = "5"
   )
-  val totalNonSexualOffences: Int?,
+  val totalNonContactSexualOffences: Int?,
 
   @Schema(
     description = "Date of commencement of community sentence or earliest possible release from custody",

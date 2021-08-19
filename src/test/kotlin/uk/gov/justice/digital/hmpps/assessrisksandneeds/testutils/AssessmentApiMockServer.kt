@@ -80,7 +80,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"totalSexualOffencesInvolvingAnAdult\" : 5," +
             "\"totalSexualOffencesInvolvingAChild\" : 3," +
             "\"totalSexualOffencesInvolvingChildImages\" : 2," +
-            "\"totalNonSexualOffences\" : 2," +
+            "\"totalNonContactSexualOffences\" : 2," +
             "\"earliestReleaseDate\" : [ 2021, 11, 1 ]," +
             "\"dynamicScoringOffences\" : {" +
             "\"hasCompletedInterview\" : true," +

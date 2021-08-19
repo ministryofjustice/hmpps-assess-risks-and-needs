@@ -172,7 +172,7 @@ class AssessmentApiRestClient {
       this.totalSexualOffencesInvolvingAnAdult,
       this.totalSexualOffencesInvolvingAChild,
       this.totalSexualOffencesInvolvingChildImages,
-      this.totalNonSexualOffences,
+      this.totalNonContactSexualOffences,
       this.earliestReleaseDate,
       this.hasCompletedInterview.let { this.dynamicScoringOffences?.toDynamicScoringOffencesBody(this.hasCompletedInterview) }
     )

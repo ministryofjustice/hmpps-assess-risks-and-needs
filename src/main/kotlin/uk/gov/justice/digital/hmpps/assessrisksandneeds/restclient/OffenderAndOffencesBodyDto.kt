@@ -20,7 +20,7 @@ data class OffenderAndOffencesBodyDto(
   val totalSexualOffencesInvolvingAnAdult: Int?,
   val totalSexualOffencesInvolvingAChild: Int?,
   val totalSexualOffencesInvolvingChildImages: Int?,
-  val totalNonSexualOffences: Int?,
+  val totalNonContactSexualOffences: Int?,
   val earliestReleaseDate: LocalDate,
   val dynamicScoringOffences: DynamicScoringOffences?
 )
