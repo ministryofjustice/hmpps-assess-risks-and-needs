@@ -47,7 +47,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       totalSexualOffencesInvolvingAnAdult = 5,
       totalSexualOffencesInvolvingAChild = 3,
       totalSexualOffencesInvolvingChildImages = 2,
-      totalNonSexualOffences = 2,
+      totalNonContactSexualOffences = 2,
       earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
       hasCompletedInterview = true,
       dynamicScoringOffences = DynamicScoringOffences(
