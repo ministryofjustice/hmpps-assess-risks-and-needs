@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoring
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
@@ -111,7 +112,7 @@ class RiskPredictorServiceTest {
         predictorType,
         offencesAndOffencesDto,
         false,
-        "source",
+        PredictorSource.ASSESSMENTS_API,
         "sourceId"
       )
     }
@@ -142,7 +143,7 @@ class RiskPredictorServiceTest {
       predictorType,
       offencesAndOffencesDto,
       false,
-      "source",
+      PredictorSource.ASSESSMENTS_API,
       "sourceId"
     )
 
@@ -192,7 +193,7 @@ class RiskPredictorServiceTest {
       predictorType,
       offencesAndOffencesDto,
       false,
-      "source",
+      PredictorSource.ASSESSMENTS_API,
       "sourceId",
     )
 
@@ -231,7 +232,7 @@ class RiskPredictorServiceTest {
       calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
     )
 
-    val source = "source"
+    val source = PredictorSource.ASSESSMENTS_API
     val sourceId = "sourceId"
     val offenderPredictorsHistoryEntitySlot = slot<OffenderPredictorsHistoryEntity>()
 

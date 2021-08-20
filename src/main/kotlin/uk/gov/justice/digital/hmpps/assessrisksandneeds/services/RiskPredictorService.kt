@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
@@ -31,7 +32,7 @@ class RiskPredictorService(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto,
     final: Boolean,
-    source: String,
+    source: PredictorSource,
     sourceId: String,
     algorithmVersion: String? = null
   ): RiskPredictorsDto {
@@ -102,7 +103,7 @@ class RiskPredictorService(
 
 private fun RiskPredictorsDto.toOffenderPredictorsHistory(
   crn: String,
-  source: String,
+  source: PredictorSource,
   sourceId: String
 ): OffenderPredictorsHistoryEntity {
 

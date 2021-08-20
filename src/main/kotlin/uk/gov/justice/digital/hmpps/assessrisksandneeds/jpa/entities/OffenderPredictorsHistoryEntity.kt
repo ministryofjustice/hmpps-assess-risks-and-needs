@@ -5,6 +5,7 @@ import com.vladmihalcea.hibernate.type.json.JsonStringType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
@@ -50,7 +51,7 @@ data class OffenderPredictorsHistoryEntity(
   val crn: String,
 
   @Column(name = "PREDICTOR_TRIGGER_SOURCE")
-  val predictorTriggerSource: String,
+  val predictorTriggerSource: PredictorSource,
 
   @Column(name = "SOURCE_ID")
   val predictorTriggerSourceId: String,

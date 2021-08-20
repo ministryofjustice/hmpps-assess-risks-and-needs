@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
@@ -31,7 +32,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @Parameter(description = "Predictor type", required = true, example = "RSR")
     @PathVariable predictorType: PredictorType,
     @RequestParam(value = "final", required = true) final: Boolean,
-    @RequestParam(value = "source", required = true) source: String,
+    @RequestParam(value = "source", required = true) source: PredictorSource,
     @RequestParam(value = "sourceId", required = true) sourceId: String,
     @RequestParam(value = "algorithmVersion", required = false) algorithmVersion: String?,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
