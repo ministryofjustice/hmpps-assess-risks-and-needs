@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities
 
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.dao.PredictorLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.dao.PredictorSubType
 import java.io.Serializable
+import java.math.BigDecimal
+import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -29,14 +31,14 @@ class PredictorEntity(
   val offenderPredictors: OffenderPredictorsHistoryEntity? = null,
 
   @Column(name = "PREDICTOR_SUBTYPE")
-  val predictorType: PredictorSubType,
+  val predictorSubType: PredictorSubType,
 
   @Column(name = "PREDICTOR_SCORE")
-  val predictorScore: PredictorSubType,
+  val predictorScore: BigDecimal?,
 
   @Column(name = "PREDICTOR_LEVEL")
-  val predictorLevel: PredictorLevel,
+  val predictorLevel: ScoreLevel?,
 
-  @Column(name = "CREATED_BY")
-  val createdBy: String,
+  @Column(name = "CREATED_DATE")
+  val createdDate: LocalDateTime = LocalDateTime.now(),
 ) : Serializable

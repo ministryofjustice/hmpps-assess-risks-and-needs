@@ -6,7 +6,10 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.dao.PredictorSubType
 import java.io.Serializable
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.CascadeType
@@ -65,4 +68,16 @@ data class OffenderPredictorsHistoryEntity(
   @OneToMany(mappedBy = "offenderPredictors", cascade = [CascadeType.ALL])
   val predictors: MutableList<PredictorEntity> = mutableListOf(),
 
-) : Serializable
+) : Serializable {
+
+  fun newPredictor(predictorType: String, score: BigDecimal?, level: ScoreLevel?): PredictorEntity {
+    val predictorEntity = PredictorEntity(
+      offenderPredictors = this,
+      predictorSubType = PredictorSubType.fromString(predictorType),
+      predictorScore = score,
+      predictorLevel = level,
+    )
+    predictors.add(predictorEntity)
+    return predictorEntity
+  }
+}

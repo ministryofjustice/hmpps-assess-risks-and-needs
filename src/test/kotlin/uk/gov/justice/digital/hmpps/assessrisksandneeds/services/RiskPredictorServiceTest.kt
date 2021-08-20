@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.dao.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
@@ -265,6 +266,16 @@ class RiskPredictorServiceTest {
       assertThat(predictorTriggerSource).isEqualTo(source)
       assertThat(predictorTriggerSourceId).isEqualTo(sourceId)
       assertThat(createdBy).isEqualTo(RequestData.getUserName())
+      assertThat(predictors).hasSize(3)
+      assertThat(predictors[0].predictorSubType).isEqualTo(PredictorSubType.RSR)
+      assertThat(predictors[0].predictorScore).isEqualTo(BigDecimal("11.34"))
+      assertThat(predictors[0].predictorLevel).isEqualTo(ScoreLevel.HIGH)
+      assertThat(predictors[1].predictorSubType).isEqualTo(PredictorSubType.OSPC)
+      assertThat(predictors[1].predictorScore).isEqualTo(BigDecimal("0"))
+      assertThat(predictors[1].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
+      assertThat(predictors[2].predictorSubType).isEqualTo(PredictorSubType.OSPI)
+      assertThat(predictors[2].predictorScore).isEqualTo(BigDecimal("0"))
+      assertThat(predictors[2].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
     }
   }
 }

@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysRSRPredictorsDto
@@ -38,7 +39,7 @@ class RiskPredictorService(
       assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences)
         ?: throw PredictorCalculationError(errorMessage)
 
-    if (predictorCalculation.errorCount > 0) log.info("$errorMessage - ${predictorCalculation.errorMessage}")
+    if (predictorCalculation.errorCount > 0) log.error("$errorMessage - ${predictorCalculation.errorMessage}")
     val predictors = predictorCalculation.toRiskPredictorsDto(predictorType)
     if (final) {
       offenderPredictorsHistoryRepository.save(
@@ -102,13 +103,26 @@ private fun RiskPredictorsDto.toOffenderPredictorsHistory(
   source: String,
   sourceId: String
 ): OffenderPredictorsHistoryEntity {
-  return OffenderPredictorsHistoryEntity(
-    predictorType = this.type,
-    algorithmVersion = this.algorithmVersion,
-    calculatedAt = this.calculatedAt,
+
+  val offenderPredictorsHistoryEntity = OffenderPredictorsHistoryEntity(
+    predictorType = type,
+    algorithmVersion = algorithmVersion,
+    calculatedAt = calculatedAt,
     crn = crn,
     predictorTriggerSource = source,
     predictorTriggerSourceId = sourceId,
-    createdBy = RequestData.getUserName()
+    createdBy = RequestData.getUserName(),
   )
+  this.scores.toPredictors(offenderPredictorsHistoryEntity)
+  return offenderPredictorsHistoryEntity
+}
+
+private fun Map<String, Score>.toPredictors(offenderPredictorsHistoryEntity: OffenderPredictorsHistoryEntity): List<PredictorEntity> {
+  return this.entries.map {
+    offenderPredictorsHistoryEntity.newPredictor(
+      it.key,
+      it.value.score,
+      it.value.level,
+    )
+  }
 }
