@@ -23,7 +23,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Risk Predictors Tests")
 class RiskPredictorsControllerTest() : IntegrationTestBase() {
 
@@ -80,7 +80,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       )
     )
 
-    webTestClient.post().uri("/risks/predictors/RSR?final=true")
+    webTestClient.post().uri("/risks/predictors/RSR?final=true&source=ASSESSMENTS-API&sourceId=90f2b674-ae1c-488d-8b85-0251708ef6b6")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
       .bodyValue(requestBody)
@@ -90,7 +90,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       .consumeWith {
         Assertions.assertThat(it.responseBody).isEqualTo(
           RiskPredictorsDto(
-            algorithmVersion = 3,
+            algorithmVersion = "3",
             type = PredictorType.RSR,
             scoreType = ScoreType.STATIC,
             rsrScore = Score(

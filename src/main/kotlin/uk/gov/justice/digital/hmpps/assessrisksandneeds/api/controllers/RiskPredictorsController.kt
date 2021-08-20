@@ -31,8 +31,10 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @Parameter(description = "Predictor type", required = true, example = "RSR")
     @PathVariable predictorType: PredictorType,
     @RequestParam(value = "final", required = true) final: Boolean,
+    @RequestParam(value = "source", required = true) source: String,
+    @RequestParam(value = "sourceId", required = true) sourceId: String,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
-    return riskPredictorService.getPredictorScores(predictorType, offenderAndOffences, final)
+    return riskPredictorService.calculatePredictorScores(predictorType, offenderAndOffences, final, source, sourceId)
   }
 }

@@ -22,6 +22,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-kotlin:1.5.9")
   implementation("com.zaxxer:HikariCP:5.0.0")
   implementation("org.postgresql:postgresql")
+  implementation("com.vladmihalcea:hibernate-types-52:2.12.1")
   runtimeOnly("com.h2database:h2:1.4.200")
   runtimeOnly("org.flywaydb:flyway-core:7.11.2")
   testRuntimeOnly("com.h2database:h2:1.4.200")
