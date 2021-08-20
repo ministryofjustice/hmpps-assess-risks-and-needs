@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
@@ -62,17 +63,17 @@ class RiskPredictorService(
           type = predictorType,
           scoreType = ScoreType.findByType(this.scoreType!!),
           scores = mapOf(
-            "RSR" to Score(
+            PredictorSubType.RSR to Score(
               level = ScoreLevel.findByType(this.rsrBand!!),
               score = this.rsrScore,
               isValid = this.validRsrScore.toBoolean()
             ),
-            "OSPC" to Score(
+            PredictorSubType.OSPC to Score(
               level = ScoreLevel.findByType(this.ospcBand!!),
               score = this.ospcScore,
               isValid = this.validOspcScore.toBoolean()
             ),
-            "OSPI" to Score(
+            PredictorSubType.OSPI to Score(
               level = ScoreLevel.findByType(this.ospiBand!!),
               score = this.ospiScore,
               isValid = this.validOspiScore.toBoolean()
@@ -117,7 +118,7 @@ private fun RiskPredictorsDto.toOffenderPredictorsHistory(
   return offenderPredictorsHistoryEntity
 }
 
-private fun Map<String, Score>.toPredictors(offenderPredictorsHistoryEntity: OffenderPredictorsHistoryEntity): List<PredictorEntity> {
+private fun Map<PredictorSubType, Score>.toPredictors(offenderPredictorsHistoryEntity: OffenderPredictorsHistoryEntity): List<PredictorEntity> {
   return this.entries.map {
     offenderPredictorsHistoryEntity.newPredictor(
       it.key,

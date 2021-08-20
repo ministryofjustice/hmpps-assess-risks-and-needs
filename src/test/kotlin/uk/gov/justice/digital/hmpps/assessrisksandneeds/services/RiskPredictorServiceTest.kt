@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoring
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
@@ -24,7 +25,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.dao.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
@@ -149,17 +149,17 @@ class RiskPredictorServiceTest {
     assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
     assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
     assertThat(predictorScores.scoreType).isEqualTo(ScoreType.STATIC)
-    assertThat(predictorScores.scores["RSR"]).isEqualTo(
+    assertThat(predictorScores.scores[PredictorSubType.RSR]).isEqualTo(
       Score(
         level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
       )
     )
-    assertThat(predictorScores.scores["OSPC"]).isEqualTo(
+    assertThat(predictorScores.scores[PredictorSubType.OSPC]).isEqualTo(
       Score(
         level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
       )
     )
-    assertThat(predictorScores.scores["OSPI"]).isEqualTo(
+    assertThat(predictorScores.scores[PredictorSubType.OSPI]).isEqualTo(
       Score(
         level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
       )

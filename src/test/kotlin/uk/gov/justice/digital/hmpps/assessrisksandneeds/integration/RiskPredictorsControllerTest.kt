@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoring
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
@@ -96,13 +97,13 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
             scoreType = ScoreType.STATIC,
             calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2),
             scores = mapOf(
-              "RSR" to Score(
+              PredictorSubType.RSR to Score(
                 level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
               ),
-              "OSPC" to Score(
+              PredictorSubType.OSPC to Score(
                 level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
               ),
-              "OSPI" to Score(
+              PredictorSubType.OSPI to Score(
                 level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
               ),
             )

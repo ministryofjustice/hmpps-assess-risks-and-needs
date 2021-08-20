@@ -5,9 +5,9 @@ import com.vladmihalcea.hibernate.type.json.JsonStringType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.dao.PredictorSubType
 import java.io.Serializable
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -70,10 +70,10 @@ data class OffenderPredictorsHistoryEntity(
 
 ) : Serializable {
 
-  fun newPredictor(predictorType: String, score: BigDecimal?, level: ScoreLevel?): PredictorEntity {
+  fun newPredictor(predictorSubType: PredictorSubType, score: BigDecimal?, level: ScoreLevel?): PredictorEntity {
     val predictorEntity = PredictorEntity(
       offenderPredictors = this,
-      predictorSubType = PredictorSubType.fromString(predictorType),
+      predictorSubType = predictorSubType,
       predictorScore = score,
       predictorLevel = level,
     )

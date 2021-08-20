@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities
 
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.dao.PredictorSubType
 import java.io.Serializable
 import java.math.BigDecimal
 import java.time.LocalDateTime
