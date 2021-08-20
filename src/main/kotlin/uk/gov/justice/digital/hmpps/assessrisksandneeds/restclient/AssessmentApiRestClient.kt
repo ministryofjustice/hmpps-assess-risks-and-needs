@@ -110,12 +110,13 @@ class AssessmentApiRestClient {
 
   fun calculatePredictorTypeScoring(
     predictorType: PredictorType,
-    offenderAndOffences: OffenderAndOffencesDto
+    offenderAndOffences: OffenderAndOffencesDto,
+    algorithmVersion: String? = null
   ): OasysRSRPredictorsDto? {
     log.info("Calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn}")
     val path =
       "/offenders/risks/predictors/$predictorType"
-    val body = offenderAndOffences.toOffenderAndOffencesBodyDto()
+    val body = offenderAndOffences.toOffenderAndOffencesBodyDto(algorithmVersion)
     log.info("Calculating $predictorType scoring with $body")
     return webClient
       .post(
@@ -154,27 +155,28 @@ class AssessmentApiRestClient {
       .also { log.info("Retrieved calculated $predictorType scoring for offender with crn ${offenderAndOffences.crn}") }
   }
 
-  private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(): OffenderAndOffencesBodyDto {
+  private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(algorithmVersion: String?): OffenderAndOffencesBodyDto {
     return OffenderAndOffencesBodyDto(
-      this.gender.value,
-      this.dob,
-      this.assessmentDate,
-      this.currentOffence.toCurrentOffenceDto(),
-      this.dateOfFirstSanction,
-      YEARS.between(this.dob, this.dateOfFirstSanction).toInt(),
-      this.totalOffences,
-      this.totalViolentOffences,
-      this.dateOfCurrentConviction,
-      this.hasAnySexualOffences,
-      this.isCurrentSexualOffence,
-      this.isCurrentOffenceVictimStranger,
-      this.mostRecentSexualOffenceDate,
-      this.totalSexualOffencesInvolvingAnAdult,
-      this.totalSexualOffencesInvolvingAChild,
-      this.totalSexualOffencesInvolvingChildImages,
-      this.totalNonContactSexualOffences,
-      this.earliestReleaseDate,
-      this.hasCompletedInterview.let { this.dynamicScoringOffences?.toDynamicScoringOffencesBody(this.hasCompletedInterview) }
+      algorithmVersion = algorithmVersion,
+      gender = this.gender.value,
+      dob = this.dob,
+      assessmentDate = this.assessmentDate,
+      currentOffence = this.currentOffence.toCurrentOffenceDto(),
+      dateOfFirstSanction = this.dateOfFirstSanction,
+      ageAtFirstSanction = YEARS.between(this.dob, this.dateOfFirstSanction).toInt(),
+      totalOffences = this.totalOffences,
+      totalViolentOffences = this.totalViolentOffences,
+      dateOfCurrentConviction = this.dateOfCurrentConviction,
+      hasAnySexualOffences = this.hasAnySexualOffences,
+      isCurrentSexualOffence = this.isCurrentSexualOffence,
+      isCurrentOffenceVictimStranger = this.isCurrentOffenceVictimStranger,
+      mostRecentSexualOffenceDate = this.mostRecentSexualOffenceDate,
+      totalSexualOffencesInvolvingAnAdult = this.totalSexualOffencesInvolvingAnAdult,
+      totalSexualOffencesInvolvingAChild = this.totalSexualOffencesInvolvingAChild,
+      totalSexualOffencesInvolvingChildImages = this.totalSexualOffencesInvolvingChildImages,
+      totalNonContactSexualOffences = this.totalNonContactSexualOffences,
+      earliestReleaseDate = this.earliestReleaseDate,
+      dynamicScoringOffences = this.hasCompletedInterview.let { this.dynamicScoringOffences?.toDynamicScoringOffencesBody(this.hasCompletedInterview) }
     )
   }
 

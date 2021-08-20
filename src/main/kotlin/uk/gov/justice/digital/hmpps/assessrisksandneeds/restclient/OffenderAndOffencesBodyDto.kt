@@ -4,6 +4,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class OffenderAndOffencesBodyDto(
+  val algorithmVersion: String? = null,
   val gender: String,
   val dob: LocalDate,
   val assessmentDate: LocalDateTime,

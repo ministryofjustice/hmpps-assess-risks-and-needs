@@ -193,7 +193,7 @@ class RiskPredictorServiceTest {
       offencesAndOffencesDto,
       false,
       "source",
-      "sourceId"
+      "sourceId",
     )
 
     assertThat(predictorScores.errors).containsExactly(
@@ -212,8 +212,9 @@ class RiskPredictorServiceTest {
   @Test
   fun `calculate risk predictors data saves predictors when final version is true`() {
     val predictorType = PredictorType.RSR
+    val algorithmVersion = "3"
     every {
-      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
+      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto, algorithmVersion)
     } returns OasysRSRPredictorsDto(
       algorithmVersion = 3,
       rsrScore = BigDecimal("11.34"),
@@ -242,7 +243,7 @@ class RiskPredictorServiceTest {
       offenderPredictorId = 1,
       offenderPredictorUuid = UUID.randomUUID(),
       predictorType = predictorType,
-      algorithmVersion = "3",
+      algorithmVersion = algorithmVersion,
       calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 24, 25),
       crn = "X1345",
       predictorTriggerSource = source,
@@ -255,11 +256,12 @@ class RiskPredictorServiceTest {
       offencesAndOffencesDto,
       true,
       source,
-      sourceId
+      sourceId,
+      algorithmVersion
     )
 
     with(offenderPredictorsHistoryEntitySlot.captured) {
-      assertThat(algorithmVersion).isEqualTo("3")
+      assertThat(algorithmVersion).isEqualTo(algorithmVersion)
       assertThat(predictorType).isEqualTo(predictorType)
       assertThat(calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
       assertThat(crn).isEqualTo("X1345")

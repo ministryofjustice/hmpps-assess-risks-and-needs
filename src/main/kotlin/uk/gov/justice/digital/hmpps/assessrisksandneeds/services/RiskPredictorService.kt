@@ -32,12 +32,13 @@ class RiskPredictorService(
     offenderAndOffences: OffenderAndOffencesDto,
     final: Boolean,
     source: String,
-    sourceId: String
+    sourceId: String,
+    algorithmVersion: String? = null
   ): RiskPredictorsDto {
     val errorMessage =
       "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
     val predictorCalculation =
-      assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences)
+      assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences, algorithmVersion)
         ?: throw PredictorCalculationError(errorMessage)
 
     if (predictorCalculation.errorCount > 0) log.error("$errorMessage - ${predictorCalculation.errorMessage}")
