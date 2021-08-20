@@ -80,7 +80,8 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       )
     )
 
-    webTestClient.post().uri("/risks/predictors/RSR?final=true&source=ASSESSMENTS-API&sourceId=90f2b674-ae1c-488d-8b85-0251708ef6b6")
+    webTestClient.post()
+      .uri("/risks/predictors/RSR?final=true&source=ASSESSMENTS-API&sourceId=90f2b674-ae1c-488d-8b85-0251708ef6b6")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
       .bodyValue(requestBody)
@@ -93,16 +94,18 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
             algorithmVersion = "3",
             type = PredictorType.RSR,
             scoreType = ScoreType.STATIC,
-            rsrScore = Score(
-              level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
-            ),
-            ospcScore = Score(
-              level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-            ),
-            ospiScore = Score(
-              level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-            ),
-            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2)
+            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2),
+            scores = mapOf(
+              "RSR" to Score(
+                level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+              ),
+              "OSPC" to Score(
+                level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+              ),
+              "OSPI" to Score(
+                level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+              ),
+            )
           )
         )
       }

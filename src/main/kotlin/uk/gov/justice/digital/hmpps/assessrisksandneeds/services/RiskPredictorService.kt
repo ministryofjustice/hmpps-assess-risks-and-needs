@@ -60,20 +60,22 @@ class RiskPredictorService(
           calculatedAt = this.calculationDateAndTime,
           type = predictorType,
           scoreType = ScoreType.findByType(this.scoreType!!),
-          rsrScore = Score(
-            level = ScoreLevel.findByType(this.rsrBand!!),
-            score = this.rsrScore,
-            isValid = this.validRsrScore.toBoolean()
-          ),
-          ospcScore = Score(
-            level = ScoreLevel.findByType(this.ospcBand!!),
-            score = this.ospcScore,
-            isValid = this.validOspcScore.toBoolean()
-          ),
-          ospiScore = Score(
-            level = ScoreLevel.findByType(this.ospiBand!!),
-            score = this.ospiScore,
-            isValid = this.validOspiScore.toBoolean()
+          scores = mapOf(
+            "RSR" to Score(
+              level = ScoreLevel.findByType(this.rsrBand!!),
+              score = this.rsrScore,
+              isValid = this.validRsrScore.toBoolean()
+            ),
+            "OSPC" to Score(
+              level = ScoreLevel.findByType(this.ospcBand!!),
+              score = this.ospcScore,
+              isValid = this.validOspcScore.toBoolean()
+            ),
+            "OSPI" to Score(
+              level = ScoreLevel.findByType(this.ospiBand!!),
+              score = this.ospiScore,
+              isValid = this.validOspiScore.toBoolean()
+            ),
           ),
           errors = this.toErrors()
         )

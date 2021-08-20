@@ -148,17 +148,17 @@ class RiskPredictorServiceTest {
     assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
     assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
     assertThat(predictorScores.scoreType).isEqualTo(ScoreType.STATIC)
-    assertThat(predictorScores.rsrScore).isEqualTo(
+    assertThat(predictorScores.scores["RSR"]).isEqualTo(
       Score(
         level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
       )
     )
-    assertThat(predictorScores.ospcScore).isEqualTo(
+    assertThat(predictorScores.scores["OSPC"]).isEqualTo(
       Score(
         level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
       )
     )
-    assertThat(predictorScores.ospiScore).isEqualTo(
+    assertThat(predictorScores.scores["OSPI"]).isEqualTo(
       Score(
         level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
       )
@@ -258,7 +258,7 @@ class RiskPredictorServiceTest {
     )
 
     with(offenderPredictorsHistoryEntitySlot.captured) {
-      assertThat(this.algorithmVersion).isEqualTo("3")
+      assertThat(algorithmVersion).isEqualTo("3")
       assertThat(predictorType).isEqualTo(predictorType)
       assertThat(calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
       assertThat(crn).isEqualTo("X1345")

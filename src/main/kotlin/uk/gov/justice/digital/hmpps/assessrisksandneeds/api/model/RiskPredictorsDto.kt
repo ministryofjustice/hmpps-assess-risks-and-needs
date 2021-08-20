@@ -10,9 +10,7 @@ data class RiskPredictorsDto(
   val calculatedAt: LocalDateTime,
   val type: PredictorType,
   val scoreType: ScoreType?,
-  val rsrScore: Score,
-  val ospcScore: Score,
-  val ospiScore: Score,
+  val scores: Map<String, Score>,
   val errors: List<String> = emptyList()
 )
 
