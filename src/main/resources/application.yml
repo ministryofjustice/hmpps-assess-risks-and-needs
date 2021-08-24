@@ -107,7 +107,3 @@ logging:
 
 assessment-api:
   base-url: http://localhost:9004
-
-feature:
-  flags:
-    disable-auth: true

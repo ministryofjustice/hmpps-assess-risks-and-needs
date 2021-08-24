@@ -39,7 +39,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @RequestParam(value = "algorithmVersion", required = false) algorithmVersion: String?,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
-    log.info("Calculate predictors for parameters final:$final source:$source, sorceId:$sourceId, algorithmVersion:$algorithmVersion and offender and offences:$offenderAndOffences and $predictorType")
+    log.info("Calculate predictors for parameters final:$final source:$source, sourceId:$sourceId, algorithmVersion:$algorithmVersion and offender and offences:$offenderAndOffences and $predictorType")
     return riskPredictorService.calculatePredictorScores(
       predictorType,
       offenderAndOffences,
