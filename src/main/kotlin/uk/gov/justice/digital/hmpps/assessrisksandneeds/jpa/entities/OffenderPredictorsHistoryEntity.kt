@@ -69,7 +69,7 @@ data class OffenderPredictorsHistoryEntity(
   @OneToMany(mappedBy = "offenderPredictors", cascade = [CascadeType.ALL])
   val predictors: MutableList<PredictorEntity> = mutableListOf(),
 
-  ) : Serializable {
+) : Serializable {
 
   fun newPredictor(predictorSubType: PredictorSubType, score: BigDecimal?, level: ScoreLevel?): PredictorEntity {
     val predictorEntity = PredictorEntity(

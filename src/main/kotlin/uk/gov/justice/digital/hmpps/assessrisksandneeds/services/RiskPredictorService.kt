@@ -122,7 +122,6 @@ class RiskPredictorService(
     }
   }
 
-
   private fun String?.toBoolean(): Boolean {
     return this?.equals(AnswerType.Y.name) == true
   }
@@ -183,6 +182,5 @@ class RiskPredictorService(
     return Klaxon().parse<Map<String, Any>>(
       objectMapper.writeValueAsString(sourceAnswers)
     ) ?: throw PredictorCalculationError("Error parsing answers for CRN: $crn")
-
   }
 }
