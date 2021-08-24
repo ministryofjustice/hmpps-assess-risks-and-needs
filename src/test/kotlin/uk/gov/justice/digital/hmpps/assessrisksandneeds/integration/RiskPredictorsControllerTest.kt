@@ -56,7 +56,6 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
         employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
         currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         evidenceOfDomesticViolence = true,
-        isVictim = true,
         isPerpetrator = true,
         alcoholUseIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         bingeDrinkingIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,

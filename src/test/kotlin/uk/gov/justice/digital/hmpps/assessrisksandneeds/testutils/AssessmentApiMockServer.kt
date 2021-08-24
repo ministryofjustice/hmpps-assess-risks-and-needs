@@ -88,7 +88,6 @@ class AssessmentApiMockServer : WireMockServer(9004) {
             "\"employment\": 0," +
             "\"currentRelationshipWithPartner\" : 2," +
             "\"evidenceOfDomesticViolence\" : true," +
-            "\"isVictim\" : true," +
             "\"isPerpetrator\" : true," +
             "\"alcoholUseIssues\" : 2," +
             "\"bingeDrinkingIssues\" : 2," +

@@ -191,7 +191,6 @@ class AssessmentApiRestClient {
       this.employment?.score,
       this.currentRelationshipWithPartner?.score,
       this.evidenceOfDomesticViolence,
-      this.isVictim,
       this.isPerpetrator,
       this.alcoholUseIssues?.score,
       this.bingeDrinkingIssues?.score,

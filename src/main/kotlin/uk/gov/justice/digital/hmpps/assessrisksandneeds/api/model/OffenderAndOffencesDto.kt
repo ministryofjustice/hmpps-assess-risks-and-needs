@@ -114,9 +114,6 @@ data class DynamicScoringOffences(
   @Schema(description = "Is there evidence that the individual is a perpetrator of domestic abuse?", example = "true")
   val evidenceOfDomesticViolence: Boolean?,
 
-  @Schema(description = "Is the individual a victim of domestic abuse?", example = "true")
-  val isVictim: Boolean?,
-
   @Schema(description = "Is the individual a perpetrator of domestic abuse?", example = "true")
   val isPerpetrator: Boolean?,
 

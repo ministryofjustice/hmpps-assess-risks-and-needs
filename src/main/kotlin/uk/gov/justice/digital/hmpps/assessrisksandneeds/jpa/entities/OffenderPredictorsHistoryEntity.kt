@@ -58,7 +58,7 @@ data class OffenderPredictorsHistoryEntity(
 
   @Type(type = "json")
   @Column(columnDefinition = "jsonb", name = "SOURCE_ANSWERS")
-  var sourceAnswers: MutableMap<String, List<String>> = mutableMapOf(),
+  var sourceAnswers: Map<String, Any> = mutableMapOf(),
 
   @Column(name = "CREATED_BY")
   val createdBy: String,
@@ -69,7 +69,7 @@ data class OffenderPredictorsHistoryEntity(
   @OneToMany(mappedBy = "offenderPredictors", cascade = [CascadeType.ALL])
   val predictors: MutableList<PredictorEntity> = mutableListOf(),
 
-) : Serializable {
+  ) : Serializable {
 
   fun newPredictor(predictorSubType: PredictorSubType, score: BigDecimal?, level: ScoreLevel?): PredictorEntity {
     val predictorEntity = PredictorEntity(

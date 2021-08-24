@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -42,8 +43,10 @@ class RiskPredictorServiceTest {
 
   private val assessmentApiClient: AssessmentApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
+  private val objectMapper: ObjectMapper = mockk()
 
-  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, offenderPredictorsHistoryRepository)
+  private val riskPredictorsService =
+    RiskPredictorService(assessmentApiClient, offenderPredictorsHistoryRepository, objectMapper)
 
   private val offencesAndOffencesDto = OffenderAndOffencesDto(
     crn = "X1345",
@@ -70,7 +73,6 @@ class RiskPredictorServiceTest {
       employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
       currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
       evidenceOfDomesticViolence = true,
-      isVictim = true,
       isPerpetrator = true,
       alcoholUseIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
       bingeDrinkingIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -98,6 +100,7 @@ class RiskPredictorServiceTest {
   @BeforeEach
   fun setup() {
     MDC.put(RequestData.USER_NAME_HEADER, "User name")
+    every { objectMapper.writeValueAsString(any()) } returns sourceAnswersJson
   }
 
   @Test
@@ -280,5 +283,10 @@ class RiskPredictorServiceTest {
       assertThat(predictors[2].predictorScore).isEqualTo(BigDecimal("0"))
       assertThat(predictors[2].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
     }
+  }
+
+  companion object {
+    val sourceAnswersJson =
+      """{"gender":"MALE","dob":"2001-01-01","assessment_date":"2021-01-01T00:00:00","offence_code":"138","offence_subcode":"00","date_first_sanction":"2020-01-01","total_sanctions":10,"total_violent_offences":8,"date_current_conviction":"2020-12-18","any_sexual_offences":true,"current_sexual_offence":true,"current_offence_victim_stranger":true,"most_recent_sexual_offence_date":"2020-12-11","total_sexual_offences_adult":5,"total_sexual_offences_child":5,"total_sexual_offences_child_image":2,"total_non_contact_sexual_offences":2,"earliest_release_date":"2021-11-01","completed_interview":true,"suitable_accommodation":"MISSING","unemployed_on_release":"NOT_AVAILABLE_FOR_WORK","current_relationship_with_partner":"SIGNIFICANT_PROBLEMS","evidence_domestic_violence":true,"perpetrator_domestic_violence":true,"use_of_alcohol":"SIGNIFICANT_PROBLEMS","binge_drinking":"SIGNIFICANT_PROBLEMS","impulsivity_issues":"SOME_PROBLEMS","temper_control_issues":"SIGNIFICANT_PROBLEMS","pro_criminal_attitudes":"SOME_PROBLEMS","previous_murder_attempt":true,"previous_wounding":true,"previous_aggravated_burglary":true,"previous_arson":true,"previous_criminal_damage":true,"previous_kidnapping":true,"previous_possession_firearm":true,"previous_robbery":true,"previous_offence_weapon":true,"current_possession_firearm":true,"current_offence_weapon":true}  """.trimIndent()
   }
 }

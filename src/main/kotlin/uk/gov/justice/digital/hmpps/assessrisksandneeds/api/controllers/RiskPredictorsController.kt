@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,6 +39,18 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @RequestParam(value = "algorithmVersion", required = false) algorithmVersion: String?,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
-    return riskPredictorService.calculatePredictorScores(predictorType, offenderAndOffences, final, source, sourceId, algorithmVersion)
+    log.info("Calculate predictors for parameters final:$final source:$source, sorceId:$sourceId, algorithmVersion:$algorithmVersion and offender and offences:$offenderAndOffences and $predictorType")
+    return riskPredictorService.calculatePredictorScores(
+      predictorType,
+      offenderAndOffences,
+      final,
+      source,
+      sourceId,
+      algorithmVersion
+    )
+  }
+
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 }
