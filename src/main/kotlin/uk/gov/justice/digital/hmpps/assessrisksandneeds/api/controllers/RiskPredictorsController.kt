@@ -4,13 +4,17 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
@@ -29,8 +33,24 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   fun getRiskPredictorsByPredictorType(
     @Parameter(description = "Predictor type", required = true, example = "RSR")
     @PathVariable predictorType: PredictorType,
+    @RequestParam(value = "final", required = true) final: Boolean,
+    @RequestParam(value = "source", required = true) source: PredictorSource,
+    @RequestParam(value = "sourceId", required = true) sourceId: String,
+    @RequestParam(value = "algorithmVersion", required = false) algorithmVersion: String?,
     @RequestBody offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
-    return riskPredictorService.getPredictorScores(predictorType, offenderAndOffences)
+    log.info("Calculate predictors for parameters final:$final source:$source, sorceId:$sourceId, algorithmVersion:$algorithmVersion and offender and offences:$offenderAndOffences and $predictorType")
+    return riskPredictorService.calculatePredictorScores(
+      predictorType,
+      offenderAndOffences,
+      final,
+      source,
+      sourceId,
+      algorithmVersion
+    )
+  }
+
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 }

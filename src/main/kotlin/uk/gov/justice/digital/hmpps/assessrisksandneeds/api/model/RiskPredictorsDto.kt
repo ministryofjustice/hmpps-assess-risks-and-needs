@@ -5,13 +5,12 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class RiskPredictorsDto(
+  val algorithmVersion: String,
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   val calculatedAt: LocalDateTime,
   val type: PredictorType,
   val scoreType: ScoreType?,
-  val rsrScore: Score,
-  val ospcScore: Score,
-  val ospiScore: Score,
+  val scores: Map<PredictorSubType, Score>,
   val errors: List<String> = emptyList()
 )
 

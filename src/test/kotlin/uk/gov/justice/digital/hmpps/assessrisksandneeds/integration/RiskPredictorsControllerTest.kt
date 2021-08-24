@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoring
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
@@ -23,7 +24,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Risk Predictors Tests")
 class RiskPredictorsControllerTest() : IntegrationTestBase() {
 
@@ -55,7 +56,6 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
         employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
         currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         evidenceOfDomesticViolence = true,
-        isVictim = true,
         isPerpetrator = true,
         alcoholUseIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         bingeDrinkingIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -80,7 +80,8 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       )
     )
 
-    webTestClient.post().uri("/risks/predictors/RSR")
+    webTestClient.post()
+      .uri("/risks/predictors/RSR?final=true&source=ASSESSMENTS_API&sourceId=90f2b674-ae1c-488d-8b85-0251708ef6b6")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
       .bodyValue(requestBody)
@@ -90,18 +91,21 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       .consumeWith {
         Assertions.assertThat(it.responseBody).isEqualTo(
           RiskPredictorsDto(
+            algorithmVersion = "3",
             type = PredictorType.RSR,
             scoreType = ScoreType.STATIC,
-            rsrScore = Score(
-              level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
-            ),
-            ospcScore = Score(
-              level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-            ),
-            ospiScore = Score(
-              level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-            ),
-            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2)
+            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2),
+            scores = mapOf(
+              PredictorSubType.RSR to Score(
+                level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+              ),
+              PredictorSubType.OSPC to Score(
+                level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+              ),
+              PredictorSubType.OSPI to Score(
+                level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+              ),
+            )
           )
         )
       }
