@@ -16,6 +16,8 @@ import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -39,6 +41,7 @@ data class OffenderPredictorsHistoryEntity(
   val offenderPredictorUuid: UUID? = UUID.randomUUID(),
 
   @Column(name = "PREDICTOR_TYPE")
+  @Enumerated(EnumType.STRING)
   val predictorType: PredictorType,
 
   @Column(name = "ALGORITHM_VERSION")
@@ -51,6 +54,7 @@ data class OffenderPredictorsHistoryEntity(
   val crn: String,
 
   @Column(name = "PREDICTOR_TRIGGER_SOURCE")
+  @Enumerated(EnumType.STRING)
   val predictorTriggerSource: PredictorSource,
 
   @Column(name = "SOURCE_ID")
