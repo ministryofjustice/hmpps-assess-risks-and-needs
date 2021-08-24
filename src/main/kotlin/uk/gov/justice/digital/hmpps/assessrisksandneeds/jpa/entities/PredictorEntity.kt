@@ -8,6 +8,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -31,12 +33,14 @@ class PredictorEntity(
   val offenderPredictors: OffenderPredictorsHistoryEntity? = null,
 
   @Column(name = "PREDICTOR_SUBTYPE")
+  @Enumerated(EnumType.STRING)
   val predictorSubType: PredictorSubType,
 
   @Column(name = "PREDICTOR_SCORE")
   val predictorScore: BigDecimal?,
 
   @Column(name = "PREDICTOR_LEVEL")
+  @Enumerated(EnumType.STRING)
   val predictorLevel: ScoreLevel?,
 
   @Column(name = "CREATED_DATE")
