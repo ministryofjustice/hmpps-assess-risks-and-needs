@@ -52,7 +52,7 @@ data class RiskRoshSummaryDto(
 
   @Schema(
     description = "Assess the risk of serious harm the offender poses on the basis that they could be released imminently back into the community." +
-      "Assess both the risk of seriou:: harm the offender presents now, in custody, and the risk they could present to others whilst in a custodial setting.",
+      "Assess both the risk of serious harm the offender presents now, in custody, and the risk they could present to others whilst in a custodial setting.",
     example = " " +
       "{" +
       "    \"HIGH \": [\"Know adult\"]," +
