@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
+import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @DisplayName("Risk Tests")
@@ -34,7 +35,8 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.LOW to listOf("Children", "Known Adult"),
               RiskLevel.MEDIUM to listOf("Public"),
               RiskLevel.HIGH to listOf("Staff")
-            )
+            ),
+            assessedOn = null
           )
         )
       }
@@ -64,7 +66,8 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
               RiskLevel.HIGH to listOf("Prisoners"),
               RiskLevel.VERY_HIGH to listOf("Staff")
-            )
+            ),
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
           )
         )
       }
@@ -107,6 +110,7 @@ class RiskControllerTest : IntegrationTestBase() {
               current = ResponseDto.YES,
               currentConcernsText = "Vulnerability current concerns free text"
             ),
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
           )
         )
       }
@@ -149,6 +153,7 @@ class RiskControllerTest : IntegrationTestBase() {
               current = ResponseDto.YES,
               currentConcernsText = "Vulnerability current concerns free text"
             ),
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
           )
         )
       }
@@ -181,7 +186,11 @@ class RiskControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           OtherRoshRisksDto(
-            null, null, null, null
+            null,
+            null,
+            null,
+            null,
+            null
           )
         )
       }
@@ -201,6 +210,7 @@ class RiskControllerTest : IntegrationTestBase() {
             controlIssuesDisruptiveBehaviour = ResponseDto.YES,
             breachOfTrust = ResponseDto.DK,
             riskToOtherPrisoners = ResponseDto.YES,
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
           )
         )
       }
@@ -244,12 +254,14 @@ class RiskControllerTest : IntegrationTestBase() {
                 current = ResponseDto.YES,
                 currentConcernsText = "Vulnerability current concerns free text"
               ),
+              assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
             ),
             OtherRoshRisksDto(
               ResponseDto.YES,
               ResponseDto.YES,
               ResponseDto.DK,
               ResponseDto.YES,
+              assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
             ),
             RiskRoshSummaryDto(
               "whoisAtRisk",
@@ -266,7 +278,8 @@ class RiskControllerTest : IntegrationTestBase() {
                 RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
                 RiskLevel.HIGH to listOf("Prisoners"),
                 RiskLevel.VERY_HIGH to listOf("Staff")
-              )
+              ),
+              assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
             )
           )
         )

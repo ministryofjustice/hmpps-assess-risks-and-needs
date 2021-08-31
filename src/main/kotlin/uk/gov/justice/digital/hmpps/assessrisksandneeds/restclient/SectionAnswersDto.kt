@@ -1,9 +1,13 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
 
+import java.time.LocalDateTime
+
 data class SectionAnswersDto(
 
   val assessmentId: Long,
 
-  val sections: Map<String?, Collection<QuestionAnswerDto>>
+  val sections: Map<String?, Collection<QuestionAnswerDto>>,
+
+  val assessedOn: LocalDateTime
 
 )

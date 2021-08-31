@@ -63,7 +63,8 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
       findAnswer(RoshQuestionCodes.RISK_INCREASE_FACTORS, roshSumAnswers)?.freeFormText,
       findAnswer(RoshQuestionCodes.RISK_MITIGATION_FACTORS, roshSumAnswers)?.freeFormText,
       roshSumAnswers.toRiskInCommunity(),
-      roshSumAnswers.toRiskInCustody()
+      roshSumAnswers.toRiskInCustody(),
+      this?.assessedOn
     )
   }
 
@@ -108,6 +109,7 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
       ),
       ResponseDto.fromString(findAnswer(RoshQuestionCodes.BREACH_OF_TRUST, roshAnswers)?.staticText),
       ResponseDto.fromString(findAnswer(RoshQuestionCodes.RISK_TO_OTHER_PRISONERS, roshAnswers)?.staticText),
+      this?.assessedOn
     )
   }
 
@@ -127,6 +129,7 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     val hostelSettingPreviousRisk =
       roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.HOSTEL_SETTING_PREVIOUS_RISK)
     val vulnerabilityPreviousRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.VULNERABILITY_PREVIOUS_RISK)
+
     return RoshRiskToSelfDto(
       suicide = RiskDto(
         risk = roshAnswers.toResponseForQuestion(RoshQuestionCodes.SUICIDE_RISK),
@@ -202,7 +205,8 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
           roshFullAnswers,
           RoshQuestionCodes.VULNERABILITY_CURRENT_RISK_TEXT
         )
-      )
+      ),
+      this?.assessedOn
     )
   }
 

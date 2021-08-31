@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import com.fasterxml.jackson.annotation.JsonView
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 data class RoshRiskToSelfDto(
 
@@ -24,4 +25,8 @@ data class RoshRiskToSelfDto(
   @Schema(description = "Vulnerability")
   @JsonView(View.CrsProvider::class)
   val vulnerability: RiskDto?,
+
+  @Schema(description = "The date and time that the assessment was completed")
+  @JsonView(View.CrsProvider::class)
+  val assessedOn: LocalDateTime?
 )
