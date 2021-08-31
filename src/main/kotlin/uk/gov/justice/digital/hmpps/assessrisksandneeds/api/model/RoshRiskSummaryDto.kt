@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import com.fasterxml.jackson.annotation.JsonView
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 data class RiskRoshSummaryDto(
 
@@ -51,7 +52,7 @@ data class RiskRoshSummaryDto(
 
   @Schema(
     description = "Assess the risk of serious harm the offender poses on the basis that they could be released imminently back into the community." +
-      "Assess both the risk of serious harm the offender presents now, in custody, and the risk they could present to others whilst in a custodial setting.",
+      "Assess both the risk of seriou:: harm the offender presents now, in custody, and the risk they could present to others whilst in a custodial setting.",
     example = " " +
       "{" +
       "    \"HIGH \": [\"Know adult\"]," +
@@ -62,6 +63,9 @@ data class RiskRoshSummaryDto(
   @JsonView(View.Probation::class)
   val riskInCustody: Map<RiskLevel, List<String>> = hashMapOf(),
 
+  @Schema(description = "The date and time that the assessment was completed")
+  @JsonView(View.Probation::class)
+  val assessedOn: LocalDateTime?
 )
 
 enum class RiskLevel(

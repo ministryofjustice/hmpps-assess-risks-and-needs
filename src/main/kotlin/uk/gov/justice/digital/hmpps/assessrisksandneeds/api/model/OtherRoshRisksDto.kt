@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import com.fasterxml.jackson.annotation.JsonView
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 data class OtherRoshRisksDto(
   @Schema(description = "Escape / abscond")
@@ -18,5 +19,9 @@ data class OtherRoshRisksDto(
 
   @Schema(description = "Risks to other prisoners")
   @JsonView(View.Probation::class)
-  val riskToOtherPrisoners: ResponseDto?
+  val riskToOtherPrisoners: ResponseDto?,
+
+  @Schema(description = "The date and time that the assessment was completed")
+  @JsonView(View.Probation::class)
+  val assessedOn: LocalDateTime?
 )

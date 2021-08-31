@@ -504,7 +504,8 @@ class AssessmentApiMockServer : WireMockServer(9004) {
                 "freeFormText": "zccx"
             }
         ]
-    }
+    },
+    "assessedOn": "2021-06-21T15:55:04"
 }
       """.trimIndent()
   }
