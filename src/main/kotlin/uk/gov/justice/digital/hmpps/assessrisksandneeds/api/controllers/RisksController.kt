@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
+import com.fasterxml.jackson.annotation.JsonView
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -13,6 +14,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
 
 @RestController
@@ -30,7 +32,8 @@ class RisksController(private val riskService: RiskService) {
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getRiskSummaryByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
-    @PathVariable crn: String,
+    @JsonView(View.SingleRisksView::class)
+    @PathVariable crn: String
   ): RiskRoshSummaryDto {
     return riskService.getRoshRiskSummaryByCrn(crn)
   }
@@ -47,7 +50,8 @@ class RisksController(private val riskService: RiskService) {
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getRiskToSelfByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
-    @PathVariable crn: String,
+    @JsonView(View.SingleRisksView::class)
+    @PathVariable crn: String
   ): RoshRiskToSelfDto {
     return riskService.getRoshRisksToSelfByCrn(crn)
   }
@@ -64,6 +68,7 @@ class RisksController(private val riskService: RiskService) {
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getOtherRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
+    @JsonView(View.SingleRisksView::class)
     @PathVariable crn: String,
   ): OtherRoshRisksDto {
     return riskService.getOtherRoshRisk(crn)
@@ -79,6 +84,7 @@ class RisksController(private val riskService: RiskService) {
     ]
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
+  @JsonView(View.AllRisksView::class)
   fun getRoshRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,

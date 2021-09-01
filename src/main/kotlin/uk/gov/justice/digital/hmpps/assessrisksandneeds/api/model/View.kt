@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
+import java.util.*
+
 class View {
   open class CrsProvider
   class Probation : CrsProvider()
 
   companion object {
-    var MAPPING: MutableMap<Role, Class<*>> = HashMap()
+    var MAPPING: MutableMap<Role, Class<*>> = EnumMap(Role::class.java)
 
     init {
       MAPPING[Role.ROLE_PROBATION] = Probation::class.java
@@ -16,4 +18,9 @@ class View {
   enum class Role {
     ROLE_PROBATION, ROLE_CRS_PROVIDER
   }
+
+  open class RiskView
+  class SingleRisksView : RiskView()
+  class AllRisksView : RiskView()
+
 }

@@ -254,14 +254,14 @@ class RiskControllerTest : IntegrationTestBase() {
                 current = ResponseDto.YES,
                 currentConcernsText = "Vulnerability current concerns free text"
               ),
-              assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
+              assessedOn = null
             ),
             OtherRoshRisksDto(
               ResponseDto.YES,
               ResponseDto.YES,
               ResponseDto.DK,
               ResponseDto.YES,
-              assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
+              assessedOn = null
             ),
             RiskRoshSummaryDto(
               "whoisAtRisk",
@@ -279,8 +279,9 @@ class RiskControllerTest : IntegrationTestBase() {
                 RiskLevel.HIGH to listOf("Prisoners"),
                 RiskLevel.VERY_HIGH to listOf("Staff")
               ),
-              assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
-            )
+              assessedOn = null
+            ),
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
           )
         )
       }

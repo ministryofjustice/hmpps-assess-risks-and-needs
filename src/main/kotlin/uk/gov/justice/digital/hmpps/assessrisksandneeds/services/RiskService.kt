@@ -27,7 +27,8 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     return AllRoshRiskDto(
       riskToSelf = sectionsAnswers.toRoshRiskToSelfDto(),
       otherRisks = sectionsAnswers.toOtherRoshRisksDto(),
-      summary = sectionsAnswers.toRiskRoshSummaryDto()
+      summary = sectionsAnswers.toRiskRoshSummaryDto(),
+      assessedOn = sectionsAnswers?.assessedOn
     )
   }
 
