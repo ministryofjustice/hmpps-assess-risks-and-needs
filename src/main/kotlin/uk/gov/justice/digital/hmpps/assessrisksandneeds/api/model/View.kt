@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-import java.util.*
+import java.util.EnumMap
 
 class View {
   open class CrsProvider
@@ -22,5 +22,4 @@ class View {
   open class RiskView
   class SingleRisksView : RiskView()
   class AllRisksView : RiskView()
-
 }
