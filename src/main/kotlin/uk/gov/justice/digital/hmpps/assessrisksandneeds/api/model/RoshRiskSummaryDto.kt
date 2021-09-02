@@ -7,11 +7,11 @@ import java.time.LocalDateTime
 data class RiskRoshSummaryDto(
 
   @Schema(description = "Who is at risk?", example = "X, Y and Z are at risk")
-  @JsonView(View.Probation::class)
+  @JsonView(View.Probation::class, View.RiskView::class)
   val whoIsAtRisk: String? = null,
 
   @Schema(description = "What is the nature of the risk?", example = "The nature of the risk is X")
-  @JsonView(View.Probation::class)
+  @JsonView(View.Probation::class, View.RiskView::class)
   val natureOfRisk: String? = null,
 
   @Schema(
@@ -19,7 +19,7 @@ data class RiskRoshSummaryDto(
       "Consider the risks in custody as well as on release.",
     example = "the risk is imminent and more probably in X situation"
   )
-  @JsonView(View.Probation::class)
+  @JsonView(View.Probation::class, View.RiskView::class)
   val riskImminence: String? = null,
 
   @Schema(
@@ -27,7 +27,7 @@ data class RiskRoshSummaryDto(
       " Describe factors, actions, events which might increase level of risk, now and in the future.",
     example = "If offender in situation X the risk can be higher"
   )
-  @JsonView(View.Probation::class)
+  @JsonView(View.Probation::class, View.RiskView::class)
   val riskIncreaseFactors: String? = null,
 
   @Schema(
@@ -35,7 +35,7 @@ data class RiskRoshSummaryDto(
       "or contain the level of risk. What has previously stopped him / her?",
     example = "Giving offender therapy in X will reduce the risk"
   )
-  @JsonView(View.Probation::class)
+  @JsonView(View.Probation::class, View.RiskView::class)
   val riskMitigationFactors: String? = null,
 
   @Schema(
@@ -47,7 +47,7 @@ data class RiskRoshSummaryDto(
       "    \"LOW\": [\"Prisoners\"]" +
       "}"
   )
-  @JsonView(View.CrsProvider::class)
+  @JsonView(View.CrsProvider::class, View.RiskView::class)
   val riskInCommunity: Map<RiskLevel, List<String>> = hashMapOf(),
 
   @Schema(
@@ -60,11 +60,11 @@ data class RiskRoshSummaryDto(
       "    \"LOW\": [\"Children\",\"Public\"]" +
       "}"
   )
-  @JsonView(View.Probation::class)
+  @JsonView(View.Probation::class, View.RiskView::class)
   val riskInCustody: Map<RiskLevel, List<String>> = hashMapOf(),
 
   @Schema(description = "The date and time that the assessment was completed")
-  @JsonView(View.Probation::class)
+  @JsonView(View.Probation::class, View.SingleRisksView::class)
   val assessedOn: LocalDateTime?
 )
 
