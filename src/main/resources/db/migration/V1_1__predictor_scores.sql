@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS predictors
     offender_predictor_uuid       UUID        NOT NULL,
     predictor_subtype             varchar(100)    not null,
     predictor_score               varchar(10)     not null,
-    predictor_level               varchar(20)     not null,
+    predictor_level               varchar(10)     not null,
     created_date                  timestamp       not null,
     FOREIGN KEY (offender_predictor_uuid) REFERENCES offender_predictors_history (offender_predictor_uuid)
 );

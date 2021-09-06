@@ -1,0 +1,1 @@
+ALTER TABLE predictors ALTER COLUMN predictor_level TYPE VARCHAR(20);
