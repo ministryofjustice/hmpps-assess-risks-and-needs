@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.6"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.7"
   kotlin("plugin.spring") version "1.5.10"
   kotlin("plugin.jpa") version "1.5.10"
 }
@@ -25,7 +25,7 @@ dependencies {
   implementation("com.vladmihalcea:hibernate-types-52:2.12.1")
   implementation("com.beust:klaxon:5.5")
   runtimeOnly("com.h2database:h2:1.4.200")
-  runtimeOnly("org.flywaydb:flyway-core:7.14.0")
+  runtimeOnly("org.flywaydb:flyway-core:7.14.1")
   testRuntimeOnly("com.h2database:h2:1.4.200")
   testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
