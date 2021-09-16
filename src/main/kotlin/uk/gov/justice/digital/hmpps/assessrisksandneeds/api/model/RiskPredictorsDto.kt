@@ -11,7 +11,8 @@ data class RiskPredictorsDto(
   val type: PredictorType,
   val scoreType: ScoreType?,
   val scores: Map<PredictorSubType, Score>,
-  val errors: List<String> = emptyList()
+  val errors: List<String> = emptyList(),
+  val errorCount: Int
 )
 
 data class Score(
