@@ -106,7 +106,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
                 level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
               ),
             ),
-            errorCount= 0
+            errorCount = 0
           )
         )
       }
