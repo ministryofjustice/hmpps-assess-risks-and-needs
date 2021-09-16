@@ -86,7 +86,8 @@ class RiskPredictorService(
               isValid = this.validOspiScore.toBoolean()
             ),
           ),
-          errors = this.toErrors()
+          errors = this.toErrors(),
+          errorCount = this.errorCount
         )
       }
     }

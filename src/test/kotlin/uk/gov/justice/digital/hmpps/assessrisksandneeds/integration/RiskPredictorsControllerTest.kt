@@ -92,9 +92,9 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
         Assertions.assertThat(it.responseBody).isEqualTo(
           RiskPredictorsDto(
             algorithmVersion = "3",
+            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2),
             type = PredictorType.RSR,
             scoreType = ScoreType.STATIC,
-            calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2),
             scores = mapOf(
               PredictorSubType.RSR to Score(
                 level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
@@ -105,7 +105,8 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
               PredictorSubType.OSPI to Score(
                 level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
               ),
-            )
+            ),
+            errorCount= 0
           )
         )
       }
