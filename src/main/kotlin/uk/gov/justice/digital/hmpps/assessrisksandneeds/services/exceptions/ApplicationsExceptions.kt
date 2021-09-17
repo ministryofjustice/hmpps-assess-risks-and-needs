@@ -11,7 +11,6 @@ class DuplicateSourceRecordFound(msg: String?, val supplementaryRiskDto: Supplem
 class PredictorCalculationError(msg: String?) : RuntimeException(msg)
 class IncorrectInputParametersException(msg: String?) : RuntimeException(msg)
 
-
 // External Services Exceptions
 class ExternalApiEntityNotFoundException(
   msg: String? = "",
