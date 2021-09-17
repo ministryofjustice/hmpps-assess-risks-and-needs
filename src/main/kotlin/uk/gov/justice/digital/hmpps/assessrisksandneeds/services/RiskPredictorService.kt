@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEn
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysRSRPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 
 @Service
@@ -40,6 +41,7 @@ class RiskPredictorService(
     sourceId: String,
     algorithmVersion: String? = null
   ): RiskPredictorsDto {
+    if (offenderAndOffences.crn == null && final) throw IncorrectInputParametersException("Crn can't be null for a final Predictor calculation, params crn:${offenderAndOffences.crn} and final:$final")
     val errorMessage =
       "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
     val predictorCalculation =
@@ -102,7 +104,7 @@ class RiskPredictorService(
       predictorType = type,
       algorithmVersion = algorithmVersion,
       calculatedAt = calculatedAt,
-      crn = offenderAndOffencesDto.crn,
+      crn = offenderAndOffencesDto.crn!!,
       predictorTriggerSource = source,
       predictorTriggerSourceId = sourceId,
       sourceAnswers = offenderAndOffencesDto.toSourceAnswers(offenderAndOffencesDto.crn),

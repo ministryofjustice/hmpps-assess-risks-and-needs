@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Exte
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiInvalidRequestException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiUnknownException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.UserNameNotFoundException
 
@@ -42,6 +43,13 @@ class ControllerAdvice {
   fun handle(e: PredictorCalculationError): ResponseEntity<ErrorResponse?> {
     log.info("PredictorCalculationError: {}", e.message)
     return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
+  }
+
+  @ExceptionHandler(IncorrectInputParametersException::class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  fun handle(e: IncorrectInputParametersException): ResponseEntity<ErrorResponse?> {
+    log.info("IncorrectInputParametersException: {}", e.message)
+    return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 
   @ExceptionHandler(MethodArgumentNotValidException::class)
