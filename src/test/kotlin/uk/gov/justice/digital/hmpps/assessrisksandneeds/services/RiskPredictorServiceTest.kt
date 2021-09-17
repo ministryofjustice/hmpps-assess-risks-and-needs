@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPre
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysRSRPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -282,6 +283,21 @@ class RiskPredictorServiceTest {
       assertThat(predictors[2].predictorSubType).isEqualTo(PredictorSubType.OSPI)
       assertThat(predictors[2].predictorScore).isEqualTo(BigDecimal("0"))
       assertThat(predictors[2].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
+    }
+  }
+
+  @Test
+  fun `calculate risk predictors final version throws IncorrectInputParametersException if crn is null`() {
+    val predictorType = PredictorType.RSR
+
+    assertThrows<IncorrectInputParametersException> {
+      riskPredictorsService.calculatePredictorScores(
+        predictorType,
+        offencesAndOffencesDto.copy(crn = null),
+        true,
+        PredictorSource.ASSESSMENTS_API,
+        "sourceId"
+      )
     }
   }
 

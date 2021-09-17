@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
@@ -107,6 +108,76 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
               ),
             ),
             errorCount = 0
+          )
+        )
+      }
+  }
+
+  @Test
+  fun `calculate rsr predictors returns bad request if crn is null and calculation should be stored`() {
+
+    val requestBody = OffenderAndOffencesDto(
+      crn = null,
+      gender = Gender.MALE,
+      dob = LocalDate.of(2021, 1, 1).minusYears(20),
+      assessmentDate = LocalDateTime.of(2021, 1, 1, 0, 0, 0),
+      currentOffence = CurrentOffence("138", "00"),
+      dateOfFirstSanction = LocalDate.of(2021, 1, 1).minusYears(1),
+      totalOffences = 10,
+      totalViolentOffences = 8,
+      dateOfCurrentConviction = LocalDate.of(2021, 1, 1).minusWeeks(2),
+      hasAnySexualOffences = true,
+      isCurrentSexualOffence = true,
+      isCurrentOffenceVictimStranger = true,
+      mostRecentSexualOffenceDate = LocalDate.of(2021, 1, 1).minusWeeks(3),
+      totalSexualOffencesInvolvingAnAdult = 5,
+      totalSexualOffencesInvolvingAChild = 3,
+      totalSexualOffencesInvolvingChildImages = 2,
+      totalNonContactSexualOffences = 2,
+      earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
+      hasCompletedInterview = true,
+      dynamicScoringOffences = DynamicScoringOffences(
+        hasSuitableAccommodation = ProblemsLevel.MISSING,
+        employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
+        currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
+        evidenceOfDomesticViolence = true,
+        isPerpetrator = true,
+        alcoholUseIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
+        bingeDrinkingIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
+        impulsivityIssues = ProblemsLevel.SOME_PROBLEMS,
+        temperControlIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
+        proCriminalAttitudes = ProblemsLevel.SOME_PROBLEMS,
+        previousOffences = PreviousOffences(
+          murderAttempt = true,
+          wounding = true,
+          aggravatedBurglary = true,
+          arson = true,
+          criminalDamage = true,
+          kidnapping = true,
+          firearmPossession = true,
+          robbery = true,
+          offencesWithWeapon = true
+        ),
+        currentOffences = CurrentOffences(
+          firearmPossession = true,
+          offencesWithWeapon = true
+        )
+      )
+    )
+
+    webTestClient.post()
+      .uri("/risks/predictors/RSR?final=true&source=ASSESSMENTS_API&sourceId=90f2b674-ae1c-488d-8b85-0251708ef6b6")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
+      .bodyValue(requestBody)
+      .exchange()
+      .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
+      .expectBody<ErrorResponse>()
+      .consumeWith {
+        Assertions.assertThat(it.responseBody).isEqualTo(
+          ErrorResponse(
+            status = 400,
+            developerMessage = "Crn can't be null for a final Predictor calculation, params crn:null and final:true"
           )
         )
       }

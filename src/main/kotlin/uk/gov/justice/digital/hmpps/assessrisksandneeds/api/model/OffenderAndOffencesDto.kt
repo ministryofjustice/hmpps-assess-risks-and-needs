@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 data class OffenderAndOffencesDto(
   @Schema(description = "Offender CRN", example = "DX12340A")
-  val crn: String,
+  val crn: String?,
 
   @Schema(description = "Gender", example = "MALE, FEMALE")
   val gender: Gender,
