@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.math.BigDecimal

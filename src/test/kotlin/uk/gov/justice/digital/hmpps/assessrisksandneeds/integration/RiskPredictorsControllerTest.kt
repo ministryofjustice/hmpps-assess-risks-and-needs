@@ -182,4 +182,21 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
         )
       }
   }
+
+  @Test
+  fun `get all rsr score history for a crn`() {
+    webTestClient.get()
+      .uri("/risks/predictors/rsr")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<>()
+      .consumeWith {
+        Assertions.assertThat(it.responseBody).isEqualTo(
+        )
+      }
+  }
+
+
 }
