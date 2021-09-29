@@ -10,6 +10,8 @@ class DuplicateSourceRecordFound(msg: String?, val supplementaryRiskDto: Supplem
   RuntimeException(msg)
 class PredictorCalculationError(msg: String?) : RuntimeException(msg)
 class IncorrectInputParametersException(msg: String?) : RuntimeException(msg)
+class ONNXResponseFailure(msg: String?) : RuntimeException(msg)
+class ONNXConsumerFailure(msg: String?) : RuntimeException(msg)
 
 // External Services Exceptions
 class ExternalApiEntityNotFoundException(

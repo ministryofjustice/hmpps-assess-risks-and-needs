@@ -198,7 +198,10 @@ enum class EmploymentType(val score: Int? = null) {
 }
 
 enum class Gender(val value: String) {
-  MALE("M"), FEMALE("F")
+  MALE("M"), FEMALE("F");
+  fun toOnnxFormat(): String {
+    return if (this == MALE) "MALE" else "FEMALE"
+  }
 }
 
 enum class ProblemsLevel(val score: Int? = null) {
