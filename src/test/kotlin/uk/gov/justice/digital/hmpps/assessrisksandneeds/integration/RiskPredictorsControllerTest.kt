@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
@@ -13,11 +14,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
@@ -186,17 +189,28 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
   @Test
   fun `get all rsr score history for a crn`() {
     webTestClient.get()
-      .uri("/risks/predictors/rsr")
-      .header("Content-Type", "application/json")
-      .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
-      .exchange()
-      .expectStatus().isEqualTo(HttpStatus.OK)
-      .expectBody<>()
-      .consumeWith {
-        Assertions.assertThat(it.responseBody).isEqualTo(
+    .uri("/risks/predictors/rsr")
+    .header("Content-Type", "application/json")
+    .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
+    .exchange()
+    .expectStatus().isEqualTo(HttpStatus.OK)
+    .expectBody<List<RsrPredictorDto>>()
+    .consumeWith {
+      Assertions.assertThat(it.responseBody).isEqualTo(
+        listOf(
+          RsrPredictorDto(
+            percentageScore = BigDecimal(10.6),
+            scoreLevel = ScoreLevel.LOW,
+            calculatedDate =  LocalDateTime.of(1999, 1, 1, 1, 1, 1),
+            completedDate = LocalDateTime.of(1990, 1, 1, 1, 1, 1),
+            signedDate = null,
+            staticOrDynamic = ScoreType.DYNAMIC,
+            source = PredictorSource.OASYS,
+            status = AssessmentStatus.COMPLETED,
+            algorithmVersion = "RSR_1.4"
+          )
         )
-      }
+      )
+    }
   }
-
-
 }

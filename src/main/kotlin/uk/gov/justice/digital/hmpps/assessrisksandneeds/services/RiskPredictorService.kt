@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSourc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
@@ -185,5 +186,9 @@ class RiskPredictorService(
     return Klaxon().parse<Map<String, Any>>(
       objectMapper.writeValueAsString(sourceAnswers)
     ) ?: throw PredictorCalculationError("Error parsing answers for CRN: $crn")
+  }
+
+  fun getAllRsrHistory(crn: String): List<RsrPredictorDto> {
+    TODO("Not yet implemented")
   }
 }
