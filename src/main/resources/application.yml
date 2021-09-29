@@ -107,3 +107,7 @@ logging:
 
 assessment-api:
   base-url: http://localhost:9004
+
+onnx-predictors:
+  enabled: false
+  onnx-path: /tmp/onnx/rsr.onnx
