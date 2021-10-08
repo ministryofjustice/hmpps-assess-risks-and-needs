@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
 data class QuestionAnswerDto(
   val refQuestionCode: String? = null,

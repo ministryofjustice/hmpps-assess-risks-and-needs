@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS offender_predictors_history
     source_answers                  JSONB,
     created_by                      text            not null,
     created_date                    timestamp       not null,
+    completed_date                  timestamp,
+    score_type                      varchar(100),
     CONSTRAINT predictors_history_unique_source UNIQUE(predictor_trigger_source, source_id)
 );
 

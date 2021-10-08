@@ -21,7 +21,7 @@ data class OffenderAndOffencesDto(
   val assessmentDate: LocalDateTime,
 
   @Schema(description = "Current Offence")
-  val currentOffence: CurrentOffence,
+  val currentOffence: CurrentOffenceDto,
 
   @Schema(description = "Date of first sanction for the offender", example = "2000-01-01")
   @JsonFormat(pattern = "yyyy-MM-dd")
@@ -88,10 +88,10 @@ data class OffenderAndOffencesDto(
   val hasCompletedInterview: Boolean,
 
   @Schema(description = "Offences for dynamic scoring")
-  val dynamicScoringOffences: DynamicScoringOffences?
+  val dynamicScoringOffences: DynamicScoringOffencesDto?
 )
 
-data class DynamicScoringOffences(
+data class DynamicScoringOffencesDto(
 
   @Schema(
     description = "Is the individual living in suitable accommodation?",
@@ -148,13 +148,13 @@ data class DynamicScoringOffences(
   val proCriminalAttitudes: ProblemsLevel?,
 
   @Schema(description = "Previous Offences")
-  val previousOffences: PreviousOffences?,
+  val previousOffences: PreviousOffencesDto?,
 
   @Schema(description = "Current Offences")
-  val currentOffences: CurrentOffences?
+  val currentOffences: CurrentOffencesDto?
 )
 
-data class CurrentOffences(
+data class CurrentOffencesDto(
   @Schema(description = "Possession of a firearm with intent to endanger life or resist arrest", example = "true")
   val firearmPossession: Boolean?,
 
@@ -162,7 +162,7 @@ data class CurrentOffences(
   val offencesWithWeapon: Boolean?
 )
 
-data class PreviousOffences(
+data class PreviousOffencesDto(
   @Schema(description = "Murder/attempted murder/threat or conspiracy to murder/manslaughter", example = "true")
   val murderAttempt: Boolean?,
 
@@ -191,7 +191,7 @@ data class PreviousOffences(
   val offencesWithWeapon: Boolean?
 )
 
-data class CurrentOffence(val offenceCode: String, val offenceSubcode: String)
+data class CurrentOffenceDto(val offenceCode: String, val offenceSubcode: String)
 
 enum class EmploymentType(val score: Int? = null) {
   NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(1), MISSING

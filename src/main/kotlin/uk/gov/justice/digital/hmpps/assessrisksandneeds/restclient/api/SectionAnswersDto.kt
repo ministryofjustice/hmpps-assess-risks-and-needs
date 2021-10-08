@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
 import java.time.LocalDateTime
 
@@ -8,6 +8,6 @@ data class SectionAnswersDto(
 
   val sections: Map<String?, Collection<QuestionAnswerDto>>,
 
-  val assessedOn: LocalDateTime
+  val assessedOn: LocalDateTime?
 
 )

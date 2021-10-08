@@ -4,15 +4,26 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OffenderAndOffencesBodyDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.PreviousOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionCodesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 import java.time.temporal.ChronoUnit.YEARS
 
@@ -155,13 +166,53 @@ class AssessmentApiRestClient {
       .also { log.info("Retrieved calculated $predictorType scoring for offender with crn ${offenderAndOffences.crn}") }
   }
 
+  fun getPredictorScoresForOffender(
+    crn: String,
+  ): List<OasysPredictorsDto>? {
+    log.info("Retrieving Predictor scores for crn $crn")
+    val path = "/offenders/crn/$crn/predictors"
+    return webClient
+      .get(
+        path
+      )
+      .retrieve()
+      .onStatus(HttpStatus::is4xxClientError) {
+        log.error(
+          "4xx Error retrieving Predictor scores for crn $crn code: ${
+          it.statusCode().value()
+          }"
+        )
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .onStatus(HttpStatus::is5xxServerError) {
+        log.error(
+          "5xx Error retrieving Predictor scores for crn $crn code: ${
+          it.statusCode().value()
+          }"
+        )
+        handle5xxError(
+          "Failed to retrieve Predictor scores for crn $crn",
+          HttpMethod.POST,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
+      .block().also { log.info("Retrieved Predictor scores for crn $crn") }
+  }
+
   private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(algorithmVersion: String?): OffenderAndOffencesBodyDto {
     return OffenderAndOffencesBodyDto(
       algorithmVersion = algorithmVersion,
       gender = this.gender.value,
       dob = this.dob,
       assessmentDate = this.assessmentDate,
-      currentOffence = this.currentOffence.toCurrentOffenceDto(),
+      currentOffence = this.currentOffence.toCurrentOffenceBody(),
       dateOfFirstSanction = this.dateOfFirstSanction,
       ageAtFirstSanction = YEARS.between(this.dob, this.dateOfFirstSanction).toInt(),
       totalOffences = this.totalOffences,
@@ -180,11 +231,11 @@ class AssessmentApiRestClient {
     )
   }
 
-  fun CurrentOffence.toCurrentOffenceDto(): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CurrentOffence {
-    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CurrentOffence(offenceCode, offenceSubcode)
+  fun CurrentOffenceDto.toCurrentOffenceBody(): CurrentOffence {
+    return CurrentOffence(offenceCode, offenceSubcode)
   }
 
-  fun DynamicScoringOffences.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.DynamicScoringOffences {
+  fun DynamicScoringOffencesDto.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): DynamicScoringOffences {
     return DynamicScoringOffences(
       hasCompletedInterview,
       this.hasSuitableAccommodation?.score,
@@ -202,15 +253,15 @@ class AssessmentApiRestClient {
     )
   }
 
-  private fun uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences.toCurrentOffencesBody(): CurrentOffences {
+  private fun CurrentOffencesDto.toCurrentOffencesBody(): CurrentOffences {
     return CurrentOffences(
       this.firearmPossession,
       this.offencesWithWeapon
     )
   }
 
-  fun PreviousOffences.toPreviousOffencesBody(): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.PreviousOffences {
-    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.PreviousOffences(
+  fun PreviousOffencesDto.toPreviousOffencesBody(): PreviousOffences {
+    return PreviousOffences(
       this.murderAttempt,
       this.wounding,
       this.aggravatedBurglary,

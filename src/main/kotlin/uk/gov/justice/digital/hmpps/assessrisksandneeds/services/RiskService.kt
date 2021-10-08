@@ -11,8 +11,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.QuestionAnswerDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionAnswersDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.QuestionAnswerDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
 
 @Service
 class RiskService(private val assessmentClient: AssessmentApiRestClient) {
