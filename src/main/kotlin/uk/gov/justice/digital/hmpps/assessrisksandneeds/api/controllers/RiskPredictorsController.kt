@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOff
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
 @RestController
@@ -48,6 +49,24 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
       sourceId,
       algorithmVersion
     )
+  }
+
+  @RequestMapping(path = ["/risks/crn/{crn}/predictors/rsr/history"], method = [RequestMethod.GET])
+  @Operation(description = "Gets RSR score history for a CRN")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "200", description = "OK")
+    ]
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  fun getRsrScoresByCrn(
+    @Parameter(description = "CRN", required = true)
+    @PathVariable crn: String,
+
+  ): List<RsrPredictorDto> {
+    log.info("Retrieving RSR score history for crn: $crn")
+    return riskPredictorService.getAllRsrHistory(crn)
   }
 
   companion object {

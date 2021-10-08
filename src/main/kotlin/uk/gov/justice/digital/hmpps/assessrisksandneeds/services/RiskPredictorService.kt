@@ -111,6 +111,8 @@ class RiskPredictorService(
       predictorTriggerSourceId = sourceId,
       sourceAnswers = offenderAndOffencesDto.toSourceAnswers(offenderAndOffencesDto.crn),
       createdBy = RequestData.getUserName(),
+      assessmentCompletedDate = offenderAndOffencesDto.assessmentDate,
+      scoreType = scoreType!!
     )
     this.scores.toPredictors(offenderPredictorsHistoryEntity)
     return offenderPredictorsHistoryEntity
@@ -189,6 +191,23 @@ class RiskPredictorService(
   }
 
   fun getAllRsrHistory(crn: String): List<RsrPredictorDto> {
-    TODO("Not yet implemented")
+    log.info("Retrieving RSR scores from each service")
+    val oasysRsrPredictors = getRsrScoresFromOasys(crn)
+    val arnRsrPredictors = getRsrScoresFromArn(crn)
+    return oasysRsrPredictors.plus(arnRsrPredictors).sortedByDescending { it.completedDate }
+  }
+
+  private fun getRsrScoresFromOasys(crn: String): List<RsrPredictorDto> {
+    val oasysPredictors = assessmentClient.getPredictorScoresForOffender(crn) ?: emptyList()
+    val oasysRsrPredictors = oasysPredictors.filter { it.assessmentCompleted == true && it.rsr != null }
+    log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys")
+    return RsrPredictorDto.from(oasysRsrPredictors)
+  }
+
+  private fun getRsrScoresFromArn(crn: String): List<RsrPredictorDto> {
+    val arnPredictors = offenderPredictorsHistoryRepository.findAllByCrn(crn)
+    val arnRsrPredictors = arnPredictors.filter { it.predictorType == PredictorType.RSR }
+    log.info("Retrieved ${arnRsrPredictors.size} RSR scores from ARN")
+    return RsrPredictorDto.from(arnRsrPredictors)
   }
 }

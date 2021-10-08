@@ -175,7 +175,7 @@ class AssessmentApiRestClient {
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
           "4xx Error retrieving Predictor scores for crn $crn code: ${
-            it.statusCode().value()
+          it.statusCode().value()
           }"
         )
         handle4xxError(
@@ -188,7 +188,7 @@ class AssessmentApiRestClient {
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
           "5xx Error retrieving Predictor scores for crn $crn code: ${
-            it.statusCode().value()
+          it.statusCode().value()
           }"
         )
         handle5xxError(

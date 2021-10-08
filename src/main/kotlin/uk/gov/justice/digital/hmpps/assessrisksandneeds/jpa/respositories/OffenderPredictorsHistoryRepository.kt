@@ -8,5 +8,4 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPre
 interface OffenderPredictorsHistoryRepository : JpaRepository<OffenderPredictorsHistoryEntity, Long> {
 
   fun findAllByCrn(crn: String): List<OffenderPredictorsHistoryEntity>
-
 }
