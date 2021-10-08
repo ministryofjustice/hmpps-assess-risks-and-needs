@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSourc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
@@ -19,7 +20,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPre
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysRSRPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 
@@ -110,6 +111,8 @@ class RiskPredictorService(
       predictorTriggerSourceId = sourceId,
       sourceAnswers = offenderAndOffencesDto.toSourceAnswers(offenderAndOffencesDto.crn),
       createdBy = RequestData.getUserName(),
+      assessmentCompletedDate = offenderAndOffencesDto.assessmentDate,
+      scoreType = scoreType!!
     )
     this.scores.toPredictors(offenderPredictorsHistoryEntity)
     return offenderPredictorsHistoryEntity
@@ -185,5 +188,26 @@ class RiskPredictorService(
     return Klaxon().parse<Map<String, Any>>(
       objectMapper.writeValueAsString(sourceAnswers)
     ) ?: throw PredictorCalculationError("Error parsing answers for CRN: $crn")
+  }
+
+  fun getAllRsrHistory(crn: String): List<RsrPredictorDto> {
+    log.info("Retrieving RSR scores from each service")
+    val oasysRsrPredictors = getRsrScoresFromOasys(crn)
+    val arnRsrPredictors = getRsrScoresFromArn(crn)
+    return oasysRsrPredictors.plus(arnRsrPredictors).sortedByDescending { it.completedDate }
+  }
+
+  private fun getRsrScoresFromOasys(crn: String): List<RsrPredictorDto> {
+    val oasysPredictors = assessmentClient.getPredictorScoresForOffender(crn) ?: emptyList()
+    val oasysRsrPredictors = oasysPredictors.filter { it.assessmentCompleted == true && it.rsr != null }
+    log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys")
+    return RsrPredictorDto.from(oasysRsrPredictors)
+  }
+
+  private fun getRsrScoresFromArn(crn: String): List<RsrPredictorDto> {
+    val arnPredictors = offenderPredictorsHistoryRepository.findAllByCrn(crn)
+    val arnRsrPredictors = arnPredictors.filter { it.predictorType == PredictorType.RSR }
+    log.info("Retrieved ${arnRsrPredictors.size} RSR scores from ARN")
+    return RsrPredictorDto.from(arnRsrPredictors)
   }
 }

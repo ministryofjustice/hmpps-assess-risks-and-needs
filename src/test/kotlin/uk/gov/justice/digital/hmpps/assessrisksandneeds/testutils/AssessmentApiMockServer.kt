@@ -196,6 +196,21 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
+  fun stubGetOffenderPredictors() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/offenders/crn/$crn/predictors"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(rsrPredictorsJson)
+        )
+    )
+  }
+
   companion object {
     val crnNotFoundJson =
       """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
@@ -640,4 +655,33 @@ class AssessmentApiMockServer : WireMockServer(9004) {
       "assessedOn": "2021-06-21T15:55:04",
       "historicStatus": "CURRENT"
     } """
+
+  private val rsrPredictorsJson = """ 
+    [
+      {
+          "oasysSetId": 9519347,
+          "refAssessmentVersionCode": "LAYER1",
+          "refAssessmentVersionNumber": "2",
+          "refAssessmentId": 10,
+          "completedDate": "2021-06-21T15:55:04",
+          "assessmentCompleted": true,
+          "assessmentStatus": "COMPLETE",
+          "ogr3": {},
+          "ovp": {},
+          "ogp": {},
+          "rsr": {
+              "rsrPercentageScore": 84.36,
+              "rsrStaticOrDynamic": "DYNAMIC",
+              "rsrAlgorithmVersion": 3,
+              "rsrRiskRecon": {
+                  "code": "H",
+                  "shortDescription": "Risk to Others",
+                  "description": "High"
+              }
+          },
+          "osp": {}
+      }
+    ]
+    
+  """.trimIndent()
 }

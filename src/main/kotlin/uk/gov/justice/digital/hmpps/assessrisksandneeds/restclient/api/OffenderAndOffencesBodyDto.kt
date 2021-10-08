@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
 import java.time.LocalDate
 import java.time.LocalDateTime

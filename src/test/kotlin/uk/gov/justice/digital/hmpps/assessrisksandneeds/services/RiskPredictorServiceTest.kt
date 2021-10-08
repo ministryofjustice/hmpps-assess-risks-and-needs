@@ -12,16 +12,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
@@ -30,7 +30,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysRSRPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 import java.math.BigDecimal
@@ -54,7 +54,7 @@ class RiskPredictorServiceTest {
     gender = Gender.MALE,
     dob = LocalDate.of(2000, 1, 1).minusYears(20),
     assessmentDate = LocalDateTime.of(2021, 1, 1, 0, 0, 0),
-    currentOffence = CurrentOffence("138", "00"),
+    currentOffence = CurrentOffenceDto("138", "00"),
     dateOfFirstSanction = LocalDate.of(2021, 1, 1).minusYears(1),
     totalOffences = 10,
     totalViolentOffences = 8,
@@ -69,7 +69,7 @@ class RiskPredictorServiceTest {
     totalNonContactSexualOffences = 2,
     earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
     hasCompletedInterview = true,
-    dynamicScoringOffences = DynamicScoringOffences(
+    dynamicScoringOffences = DynamicScoringOffencesDto(
       hasSuitableAccommodation = ProblemsLevel.MISSING,
       employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
       currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -80,7 +80,7 @@ class RiskPredictorServiceTest {
       impulsivityIssues = ProblemsLevel.SOME_PROBLEMS,
       temperControlIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
       proCriminalAttitudes = ProblemsLevel.SOME_PROBLEMS,
-      previousOffences = PreviousOffences(
+      previousOffences = PreviousOffencesDto(
         murderAttempt = true,
         wounding = true,
         aggravatedBurglary = true,
@@ -91,7 +91,7 @@ class RiskPredictorServiceTest {
         robbery = true,
         offencesWithWeapon = true
       ),
-      currentOffences = CurrentOffences(
+      currentOffences = CurrentOffencesDto(
         firearmPossession = true,
         offencesWithWeapon = true
       )
@@ -253,7 +253,9 @@ class RiskPredictorServiceTest {
       crn = "X1345",
       predictorTriggerSource = source,
       predictorTriggerSourceId = sourceId,
-      createdBy = RequestData.getUserName()
+      createdBy = RequestData.getUserName(),
+      assessmentCompletedDate = LocalDateTime.of(2021, 7, 30, 16, 0),
+      scoreType = ScoreType.DYNAMIC
     )
 
     riskPredictorsService.calculatePredictorScores(
