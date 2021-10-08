@@ -13,6 +13,8 @@ class OasysPredictorsDto(
   val assessmentCompleted: Boolean? = null,
   val assessmentStatus: String? = null,
   val rsr: RsrDto? = null,
+  val osp: OspDto? = null
+
 )
 
 class RsrDto(
@@ -20,6 +22,13 @@ class RsrDto(
   val rsrStaticOrDynamic: String? = null,
   val rsrAlgorithmVersion: Long? = null,
   val rsrRiskRecon: RefElementDto? = null
+)
+
+data class OspDto(
+  val ospIndecentPercentageScore: BigDecimal? = null,
+  val ospContactPercentageScore: BigDecimal? = null,
+  val ospIndecentRiskRecon: RefElementDto? = null,
+  val ospContactRiskRecon: RefElementDto? = null
 )
 
 data class RefElementDto(

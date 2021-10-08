@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSourc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import java.io.Serializable
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -69,6 +70,13 @@ data class OffenderPredictorsHistoryEntity(
 
   @Column(name = "CREATED_DATE")
   val createdDate: LocalDateTime = LocalDateTime.now(),
+
+  @Column(name = "COMPLETED_DATE")
+  val assessmentCompletedDate: LocalDateTime,
+
+  @Column(name = "SCORE_TYPE")
+  @Enumerated(EnumType.STRING)
+  val scoreType: ScoreType,
 
   @OneToMany(mappedBy = "offenderPredictors", cascade = [CascadeType.ALL])
   val predictors: MutableList<PredictorEntity> = mutableListOf(),

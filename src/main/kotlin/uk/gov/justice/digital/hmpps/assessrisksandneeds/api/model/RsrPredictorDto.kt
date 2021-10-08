@@ -1,52 +1,86 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class RsrPredictorDto(
-  val percentageScore: BigDecimal? = null,
-  val scoreLevel: ScoreLevel? = null,
+  val rsrPercentageScore: BigDecimal? = null,
+  val rsrScoreLevel: ScoreLevel? = null,
+  val ospcPercentageScore: BigDecimal? = null,
+  val ospcScoreLevel: ScoreLevel? = null,
+  val ospiPercentageScore: BigDecimal? = null,
+  val ospiScoreLevel: ScoreLevel? = null,
   val calculatedDate: LocalDateTime? = null,
   val completedDate: LocalDateTime? = null,
   val signedDate: LocalDateTime? = null,
   val staticOrDynamic: ScoreType? = null,
-  val source: PredictorSource,
+  val source: RsrScoreSource,
   val status: AssessmentStatus,
   val algorithmVersion: String? = null,
 ) {
-  // TODO: 29/09/2021 check for variable types and nulls
-  companion object{
-    fun from(oasysPredictorsDto: OasysPredictorsDto): RsrPredictorDto? {
-      // TODO: 29/09/2021 check possible assessment statuses 
-      if (AssessmentStatus.findBy(oasysPredictorsDto.assessmentStatus!!) == null) {
-        return null
-      } else {
-        with(oasysPredictorsDto.rsr!!) {
-          return RsrPredictorDto(
-            percentageScore = rsrPercentageScore,
-            scoreLevel = ScoreLevel.findByType(rsrRiskRecon?.code!!),
-            calculatedDate = null,
-            completedDate = oasysPredictorsDto.completedDate,
-            signedDate = null,
-            staticOrDynamic = ScoreType.findByType(rsrStaticOrDynamic!!),
-            source = PredictorSource.OASYS,
-            status = AssessmentStatus.findBy(oasysPredictorsDto.assessmentStatus!!)!!,
-            algorithmVersion = rsrAlgorithmVersion.toString()
-          )
-        }
+
+  companion object {
+
+    fun from(oasysPredictorsDtos: List<OasysPredictorsDto>): List<RsrPredictorDto> {
+      return oasysPredictorsDtos.map { from(it) }
+    }
+
+    fun from(oasysPredictorsDto: OasysPredictorsDto): RsrPredictorDto {
+      with(oasysPredictorsDto) {
+        return RsrPredictorDto(
+          rsrPercentageScore = rsr?.rsrPercentageScore,
+          rsrScoreLevel = ScoreLevel.findByType(rsr?.rsrRiskRecon?.description!!),
+          ospcPercentageScore = osp?.ospContactPercentageScore,
+          ospcScoreLevel = osp?.ospContactRiskRecon?.description?.let { ScoreLevel.findByType(it) },
+          ospiPercentageScore = osp?.ospIndecentPercentageScore,
+          ospiScoreLevel = osp?.ospIndecentRiskRecon?.description?.let { ScoreLevel.findByType(it) },
+          calculatedDate = null,
+          completedDate = completedDate,
+          signedDate = null,
+          staticOrDynamic = ScoreType.valueOf(rsr.rsrStaticOrDynamic?.uppercase()!!),
+          source = RsrScoreSource.OASYS,
+          status = AssessmentStatus.valueOf(assessmentStatus!!),
+          algorithmVersion = rsr.rsrAlgorithmVersion.toString()
+        )
+      }
+    }
+
+    @JvmName("fromArn")
+    fun from(arnPredictorDtos: List<OffenderPredictorsHistoryEntity>): List<RsrPredictorDto> {
+      return arnPredictorDtos.map { from(it) }
+    }
+
+    fun from(arnPredictor: OffenderPredictorsHistoryEntity): RsrPredictorDto {
+      with(arnPredictor) {
+        val rsr = predictors.firstOrNull { it.predictorSubType == PredictorSubType.RSR }
+        val ospi = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPI }
+        val ospc = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPC }
+        return RsrPredictorDto(
+          rsrPercentageScore = rsr?.predictorScore,
+          rsrScoreLevel = rsr?.predictorLevel,
+          ospcPercentageScore = ospc?.predictorScore,
+          ospcScoreLevel = ospc?.predictorLevel,
+          ospiPercentageScore = ospi?.predictorScore,
+          ospiScoreLevel = ospi?.predictorLevel,
+          calculatedDate = calculatedAt,
+          completedDate = assessmentCompletedDate,
+          signedDate = null,
+          staticOrDynamic = scoreType,
+          source = RsrScoreSource.ASSESSMENTS_API,
+          status = AssessmentStatus.COMPLETE,
+          algorithmVersion = algorithmVersion,
+        )
       }
     }
   }
 }
 
-enum class AssessmentStatus(val status: String) {
-  COMPLETED("Completed"), LOCKED_INCOMPLETE("Locked Incomplete");
-
-  companion object {
-    fun findBy(status: String): AssessmentStatus? {
-      return values().firstOrNull { value -> value.status == status }
-    }
-  }
+enum class AssessmentStatus {
+  COMPLETE, LOCKED_INCOMPLETE;
 }
 
+enum class RsrScoreSource {
+  ASSESSMENTS_API, OASYS, DELIUS;
+}

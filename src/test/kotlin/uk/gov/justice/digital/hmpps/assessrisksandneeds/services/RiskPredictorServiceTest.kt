@@ -253,7 +253,9 @@ class RiskPredictorServiceTest {
       crn = "X1345",
       predictorTriggerSource = source,
       predictorTriggerSourceId = sourceId,
-      createdBy = RequestData.getUserName()
+      createdBy = RequestData.getUserName(),
+      assessmentCompletedDate = LocalDateTime.of(2021, 7, 30, 16, 0),
+      scoreType = ScoreType.DYNAMIC
     )
 
     riskPredictorsService.calculatePredictorScores(

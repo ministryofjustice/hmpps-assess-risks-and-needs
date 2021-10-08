@@ -35,6 +35,7 @@ abstract class IntegrationTestBase {
       assessmentApiMockServer.stubGetRoshRisksByCrn()
       assessmentApiMockServer.stubGetLatestNeedsByCrn()
       assessmentApiMockServer.stubGetRSRPredictorScoring()
+      assessmentApiMockServer.stubGetOffenderPredictors()
     }
 
     @AfterAll

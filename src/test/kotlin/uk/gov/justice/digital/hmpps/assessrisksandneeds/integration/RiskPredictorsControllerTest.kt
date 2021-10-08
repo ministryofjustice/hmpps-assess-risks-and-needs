@@ -1,10 +1,13 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.context.jdbc.SqlConfig
+import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
@@ -14,13 +17,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
@@ -30,7 +33,18 @@ import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Risk Predictors Tests")
-class RiskPredictorsControllerTest() : IntegrationTestBase() {
+@SqlGroup(
+  Sql(
+    scripts = ["classpath:rsrPredictorHistory/before-test.sql"],
+    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
+  ),
+  Sql(
+    scripts = ["classpath:rsrPredictorHistory/after-test.sql"],
+    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
+    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+  )
+)
+class RiskPredictorsControllerTest : IntegrationTestBase() {
 
   @Test
   fun `calculate rsr predictors returns rsr scoring`() {
@@ -93,7 +107,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<RiskPredictorsDto>()
       .consumeWith {
-        Assertions.assertThat(it.responseBody).isEqualTo(
+        assertThat(it.responseBody).isEqualTo(
           RiskPredictorsDto(
             algorithmVersion = "3",
             calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 10, 2),
@@ -177,7 +191,7 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
       .expectBody<ErrorResponse>()
       .consumeWith {
-        Assertions.assertThat(it.responseBody).isEqualTo(
+        assertThat(it.responseBody).isEqualTo(
           ErrorResponse(
             status = 400,
             developerMessage = "Crn can't be null for a final Predictor calculation, params crn:null and final:true"
@@ -188,29 +202,50 @@ class RiskPredictorsControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `get all rsr score history for a crn`() {
-    webTestClient.get()
-    .uri("/risks/predictors/rsr")
-    .header("Content-Type", "application/json")
-    .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
-    .exchange()
-    .expectStatus().isEqualTo(HttpStatus.OK)
-    .expectBody<List<RsrPredictorDto>>()
-    .consumeWith {
-      Assertions.assertThat(it.responseBody).isEqualTo(
-        listOf(
-          RsrPredictorDto(
-            percentageScore = BigDecimal(10.6),
-            scoreLevel = ScoreLevel.LOW,
-            calculatedDate =  LocalDateTime.of(1999, 1, 1, 1, 1, 1),
-            completedDate = LocalDateTime.of(1990, 1, 1, 1, 1, 1),
-            signedDate = null,
-            staticOrDynamic = ScoreType.DYNAMIC,
-            source = PredictorSource.OASYS,
-            status = AssessmentStatus.COMPLETED,
-            algorithmVersion = "RSR_1.4"
-          )
-        )
-      )
+    val crn = "X123456"
+    val rsrHistory = webTestClient.get()
+      .uri("/risks/crn/$crn/predictors/rsr/history")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<List<RsrPredictorDto>>()
+      .returnResult().responseBody
+
+    assertThat(rsrHistory).hasSize(3)
+    with(rsrHistory[0]) {
+      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(40.44))
+      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.HIGH)
+      assertThat(calculatedDate).isEqualTo(LocalDateTime.of(2021, 10, 5, 9, 6))
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2021, 9, 14, 9, 7))
+      assertThat(staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+      assertThat(source).isEqualTo(RsrScoreSource.ASSESSMENTS_API)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(algorithmVersion).isEqualTo("3")
+    }
+    with(rsrHistory[1]) {
+      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(84.36))
+      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.HIGH)
+      assertThat(calculatedDate).isNull()
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2021, 6, 21, 15, 55, 4))
+      assertThat(staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(algorithmVersion).isEqualTo("3")
+    }
+    with(rsrHistory[2]) {
+      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(20.22))
+      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
+      assertThat(ospcPercentageScore).isEqualTo(BigDecimal.valueOf(10.1))
+      assertThat(ospcScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
+      assertThat(ospiPercentageScore).isEqualTo(BigDecimal.valueOf(30.3))
+      assertThat(ospiScoreLevel).isEqualTo(ScoreLevel.HIGH)
+      assertThat(calculatedDate).isEqualTo(LocalDateTime.of(2019, 11, 14, 9, 6))
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2019, 11, 14, 9, 7))
+      assertThat(staticOrDynamic).isEqualTo(ScoreType.STATIC)
+      assertThat(source).isEqualTo(RsrScoreSource.ASSESSMENTS_API)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(algorithmVersion).isEqualTo("3")
     }
   }
 }
