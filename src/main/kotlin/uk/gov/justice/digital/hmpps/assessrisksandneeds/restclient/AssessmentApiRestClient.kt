@@ -8,16 +8,20 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OffenderAndOffencesBodyDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionCodesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
@@ -208,7 +212,7 @@ class AssessmentApiRestClient {
       gender = this.gender.value,
       dob = this.dob,
       assessmentDate = this.assessmentDate,
-      currentOffence = this.currentOffence.toCurrentOffenceDto(),
+      currentOffence = this.currentOffence.toCurrentOffenceBody(),
       dateOfFirstSanction = this.dateOfFirstSanction,
       ageAtFirstSanction = YEARS.between(this.dob, this.dateOfFirstSanction).toInt(),
       totalOffences = this.totalOffences,
@@ -227,12 +231,12 @@ class AssessmentApiRestClient {
     )
   }
 
-  fun CurrentOffence.toCurrentOffenceDto(): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence {
-    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence(offenceCode, offenceSubcode)
+  fun CurrentOffenceDto.toCurrentOffenceBody(): CurrentOffence {
+    return CurrentOffence(offenceCode, offenceSubcode)
   }
 
-  fun DynamicScoringOffences.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences {
-    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences(
+  fun DynamicScoringOffencesDto.toDynamicScoringOffencesBody(hasCompletedInterview: Boolean): DynamicScoringOffences {
+    return DynamicScoringOffences(
       hasCompletedInterview,
       this.hasSuitableAccommodation?.score,
       this.employment?.score,
@@ -249,15 +253,15 @@ class AssessmentApiRestClient {
     )
   }
 
-  private fun uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences.toCurrentOffencesBody(): CurrentOffences {
+  private fun CurrentOffencesDto.toCurrentOffencesBody(): CurrentOffences {
     return CurrentOffences(
       this.firearmPossession,
       this.offencesWithWeapon
     )
   }
 
-  fun PreviousOffences.toPreviousOffencesBody(): uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.PreviousOffences {
-    return uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.PreviousOffences(
+  fun PreviousOffencesDto.toPreviousOffencesBody(): PreviousOffences {
+    return PreviousOffences(
       this.murderAttempt,
       this.wounding,
       this.aggravatedBurglary,

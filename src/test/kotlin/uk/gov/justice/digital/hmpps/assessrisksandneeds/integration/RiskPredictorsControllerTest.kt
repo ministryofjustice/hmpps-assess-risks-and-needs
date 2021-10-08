@@ -10,16 +10,16 @@ import org.springframework.test.context.jdbc.SqlConfig
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffences
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
@@ -54,7 +54,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       gender = Gender.MALE,
       dob = LocalDate.of(2021, 1, 1).minusYears(20),
       assessmentDate = LocalDateTime.of(2021, 1, 1, 0, 0, 0),
-      currentOffence = CurrentOffence("138", "00"),
+      currentOffence = CurrentOffenceDto("138", "00"),
       dateOfFirstSanction = LocalDate.of(2021, 1, 1).minusYears(1),
       totalOffences = 10,
       totalViolentOffences = 8,
@@ -69,7 +69,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       totalNonContactSexualOffences = 2,
       earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
       hasCompletedInterview = true,
-      dynamicScoringOffences = DynamicScoringOffences(
+      dynamicScoringOffences = DynamicScoringOffencesDto(
         hasSuitableAccommodation = ProblemsLevel.MISSING,
         employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
         currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -80,7 +80,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
         impulsivityIssues = ProblemsLevel.SOME_PROBLEMS,
         temperControlIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         proCriminalAttitudes = ProblemsLevel.SOME_PROBLEMS,
-        previousOffences = PreviousOffences(
+        previousOffences = PreviousOffencesDto(
           murderAttempt = true,
           wounding = true,
           aggravatedBurglary = true,
@@ -91,7 +91,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
           robbery = true,
           offencesWithWeapon = true
         ),
-        currentOffences = CurrentOffences(
+        currentOffences = CurrentOffencesDto(
           firearmPossession = true,
           offencesWithWeapon = true
         )
@@ -138,7 +138,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       gender = Gender.MALE,
       dob = LocalDate.of(2021, 1, 1).minusYears(20),
       assessmentDate = LocalDateTime.of(2021, 1, 1, 0, 0, 0),
-      currentOffence = CurrentOffence("138", "00"),
+      currentOffence = CurrentOffenceDto("138", "00"),
       dateOfFirstSanction = LocalDate.of(2021, 1, 1).minusYears(1),
       totalOffences = 10,
       totalViolentOffences = 8,
@@ -153,7 +153,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       totalNonContactSexualOffences = 2,
       earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
       hasCompletedInterview = true,
-      dynamicScoringOffences = DynamicScoringOffences(
+      dynamicScoringOffences = DynamicScoringOffencesDto(
         hasSuitableAccommodation = ProblemsLevel.MISSING,
         employment = EmploymentType.NOT_AVAILABLE_FOR_WORK,
         currentRelationshipWithPartner = ProblemsLevel.SIGNIFICANT_PROBLEMS,
@@ -164,7 +164,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
         impulsivityIssues = ProblemsLevel.SOME_PROBLEMS,
         temperControlIssues = ProblemsLevel.SIGNIFICANT_PROBLEMS,
         proCriminalAttitudes = ProblemsLevel.SOME_PROBLEMS,
-        previousOffences = PreviousOffences(
+        previousOffences = PreviousOffencesDto(
           murderAttempt = true,
           wounding = true,
           aggravatedBurglary = true,
@@ -175,7 +175,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
           robbery = true,
           offencesWithWeapon = true
         ),
-        currentOffences = CurrentOffences(
+        currentOffences = CurrentOffencesDto(
           firearmPossession = true,
           offencesWithWeapon = true
         )
