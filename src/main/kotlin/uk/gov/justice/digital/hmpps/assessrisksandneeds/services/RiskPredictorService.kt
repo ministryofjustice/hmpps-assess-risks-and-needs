@@ -198,13 +198,19 @@ class RiskPredictorService(
   }
 
   private fun getRsrScoresFromOasys(crn: String): List<RsrPredictorDto> {
-    val oasysPredictors = assessmentClient.getPredictorScoresForOffender(crn) ?: emptyList()
-    val oasysRsrPredictors = oasysPredictors.filter { it.assessmentCompleted == true && it.rsr != null }
-    log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys")
-    return RsrPredictorDto.from(oasysRsrPredictors)
+    log.info("Retrieving RSR scores from OASys")
+    return try {
+      val oasysPredictors = assessmentClient.getPredictorScoresForOffender(crn) ?: emptyList()
+      val oasysRsrPredictors = oasysPredictors.filter { it.assessmentCompleted == true && it.rsr != null }
+      log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys")
+      RsrPredictorDto.from(oasysRsrPredictors)
+    } catch (e: Exception) {
+      emptyList()
+    }
   }
 
   private fun getRsrScoresFromArn(crn: String): List<RsrPredictorDto> {
+    log.info("Retrieving RSR scores from ARN")
     val arnPredictors = offenderPredictorsHistoryRepository.findAllByCrn(crn)
     val arnRsrPredictors = arnPredictors.filter { it.predictorType == PredictorType.RSR }
     log.info("Retrieved ${arnRsrPredictors.size} RSR scores from ARN")
