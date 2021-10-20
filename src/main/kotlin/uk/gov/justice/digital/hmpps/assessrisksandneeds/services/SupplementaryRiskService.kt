@@ -91,17 +91,12 @@ class SupplementaryRiskService(
   }
 
   fun toJson(redactedRiskDto: RedactedOasysRiskDto?): Map<String, Any>? {
-    val blah = objectMapper.writeValueAsString(redactedRiskDto)
-    val parsed = Klaxon().parse<Map<String, Any>>(blah)
-    return parsed
+    return Klaxon().parse<Map<String, Any>>(objectMapper.writeValueAsString(redactedRiskDto))
   }
 
   fun toRedactedOasysRisk(json: Map<String, Any>?): RedactedOasysRiskDto? {
     return if (json.isNullOrEmpty()) null
-    else {
-      val blah = objectMapper.writeValueAsString(json)
-      Klaxon().parse<RedactedOasysRiskDto>(blah)
-    }
+    else Klaxon().parse<RedactedOasysRiskDto>(objectMapper.writeValueAsString(json))
   }
 
   fun List<SupplementaryRiskEntity>.toSupplementaryRiskDtos(message: String): List<SupplementaryRiskDto> {
