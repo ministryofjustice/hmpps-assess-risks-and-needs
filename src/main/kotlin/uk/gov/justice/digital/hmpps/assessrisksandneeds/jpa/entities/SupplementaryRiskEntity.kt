@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import com.vladmihalcea.hibernate.type.json.JsonStringType
+import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
+import org.hibernate.annotations.TypeDefs
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
@@ -11,6 +16,10 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "supplementary_risk")
+@TypeDefs(
+  TypeDef(name = "json", typeClass = JsonStringType::class),
+  TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
+)
 class SupplementaryRiskEntity(
   @Id
   @Column(name = "SUPPLEMENTARY_RISK_ID")
@@ -37,6 +46,10 @@ class SupplementaryRiskEntity(
 
   @Column(name = "CREATED_BY")
   val createdBy: String,
+
+  @Type(type = "json")
+  @Column(columnDefinition = "jsonb", name = "RISK_ANSWERS")
+  val riskAnswers: Map<String, Any> = mutableMapOf(),
 
   @Column(name = "RISK_COMMENTS")
   val riskComments: String,

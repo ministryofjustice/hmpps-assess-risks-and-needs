@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RedactedOasysRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData.Companion.USER_NAME_HEADER
@@ -26,8 +28,9 @@ import java.util.UUID
 @DisplayName("Supplementary Risk Service Tests")
 class SupplementaryRiskServiceTest {
   private val supplementaryRiskRepository: SupplementaryRiskRepository = mockk()
+  private val objectMapper: ObjectMapper = mockk()
 
-  private val supplementaryRiskService = SupplementaryRiskService(supplementaryRiskRepository)
+  private val supplementaryRiskService = SupplementaryRiskService(supplementaryRiskRepository, objectMapper)
 
   @Test
   fun `get supplementary risk data by existing source and sourceId`() {
@@ -46,7 +49,7 @@ class SupplementaryRiskServiceTest {
       )
     } returns SupplementaryRiskEntity(
       123L, supplementaryRiskUuid, source, sourceId, crn,
-      createdDate, createdByUserType, createdBy, riskComments
+      createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
     )
 
     val riskBySourceAndSourceId =
@@ -61,6 +64,7 @@ class SupplementaryRiskServiceTest {
         createdBy,
         "delius",
         createdDate,
+        null,
         riskComments
       )
     )
@@ -102,7 +106,7 @@ class SupplementaryRiskServiceTest {
       )
     } returns SupplementaryRiskEntity(
       123L, supplementaryRiskUuid, source, sourceId, crn,
-      createdDate, createdByUserType, createdBy, riskComments
+      createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
     )
 
     val riskBySourceAndSourceId =
@@ -117,6 +121,7 @@ class SupplementaryRiskServiceTest {
         createdBy,
         "delius",
         createdDate,
+        null,
         riskComments
       )
     )
@@ -159,11 +164,11 @@ class SupplementaryRiskServiceTest {
     } returns listOf(
       SupplementaryRiskEntity(
         123L, supplementaryRiskUuid, source, sourceId, crn,
-        createdDate, createdByUserType, createdBy, riskComments
+        createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
       ),
       SupplementaryRiskEntity(
         124L, supplementaryRiskUuid2, source, sourceId, crn,
-        createdDate, createdByUserType, createdBy, riskComments
+        createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
       )
     )
 
@@ -179,6 +184,7 @@ class SupplementaryRiskServiceTest {
         createdBy,
         "delius",
         createdDate,
+        null,
         riskComments
       ),
       SupplementaryRiskDto(
@@ -189,6 +195,7 @@ class SupplementaryRiskServiceTest {
         createdBy,
         "delius",
         createdDate,
+        null,
         riskComments
       )
     )
@@ -217,12 +224,10 @@ class SupplementaryRiskServiceTest {
       createdBy = createdBy,
       riskComments = riskComments
     )
-    every {
-      supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId)
-    } returns null
-    every {
-      supplementaryRiskRepository.save(any())
-    } returns riskEntity
+
+    every { supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId) } returns null
+    every { supplementaryRiskRepository.save(any()) } returns riskEntity
+    every { objectMapper.writeValueAsString(null) } returns "{}"
 
     val supplementaryRiskDto = CreateSupplementaryRiskDto(
       source = Source.INTERVENTION_REFERRAL,
@@ -243,6 +248,7 @@ class SupplementaryRiskServiceTest {
         createdByUser = createdBy,
         createdByUserType = "delius",
         createdDate = createdDate,
+        redactedRisk = null,
         riskSummaryComments = riskComments
       )
     )
@@ -260,7 +266,7 @@ class SupplementaryRiskServiceTest {
     val riskComments = "risk comments bla bla"
     val riskEntity = SupplementaryRiskEntity(
       123L, supplementaryRiskUuid, source, sourceId, crn,
-      createdDate, createdByUserType, createdBy, riskComments
+      createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
     )
     every {
       supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId)
@@ -272,6 +278,7 @@ class SupplementaryRiskServiceTest {
       crn,
       "delius",
       createdDate,
+      null,
       riskComments
     )
 
@@ -282,6 +289,83 @@ class SupplementaryRiskServiceTest {
     assertEquals(
       "Duplicate supplementary risk found for source: $source with sourceId: $sourceId",
       exception.message
+    )
+  }
+
+  @Test
+  fun `create supplementary risk data with redacted risk answers`() {
+    MDC.put(USER_NAME_HEADER, "Arnold G.")
+
+    val supplementaryRiskUuid = UUID.randomUUID()
+    val source = "INTERVENTION_REFERRAL"
+    val sourceId = "123"
+    val crn = "CRN123"
+    val createdDate = LocalDateTime.now()
+    val createdByUserType = "delius"
+    val createdBy = "Arnold G."
+    val riskComments = "risk comments bla bla"
+    val redactedRisk = RedactedOasysRiskDto(
+      riskWho = "Risk to person",
+      riskWhen = "When risk is greatest",
+      riskNature = "Nature is risk",
+      concernsSelfHarm = "Self harm concerns",
+      concernsSuicide = "Suicide concerns",
+      concernsHostel = "Hostel concerns",
+      concernsVulnerability = "Vulnerability concerns"
+    )
+
+    val redactedRiskMap = mutableMapOf(
+      "concernsSelfHarm" to "Self harm concerns",
+      "concernsVulnerability" to "Vulnerability concerns",
+      "riskWho" to "Risk to person",
+      "riskWhen" to "When risk is greatest",
+      "riskNature" to "Nature is risk",
+      "concernsHostel" to "Hostel concerns",
+      "concernsSuicide" to "Suicide concerns"
+    )
+
+    val redactedRiskString = "{\"riskWho\":\"Risk to person\",\"riskWhen\":\"When risk is greatest\",\"riskNature\":\"Nature is risk\",\"concernsSelfHarm\":\"Self harm concerns\",\"concernsSuicide\":\"Suicide concerns\",\"concernsHostel\":\"Hostel concerns\",\"concernsVulnerability\":\"Vulnerability concerns\"}"
+    val riskEntity = SupplementaryRiskEntity(
+      supplementaryRiskId = 123L,
+      supplementaryRiskUuid = supplementaryRiskUuid,
+      source = source,
+      sourceId = sourceId,
+      crn = crn,
+      createdDate = createdDate,
+      createdByUserType = createdByUserType,
+      createdBy = createdBy,
+      riskAnswers = redactedRiskMap,
+      riskComments = riskComments
+    )
+
+    every { supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId) } returns null
+    every { supplementaryRiskRepository.save(any()) } returns riskEntity
+    every { objectMapper.writeValueAsString(redactedRiskMap) } returns redactedRiskString
+    every { objectMapper.writeValueAsString(redactedRisk) } returns redactedRiskString
+
+    val supplementaryRiskDto = CreateSupplementaryRiskDto(
+      source = Source.INTERVENTION_REFERRAL,
+      sourceId = sourceId,
+      crn = crn,
+      createdByUserType = "delius",
+      createdDate = createdDate,
+      redactedRisk = redactedRisk,
+      riskSummaryComments = riskComments
+    )
+    val risk = supplementaryRiskService.createNewSupplementaryRisk(supplementaryRiskDto)
+
+    assertThat(risk).isEqualTo(
+      SupplementaryRiskDto(
+        supplementaryRiskId = supplementaryRiskUuid,
+        source = Source.INTERVENTION_REFERRAL,
+        sourceId = sourceId,
+        crn = crn,
+        createdByUser = createdBy,
+        createdByUserType = "delius",
+        createdDate = createdDate,
+        redactedRisk = redactedRisk,
+        riskSummaryComments = riskComments
+      )
     )
   }
 

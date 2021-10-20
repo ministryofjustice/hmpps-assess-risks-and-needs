@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RedactedOasysRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import java.time.LocalDateTime
@@ -102,6 +103,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary cooper",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 0),
+              null,
               "risk for children"
             )
           )
@@ -125,6 +127,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary cooper",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 0),
+              null,
               "risk for children"
             )
           )
@@ -178,6 +181,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 7),
+              null,
               "risk to self"
             ),
             SupplementaryRiskDto(
@@ -188,6 +192,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
+              null,
               "risk to self"
             )
           )
@@ -248,6 +253,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
+              null,
               "risk to self"
             )
           )
@@ -270,6 +276,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
+              null,
               "risk to self"
             )
           )
@@ -281,13 +288,21 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
   @DisplayName("Create new supplementary risk")
   inner class PostNewSupplementaryRisk {
 
-    private val requestBody = SupplementaryRiskDto(
-      supplementaryRiskId = null,
+    private val requestBody = CreateSupplementaryRiskDto(
       source = Source.INTERVENTION_REFERRAL,
       sourceId = "8e020e78-a81c-407f-bc78-e5f284e237e8",
       crn = "X123457",
       createdByUserType = "delius",
       createdDate = LocalDateTime.of(2019, 11, 14, 9, 7),
+      redactedRisk = RedactedOasysRiskDto(
+        riskWho = null,
+        riskWhen = null,
+        riskNature = null,
+        concernsSelfHarm = null,
+        concernsSuicide = null,
+        concernsHostel = null,
+        concernsVulnerability = null
+      ),
       riskSummaryComments = "risk to others"
     )
 
@@ -337,6 +352,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Tom C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 7),
+              null,
               "risk to others"
             )
           )
@@ -388,9 +404,53 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               sourceId = "3e020e78-a81c-407f-bc78-e5f284e237e5",
               crn = "X123457",
               createdByUser = "Gary C",
-              riskSummaryComments = "risk to self",
-              createdDate = LocalDateTime.of(2019, 11, 14, 9, 5),
               createdByUserType = "delius",
+              createdDate = LocalDateTime.of(2019, 11, 14, 9, 5),
+              riskSummaryComments = "risk to self",
+              redactedRisk = null,
+            )
+          )
+        }
+    }
+    @Test
+    fun `create new supplementary risk with redacted data`() {
+      val redactedRiskBody = requestBody.copy(
+        redactedRisk = RedactedOasysRiskDto(
+          riskWho = "Risk to person",
+          riskWhen = "When risk is greatest",
+          riskNature = "Nature is risk",
+          concernsSelfHarm = "Self harm concerns",
+          concernsSuicide = "Suicide concerns",
+          concernsHostel = "Hostel concerns",
+          concernsVulnerability = "Vulnerability concerns"
+        )
+      )
+      webTestClient.post().uri("/risks/supplementary")
+        .header("Content-Type", "application/json")
+        .headers(setAuthorisation(user = "Tom C", roles = listOf("ROLE_PROBATION")))
+        .bodyValue(redactedRiskBody)
+        .exchange()
+        .expectBody<SupplementaryRiskDto>()
+        .consumeWith {
+          assertThat(it.responseBody).isEqualTo(
+            SupplementaryRiskDto(
+              supplementaryRiskId = it.responseBody?.supplementaryRiskId,
+              Source.INTERVENTION_REFERRAL,
+              "8e020e78-a81c-407f-bc78-e5f284e237e8",
+              "X123457",
+              "Tom C",
+              "delius",
+              LocalDateTime.of(2019, 11, 14, 9, 7),
+              redactedRisk = RedactedOasysRiskDto(
+                riskWho = "Risk to person",
+                riskWhen = "When risk is greatest",
+                riskNature = "Nature is risk",
+                concernsSelfHarm = "Self harm concerns",
+                concernsSuicide = "Suicide concerns",
+                concernsHostel = "Hostel concerns",
+                concernsVulnerability = "Vulnerability concerns"
+              ),
+              "risk to others"
             )
           )
         }
