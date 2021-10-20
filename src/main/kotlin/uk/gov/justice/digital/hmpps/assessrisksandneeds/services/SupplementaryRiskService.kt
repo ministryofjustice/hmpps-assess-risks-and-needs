@@ -1,9 +1,13 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
+import com.beust.klaxon.Klaxon
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RedactedOasysRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserType
@@ -16,7 +20,8 @@ import java.util.UUID
 
 @Service
 class SupplementaryRiskService(
-  private val supplementaryRiskRepository: SupplementaryRiskRepository
+  private val supplementaryRiskRepository: SupplementaryRiskRepository,
+  @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -67,6 +72,7 @@ class SupplementaryRiskService(
       this.createdBy,
       this.createdByUserType.lowercase(),
       this.createdDate,
+      toRedactedOasysRisk(this.riskAnswers),
       this.riskComments
     )
   }
@@ -79,8 +85,18 @@ class SupplementaryRiskService(
       createdBy = RequestData.getUserName(),
       createdByUserType = UserType.fromString(this.createdByUserType).name,
       createdDate = this.createdDate,
+      riskAnswers = toJson(this.redactedRisk) ?: mutableMapOf(),
       riskComments = this.riskSummaryComments
     )
+  }
+
+  fun toJson(redactedRiskDto: RedactedOasysRiskDto?): Map<String, Any>? {
+    return Klaxon().parse<Map<String, Any>>(objectMapper.writeValueAsString(redactedRiskDto))
+  }
+
+  fun toRedactedOasysRisk(json: Map<String, Any>?): RedactedOasysRiskDto? {
+    return if (json.isNullOrEmpty()) null
+    else Klaxon().parse<RedactedOasysRiskDto>(objectMapper.writeValueAsString(json))
   }
 
   fun List<SupplementaryRiskEntity>.toSupplementaryRiskDtos(message: String): List<SupplementaryRiskDto> {
