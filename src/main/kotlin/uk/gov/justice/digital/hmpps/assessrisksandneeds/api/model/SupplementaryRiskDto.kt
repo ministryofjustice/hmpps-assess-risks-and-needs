@@ -27,6 +27,10 @@ data class SupplementaryRiskDto(
   @Schema(description = "Created At", example = "")
   val createdDate: LocalDateTime = LocalDateTime.now(),
 
+  @Schema(description = "Redacted risk answers")
+  val redactedRisk: RedactedOasysRiskDto? = null,
+
   @Schema(description = "Risk Summary Comments", example = "Free text up to 4000 characters")
   val riskSummaryComments: String,
+
 )
