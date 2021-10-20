@@ -192,7 +192,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
-              null,
+              RedactedOasysRiskDto(
+                riskWho = "Risk to person",
+                riskWhen = "When risk is greatest",
+                riskNature = "Nature is risk",
+                concernsSelfHarm = "Self harm concerns",
+                concernsSuicide = "Suicide concerns",
+                concernsHostel = "Hostel concerns",
+                concernsVulnerability = "Vulnerability concerns"
+              ),
               "risk to self"
             )
           )
@@ -253,7 +261,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
-              null,
+              RedactedOasysRiskDto(
+                riskWho = "Risk to person",
+                riskWhen = "When risk is greatest",
+                riskNature = "Nature is risk",
+                concernsSelfHarm = "Self harm concerns",
+                concernsSuicide = "Suicide concerns",
+                concernsHostel = "Hostel concerns",
+                concernsVulnerability = "Vulnerability concerns"
+              ),
               "risk to self"
             )
           )
@@ -276,7 +292,15 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "Gary C",
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 6),
-              null,
+              RedactedOasysRiskDto(
+                riskWho = "Risk to person",
+                riskWhen = "When risk is greatest",
+                riskNature = "Nature is risk",
+                concernsSelfHarm = "Self harm concerns",
+                concernsSuicide = "Suicide concerns",
+                concernsHostel = "Hostel concerns",
+                concernsVulnerability = "Vulnerability concerns"
+              ),
               "risk to self"
             )
           )
@@ -412,6 +436,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           )
         }
     }
+
     @Test
     fun `create new supplementary risk with redacted data`() {
       val redactedRiskBody = requestBody.copy(
