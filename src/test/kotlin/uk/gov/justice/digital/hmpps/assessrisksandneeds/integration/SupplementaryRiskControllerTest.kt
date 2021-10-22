@@ -318,15 +318,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
       crn = "X123457",
       createdByUserType = "delius",
       createdDate = LocalDateTime.of(2019, 11, 14, 9, 7),
-      redactedRisk = RedactedOasysRiskDto(
-        riskWho = null,
-        riskWhen = null,
-        riskNature = null,
-        concernsSelfHarm = null,
-        concernsSuicide = null,
-        concernsHostel = null,
-        concernsVulnerability = null
-      ),
+      redactedRisk = null,
       riskSummaryComments = "risk to others"
     )
 

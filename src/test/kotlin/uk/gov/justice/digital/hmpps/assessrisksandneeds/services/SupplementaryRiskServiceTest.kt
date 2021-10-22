@@ -333,6 +333,54 @@ class SupplementaryRiskServiceTest {
   }
 
   @Test
+  fun `create supplementary risk data with null redacted risk answers`() {
+    MDC.put(USER_NAME_HEADER, "Arnold G.")
+
+    val riskEntity = SupplementaryRiskEntity(
+      supplementaryRiskId = 123L,
+      supplementaryRiskUuid = supplementaryRiskUuid,
+      source = source,
+      sourceId = sourceId,
+      crn = crn,
+      createdDate = createdDate,
+      createdByUserType = createdByUserType,
+      createdBy = createdBy,
+      riskAnswers = mapOf(),
+      riskComments = riskComments
+    )
+
+    every { supplementaryRiskRepository.findBySourceAndSourceId(source, sourceId) } returns null
+    every { supplementaryRiskRepository.save(any()) } returns riskEntity
+    every { objectMapper.writeValueAsString(redactedRiskMap) } returns "{}"
+    every { objectMapper.writeValueAsString(redactedRisk) } returns "{}"
+
+    val supplementaryRiskDto = CreateSupplementaryRiskDto(
+      source = Source.INTERVENTION_REFERRAL,
+      sourceId = sourceId,
+      crn = crn,
+      createdByUserType = "delius",
+      createdDate = createdDate,
+      redactedRisk = null,
+      riskSummaryComments = riskComments
+    )
+    val risk = supplementaryRiskService.createNewSupplementaryRisk(supplementaryRiskDto)
+
+    assertThat(risk).isEqualTo(
+      SupplementaryRiskDto(
+        supplementaryRiskId = supplementaryRiskUuid,
+        source = Source.INTERVENTION_REFERRAL,
+        sourceId = sourceId,
+        crn = crn,
+        createdByUser = createdBy,
+        createdByUserType = "delius",
+        createdDate = createdDate,
+        redactedRisk = null,
+        riskSummaryComments = riskComments
+      )
+    )
+  }
+
+  @Test
   fun `throws UserNameNotFoundException when user name is not in the auth context`() {
     MDC.clear()
     val source = Source.INTERVENTION_REFERRAL

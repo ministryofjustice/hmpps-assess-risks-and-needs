@@ -85,13 +85,16 @@ class SupplementaryRiskService(
       createdBy = RequestData.getUserName(),
       createdByUserType = UserType.fromString(this.createdByUserType).name,
       createdDate = this.createdDate,
-      riskAnswers = toJson(this.redactedRisk) ?: mutableMapOf(),
+      riskAnswers = toJson(this.redactedRisk) ?: mapOf(),
       riskComments = this.riskSummaryComments
     )
   }
 
   fun toJson(redactedRiskDto: RedactedOasysRiskDto?): Map<String, Any>? {
-    return Klaxon().parse<Map<String, Any>>(objectMapper.writeValueAsString(redactedRiskDto))
+    return if (redactedRiskDto == null)
+      null
+    else
+      Klaxon().parse<Map<String, Any>>(objectMapper.writeValueAsString(redactedRiskDto))
   }
 
   fun toRedactedOasysRisk(json: Map<String, Any>?): RedactedOasysRiskDto? {
