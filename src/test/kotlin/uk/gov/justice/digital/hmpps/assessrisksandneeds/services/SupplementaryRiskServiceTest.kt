@@ -32,16 +32,37 @@ class SupplementaryRiskServiceTest {
 
   private val supplementaryRiskService = SupplementaryRiskService(supplementaryRiskRepository, objectMapper)
 
+  private val supplementaryRiskUuid = UUID.randomUUID()
+  private val source = "INTERVENTION_REFERRAL"
+  private val sourceId = "123"
+  private val crn = "CRN123"
+  private val createdDate = LocalDateTime.now()
+  private val createdByUserType = "delius"
+  private val createdBy = "Arnold G."
+  private val riskComments = "risk comments bla bla"
+  private val redactedRisk = RedactedOasysRiskDto(
+    riskWho = "Risk to person",
+    riskWhen = "When risk is greatest",
+    riskNature = "Nature is risk",
+    concernsSelfHarm = "Self harm concerns",
+    concernsSuicide = "Suicide concerns",
+    concernsHostel = "Hostel concerns",
+    concernsVulnerability = "Vulnerability concerns"
+  )
+  private val redactedRiskMap = mutableMapOf(
+    "concernsSelfHarm" to "Self harm concerns",
+    "concernsVulnerability" to "Vulnerability concerns",
+    "riskWho" to "Risk to person",
+    "riskWhen" to "When risk is greatest",
+    "riskNature" to "Nature is risk",
+    "concernsHostel" to "Hostel concerns",
+    "concernsSuicide" to "Suicide concerns"
+  )
+  private val redactedRiskString = "{\"riskWho\":\"Risk to person\",\"riskWhen\":\"When risk is greatest\",\"riskNature\":\"Nature is risk\",\"concernsSelfHarm\":\"Self harm concerns\",\"concernsSuicide\":\"Suicide concerns\",\"concernsHostel\":\"Hostel concerns\",\"concernsVulnerability\":\"Vulnerability concerns\"}"
+
   @Test
   fun `get supplementary risk data by existing source and sourceId`() {
-    val supplementaryRiskUuid = UUID.randomUUID()
-    val source = "INTERVENTION_REFERRAL"
-    val sourceId = "123"
-    val crn = "CRN123"
-    val createdDate = LocalDateTime.now()
-    val createdByUserType = "delius"
-    val createdBy = "Arnold G."
-    val riskComments = "risk comments bla bla"
+
     every {
       supplementaryRiskRepository.findBySourceAndSourceId(
         source,
@@ -49,8 +70,9 @@ class SupplementaryRiskServiceTest {
       )
     } returns SupplementaryRiskEntity(
       123L, supplementaryRiskUuid, source, sourceId, crn,
-      createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
+      createdDate, createdByUserType, createdBy, redactedRiskMap, riskComments
     )
+    every { objectMapper.writeValueAsString(redactedRiskMap) } returns redactedRiskString
 
     val riskBySourceAndSourceId =
       supplementaryRiskService.getRiskBySourceAndSourceId(Source.INTERVENTION_REFERRAL, sourceId)
@@ -64,7 +86,7 @@ class SupplementaryRiskServiceTest {
         createdBy,
         "delius",
         createdDate,
-        null,
+        redactedRisk,
         riskComments
       )
     )
@@ -72,8 +94,7 @@ class SupplementaryRiskServiceTest {
 
   @Test
   fun `get supplementary risk data by existing source and sourceId throws Exception when risk not found`() {
-    val source = "INTERVENTION_REFERRAL"
-    val sourceId = "123"
+
     every {
       supplementaryRiskRepository.findBySourceAndSourceId(
         source,
@@ -92,22 +113,16 @@ class SupplementaryRiskServiceTest {
 
   @Test
   fun `get supplementary risk data by existing supplementaryRiskUuid`() {
-    val supplementaryRiskUuid = UUID.randomUUID()
-    val source = "INTERVENTION_REFERRAL"
-    val sourceId = "123"
-    val crn = "CRN123"
-    val createdDate = LocalDateTime.now()
-    val createdByUserType = "delius"
-    val createdBy = "Arnold G."
-    val riskComments = "risk comments bla bla"
+
     every {
       supplementaryRiskRepository.findBySupplementaryRiskUuid(
         supplementaryRiskUuid
       )
     } returns SupplementaryRiskEntity(
       123L, supplementaryRiskUuid, source, sourceId, crn,
-      createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
+      createdDate, createdByUserType, createdBy, redactedRiskMap, riskComments
     )
+    every { objectMapper.writeValueAsString(redactedRiskMap) } returns redactedRiskString
 
     val riskBySourceAndSourceId =
       supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskUuid)
@@ -121,7 +136,7 @@ class SupplementaryRiskServiceTest {
         createdBy,
         "delius",
         createdDate,
-        null,
+        redactedRisk,
         riskComments
       )
     )
@@ -129,7 +144,6 @@ class SupplementaryRiskServiceTest {
 
   @Test
   fun `get supplementary risk data by supplementaryRiskUuid throws Exception when risk not found`() {
-    val supplementaryRiskUuid = UUID.randomUUID()
 
     every {
       supplementaryRiskRepository.findBySupplementaryRiskUuid(
@@ -148,15 +162,8 @@ class SupplementaryRiskServiceTest {
 
   @Test
   fun `get all risks data by existing crn`() {
-    val supplementaryRiskUuid = UUID.randomUUID()
     val supplementaryRiskUuid2 = UUID.randomUUID()
-    val source = "INTERVENTION_REFERRAL"
-    val sourceId = "123"
-    val crn = "CRN123"
-    val createdDate = LocalDateTime.now()
-    val createdByUserType = "delius"
-    val createdBy = "Arnold G."
-    val riskComments = "risk comments bla bla"
+
     every {
       supplementaryRiskRepository.findAllByCrnOrderByCreatedByDesc(
         crn
@@ -164,13 +171,14 @@ class SupplementaryRiskServiceTest {
     } returns listOf(
       SupplementaryRiskEntity(
         123L, supplementaryRiskUuid, source, sourceId, crn,
-        createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
+        createdDate, createdByUserType, createdBy, redactedRiskMap, riskComments
       ),
       SupplementaryRiskEntity(
         124L, supplementaryRiskUuid2, source, sourceId, crn,
         createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
       )
     )
+    every { objectMapper.writeValueAsString(redactedRiskMap) } returns redactedRiskString
 
     val risksByCrn =
       supplementaryRiskService.getRisksByCrn(crn)
@@ -184,7 +192,7 @@ class SupplementaryRiskServiceTest {
         createdBy,
         "delius",
         createdDate,
-        null,
+        redactedRisk,
         riskComments
       ),
       SupplementaryRiskDto(
@@ -205,14 +213,6 @@ class SupplementaryRiskServiceTest {
   fun `create supplementary risk data`() {
     MDC.put(USER_NAME_HEADER, "Arnold G.")
 
-    val supplementaryRiskUuid = UUID.randomUUID()
-    val source = "INTERVENTION_REFERRAL"
-    val sourceId = "123"
-    val crn = "CRN123"
-    val createdDate = LocalDateTime.now()
-    val createdByUserType = "delius"
-    val createdBy = "Arnold G."
-    val riskComments = "risk comments bla bla"
     val riskEntity = SupplementaryRiskEntity(
       supplementaryRiskId = 123L,
       supplementaryRiskUuid = supplementaryRiskUuid,
@@ -256,14 +256,6 @@ class SupplementaryRiskServiceTest {
 
   @Test
   fun `throw exception when supplementary risk data already exists for source`() {
-    val supplementaryRiskUuid = UUID.randomUUID()
-    val source = "INTERVENTION_REFERRAL"
-    val sourceId = "123"
-    val crn = "CRN123"
-    val createdDate = LocalDateTime.now()
-    val createdByUserType = "delius"
-    val createdBy = "Arnold G."
-    val riskComments = "risk comments bla bla"
     val riskEntity = SupplementaryRiskEntity(
       123L, supplementaryRiskUuid, source, sourceId, crn,
       createdDate, createdByUserType, createdBy, mutableMapOf(), riskComments
@@ -296,35 +288,6 @@ class SupplementaryRiskServiceTest {
   fun `create supplementary risk data with redacted risk answers`() {
     MDC.put(USER_NAME_HEADER, "Arnold G.")
 
-    val supplementaryRiskUuid = UUID.randomUUID()
-    val source = "INTERVENTION_REFERRAL"
-    val sourceId = "123"
-    val crn = "CRN123"
-    val createdDate = LocalDateTime.now()
-    val createdByUserType = "delius"
-    val createdBy = "Arnold G."
-    val riskComments = "risk comments bla bla"
-    val redactedRisk = RedactedOasysRiskDto(
-      riskWho = "Risk to person",
-      riskWhen = "When risk is greatest",
-      riskNature = "Nature is risk",
-      concernsSelfHarm = "Self harm concerns",
-      concernsSuicide = "Suicide concerns",
-      concernsHostel = "Hostel concerns",
-      concernsVulnerability = "Vulnerability concerns"
-    )
-
-    val redactedRiskMap = mutableMapOf(
-      "concernsSelfHarm" to "Self harm concerns",
-      "concernsVulnerability" to "Vulnerability concerns",
-      "riskWho" to "Risk to person",
-      "riskWhen" to "When risk is greatest",
-      "riskNature" to "Nature is risk",
-      "concernsHostel" to "Hostel concerns",
-      "concernsSuicide" to "Suicide concerns"
-    )
-
-    val redactedRiskString = "{\"riskWho\":\"Risk to person\",\"riskWhen\":\"When risk is greatest\",\"riskNature\":\"Nature is risk\",\"concernsSelfHarm\":\"Self harm concerns\",\"concernsSuicide\":\"Suicide concerns\",\"concernsHostel\":\"Hostel concerns\",\"concernsVulnerability\":\"Vulnerability concerns\"}"
     val riskEntity = SupplementaryRiskEntity(
       supplementaryRiskId = 123L,
       supplementaryRiskUuid = supplementaryRiskUuid,
