@@ -69,7 +69,7 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     )
   }
 
-  private fun Collection<QuestionAnswerDto>?.toRiskInCustody(): Map<RiskLevel, List<String>> {
+  private fun Collection<QuestionAnswerDto>?.toRiskInCustody(): Map<RiskLevel?, List<String>> {
     val children = RiskLevel.fromString(findAnswer(RoshQuestionCodes.CHILDREN_IN_CUSTODY_RISK, this)?.staticText)
     val public = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PUBLIC_IN_CUSTODY_RISK, this)?.staticText)
     val knowAdult = RiskLevel.fromString(findAnswer(RoshQuestionCodes.KNOWN_ADULT_IN_CUSTODY_RISK, this)?.staticText)
@@ -82,10 +82,10 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
       "Known Adult" to knowAdult,
       "Staff" to staff,
       "Prisoners" to prisoners
-    ).groupBy({ it.second }, { it.first })
+    ).groupBy({ it.second }, { it.first }).filterKeys { it != null }
   }
 
-  private fun Collection<QuestionAnswerDto>?.toRiskInCommunity(): Map<RiskLevel, List<String>> {
+  private fun Collection<QuestionAnswerDto>?.toRiskInCommunity(): Map<RiskLevel?, List<String>> {
     val children = RiskLevel.fromString(findAnswer(RoshQuestionCodes.CHILDREN_IN_COMMUNITY_RISK, this)?.staticText)
     val public = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PUBLIC_IN_COMMUNITY_RISK, this)?.staticText)
     val knowAdult = RiskLevel.fromString(findAnswer(RoshQuestionCodes.KNOWN_ADULT_IN_COMMUNITY_RISK, this)?.staticText)
@@ -95,7 +95,7 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
       "Public" to public,
       "Known Adult" to knowAdult,
       "Staff" to staff
-    ).groupBy({ it.second }, { it.first })
+    ).groupBy({ it.second }, { it.first }).filterKeys { it != null }
   }
 
   private fun SectionAnswersDto?.toOtherRoshRisksDto(): OtherRoshRisksDto {

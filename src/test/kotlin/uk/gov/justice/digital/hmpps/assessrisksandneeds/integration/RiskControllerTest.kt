@@ -286,4 +286,33 @@ class RiskControllerTest : IntegrationTestBase() {
         )
       }
   }
+
+  @Test
+  fun `allow null rosh scores`() {
+    val crn = "X234567"
+    webTestClient.get().uri("/risks/crn/$crn")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .consumeWith {
+        assertThat(it.responseBody.summary).isEqualTo(
+          RiskRoshSummaryDto(
+            "whoisAtRisk",
+            "natureOfRisk",
+            "riskImminence",
+            "riskIncreaseFactors",
+            "riskMitigationFactors",
+            mapOf(
+              RiskLevel.LOW to listOf("Known Adult"),
+              RiskLevel.MEDIUM to listOf("Public"),
+            ),
+            mapOf(
+              RiskLevel.LOW to listOf("Public", "Known Adult")
+            ),
+            assessedOn = null
+          )
+        )
+      }
+  }
 }
