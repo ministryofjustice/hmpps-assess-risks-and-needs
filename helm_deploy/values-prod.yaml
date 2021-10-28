@@ -18,3 +18,5 @@ generic-prometheus-alerts:
 
 dataExtractor:
   enabled: false
+
+is_production: true
