@@ -56,6 +56,18 @@ SPRING_PROFILES_ACTIVE=postgres
 ### Documentation
 The generated documentation for the api can be viewed at http://localhost:8080/swagger-ui.html
 
+## Tasks
+
+❗️ This requires kubectl 1.19, as 1.20+ is incompatible with the live-1 cluster as of October 2021
+
+### Manually sync prod to pre-prod
+
+To manually trigger the production refresh job:
+```
+kubectl --namespace=hmpps-assess-risks-and-needs-prod \
+  create job --from=cronjob.batch/db-refresh-job refresh-job
+```
+
 ## Code style & formatting
 ./gradlew ktlintApplyToIdea addKtlintFormatGitPreCommitHook
 will apply ktlint styles to intellij and also add a pre-commit hook to format all changed kotlin files.
