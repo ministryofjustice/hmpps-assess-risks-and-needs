@@ -36,7 +36,8 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.MEDIUM to listOf("Public"),
               RiskLevel.HIGH to listOf("Staff")
             ),
-            assessedOn = null
+            assessedOn = null,
+            overallRiskLevel = RiskLevel.VERY_HIGH
           )
         )
       }
@@ -67,7 +68,8 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.HIGH to listOf("Prisoners"),
               RiskLevel.VERY_HIGH to listOf("Staff")
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+            RiskLevel.VERY_HIGH
           )
         )
       }
@@ -279,7 +281,8 @@ class RiskControllerTest : IntegrationTestBase() {
                 RiskLevel.HIGH to listOf("Prisoners"),
                 RiskLevel.VERY_HIGH to listOf("Staff")
               ),
-              assessedOn = null
+              assessedOn = null,
+              overallRiskLevel = RiskLevel.VERY_HIGH
             ),
             assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
           )
@@ -310,7 +313,8 @@ class RiskControllerTest : IntegrationTestBase() {
             mapOf(
               RiskLevel.LOW to listOf("Public", "Known Adult")
             ),
-            assessedOn = null
+            assessedOn = null,
+            RiskLevel.MEDIUM
           )
         )
       }

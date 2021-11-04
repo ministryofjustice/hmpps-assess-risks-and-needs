@@ -57,16 +57,29 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
   private fun SectionAnswersDto?.toRiskRoshSummaryDto(): RiskRoshSummaryDto {
     val roshSumAnswers = this?.sections?.get(SectionHeader.ROSH_SUMMARY.value)
 
+    val riskInCommunity = roshSumAnswers.toRiskInCommunity()
+    val riskInCustody = roshSumAnswers.toRiskInCustody()
+
     return RiskRoshSummaryDto(
       findAnswer(RoshQuestionCodes.WHO_IS_AT_RISK, roshSumAnswers)?.freeFormText,
       findAnswer(RoshQuestionCodes.NATURE_OF_RISK, roshSumAnswers)?.freeFormText,
       findAnswer(RoshQuestionCodes.RISK_IMMINENCE, roshSumAnswers)?.freeFormText,
       findAnswer(RoshQuestionCodes.RISK_INCREASE_FACTORS, roshSumAnswers)?.freeFormText,
       findAnswer(RoshQuestionCodes.RISK_MITIGATION_FACTORS, roshSumAnswers)?.freeFormText,
-      roshSumAnswers.toRiskInCommunity(),
-      roshSumAnswers.toRiskInCustody(),
-      this?.assessedOn
+      riskInCommunity,
+      riskInCustody,
+      this?.assessedOn,
+      calculateOverallRiskLevel(riskInCustody + riskInCommunity)
     )
+  }
+
+  private fun calculateOverallRiskLevel(riskLevels: Map<RiskLevel?, List<String>>): RiskLevel? {
+    val riskLevelsWithItems = riskLevels.filterValues { it.isNotEmpty() }.keys
+    if (riskLevelsWithItems.contains(RiskLevel.VERY_HIGH)) return RiskLevel.VERY_HIGH
+    if (riskLevelsWithItems.contains(RiskLevel.HIGH)) return RiskLevel.HIGH
+    if (riskLevelsWithItems.contains(RiskLevel.MEDIUM)) return RiskLevel.MEDIUM
+    if (riskLevelsWithItems.contains(RiskLevel.LOW)) return RiskLevel.LOW
+    return null
   }
 
   private fun Collection<QuestionAnswerDto>?.toRiskInCustody(): Map<RiskLevel?, List<String>> {
