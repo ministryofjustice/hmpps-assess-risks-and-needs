@@ -65,7 +65,14 @@ data class RiskRoshSummaryDto(
 
   @Schema(description = "The date and time that the assessment was completed")
   @JsonView(View.Probation::class, View.SingleRisksView::class)
-  val assessedOn: LocalDateTime?
+  val assessedOn: LocalDateTime?,
+
+  @Schema(
+    description = "Overall Risk Level",
+    example = "HIGH"
+  )
+  @JsonView(View.CrsProvider::class, View.RiskView::class)
+  val overallRiskLevel: RiskLevel? = null
 )
 
 enum class RiskLevel(
