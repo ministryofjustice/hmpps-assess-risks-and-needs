@@ -17,6 +17,6 @@ generic-prometheus-alerts:
   alertSeverity: hmpps-assess-risks-and-needs
 
 dataExtractor:
-  enabled: false
+  enabled: true
 
 is_production: true
