@@ -66,3 +66,7 @@ dist
 ecr.repo
 /dps-gradle-spring-boot-suppressions.xml
 .editorconfig
+
+# Helm
+/helm_deploy/hmpps-assess-risks-and-needs/charts
+/helm_deploy/hmpps-assess-risks-and-needs/Chart.lock
