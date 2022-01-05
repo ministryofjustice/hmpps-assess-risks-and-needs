@@ -1,5 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.16"
+  id("org.springframework.boot") version "2.5.8" // this can be removed once spring boot 2.5.8 is added to the dps gradle plugin
   kotlin("plugin.spring") version "1.5.31"
   kotlin("plugin.jpa") version "1.5.31"
 }
@@ -9,6 +10,7 @@ configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
+ext["log4j2.version"] = "2.17.1" // this can be removed once spring boot 2.5.8 is added to the dps gradle plugin
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
