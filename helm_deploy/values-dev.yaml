@@ -8,7 +8,7 @@ generic-service:
     host: assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
     contextColour: green
     annotations:
-      external-dns.alpha.kubernetes.io/aws-weight: "0"
+      external-dns.alpha.kubernetes.io/aws-weight: "100"
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
