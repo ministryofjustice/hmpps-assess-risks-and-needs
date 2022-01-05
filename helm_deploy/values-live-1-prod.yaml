@@ -6,9 +6,9 @@ generic-service:
 
   ingress:
     host: assess-risks-and-needs.hmpps.service.justice.gov.uk
-    contextColour: green
+    contextColour: blue
     annotations:
-      external-dns.alpha.kubernetes.io/aws-weight: "0"
+      external-dns.alpha.kubernetes.io/aws-weight: "100"
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
@@ -20,6 +20,6 @@ generic-prometheus-alerts:
   alertSeverity: hmpps-assess-risks-and-needs
 
 dataExtractor:
-  enabled: false
+  enabled: true
 
 is_production: true

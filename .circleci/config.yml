@@ -47,9 +47,23 @@ workflows:
               only:
                 - main
       - hmpps/deploy_env:
+          name: deploy_live_1_dev
+          env: "live-1-dev"
+          context: hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - validate
+            - build_docker
+            - helm_lint
+      - hmpps/deploy_env:
           name: deploy_dev
           env: "dev"
-          context: hmpps-common-vars
+          context:
+            - hmpps-common-vars
+            - hmpps-assess-risks-and-needs-dev-live
           filters:
             branches:
               only:
@@ -61,10 +75,10 @@ workflows:
       - request-preprod-approval:
           type: approval
           requires:
-            - deploy_dev
+            - deploy_live_1_dev
       - hmpps/deploy_env:
-          name: deploy_preprod
-          env: "preprod"
+          name: deploy_live_1_preprod
+          env: "live-1-preprod"
           context:
             - hmpps-common-vars
             - hmpps-assess-risks-and-needs-preprod
@@ -73,10 +87,10 @@ workflows:
       - request-prod-approval:
           type: approval
           requires:
-            - deploy_preprod
+            - deploy_live_1_preprod
       - hmpps/deploy_env:
-          name: deploy_prod
-          env: "prod"
+          name: deploy_live_1_prod
+          env: "live-1-prod"
           slack_notification: true
           context:
             - hmpps-common-vars
