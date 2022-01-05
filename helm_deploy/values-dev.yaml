@@ -19,4 +19,4 @@ generic-prometheus-alerts:
   enabled: false
 
 dataExtractor:
-  enabled: false
+  enabled: true
