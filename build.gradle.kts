@@ -10,6 +10,10 @@ configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
+dependencyCheck {
+  suppressionFiles.add("suppressions.xml")
+}
+
 ext["log4j2.version"] = "2.17.1" // this can be removed once spring boot 2.5.8 is added to the dps gradle plugin
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
