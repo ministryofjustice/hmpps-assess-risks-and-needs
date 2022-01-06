@@ -77,15 +77,6 @@ workflows:
           requires:
             - deploy_preprod
       - hmpps/deploy_env:
-          name: deploy_live_1_prod
-          env: "live-1-prod"
-          slack_notification: true
-          context:
-            - hmpps-common-vars
-            - hmpps-assess-risks-and-needs-prod
-          requires:
-            - request-prod-approval
-      - hmpps/deploy_env:
           name: deploy_prod
           env: "prod"
           slack_notification: true
