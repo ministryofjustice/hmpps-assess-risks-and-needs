@@ -1,4 +1,4 @@
 # Suppress CVE for h2 as we are in control of the SQL files being run
 CVE-2021-23463
 # Suppress CVE for h2 as console is not enabled in production
-GHSA-h376-j262-vhq6
+CVE-2021-42392
