@@ -2,3 +2,5 @@
 CVE-2021-23463
 # Suppress CVE for h2 as console is not enabled in production
 CVE-2021-42392
+# Suppress CVE for h2 as console is not enabled in production
+CVE-2022-23221

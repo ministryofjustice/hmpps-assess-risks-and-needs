@@ -7,4 +7,18 @@
         <packageUrl regex="true">^pkg:maven/com\.h2database/h2@.*$</packageUrl>
         <cve>CVE-2021-23463</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: h2-1.4.200.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.h2database/h2@.*$</packageUrl>
+        <cve>CVE-2021-42392</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: h2-1.4.200.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.h2database/h2@.*$</packageUrl>
+        <cve>CVE-2022-23221</cve>
+    </suppress>
 </suppressions>
