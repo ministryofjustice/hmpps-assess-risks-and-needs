@@ -15,12 +15,6 @@ generic-service:
     ASSESSMENT_API_BASE_URL: https://offender-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
     SENTRY_ENVIRONMENT: "dev"
 
-generic-prometheus-alerts:
-  enabled: false
-
-dataExtractor:
-  enabled: true
-
   allowlist:
     office: "217.33.148.210/32"
     health-kick: "35.177.252.195/32"
@@ -29,3 +23,9 @@ dataExtractor:
     cloudplatform-live1-2: "3.8.51.207/32"
     cloudplatform-live1-3: "35.177.252.54/32"
     dxw: "54.76.254.148/32"
+
+generic-prometheus-alerts:
+  enabled: false
+
+dataExtractor:
+  enabled: true
