@@ -39,7 +39,7 @@ enum class ScoreType(val type: String) {
   STATIC("Static"), DYNAMIC("Dynamic");
 
   companion object {
-    fun findByType(type: String): ScoreType? {
+    fun findByType(type: String?): ScoreType? {
       return values().firstOrNull { value -> value.type == type }
     }
   }
