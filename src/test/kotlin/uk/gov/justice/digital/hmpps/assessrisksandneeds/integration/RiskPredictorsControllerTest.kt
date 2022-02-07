@@ -260,5 +260,6 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<RsrPredictorDto>>()
       .returnResult().responseBody
+    assertThat(rsrHistory).hasSize(1)
   }
 }

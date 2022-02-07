@@ -199,7 +199,7 @@ class RiskPredictorService(
 
   private fun getRsrScoresFromOasys(crn: String): List<RsrPredictorDto> {
     val oasysPredictors = assessmentClient.getPredictorScoresForOffender(crn) ?: emptyList()
-    val oasysRsrPredictors = oasysPredictors.filter { it.assessmentCompleted == true && it.rsr != null }
+    val oasysRsrPredictors = oasysPredictors.filter { it.assessmentCompleted == true && it.hasRsrScores() }
     log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys")
     return RsrPredictorDto.from(oasysRsrPredictors)
   }

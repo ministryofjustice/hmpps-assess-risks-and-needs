@@ -15,7 +15,14 @@ class OasysPredictorsDto(
   val rsr: RsrDto? = null,
   val osp: OspDto? = null
 
-)
+) {
+  fun hasRsrScores(): Boolean {
+    return rsr?.rsrPercentageScore != null
+      && rsr.rsrStaticOrDynamic != null
+      && rsr.rsrAlgorithmVersion != null
+      && rsr.rsrRiskRecon != null
+  }
+}
 
 class RsrDto(
   val rsrPercentageScore: BigDecimal? = null,
