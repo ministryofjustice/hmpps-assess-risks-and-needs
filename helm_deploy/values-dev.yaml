@@ -6,11 +6,23 @@ generic-service:
 
   ingress:
     host: assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
+    contextColour: green
+    annotations:
+      external-dns.alpha.kubernetes.io/aws-weight: "100"
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     ASSESSMENT_API_BASE_URL: https://offender-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
     SENTRY_ENVIRONMENT: "dev"
+
+  allowlist:
+    office: "217.33.148.210/32"
+    health-kick: "35.177.252.195/32"
+    mojvpn: "81.134.202.29/32"
+    cloudplatform-live1-1: "35.178.209.113/32"
+    cloudplatform-live1-2: "3.8.51.207/32"
+    cloudplatform-live1-3: "35.177.252.54/32"
+    dxw: "54.76.254.148/32"
 
 generic-prometheus-alerts:
   enabled: false

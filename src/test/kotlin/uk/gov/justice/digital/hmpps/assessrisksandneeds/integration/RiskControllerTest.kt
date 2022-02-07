@@ -36,7 +36,8 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.MEDIUM to listOf("Public"),
               RiskLevel.HIGH to listOf("Staff")
             ),
-            assessedOn = null
+            assessedOn = null,
+            overallRiskLevel = RiskLevel.VERY_HIGH
           )
         )
       }
@@ -67,7 +68,8 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.HIGH to listOf("Prisoners"),
               RiskLevel.VERY_HIGH to listOf("Staff")
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+            RiskLevel.VERY_HIGH
           )
         )
       }
@@ -279,9 +281,40 @@ class RiskControllerTest : IntegrationTestBase() {
                 RiskLevel.HIGH to listOf("Prisoners"),
                 RiskLevel.VERY_HIGH to listOf("Staff")
               ),
-              assessedOn = null
+              assessedOn = null,
+              overallRiskLevel = RiskLevel.VERY_HIGH
             ),
             assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
+          )
+        )
+      }
+  }
+
+  @Test
+  fun `allow null rosh scores`() {
+    val crn = "X234567"
+    webTestClient.get().uri("/risks/crn/$crn")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .consumeWith {
+        assertThat(it.responseBody.summary).isEqualTo(
+          RiskRoshSummaryDto(
+            "whoisAtRisk",
+            "natureOfRisk",
+            "riskImminence",
+            "riskIncreaseFactors",
+            "riskMitigationFactors",
+            mapOf(
+              RiskLevel.LOW to listOf("Known Adult"),
+              RiskLevel.MEDIUM to listOf("Public"),
+            ),
+            mapOf(
+              RiskLevel.LOW to listOf("Public", "Known Adult")
+            ),
+            assessedOn = null,
+            RiskLevel.MEDIUM
           )
         )
       }
