@@ -17,10 +17,10 @@ class OasysPredictorsDto(
 
 ) {
   fun hasRsrScores(): Boolean {
-    return rsr?.rsrPercentageScore != null
-      && rsr.rsrStaticOrDynamic != null
-      && rsr.rsrAlgorithmVersion != null
-      && rsr.rsrRiskRecon != null
+    return rsr?.rsrPercentageScore != null &&
+      rsr.rsrStaticOrDynamic != null &&
+      rsr.rsrAlgorithmVersion != null &&
+      rsr.rsrRiskRecon != null
   }
 }
 
