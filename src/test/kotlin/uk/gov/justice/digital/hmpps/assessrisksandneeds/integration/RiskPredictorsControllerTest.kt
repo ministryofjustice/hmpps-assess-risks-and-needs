@@ -248,4 +248,18 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(algorithmVersion).isEqualTo("3")
     }
   }
+
+  @Test
+  fun `get all rsr score history for a crn when no rsr returned from assessment API`() {
+    val crn = "X234567"
+    val rsrHistory = webTestClient.get()
+      .uri("/risks/crn/$crn/predictors/rsr/history")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<List<RsrPredictorDto>>()
+      .returnResult().responseBody
+    assertThat(rsrHistory).isEmpty()
+  }
 }
