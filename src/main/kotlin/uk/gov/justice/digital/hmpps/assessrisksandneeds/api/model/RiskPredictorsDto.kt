@@ -12,7 +12,7 @@ data class RiskPredictorsDto(
   val scoreType: ScoreType?,
   val scores: Map<PredictorSubType, Score>,
   val errors: List<String> = emptyList(),
-  val errorCount: Int
+  val errorCount: Int = 0
 )
 
 data class Score(
@@ -27,6 +27,15 @@ enum class ScoreLevel(val type: String) {
   companion object {
     fun findByType(type: String?): ScoreLevel? {
       return values().firstOrNull { value -> value.type == type }
+    }
+    fun findByOrdinal(ordinal: Int?): ScoreLevel? {
+      return when (ordinal) {
+        1 -> LOW
+        2 -> MEDIUM
+        3 -> HIGH
+        4 -> VERY_HIGH
+        else -> null
+      }
     }
   }
 }
