@@ -78,4 +78,14 @@ will apply ktlint styles to intellij and also add a pre-commit hook to format al
   by offender assessment service health monitoring (e.g. pager duty) and not other systems who wish to find out the   
   state of offender assessment service.
 - `/info`: provides information about the version of deployed application.  
-  
+
+## RSR Predictor implementation  
+
+The service contains implementations for the OASys and Data Science (ONNX) RSR calculators.
+Only one implementation can be used at once, selected using the spring profiles
+- `oasys-rsr` to use the OASys calculator
+- `onnx-rsr` to use the ONNX implementation
+
+It is not possible to store the ONNX files in this public repository as it has not been approved for release. Sample static and dynamic files which return constant values is provided to facilitate unit tests.
+
+

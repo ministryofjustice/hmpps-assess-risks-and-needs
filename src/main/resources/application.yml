@@ -44,6 +44,8 @@ spring:
         show_sql: false
 
   profiles:
+    active:
+      - "oasys-rsr"
     group:
       test:
         - "stdout"
@@ -109,5 +111,4 @@ assessment-api:
   base-url: http://localhost:9004
 
 onnx-predictors:
-  enabled: false
-  onnx-path: /tmp/onnx/rsr.onnx
+  onnx-path: classpath:/const_rsr_extended.onnx

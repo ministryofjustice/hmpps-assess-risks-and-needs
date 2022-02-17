@@ -13,14 +13,11 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 
@@ -28,6 +25,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Pred
 class RiskPredictorService(
   private val assessmentClient: AssessmentApiRestClient,
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository,
+  private val riskCalculatorService: RiskCalculatorService,
   @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper
 ) {
   companion object {
@@ -42,15 +40,10 @@ class RiskPredictorService(
     sourceId: String,
     algorithmVersion: String? = null
   ): RiskPredictorsDto {
-    if (offenderAndOffences.crn == null && final) throw IncorrectInputParametersException("Crn can't be null for a final Predictor calculation, params crn:${offenderAndOffences.crn} and final:$final")
-    val errorMessage =
-      "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
-    val predictorCalculation =
-      assessmentClient.calculatePredictorTypeScoring(predictorType, offenderAndOffences, algorithmVersion)
-        ?: throw PredictorCalculationError(errorMessage)
 
-    if (predictorCalculation.errorCount > 0) log.error("$errorMessage - ${predictorCalculation.errorMessage}")
-    val predictors = predictorCalculation.toRiskPredictorsDto(predictorType)
+    if (offenderAndOffences.crn == null && final) throw IncorrectInputParametersException("Crn can't be null for a final Predictor calculation")
+    val predictors = riskCalculatorService.calculatePredictorScores(predictorType, offenderAndOffences, algorithmVersion)
+
     if (final) {
       log.info("Saving predictors calculation for offender with CRN ${offenderAndOffences.crn} and $predictorType")
       offenderPredictorsHistoryRepository.save(
@@ -62,38 +55,6 @@ class RiskPredictorService(
       )
     }
     return predictors
-  }
-
-  private fun OasysRSRPredictorsDto.toRiskPredictorsDto(predictorType: PredictorType): RiskPredictorsDto {
-    return when (predictorType) {
-      PredictorType.RSR -> {
-        RiskPredictorsDto(
-          algorithmVersion = this.algorithmVersion.toString(),
-          calculatedAt = this.calculationDateAndTime,
-          type = predictorType,
-          scoreType = ScoreType.findByType(this.scoreType!!),
-          scores = mapOf(
-            PredictorSubType.RSR to Score(
-              level = ScoreLevel.findByType(this.rsrBand!!),
-              score = this.rsrScore,
-              isValid = this.validRsrScore.toBoolean()
-            ),
-            PredictorSubType.OSPC to Score(
-              level = ScoreLevel.findByType(this.ospcBand!!),
-              score = this.ospcScore,
-              isValid = this.validOspcScore.toBoolean()
-            ),
-            PredictorSubType.OSPI to Score(
-              level = ScoreLevel.findByType(this.ospiBand!!),
-              score = this.ospiScore,
-              isValid = this.validOspiScore.toBoolean()
-            ),
-          ),
-          errors = this.toErrors(),
-          errorCount = this.errorCount
-        )
-      }
-    }
   }
 
   private fun RiskPredictorsDto.toOffenderPredictorsHistory(
@@ -126,19 +87,6 @@ class RiskPredictorService(
         it.value.level,
       )
     }
-  }
-
-  private fun String?.toBoolean(): Boolean {
-    return this?.equals(AnswerType.Y.name) == true
-  }
-
-  private fun OasysRSRPredictorsDto.toErrors(): List<String> {
-    return if (this.errorCount > 0) this.errorMessage?.split('\n')?.filter { !it.isNullOrBlank() }
-      ?: emptyList() else emptyList()
-  }
-
-  enum class AnswerType {
-    Y, N
   }
 
   private fun OffenderAndOffencesDto.toSourceAnswers(crn: String): Map<String, Any> {

@@ -22,7 +22,7 @@ import java.time.Duration
 
 @Import(JwtAuthHelper::class, ClientTrackingInterceptor::class, ClientTrackingConfiguration::class)
 @ContextConfiguration(initializers = [ConfigDataApplicationContextInitializer::class])
-@ActiveProfiles("test")
+@ActiveProfiles("test", "oasys-rsr")
 @ExtendWith(SpringExtension::class)
 class ClientTrackingConfigurationTest {
   @Suppress("SpringJavaInjectionPointsAutowiringInspection")

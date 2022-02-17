@@ -70,3 +70,6 @@ ecr.repo
 # Helm
 /helm_deploy/hmpps-assess-risks-and-needs/charts
 /helm_deploy/hmpps-assess-risks-and-needs/Chart.lock
+
+# RSR ONNX Files
+/src/main/resources/onnx/

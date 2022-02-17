@@ -191,12 +191,8 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
       .expectBody<ErrorResponse>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          ErrorResponse(
-            status = 400,
-            developerMessage = "Crn can't be null for a final Predictor calculation, params crn:null and final:true"
-          )
-        )
+        assertThat(it.responseBody.status).isEqualTo(400)
+        assertThat(it.responseBody.developerMessage).contains("Crn can't be null for a final Predictor calculation")
       }
   }
 

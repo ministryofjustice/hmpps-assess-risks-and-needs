@@ -11,7 +11,7 @@ generic-service:
     OAUTH_ENDPOINT_URL: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
     ASSESSMENT_API_BASE_URL: https://offender-prprod.aks-live-1.studio-hosting.service.justice.gov.uk
     SENTRY_ENVIRONMENT: "preprod"
-
+    SPRING_PROFILES_ACTIVE: "logstash,postgres,oasys-rsr"
 generic-prometheus-alerts:
   enabled: false
 
