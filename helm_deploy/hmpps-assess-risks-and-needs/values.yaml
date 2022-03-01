@@ -17,7 +17,7 @@ generic-service:
 
   # Environment variables to load into the deployment
   env:
-    JAVA_OPTS: "-Xmx512m"
+    JAVA_OPTS: "-Xmx768m"
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "logstash,postgres"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
