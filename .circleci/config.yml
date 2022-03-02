@@ -20,6 +20,8 @@ jobs:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
       - run:
+          environment:
+            ENABLE_ONNX_INTEGRATION_TESTS: "false"
           command: ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
       - save_cache:
           paths:

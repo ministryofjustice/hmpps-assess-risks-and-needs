@@ -8,6 +8,7 @@ import io.mockk.slot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -45,10 +46,6 @@ class RiskPredictorServiceTest {
   private val assessmentApiClient: AssessmentApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()
-  private val riskCalculatorService = OASysCalculatorServiceImpl(assessmentApiClient)
-
-  private val riskPredictorsService =
-    RiskPredictorService(assessmentApiClient, offenderPredictorsHistoryRepository, riskCalculatorService, objectMapper)
 
   private val offencesAndOffencesDto = OffenderAndOffencesDto(
     crn = "X1345",
@@ -105,202 +102,216 @@ class RiskPredictorServiceTest {
     every { objectMapper.writeValueAsString(any()) } returns sourceAnswersJson
   }
 
-  @Test
-  fun `calculate risk predictors data throws PredictorCalculationError if calculation is null`() {
-    val predictorType = PredictorType.RSR
-    every {
-      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
-    } returns null
+  @Nested
+  @DisplayName("OASys RSR Calculator")
+  inner class ValidateRSRScores {
 
-    assertThrows<PredictorCalculationError> {
-      riskPredictorsService.calculatePredictorScores(
+    private val riskCalculatorService = OASysCalculatorServiceImpl(assessmentApiClient)
+    private val riskPredictorsService =
+      RiskPredictorService(
+        assessmentApiClient,
+        offenderPredictorsHistoryRepository,
+        riskCalculatorService,
+        objectMapper
+      )
+
+    @Test
+    fun `calculate risk predictors data throws PredictorCalculationError if calculation is null`() {
+      val predictorType = PredictorType.RSR
+      every {
+        assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
+      } returns null
+
+      assertThrows<PredictorCalculationError> {
+        riskPredictorsService.calculatePredictorScores(
+          predictorType,
+          offencesAndOffencesDto,
+          false,
+          PredictorSource.ASSESSMENTS_API,
+          "sourceId"
+        )
+      }
+    }
+
+    @Test
+    fun `calculate risk predictors data returns oasys predictors`() {
+      val predictorType = PredictorType.RSR
+      every {
+        assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
+      } returns OasysRSRPredictorsDto(
+        algorithmVersion = 3,
+        rsrScore = BigDecimal("11.34"),
+        rsrBand = "High",
+        scoreType = "Static",
+        validRsrScore = "Y",
+        ospcScore = BigDecimal("0"),
+        ospcBand = "Not Applicable",
+        validOspcScore = "A",
+        ospiScore = BigDecimal("0"),
+        ospiBand = "Not Applicable",
+        validOspiScore = "A",
+        errorCount = 0,
+        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
+      )
+
+      val predictorScores = riskPredictorsService.calculatePredictorScores(
         predictorType,
         offencesAndOffencesDto,
         false,
         PredictorSource.ASSESSMENTS_API,
         "sourceId"
       )
+
+      assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
+      assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
+      assertThat(predictorScores.scoreType).isEqualTo(ScoreType.STATIC)
+      assertThat(predictorScores.scores[PredictorSubType.RSR]).isEqualTo(
+        Score(
+          level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+        )
+      )
+      assertThat(predictorScores.scores[PredictorSubType.OSPC]).isEqualTo(
+        Score(
+          level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+        )
+      )
+      assertThat(predictorScores.scores[PredictorSubType.OSPI]).isEqualTo(
+        Score(
+          level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+        )
+      )
     }
-  }
 
-  @Test
-  fun `calculate risk predictors data returns oasys predictors`() {
-    val predictorType = PredictorType.RSR
-    every {
-      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
-    } returns OasysRSRPredictorsDto(
-      algorithmVersion = 3,
-      rsrScore = BigDecimal("11.34"),
-      rsrBand = "High",
-      scoreType = "Static",
-      validRsrScore = "Y",
-      ospcScore = BigDecimal("0"),
-      ospcBand = "Not Applicable",
-      validOspcScore = "A",
-      ospiScore = BigDecimal("0"),
-      ospiBand = "Not Applicable",
-      validOspiScore = "A",
-      errorCount = 0,
-      calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
-    )
-
-    val predictorScores = riskPredictorsService.calculatePredictorScores(
-      predictorType,
-      offencesAndOffencesDto,
-      false,
-      PredictorSource.ASSESSMENTS_API,
-      "sourceId"
-    )
-
-    assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
-    assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
-    assertThat(predictorScores.scoreType).isEqualTo(ScoreType.STATIC)
-    assertThat(predictorScores.scores[PredictorSubType.RSR]).isEqualTo(
-      Score(
-        level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+    @Test
+    fun `should deserialize errors correctly`() {
+      val predictorType = PredictorType.RSR
+      every {
+        assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
+      } returns OasysRSRPredictorsDto(
+        algorithmVersion = 3,
+        rsrScore = BigDecimal("11.34"),
+        rsrBand = "High",
+        scoreType = "Static",
+        validRsrScore = "Y",
+        ospcScore = BigDecimal("0"),
+        ospcBand = "Not Applicable",
+        validOspcScore = "A",
+        ospiScore = BigDecimal("0"),
+        ospiBand = "Not Applicable",
+        validOspiScore = "A",
+        errorCount = 9,
+        errorMessage = "Missing detail on previous murder (R1.2).\nMissing detail on previous wounding or gbh (R1.2).\nMissing detail on previous kidnapping (R1.2).\nMissing detail on previous firearm (R1.2).\nMissing detail on previous robbery (R1.2).\nMissing detail on previous aggravated burglary (R1.2).\nMissing detail on previous weapon (R1.2).\nMissing detail on previous criminal damage with intent to endanger life (R1.2).\nMissing detail on previous arson (R1.2).\n",
+        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
       )
-    )
-    assertThat(predictorScores.scores[PredictorSubType.OSPC]).isEqualTo(
-      Score(
-        level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+
+      val predictorScores = riskPredictorsService.calculatePredictorScores(
+        predictorType,
+        offencesAndOffencesDto,
+        false,
+        PredictorSource.ASSESSMENTS_API,
+        "sourceId",
       )
-    )
-    assertThat(predictorScores.scores[PredictorSubType.OSPI]).isEqualTo(
-      Score(
-        level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+
+      assertThat(predictorScores.errors).containsExactly(
+        "Missing detail on previous murder (R1.2).",
+        "Missing detail on previous wounding or gbh (R1.2).",
+        "Missing detail on previous kidnapping (R1.2).",
+        "Missing detail on previous firearm (R1.2).",
+        "Missing detail on previous robbery (R1.2).",
+        "Missing detail on previous aggravated burglary (R1.2).",
+        "Missing detail on previous weapon (R1.2).",
+        "Missing detail on previous criminal damage with intent to endanger life (R1.2).",
+        "Missing detail on previous arson (R1.2).",
       )
-    )
-  }
-
-  @Test
-  fun `should deserialize errors correctly`() {
-    val predictorType = PredictorType.RSR
-    every {
-      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto)
-    } returns OasysRSRPredictorsDto(
-      algorithmVersion = 3,
-      rsrScore = BigDecimal("11.34"),
-      rsrBand = "High",
-      scoreType = "Static",
-      validRsrScore = "Y",
-      ospcScore = BigDecimal("0"),
-      ospcBand = "Not Applicable",
-      validOspcScore = "A",
-      ospiScore = BigDecimal("0"),
-      ospiBand = "Not Applicable",
-      validOspiScore = "A",
-      errorCount = 9,
-      errorMessage = "Missing detail on previous murder (R1.2).\nMissing detail on previous wounding or gbh (R1.2).\nMissing detail on previous kidnapping (R1.2).\nMissing detail on previous firearm (R1.2).\nMissing detail on previous robbery (R1.2).\nMissing detail on previous aggravated burglary (R1.2).\nMissing detail on previous weapon (R1.2).\nMissing detail on previous criminal damage with intent to endanger life (R1.2).\nMissing detail on previous arson (R1.2).\n",
-      calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
-    )
-
-    val predictorScores = riskPredictorsService.calculatePredictorScores(
-      predictorType,
-      offencesAndOffencesDto,
-      false,
-      PredictorSource.ASSESSMENTS_API,
-      "sourceId",
-    )
-
-    assertThat(predictorScores.errors).containsExactly(
-      "Missing detail on previous murder (R1.2).",
-      "Missing detail on previous wounding or gbh (R1.2).",
-      "Missing detail on previous kidnapping (R1.2).",
-      "Missing detail on previous firearm (R1.2).",
-      "Missing detail on previous robbery (R1.2).",
-      "Missing detail on previous aggravated burglary (R1.2).",
-      "Missing detail on previous weapon (R1.2).",
-      "Missing detail on previous criminal damage with intent to endanger life (R1.2).",
-      "Missing detail on previous arson (R1.2).",
-    )
-  }
-
-  @Test
-  fun `calculate risk predictors data saves predictors when final version is true`() {
-    val predictorType = PredictorType.RSR
-    val algorithmVersion = "3"
-    every {
-      assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto, algorithmVersion)
-    } returns OasysRSRPredictorsDto(
-      algorithmVersion = 3,
-      rsrScore = BigDecimal("11.34"),
-      rsrBand = "High",
-      scoreType = "Static",
-      validRsrScore = "Y",
-      ospcScore = BigDecimal("0"),
-      ospcBand = "Not Applicable",
-      validOspcScore = "A",
-      ospiScore = BigDecimal("0"),
-      ospiBand = "Not Applicable",
-      validOspiScore = "A",
-      errorCount = 0,
-      calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
-    )
-
-    val source = PredictorSource.ASSESSMENTS_API
-    val sourceId = "sourceId"
-    val offenderPredictorsHistoryEntitySlot = slot<OffenderPredictorsHistoryEntity>()
-
-    every {
-      offenderPredictorsHistoryRepository.save(
-        capture(offenderPredictorsHistoryEntitySlot)
-      )
-    } returns OffenderPredictorsHistoryEntity(
-      offenderPredictorId = 1,
-      offenderPredictorUuid = UUID.randomUUID(),
-      predictorType = predictorType,
-      algorithmVersion = algorithmVersion,
-      calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 24, 25),
-      crn = "X1345",
-      predictorTriggerSource = source,
-      predictorTriggerSourceId = sourceId,
-      createdBy = RequestData.getUserName(),
-      assessmentCompletedDate = LocalDateTime.of(2021, 7, 30, 16, 0),
-      scoreType = ScoreType.DYNAMIC
-    )
-
-    riskPredictorsService.calculatePredictorScores(
-      predictorType,
-      offencesAndOffencesDto,
-      true,
-      source,
-      sourceId,
-      algorithmVersion
-    )
-
-    with(offenderPredictorsHistoryEntitySlot.captured) {
-      assertThat(algorithmVersion).isEqualTo(algorithmVersion)
-      assertThat(predictorType).isEqualTo(predictorType)
-      assertThat(calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
-      assertThat(crn).isEqualTo("X1345")
-      assertThat(predictorTriggerSource).isEqualTo(source)
-      assertThat(predictorTriggerSourceId).isEqualTo(sourceId)
-      assertThat(createdBy).isEqualTo(RequestData.getUserName())
-      assertThat(predictors).hasSize(3)
-      assertThat(predictors[0].predictorSubType).isEqualTo(PredictorSubType.RSR)
-      assertThat(predictors[0].predictorScore).isEqualTo(BigDecimal("11.34"))
-      assertThat(predictors[0].predictorLevel).isEqualTo(ScoreLevel.HIGH)
-      assertThat(predictors[1].predictorSubType).isEqualTo(PredictorSubType.OSPC)
-      assertThat(predictors[1].predictorScore).isEqualTo(BigDecimal("0"))
-      assertThat(predictors[1].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
-      assertThat(predictors[2].predictorSubType).isEqualTo(PredictorSubType.OSPI)
-      assertThat(predictors[2].predictorScore).isEqualTo(BigDecimal("0"))
-      assertThat(predictors[2].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
     }
-  }
 
-  @Test
-  fun `calculate risk predictors final version throws IncorrectInputParametersException if crn is null`() {
-    val predictorType = PredictorType.RSR
+    @Test
+    fun `calculate risk predictors data saves predictors when final version is true`() {
+      val predictorType = PredictorType.RSR
+      val algorithmVersion = "3"
+      every {
+        assessmentApiClient.calculatePredictorTypeScoring(predictorType, offencesAndOffencesDto, algorithmVersion)
+      } returns OasysRSRPredictorsDto(
+        algorithmVersion = 3,
+        rsrScore = BigDecimal("11.34"),
+        rsrBand = "High",
+        scoreType = "Static",
+        validRsrScore = "Y",
+        ospcScore = BigDecimal("0"),
+        ospcBand = "Not Applicable",
+        validOspcScore = "A",
+        ospiScore = BigDecimal("0"),
+        ospiBand = "Not Applicable",
+        validOspiScore = "A",
+        errorCount = 0,
+        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
+      )
 
-    assertThrows<IncorrectInputParametersException> {
+      val source = PredictorSource.ASSESSMENTS_API
+      val sourceId = "sourceId"
+      val offenderPredictorsHistoryEntitySlot = slot<OffenderPredictorsHistoryEntity>()
+
+      every {
+        offenderPredictorsHistoryRepository.save(
+          capture(offenderPredictorsHistoryEntitySlot)
+        )
+      } returns OffenderPredictorsHistoryEntity(
+        offenderPredictorId = 1,
+        offenderPredictorUuid = UUID.randomUUID(),
+        predictorType = predictorType,
+        algorithmVersion = algorithmVersion,
+        calculatedAt = LocalDateTime.of(2021, 7, 30, 16, 24, 25),
+        crn = "X1345",
+        predictorTriggerSource = source,
+        predictorTriggerSourceId = sourceId,
+        createdBy = RequestData.getUserName(),
+        assessmentCompletedDate = LocalDateTime.of(2021, 7, 30, 16, 0),
+        scoreType = ScoreType.DYNAMIC
+      )
+
       riskPredictorsService.calculatePredictorScores(
         predictorType,
-        offencesAndOffencesDto.copy(crn = null),
+        offencesAndOffencesDto,
         true,
-        PredictorSource.ASSESSMENTS_API,
-        "sourceId"
+        source,
+        sourceId,
+        algorithmVersion
       )
+
+      with(offenderPredictorsHistoryEntitySlot.captured) {
+        assertThat(algorithmVersion).isEqualTo(algorithmVersion)
+        assertThat(predictorType).isEqualTo(predictorType)
+        assertThat(calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
+        assertThat(crn).isEqualTo("X1345")
+        assertThat(predictorTriggerSource).isEqualTo(source)
+        assertThat(predictorTriggerSourceId).isEqualTo(sourceId)
+        assertThat(createdBy).isEqualTo(RequestData.getUserName())
+        assertThat(predictors).hasSize(3)
+        assertThat(predictors[0].predictorSubType).isEqualTo(PredictorSubType.RSR)
+        assertThat(predictors[0].predictorScore).isEqualTo(BigDecimal("11.34"))
+        assertThat(predictors[0].predictorLevel).isEqualTo(ScoreLevel.HIGH)
+        assertThat(predictors[1].predictorSubType).isEqualTo(PredictorSubType.OSPC)
+        assertThat(predictors[1].predictorScore).isEqualTo(BigDecimal("0"))
+        assertThat(predictors[1].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
+        assertThat(predictors[2].predictorSubType).isEqualTo(PredictorSubType.OSPI)
+        assertThat(predictors[2].predictorScore).isEqualTo(BigDecimal("0"))
+        assertThat(predictors[2].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
+      }
+    }
+
+    @Test
+    fun `calculate risk predictors final version throws IncorrectInputParametersException if crn is null`() {
+      val predictorType = PredictorType.RSR
+
+      assertThrows<IncorrectInputParametersException> {
+        riskPredictorsService.calculatePredictorScores(
+          predictorType,
+          offencesAndOffencesDto.copy(crn = null),
+          true,
+          PredictorSource.ASSESSMENTS_API,
+          "sourceId"
+        )
+      }
     }
   }
 

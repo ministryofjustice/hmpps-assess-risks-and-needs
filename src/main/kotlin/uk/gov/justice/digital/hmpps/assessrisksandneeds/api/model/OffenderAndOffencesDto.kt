@@ -194,9 +194,9 @@ data class PreviousOffencesDto(
 data class CurrentOffenceDto(val offenceCode: String, val offenceSubcode: String)
 
 enum class EmploymentType(val score: Int? = null) {
-  NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(1), MISSING;
+  NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(2), MISSING;
   companion object {
-    fun getByValue(value: Int?) = values().firstOrNull { it.score == value }
+    fun getByValue(value: Int?) = values().firstOrNull { it.score == value } ?: MISSING
   }
 }
 
@@ -219,6 +219,6 @@ enum class Gender(val value: String) {
 enum class ProblemsLevel(val score: Int? = null) {
   NO_PROBLEMS(0), SOME_PROBLEMS(1), SIGNIFICANT_PROBLEMS(2), MISSING;
   companion object {
-    fun getByValue(value: Int?) = values().firstOrNull { it.score == value }
+    fun getByValue(value: Int?) = values().firstOrNull { it.score == value } ?: MISSING
   }
 }

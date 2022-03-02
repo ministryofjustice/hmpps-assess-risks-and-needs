@@ -50,15 +50,6 @@ class OnnxCalculatorServiceImplTest {
       assertThat(result.errorCount).isEqualTo(0)
       assertThat(result.errors).isEmpty()
 
-      assertThat(result.scores[PredictorSubType.RSR]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.2943015))
-      assertThat(result.scores[PredictorSubType.RSR]?.level).isEqualTo(ScoreLevel.HIGH)
-      assertThat(result.scores[PredictorSubType.OSPC]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.22851883))
-      assertThat(result.scores[PredictorSubType.OSPC]?.level).isEqualTo(ScoreLevel.VERY_HIGH)
-      assertThat(result.scores[PredictorSubType.OSPI]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.057949))
-      assertThat(result.scores[PredictorSubType.OSPI]?.level).isNull()
-      assertThat(result.scores[PredictorSubType.SNSV]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.007833679))
-      assertThat(result.scores[PredictorSubType.SNSV]?.level).isNull()
-
       assertThat(result.scores[PredictorSubType.RSR_1YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
           0.18834394
@@ -130,16 +121,6 @@ class OnnxCalculatorServiceImplTest {
       assertThat(result.type).isEqualTo(PredictorType.RSR)
       assertThat(result.errorCount).isEqualTo(0)
       assertThat(result.errors).isEmpty()
-
-      assertThat(result.scores[PredictorSubType.RSR]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.30561092))
-      assertThat(result.scores[PredictorSubType.RSR]?.level).isEqualTo(ScoreLevel.HIGH)
-//      assertThat(result.scores[PredictorSubType.OSPC]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPC]?.level).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPI]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPI]?.level).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV]?.level).isNull()
-
       assertThat(result.scores[PredictorSubType.RSR_1YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
           0.18834394
@@ -152,31 +133,26 @@ class OnnxCalculatorServiceImplTest {
         )
       )
       assertThat(result.scores[PredictorSubType.RSR_2YR_BRIEF]?.level).isEqualTo(ScoreLevel.HIGH)
+    }
 
-//      assertThat(result.scores[PredictorSubType.RSR_1YR_EXTENDED]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.RSR_1YR_EXTENDED]?.level).isNull()
-//      assertThat(result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.level).isNull()
-//
-//      assertThat(result.scores[PredictorSubType.OSPC_1YR]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPC_1YR]?.level).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPC_2YR]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPC_2YR]?.level).isNull()
-//
-//      assertThat(result.scores[PredictorSubType.OSPI_1YR]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPI_1YR]?.level).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPI_2YR]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.OSPI_2YR]?.level).isNull()
-//
-//      assertThat(result.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV_1YR_BRIEF]?.level).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV_2YR_BRIEF]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV_2YR_BRIEF]?.level).isNull()
-//
-//      assertThat(result.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.level).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.score).isNull()
-//      assertThat(result.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.level).isNull()
+    @Test
+    fun `should return percentage RSR, OSP and SNSV scores`() {
+      val result =
+        extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, getExtendedInputParameters())
+
+      assertThat(result.scoreType).isEqualTo(ScoreType.DYNAMIC)
+      assertThat(result.type).isEqualTo(PredictorType.RSR)
+      assertThat(result.errorCount).isEqualTo(0)
+      assertThat(result.errors).isEmpty()
+
+      assertThat(result.scores[PredictorSubType.RSR]?.score).isEqualByComparingTo(BigDecimal.valueOf(29.43))
+      assertThat(result.scores[PredictorSubType.RSR]?.level).isEqualTo(ScoreLevel.HIGH)
+      assertThat(result.scores[PredictorSubType.OSPC]?.score).isEqualByComparingTo(BigDecimal.valueOf(22.85))
+      assertThat(result.scores[PredictorSubType.OSPC]?.level).isEqualTo(ScoreLevel.VERY_HIGH)
+      assertThat(result.scores[PredictorSubType.OSPI]?.score).isEqualByComparingTo(BigDecimal.valueOf(5.79))
+      assertThat(result.scores[PredictorSubType.OSPI]?.level).isNull()
+      assertThat(result.scores[PredictorSubType.SNSV]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.78))
+      assertThat(result.scores[PredictorSubType.SNSV]?.level).isNull()
     }
   }
 

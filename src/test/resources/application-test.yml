@@ -32,3 +32,6 @@ assessment-api:
 oauth:
   endpoint:
     url: http://localhost:9010/auth
+
+onnx-predictors:
+  onnx-path: classpath:/onnx/rsr.onnx

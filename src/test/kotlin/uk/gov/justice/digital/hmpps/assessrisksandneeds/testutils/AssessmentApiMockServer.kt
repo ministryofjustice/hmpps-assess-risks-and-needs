@@ -83,6 +83,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
       ).withRequestBody(
         WireMock.equalToJson(
           "{ " +
+            "\"algorithmVersion\" : null," +
             "\"gender\" : \"M\"," +
             "\"dob\" : [ 2001, 1, 1 ]," +
             "\"assessmentDate\" : [ 2021, 1, 1, 0, 0 ]," +

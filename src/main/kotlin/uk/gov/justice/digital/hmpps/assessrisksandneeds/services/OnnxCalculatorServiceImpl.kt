@@ -16,10 +16,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
+
+private const val onnxVersion = "1.0.0"
 
 @Profile("onnx-rsr")
 @Service
@@ -34,7 +37,7 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
 
     val validationErrors = validateInputParams(offenderAndOffences)
     if (validationErrors.isNotEmpty()) return RiskPredictorsDto(
-      "ONNX-pre-release",
+      onnxVersion,
       LocalDateTime.now(),
       PredictorType.RSR,
       null,
@@ -46,17 +49,13 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     log.info("Generating RSR score using ONNX runtime for CRN ${offenderAndOffences.crn}")
     val results = getResults(buildTensorsFromInputParameters(offenderAndOffences))
 
-    // RSR
     val rsr1YearBriefProb = getBigDecimalResultFor("rsr_brief_1yr_prob", results)
     val rsr2YearBriefProb = getBigDecimalResultFor("rsr_brief_2yr_prob", results)
     val rsr1YearExtendedProb = getBigDecimalResultFor("rsr_extended_1yr_prob", results)
     val rsr2YearExtendedProb = getBigDecimalResultFor("rsr_extended_2yr_prob", results)
-    val rsrBriefBand = ScoreLevel.findByOrdinal(
-      (results["rsr_band_brief"]?.value as? LongArray)?.getOrNull(0)?.toInt()
-    )
+    val rsrBriefBand = getScoreBandResultFor("rsr_band_brief", results)
     val rsrExtendedBand = getScoreBandResultFor("rsr_band_extended", results)
 
-    // OSP
     val ospC1YearProb = getBigDecimalResultFor("osp_c_1yr_prob", results)
     val ospC2YearProb = getBigDecimalResultFor("osp_c_2yr_prob", results)
     val ospI1YearProb = getBigDecimalResultFor("osp_i_1yr_prob", results)
@@ -64,7 +63,6 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     val ospCBand = getScoreBandResultFor("osp_4band", results)
     val ospIBand = getScoreBandResultFor("osp_iband", results)
 
-    // SNSV
     val snsv1YearBriefProb = getBigDecimalResultFor("snsv_brief_1yr_prob", results)
     val snsv2YearBriefProb = getBigDecimalResultFor("snsv_brief_2yr_prob", results)
     val snsv1YearExtendedProb = getBigDecimalResultFor("snsv_extended_1yr_prob", results)
@@ -78,7 +76,11 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     }
     if (rsr2YearBriefProb != null) {
       predictorResults[PredictorSubType.RSR_2YR_BRIEF] = Score(rsrBriefBand, rsr2YearBriefProb, true)
-      predictorResults[PredictorSubType.RSR] = Score(rsrBriefBand, rsr2YearBriefProb, true)
+      predictorResults[PredictorSubType.RSR] = Score(
+        rsrBriefBand,
+        rsr2YearBriefProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
+        true
+      )
     }
 
     if (rsr1YearExtendedProb != null) {
@@ -87,7 +89,11 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     if (rsr2YearExtendedProb != null) {
       predictorResults[PredictorSubType.RSR_2YR_EXTENDED] =
         Score(rsrExtendedBand, rsr2YearExtendedProb, true)
-      predictorResults[PredictorSubType.RSR] = Score(rsrExtendedBand, rsr2YearExtendedProb, true)
+      predictorResults[PredictorSubType.RSR] = Score(
+        rsrExtendedBand,
+        rsr2YearExtendedProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
+        true
+      )
     }
 
     if (ospC1YearProb != null) {
@@ -95,7 +101,11 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     }
     if (ospC2YearProb != null) {
       predictorResults[PredictorSubType.OSPC_2YR] = Score(ospCBand, ospC2YearProb, true)
-      predictorResults[PredictorSubType.OSPC] = Score(ospCBand, ospC2YearProb, true)
+      predictorResults[PredictorSubType.OSPC] = Score(
+        ospCBand,
+        ospC2YearProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
+        true
+      )
     }
 
     if (ospI1YearProb != null) {
@@ -103,7 +113,11 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     }
     if (ospI2YearProb != null) {
       predictorResults[PredictorSubType.OSPI_2YR] = Score(ospIBand, ospI2YearProb, true)
-      predictorResults[PredictorSubType.OSPI] = Score(ospIBand, ospI2YearProb, true)
+      predictorResults[PredictorSubType.OSPI] = Score(
+        ospIBand,
+        ospI2YearProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
+        true
+      )
     }
 
     if (snsv1YearBriefProb != null) {
@@ -111,7 +125,11 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     }
     if (snsv2YearBriefProb != null) {
       predictorResults[PredictorSubType.SNSV_2YR_BRIEF] = Score(null, snsv2YearBriefProb, true)
-      predictorResults[PredictorSubType.SNSV] = Score(null, snsv2YearBriefProb, true)
+      predictorResults[PredictorSubType.SNSV] = Score(
+        null,
+        snsv2YearBriefProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
+        true
+      )
     }
 
     if (snsv1YearExtendedProb != null) {
@@ -119,11 +137,15 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     }
     if (snsv2YearExtendedProb != null) {
       predictorResults[PredictorSubType.SNSV_2YR_EXTENDED] = Score(null, snsv2YearExtendedProb, true)
-      predictorResults[PredictorSubType.SNSV] = Score(null, snsv2YearExtendedProb, true)
+      predictorResults[PredictorSubType.SNSV] = Score(
+        null,
+        snsv2YearExtendedProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
+        true
+      )
     }
 
     return RiskPredictorsDto(
-      "ONNX-pre-release",
+      onnxVersion,
       LocalDateTime.now(),
       PredictorType.RSR,
       scoreType,
@@ -136,13 +158,21 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
   }
 
   private fun getScoreBandResultFor(outputFieldName: String, results: Map<String, OnnxValue>): ScoreLevel? {
+    when (results[outputFieldName]?.value) {
+      is FloatArray -> return ScoreLevel.findByOrdinal(
+        (results[outputFieldName]?.value as? FloatArray)?.getOrNull(0)?.toInt()
+      )
+      is LongArray -> return ScoreLevel.findByOrdinal(
+        (results[outputFieldName]?.value as? LongArray)?.getOrNull(0)?.toInt()
+      )
+    }
+
     return ScoreLevel.findByOrdinal(
       (results[outputFieldName]?.value as? FloatArray)?.getOrNull(0)?.toInt()
     )
   }
 
   fun getResults(inputTensors: Map<String, OnnxTensor>): Map<String, OnnxValue> {
-    // TODO: Raise Custom Event for this in App Insights
     val results = ortSession.run(inputTensors)
     return results.associate { it.key to it.value }
   }
@@ -230,12 +260,11 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
 
   fun buildTensorsFromInputParameters(offenderAndOffences: OffenderAndOffencesDto): MutableMap<String, OnnxTensor> {
     val aggregatedMap = mutableMapOf<String, OnnxTensor>()
-    aggregatedMap += buildStaticTensors(offenderAndOffences)
-    if (offenderAndOffences.hasCompletedInterview) {
-      aggregatedMap += buildDynamicTensors(offenderAndOffences) +
-        buildPreviousOffencesTensors(offenderAndOffences) +
-        buildCurrentOffencesTensors(offenderAndOffences)
-    }
+    aggregatedMap += buildStaticTensors(offenderAndOffences) +
+      buildDynamicTensors(offenderAndOffences) +
+      buildPreviousOffencesTensors(offenderAndOffences) +
+      buildCurrentOffencesTensors(offenderAndOffences)
+
     return aggregatedMap
   }
 
@@ -247,7 +276,10 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
         "dob" to OnnxTensor.createTensor(ortEnvironment, getDateAsString(dob)),
         "assessmentDate" to OnnxTensor.createTensor(ortEnvironment, getDateAsString(assessmentDate)),
         "currentOffence" to OnnxTensor.createTensor(ortEnvironment, longArrayOf(currentOffence.offenceCode.toLong())),
-        "offenceSubcode" to OnnxTensor.createTensor(ortEnvironment, longArrayOf(currentOffence.offenceSubcode.toLong())),
+        "offenceSubcode" to OnnxTensor.createTensor(
+          ortEnvironment,
+          longArrayOf(currentOffence.offenceSubcode.toLong())
+        ),
         "homeOfficeCode" to OnnxTensor.createTensor(
           ortEnvironment,
           longArrayOf("${currentOffence.offenceCode}${currentOffence.offenceSubcode}".toLong())
@@ -257,12 +289,18 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
         "totalViolentOffences" to OnnxTensor.createTensor(ortEnvironment, longArrayOf(totalViolentOffences.toLong())),
         "dateOfCurrentConviction" to OnnxTensor.createTensor(ortEnvironment, getDateAsString(dateOfCurrentConviction)),
         "hasAnySexualOffences" to OnnxTensor.createTensor(ortEnvironment, booleanArrayOf(hasAnySexualOffences)),
-        "isCurrentSexualOffence" to OnnxTensor.createTensor(ortEnvironment, booleanArrayOf(isCurrentSexualOffence ?: false)),
+        "isCurrentSexualOffence" to OnnxTensor.createTensor(
+          ortEnvironment,
+          booleanArrayOf(isCurrentSexualOffence ?: false)
+        ),
         "isCurrentOffenceVictimStranger" to OnnxTensor.createTensor(
           ortEnvironment,
           booleanArrayOf(isCurrentOffenceVictimStranger ?: false)
         ),
-        "mostRecentSexualOffenceDate" to OnnxTensor.createTensor(ortEnvironment, getDateAsString(mostRecentSexualOffenceDate)),
+        "mostRecentSexualOffenceDate" to OnnxTensor.createTensor(
+          ortEnvironment,
+          getDateAsString(mostRecentSexualOffenceDate)
+        ),
         "totalSexualOffencesInvolvingAnAdult" to OnnxTensor.createTensor(
           ortEnvironment,
           longArrayOf(totalSexualOffencesInvolvingAnAdult?.toLong() ?: -1)
