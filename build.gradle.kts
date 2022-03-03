@@ -25,7 +25,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-data-rest:1.5.10")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.5.10")
   implementation("com.zaxxer:HikariCP:5.0.0")
-  implementation("org.postgresql:postgresql")
+  implementation("org.postgresql:postgresql:42.3.3")
   implementation("com.vladmihalcea:hibernate-types-52:2.12.1")
   implementation("com.beust:klaxon:5.5")
   runtimeOnly("com.h2database:h2:1.4.200")
