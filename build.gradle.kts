@@ -28,6 +28,7 @@ dependencies {
   implementation("org.postgresql:postgresql:42.3.3")
   implementation("com.vladmihalcea:hibernate-types-52:2.12.1")
   implementation("com.beust:klaxon:5.5")
+  implementation("com.microsoft.onnxruntime:onnxruntime:1.10.0")
   runtimeOnly("com.h2database:h2:1.4.200")
   runtimeOnly("org.flywaydb:flyway-core:7.15.0")
   testRuntimeOnly("com.h2database:h2:1.4.200")

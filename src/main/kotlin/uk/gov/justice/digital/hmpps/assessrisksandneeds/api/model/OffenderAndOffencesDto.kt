@@ -88,7 +88,7 @@ data class OffenderAndOffencesDto(
   val hasCompletedInterview: Boolean,
 
   @Schema(description = "Offences for dynamic scoring")
-  val dynamicScoringOffences: DynamicScoringOffencesDto?
+  val dynamicScoringOffences: DynamicScoringOffencesDto? = null
 )
 
 data class DynamicScoringOffencesDto(
@@ -194,13 +194,31 @@ data class PreviousOffencesDto(
 data class CurrentOffenceDto(val offenceCode: String, val offenceSubcode: String)
 
 enum class EmploymentType(val score: Int? = null) {
-  NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(1), MISSING
+  NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(2), MISSING;
+  companion object {
+    fun getByValue(value: Int?) = values().firstOrNull { it.score == value } ?: MISSING
+  }
 }
 
 enum class Gender(val value: String) {
-  MALE("M"), FEMALE("F")
+  MALE("M"), FEMALE("F");
+  fun toOnnxFormat(): String {
+    return if (this == MALE) "MALE" else "FEMALE"
+  }
+  companion object {
+    fun fromONNX(value: String): Gender {
+      return when (value) {
+        "MALE" -> MALE
+        "FEMALE" -> FEMALE
+        else -> throw Exception("Invalid value for Gender $value")
+      }
+    }
+  }
 }
 
 enum class ProblemsLevel(val score: Int? = null) {
-  NO_PROBLEMS(0), SOME_PROBLEMS(1), SIGNIFICANT_PROBLEMS(2), MISSING
+  NO_PROBLEMS(0), SOME_PROBLEMS(1), SIGNIFICANT_PROBLEMS(2), MISSING;
+  companion object {
+    fun getByValue(value: Int?) = values().firstOrNull { it.score == value } ?: MISSING
+  }
 }

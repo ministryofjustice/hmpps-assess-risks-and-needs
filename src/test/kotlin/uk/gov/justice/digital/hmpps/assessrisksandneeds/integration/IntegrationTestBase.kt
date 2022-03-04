@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.AssessmentApiM
 import java.time.Duration
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("test")
+@ActiveProfiles("test", "oasys-rsr")
 abstract class IntegrationTestBase {
 
   @Suppress("SpringJavaInjectionPointsAutowiringInspection")

@@ -19,8 +19,8 @@ generic-service:
   env:
     JAVA_OPTS: "-Xmx768m"
     SERVER_PORT: "8080"
-    SPRING_PROFILES_ACTIVE: "logstash,postgres"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
+    ONNX_PREDICTORS_ONNX_PATH: "file:/app/secrets/rsr.onnx"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
@@ -41,6 +41,11 @@ generic-service:
 
     sentry:
       SENTRY_DSN: "sentry_dsn"
+
+  namespace_secrets_to_file:
+    onnx-file:
+      /app/secrets:
+        - rsr.onnx
 
   allowlist:
     office: "217.33.148.210/32"

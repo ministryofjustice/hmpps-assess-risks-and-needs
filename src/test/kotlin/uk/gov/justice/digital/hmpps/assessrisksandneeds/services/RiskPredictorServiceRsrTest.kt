@@ -34,7 +34,8 @@ class RiskPredictorServiceRsrTest {
   private val assessmentApiClient: AssessmentApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()
-  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, offenderPredictorsHistoryRepository, objectMapper)
+  private val riskCalculatorService = OASysCalculatorServiceImpl(assessmentApiClient)
+  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, offenderPredictorsHistoryRepository, riskCalculatorService, objectMapper)
 
   val crn = "TEST_CRN"
 
