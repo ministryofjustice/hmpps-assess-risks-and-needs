@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.0.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.0"
   kotlin("plugin.spring") version "1.6.10"
   kotlin("plugin.jpa") version "1.6.10"
 }
@@ -21,9 +21,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.apache.commons:commons-lang3")
-  implementation("org.springdoc:springdoc-openapi-ui:1.5.10")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.5.10")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.5.10")
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.6")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.6")
   implementation("com.zaxxer:HikariCP:5.0.0")
   implementation("org.postgresql:postgresql:42.3.3")
   implementation("com.vladmihalcea:hibernate-types-52:2.12.1")
