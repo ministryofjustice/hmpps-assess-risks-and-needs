@@ -17,7 +17,7 @@ kind: Component
 metadata:
   name: hmpps-assess-risks-and-needs
   title: Risks and Needs Service
-  description: Risks and Needs business logic, Authoritative source for risk and needs data for offenders
+  description: Risks and Needs business logic, authoritative source for risk and needs data for offenders
   tags:
     - kotlin
     - spring-boot
@@ -26,3 +26,20 @@ spec:
   owner: group:hmpps-assessments
   system: system:hmpps-assess-risks-and-needs # system defined in hmpps-assess-risks-and-needs
   lifecycle: production
+  providesApis:
+    - api:hmpps-risks-and-needs
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: hmpps-risks-and-needs
+  title: Risks and Needs API
+  description: Risks and Needs business API, authoritative source for risk and needs data for offenders
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:hmpps-assessments
+  system: system:hmpps-assess-risks-and-needs # system defined in hmpps-assess-risks-and-needs
+  definition:
+    $text: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk/v3/api-docs
