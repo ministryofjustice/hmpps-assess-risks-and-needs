@@ -29,6 +29,7 @@ dependencies {
   implementation("com.vladmihalcea:hibernate-types-52:2.16.1")
   implementation("com.beust:klaxon:5.6")
   implementation("com.microsoft.onnxruntime:onnxruntime:1.11.0")
+  implementation("net.logstash.logback:logstash-logback-encoder:7.1.1")
   runtimeOnly("com.h2database:h2:1.4.200")
   runtimeOnly("org.flywaydb:flyway-core:8.5.9")
   testRuntimeOnly("com.h2database:h2:1.4.200")
