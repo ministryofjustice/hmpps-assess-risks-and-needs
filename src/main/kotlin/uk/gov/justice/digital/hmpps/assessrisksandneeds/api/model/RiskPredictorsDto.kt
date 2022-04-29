@@ -28,15 +28,6 @@ enum class ScoreLevel(val type: String) {
     fun findByType(type: String?): ScoreLevel? {
       return values().firstOrNull { value -> value.type == type }
     }
-    fun findByOrdinal(ordinal: Int?): ScoreLevel? {
-      return when (ordinal) {
-        1 -> LOW
-        2 -> MEDIUM
-        3 -> HIGH
-        4 -> VERY_HIGH
-        else -> null
-      }
-    }
   }
 }
 

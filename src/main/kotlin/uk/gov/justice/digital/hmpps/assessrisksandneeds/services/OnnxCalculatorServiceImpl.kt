@@ -159,17 +159,8 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
   }
 
   private fun getScoreBandResultFor(outputFieldName: String, results: Map<String, OnnxValue>): ScoreLevel? {
-    when (results[outputFieldName]?.value) {
-      is FloatArray -> return ScoreLevel.findByOrdinal(
-        (results[outputFieldName]?.value as? FloatArray)?.getOrNull(0)?.toInt()
-      )
-      is LongArray -> return ScoreLevel.findByOrdinal(
-        (results[outputFieldName]?.value as? LongArray)?.getOrNull(0)?.toInt()
-      )
-    }
-
-    return ScoreLevel.findByOrdinal(
-      (results[outputFieldName]?.value as? FloatArray)?.getOrNull(0)?.toInt()
+    return ScoreLevel.findByType(
+      (results[outputFieldName]?.value as? Array<String>)?.getOrNull(0)
     )
   }
 
