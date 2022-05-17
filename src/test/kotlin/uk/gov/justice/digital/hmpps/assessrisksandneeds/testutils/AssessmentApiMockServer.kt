@@ -249,6 +249,21 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
+  fun stubGetOasysRiskPredictorScores(crn: String) {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "offenders/crn/$crn/predictors/latest?period=YEAR&periodUnits=1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(this::class.java.getResource("/json/oasysRiskPredictorsScores.json")?.readText())
+        )
+    )
+  }
+
   companion object {
     val crnNotFoundJson =
       """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
@@ -1021,4 +1036,5 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     "assessedOn": "2021-06-21T15:55:04"
 }
     """.trimIndent()
+
 }

@@ -1,0 +1,188 @@
+[
+  {
+    "oasysSetId": 9531347,
+    "refAssessmentVersionCode": "LAYER3",
+    "refAssessmentVersionNumber": "1",
+    "refAssessmentId": 4,
+    "completedDate": "2022-01-07T13:19:34",
+    "assessmentCompleted": true,
+    "assessmentStatus": "LOCKED_INCOMPLETE",
+    "ogr3": {
+      "ogrs3_1Year": 43,
+      "ogrs3_2Year": 61,
+      "reconvictionRisk": {
+        "code": "M",
+        "shortDescription": "No Risk to Others",
+        "description": "Medium"
+      }
+    },
+    "ovp": {
+      "ovpStaticWeightedScore": 31,
+      "ovpPreviousWeightedScore": 5,
+      "ovpViolentWeightedScore": 12,
+      "ovpNonViolentWeightedScore": 5,
+      "ovpAgeWeightedScore": 4,
+      "ovpSexWeightedScore": 5
+    },
+    "ogp": {
+      "ogpStaticWeightedScore": 37
+    },
+    "rsr": {
+      "rsrAlgorithmVersion": 3
+    },
+    "osp": {}
+  },
+  {
+    "oasysSetId": 9524347,
+    "refAssessmentVersionCode": "LAYER3",
+    "refAssessmentVersionNumber": "1",
+    "refAssessmentId": 4,
+    "completedDate": "2021-08-04T11:06:19",
+    "assessmentCompleted": true,
+    "assessmentStatus": "LOCKED_INCOMPLETE",
+    "ogr3": {
+      "ogrs3_1Year": 43,
+      "ogrs3_2Year": 61,
+      "reconvictionRisk": {
+        "code": "M",
+        "shortDescription": "No Risk to Others",
+        "description": "Medium"
+      }
+    },
+    "ovp": {
+      "ovpStaticWeightedScore": 31,
+      "ovpDynamicWeightedScore": 35,
+      "ovpTotalWeightedScore": 66,
+      "ovp1Year": 56,
+      "ovp2Year": 71,
+      "ovpRisk": {
+        "code": "H",
+        "shortDescription": "Risk to Others",
+        "description": "High"
+      },
+      "ovpPreviousWeightedScore": 5,
+      "ovpViolentWeightedScore": 12,
+      "ovpNonViolentWeightedScore": 5,
+      "ovpAgeWeightedScore": 4,
+      "ovpSexWeightedScore": 5
+    },
+    "ogp": {
+      "ogpStaticWeightedScore": 37,
+      "ogpDynamicWeightedScore": 39,
+      "ogpTotalWeightedScore": 76,
+      "ogp1Year": 73,
+      "ogp2Year": 83,
+      "ogpRisk": {
+        "code": "H",
+        "shortDescription": "Risk to Others",
+        "description": "High"
+      }
+    },
+    "rsr": {
+      "rsrAlgorithmVersion": 3
+    },
+    "osp": {}
+  },
+  {
+    "oasysSetId": 9523347,
+    "refAssessmentVersionCode": "LAYER3",
+    "refAssessmentVersionNumber": "1",
+    "refAssessmentId": 4,
+    "completedDate": "2021-07-23T12:37:33",
+    "assessmentCompleted": true,
+    "assessmentStatus": "LOCKED_INCOMPLETE",
+    "ogr3": {
+      "ogrs3_1Year": 43,
+      "ogrs3_2Year": 61,
+      "reconvictionRisk": {
+        "code": "M",
+        "shortDescription": "No Risk to Others",
+        "description": "Medium"
+      }
+    },
+    "ovp": {
+      "ovpStaticWeightedScore": 31,
+      "ovpDynamicWeightedScore": 35,
+      "ovpTotalWeightedScore": 66,
+      "ovp1Year": 56,
+      "ovp2Year": 71,
+      "ovpRisk": {
+        "code": "H",
+        "shortDescription": "Risk to Others",
+        "description": "High"
+      },
+      "ovpPreviousWeightedScore": 5,
+      "ovpViolentWeightedScore": 12,
+      "ovpNonViolentWeightedScore": 5,
+      "ovpAgeWeightedScore": 4,
+      "ovpSexWeightedScore": 5
+    },
+    "ogp": {
+      "ogpStaticWeightedScore": 37,
+      "ogpDynamicWeightedScore": 39,
+      "ogpTotalWeightedScore": 76,
+      "ogp1Year": 73,
+      "ogp2Year": 83,
+      "ogpRisk": {
+        "code": "H",
+        "shortDescription": "Risk to Others",
+        "description": "High"
+      }
+    },
+    "rsr": {
+      "rsrAlgorithmVersion": 3
+    },
+    "osp": {}
+  },
+  {
+    "oasysSetId": 9516347,
+    "refAssessmentVersionCode": "LAYER3",
+    "refAssessmentVersionNumber": "1",
+    "refAssessmentId": 4,
+    "completedDate": "2021-06-21T15:55:04",
+    "assessmentCompleted": true,
+    "assessmentStatus": "COMPLETE",
+    "ogr3": {
+      "ogrs3_1Year": 43,
+      "ogrs3_2Year": 61,
+      "reconvictionRisk": {
+        "code": "M",
+        "shortDescription": "No Risk to Others",
+        "description": "Medium"
+      }
+    },
+    "ovp": {
+      "ovpStaticWeightedScore": 31,
+      "ovpDynamicWeightedScore": 35,
+      "ovpTotalWeightedScore": 66,
+      "ovp1Year": 56,
+      "ovp2Year": 71,
+      "ovpRisk": {
+        "code": "H",
+        "shortDescription": "Risk to Others",
+        "description": "High"
+      },
+      "ovpPreviousWeightedScore": 5,
+      "ovpViolentWeightedScore": 12,
+      "ovpNonViolentWeightedScore": 5,
+      "ovpAgeWeightedScore": 4,
+      "ovpSexWeightedScore": 5
+    },
+    "ogp": {
+      "ogpStaticWeightedScore": 37,
+      "ogpDynamicWeightedScore": 39,
+      "ogpTotalWeightedScore": 76,
+      "ogp1Year": 73,
+      "ogp2Year": 83,
+      "ogpRisk": {
+        "code": "H",
+        "shortDescription": "Risk to Others",
+        "description": "High"
+      }
+    },
+    "rsr": {
+      "rsrAlgorithmVersion": 3
+    },
+    "osp": {}
+  }
+]
