@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSourc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
@@ -157,5 +158,13 @@ class RiskPredictorService(
     val arnRsrPredictors = arnPredictors.filter { it.predictorType == PredictorType.RSR }
     log.info("Retrieved ${arnRsrPredictors.size} RSR scores from ARN")
     return RsrPredictorDto.from(arnRsrPredictors)
+  }
+
+  fun getAllRiskScores(crn: String): RiskPredictorsDto {
+    log.debug("Entered getAllRiskScores for crn: $crn")
+    val allRisks = assessmentClient.getRiskScoresForCompletedLastYearAssessments(crn)
+    RiskScoresDto.from(allRisks)
+
+    TODO("Not yet implemented")
   }
 }

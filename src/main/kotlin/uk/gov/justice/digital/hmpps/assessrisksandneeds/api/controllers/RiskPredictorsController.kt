@@ -69,6 +69,23 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     return riskPredictorService.getAllRsrHistory(crn)
   }
 
+  @RequestMapping(path = ["/risks/crn/{crn}/predictors/all"], method = [RequestMethod.GET])
+  @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "200", description = "OK")
+    ]
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  fun getAllRiskScores(
+    @PathVariable crn: String,
+  ) {
+    log.debug("Entered getAllRiskScores for crn: $crn")
+      return riskPredictorService.getAllRiskScores(crn)
+    )
+  }
+
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }

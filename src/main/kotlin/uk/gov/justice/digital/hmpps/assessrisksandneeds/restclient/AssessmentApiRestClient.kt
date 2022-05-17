@@ -206,7 +206,7 @@ class AssessmentApiRestClient {
       .block().also { log.info("Retrieved Predictor scores for crn $crn") }
   }
 
-  fun getPredictorScoresForCompletedLastYearAssessments(
+  fun getRiskScoresForCompletedLastYearAssessments(
     crn: String,
   ): List<OasysPredictorsDto>? {
     log.info("Retrieving risk predictor scores for last year completed Assessments for crn $crn")
