@@ -88,4 +88,3 @@ Only one implementation can be used at once, selected using the spring profiles
 
 It is not possible to store the ONNX files in this public repository as it has not been approved for release. Sample static and dynamic files which return constant values is provided to facilitate unit tests.
 
-
