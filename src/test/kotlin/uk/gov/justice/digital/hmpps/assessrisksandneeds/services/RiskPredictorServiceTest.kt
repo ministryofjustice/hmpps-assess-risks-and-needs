@@ -215,6 +215,7 @@ class RiskPredictorServiceTest {
         assertThat(violencePredictorScore?.ovpTotalWeightedScore).isEqualTo(BigDecimal(3))
         assertThat(violencePredictorScore?.oneYear).isEqualTo(BigDecimal(4))
         assertThat(violencePredictorScore?.twoYears).isEqualTo(BigDecimal(5))
+        assertThat(violencePredictorScore?.ovpRisk).isEqualTo(LOW)
 
         assertThat(groupReconvictionScore?.oneYear).isEqualTo(BigDecimal(6))
         assertThat(groupReconvictionScore?.twoYears).isEqualTo(BigDecimal(7))
