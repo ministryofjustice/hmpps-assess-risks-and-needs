@@ -25,15 +25,26 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource.OASYS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.HIGH
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.LOW
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.MEDIUM
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.VERY_HIGH
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType.STATIC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OgpDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.Ogrs3Dto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OvpDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RsrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 import java.math.BigDecimal
@@ -135,20 +146,93 @@ class RiskPredictorServiceTest {
       }
     }
 
-
     @Test
     fun `should return a list of all risk predictors for valid crn`() {
       // Given
       val crn = "X12345"
+      val now = LocalDateTime.now()
+
+      val oasysPredictorsDto = OasysPredictorsDto(
+        completedDate = now,
+        ovp = OvpDto(
+          ovpStaticWeightedScore = BigDecimal(1),
+          ovpDynamicWeightedScore = BigDecimal(2),
+          ovpTotalWeightedScore = BigDecimal(3),
+          ovp1Year = BigDecimal(4),
+          ovp2Year = BigDecimal(5),
+          ovpRisk = RefElementDto(
+            code = "ovpCode",
+            shortDescription = "ovpShortDescription",
+            description = "Low"
+          )
+        ),
+        ogr3 = Ogrs3Dto(
+          ogrs3_1Year = BigDecimal(6),
+          ogrs3_2Year = BigDecimal(7),
+          reconvictionRisk = RefElementDto(
+            code = "ogrCode",
+            shortDescription = "ogrShortDescription",
+            description = "Medium"
+          )
+        ),
+        rsr = RsrDto(
+          rsrPercentageScore = BigDecimal(8),
+          rsrStaticOrDynamic = "STATIC",
+          rsrAlgorithmVersion = 98765,
+          rsrRiskRecon = RefElementDto(
+            code = "rsrCode",
+            shortDescription = "rsrShortDescription",
+            description = "High"
+          )
+        ),
+        ogp = OgpDto(
+          ogpStaticWeightedScore = BigDecimal(9),
+          ogpDynamicWeightedScore = BigDecimal(10),
+          ogpTotalWeightedScore = BigDecimal(11),
+          ogp1Year = BigDecimal(12),
+          ogp2Year = BigDecimal(13),
+          ogpRisk = RefElementDto(
+            code = "ogpCode",
+            shortDescription = "ogpShortDescription",
+            description = "Very High"
+          )
+        )
+      )
+
       every {
         assessmentApiClient.getRiskScoresForCompletedLastYearAssessments(crn)
-      }.returns(listOf(OasysPredictorsDto()))
+      }.returns(listOf(oasysPredictorsDto))
 
       // When
       val allRiskScores = riskPredictorsService.getAllRiskScores(crn)
 
       // Should
-      assertThat(allRiskScores.isNotEmpty())
+      with(allRiskScores[0]) {
+        assertThat(completedDate).isEqualTo(now)
+
+        assertThat(violencePredictorScore?.ovpStaticWeightedScore).isEqualTo(BigDecimal(1))
+        assertThat(violencePredictorScore?.ovpDynamicWeightedScore).isEqualTo(BigDecimal(2))
+        assertThat(violencePredictorScore?.ovpTotalWeightedScore).isEqualTo(BigDecimal(3))
+        assertThat(violencePredictorScore?.oneYear).isEqualTo(BigDecimal(4))
+        assertThat(violencePredictorScore?.twoYears).isEqualTo(BigDecimal(5))
+
+        assertThat(groupReconvictionScore?.oneYear).isEqualTo(BigDecimal(6))
+        assertThat(groupReconvictionScore?.twoYears).isEqualTo(BigDecimal(7))
+        assertThat(groupReconvictionScore?.scoreLevel).isEqualTo(MEDIUM)
+
+        assertThat(riskOfSeriousRecidivismScore?.percentageScore).isEqualTo(BigDecimal(8))
+        assertThat(riskOfSeriousRecidivismScore?.staticOrDynamic).isEqualTo(STATIC)
+        assertThat(riskOfSeriousRecidivismScore?.source).isEqualTo(OASYS)
+        assertThat(riskOfSeriousRecidivismScore?.algorithmVersion).isEqualTo("98765")
+        assertThat(riskOfSeriousRecidivismScore?.scoreLevel).isEqualTo(HIGH)
+
+        assertThat(generalPredictorScore?.ogpStaticWeightedScore).isEqualTo(BigDecimal(9))
+        assertThat(generalPredictorScore?.ogpDynamicWeightedScore).isEqualTo(BigDecimal(10))
+        assertThat(generalPredictorScore?.ogpTotalWeightedScore).isEqualTo(BigDecimal(11))
+        assertThat(generalPredictorScore?.ogp1Year).isEqualTo(BigDecimal(12))
+        assertThat(generalPredictorScore?.ogp2Year).isEqualTo(BigDecimal(13))
+        assertThat(generalPredictorScore?.ogpRisk).isEqualTo(VERY_HIGH)
+      }
     }
 
     @Test
@@ -165,8 +249,6 @@ class RiskPredictorServiceTest {
       // Should
       assertThat(allRiskScores.isEmpty())
     }
-
-
 
     @Test
     fun `calculate risk predictors data returns oasys predictors`() {
@@ -199,10 +281,10 @@ class RiskPredictorServiceTest {
 
       assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
       assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
-      assertThat(predictorScores.scoreType).isEqualTo(ScoreType.STATIC)
+      assertThat(predictorScores.scoreType).isEqualTo(STATIC)
       assertThat(predictorScores.scores[PredictorSubType.RSR]).isEqualTo(
         Score(
-          level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+          level = HIGH, score = BigDecimal("11.34"), isValid = true
         )
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC]).isEqualTo(
@@ -324,7 +406,7 @@ class RiskPredictorServiceTest {
         assertThat(predictors).hasSize(3)
         assertThat(predictors[0].predictorSubType).isEqualTo(PredictorSubType.RSR)
         assertThat(predictors[0].predictorScore).isEqualTo(BigDecimal("11.34"))
-        assertThat(predictors[0].predictorLevel).isEqualTo(ScoreLevel.HIGH)
+        assertThat(predictors[0].predictorLevel).isEqualTo(HIGH)
         assertThat(predictors[1].predictorSubType).isEqualTo(PredictorSubType.OSPC)
         assertThat(predictors[1].predictorScore).isEqualTo(BigDecimal("0"))
         assertThat(predictors[1].predictorLevel).isEqualTo(ScoreLevel.NOT_APPLICABLE)
@@ -376,20 +458,20 @@ class RiskPredictorServiceTest {
         type = PredictorType.RSR,
         errors = emptyList(),
         scores = mapOf(
-          PredictorSubType.RSR to Score(ScoreLevel.LOW, BigDecimal("1.50"), true),
-          PredictorSubType.OSPC to Score(ScoreLevel.MEDIUM, BigDecimal("2.50"), true),
-          PredictorSubType.OSPI to Score(ScoreLevel.HIGH, BigDecimal("3.50"), true),
+          PredictorSubType.RSR to Score(LOW, BigDecimal("1.50"), true),
+          PredictorSubType.OSPC to Score(MEDIUM, BigDecimal("2.50"), true),
+          PredictorSubType.OSPI to Score(HIGH, BigDecimal("3.50"), true),
           PredictorSubType.SNSV to Score(null, BigDecimal("4.50"), true),
 
-          PredictorSubType.RSR_2YR_BRIEF to Score(ScoreLevel.HIGH, BigDecimal("0.001"), true),
+          PredictorSubType.RSR_2YR_BRIEF to Score(HIGH, BigDecimal("0.001"), true),
           PredictorSubType.RSR_1YR_BRIEF to Score(null, BigDecimal("0.002"), true),
           PredictorSubType.RSR_1YR_EXTENDED to Score(null, BigDecimal("0.003"), true),
-          PredictorSubType.RSR_2YR_EXTENDED to Score(ScoreLevel.HIGH, BigDecimal("0.004"), true),
+          PredictorSubType.RSR_2YR_EXTENDED to Score(HIGH, BigDecimal("0.004"), true),
 
           PredictorSubType.OSPI_1YR to Score(null, BigDecimal("0.005"), true),
-          PredictorSubType.OSPI_2YR to Score(ScoreLevel.HIGH, BigDecimal("0.006"), true),
+          PredictorSubType.OSPI_2YR to Score(HIGH, BigDecimal("0.006"), true),
           PredictorSubType.OSPC_1YR to Score(null, BigDecimal("0.007"), true),
-          PredictorSubType.OSPC_2YR to Score(ScoreLevel.HIGH, BigDecimal("0.008"), true),
+          PredictorSubType.OSPC_2YR to Score(HIGH, BigDecimal("0.008"), true),
 
           PredictorSubType.SNSV_1YR_BRIEF to Score(null, BigDecimal("0.009"), true),
           PredictorSubType.SNSV_2YR_BRIEF to Score(null, BigDecimal("0.010"), true),
@@ -410,19 +492,19 @@ class RiskPredictorServiceTest {
       assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
       assertThat(predictorScores.scoreType).isEqualTo(ScoreType.DYNAMIC)
       assertThat(predictorScores.scores[PredictorSubType.RSR]).isEqualTo(
-        Score(level = ScoreLevel.LOW, score = BigDecimal("1.50"), isValid = true)
+        Score(level = LOW, score = BigDecimal("1.50"), isValid = true)
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC]).isEqualTo(
-        Score(level = ScoreLevel.MEDIUM, score = BigDecimal("2.50"), isValid = true)
+        Score(level = MEDIUM, score = BigDecimal("2.50"), isValid = true)
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPI]).isEqualTo(
-        Score(level = ScoreLevel.HIGH, score = BigDecimal("3.50"), isValid = true)
+        Score(level = HIGH, score = BigDecimal("3.50"), isValid = true)
       )
       assertThat(predictorScores.scores[PredictorSubType.SNSV]).isEqualTo(
         Score(level = null, score = BigDecimal("4.50"), isValid = true)
       )
       assertThat(predictorScores.scores[PredictorSubType.RSR_2YR_BRIEF]).isEqualTo(
-        Score(ScoreLevel.HIGH, BigDecimal("0.001"), true)
+        Score(HIGH, BigDecimal("0.001"), true)
       )
       assertThat(predictorScores.scores[PredictorSubType.RSR_1YR_BRIEF]).isEqualTo(
         Score(null, BigDecimal("0.002"), true)
@@ -431,20 +513,20 @@ class RiskPredictorServiceTest {
         Score(null, BigDecimal("0.003"), true)
       )
       assertThat(predictorScores.scores[PredictorSubType.RSR_2YR_EXTENDED]).isEqualTo(
-        Score(ScoreLevel.HIGH, BigDecimal("0.004"), true)
+        Score(HIGH, BigDecimal("0.004"), true)
       )
 
       assertThat(predictorScores.scores[PredictorSubType.OSPI_1YR]).isEqualTo(
         Score(null, BigDecimal("0.005"), true)
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPI_2YR]).isEqualTo(
-        Score(ScoreLevel.HIGH, BigDecimal("0.006"), true)
+        Score(HIGH, BigDecimal("0.006"), true)
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC_1YR]).isEqualTo(
         Score(null, BigDecimal("0.007"), true)
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC_2YR]).isEqualTo(
-        Score(ScoreLevel.HIGH, BigDecimal("0.008"), true)
+        Score(HIGH, BigDecimal("0.008"), true)
       )
 
       assertThat(predictorScores.scores[PredictorSubType.SNSV_1YR_BRIEF]).isEqualTo(
@@ -475,20 +557,20 @@ class RiskPredictorServiceTest {
         type = PredictorType.RSR,
         errors = emptyList(),
         scores = mapOf(
-          PredictorSubType.RSR to Score(ScoreLevel.LOW, BigDecimal("1.50"), true),
-          PredictorSubType.OSPC to Score(ScoreLevel.MEDIUM, BigDecimal("2.50"), true),
-          PredictorSubType.OSPI to Score(ScoreLevel.HIGH, BigDecimal("3.50"), true),
+          PredictorSubType.RSR to Score(LOW, BigDecimal("1.50"), true),
+          PredictorSubType.OSPC to Score(MEDIUM, BigDecimal("2.50"), true),
+          PredictorSubType.OSPI to Score(HIGH, BigDecimal("3.50"), true),
           PredictorSubType.SNSV to Score(null, BigDecimal("4.50"), true),
 
           PredictorSubType.RSR_1YR_BRIEF to Score(null, BigDecimal("0.001"), true),
-          PredictorSubType.RSR_2YR_BRIEF to Score(ScoreLevel.HIGH, BigDecimal("0.002"), true),
+          PredictorSubType.RSR_2YR_BRIEF to Score(HIGH, BigDecimal("0.002"), true),
           PredictorSubType.RSR_1YR_EXTENDED to Score(null, BigDecimal("0.003"), true),
-          PredictorSubType.RSR_2YR_EXTENDED to Score(ScoreLevel.HIGH, BigDecimal("0.004"), true),
+          PredictorSubType.RSR_2YR_EXTENDED to Score(HIGH, BigDecimal("0.004"), true),
 
           PredictorSubType.OSPI_1YR to Score(null, BigDecimal("0.005"), true),
-          PredictorSubType.OSPI_2YR to Score(ScoreLevel.HIGH, BigDecimal("0.006"), true),
+          PredictorSubType.OSPI_2YR to Score(HIGH, BigDecimal("0.006"), true),
           PredictorSubType.OSPC_1YR to Score(null, BigDecimal("0.007"), true),
-          PredictorSubType.OSPC_2YR to Score(ScoreLevel.HIGH, BigDecimal("0.008"), true),
+          PredictorSubType.OSPC_2YR to Score(HIGH, BigDecimal("0.008"), true),
 
           PredictorSubType.SNSV_1YR_BRIEF to Score(null, BigDecimal("0.009"), true),
           PredictorSubType.SNSV_2YR_BRIEF to Score(null, BigDecimal("0.010"), true),
@@ -528,15 +610,15 @@ class RiskPredictorServiceTest {
 
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.RSR }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("1.50"))
-          assertThat(predictorLevel).isEqualTo(ScoreLevel.LOW)
+          assertThat(predictorLevel).isEqualTo(LOW)
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.OSPC }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("2.50"))
-          assertThat(predictorLevel).isEqualTo(ScoreLevel.MEDIUM)
+          assertThat(predictorLevel).isEqualTo(MEDIUM)
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.OSPI }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("3.50"))
-          assertThat(predictorLevel).isEqualTo(ScoreLevel.HIGH)
+          assertThat(predictorLevel).isEqualTo(HIGH)
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.SNSV }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("4.50"))
@@ -548,7 +630,7 @@ class RiskPredictorServiceTest {
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.RSR_2YR_BRIEF }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.002"))
-          assertThat(predictorLevel).isEqualTo(ScoreLevel.HIGH)
+          assertThat(predictorLevel).isEqualTo(HIGH)
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.RSR_1YR_EXTENDED }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.003"))
@@ -556,7 +638,7 @@ class RiskPredictorServiceTest {
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.RSR_2YR_EXTENDED }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.004"))
-          assertThat(predictorLevel).isEqualTo(ScoreLevel.HIGH)
+          assertThat(predictorLevel).isEqualTo(HIGH)
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.OSPI_1YR }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.005"))
@@ -564,7 +646,7 @@ class RiskPredictorServiceTest {
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.OSPI_2YR }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.006"))
-          assertThat(predictorLevel).isEqualTo(ScoreLevel.HIGH)
+          assertThat(predictorLevel).isEqualTo(HIGH)
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.OSPC_1YR }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.007"))
@@ -572,7 +654,7 @@ class RiskPredictorServiceTest {
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.OSPC_2YR }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.008"))
-          assertThat(predictorLevel).isEqualTo(ScoreLevel.HIGH)
+          assertThat(predictorLevel).isEqualTo(HIGH)
         }
         with(predictors.first { predictor -> predictor.predictorSubType == PredictorSubType.SNSV_1YR_BRIEF }) {
           assertThat(predictorScore).isEqualTo(BigDecimal("0.009"))

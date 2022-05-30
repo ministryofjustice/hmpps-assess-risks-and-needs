@@ -275,9 +275,6 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
-
-
-
   companion object {
     val crnNotFoundJson =
       """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
