@@ -97,10 +97,7 @@ class ControllerAdvice {
   @ExceptionHandler(ExternalApiEntityNotFoundException::class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   fun handle(e: ExternalApiEntityNotFoundException): ResponseEntity<ErrorResponse?> {
-    log.info(
-      "ApiClientEntityNotFoundException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
-      e.message
-    )
+    log.warn("ApiClientEntityNotFoundException for external client ${e.client} method ${e.method} and url ${e.url}: {}", e)
     return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
   }
 

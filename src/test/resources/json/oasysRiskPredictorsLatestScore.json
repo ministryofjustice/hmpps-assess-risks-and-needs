@@ -1,0 +1,75 @@
+[
+  {
+    "oasysSetId": 5432,
+    "refAssessmentVersionCode": "LAYER3",
+    "refAssessmentVersionNumber": "1",
+    "refAssessmentId": 4,
+    "completedDate": "2022-05-27T00:00:00",
+    "voidedDateTime": null,
+    "assessmentCompleted": true,
+    "assessmentStatus": "COMPLETE",
+    "otherRisk": null,
+    "ogr3": {
+      "ogrs3_1Year": 3,
+      "ogrs3_2Year": 5,
+      "reconvictionRisk": {
+        "code": "L",
+        "shortDescription": "No Risk to Others",
+        "description": "Low"
+      }
+    },
+    "ovp": {
+      "ovpStaticWeightedScore": 14,
+      "ovpDynamicWeightedScore": 3,
+      "ovpTotalWeightedScore": 17,
+      "ovp1Year": 4,
+      "ovp2Year": 7,
+      "ovpRisk": {
+        "code": "L",
+        "shortDescription": "No Risk to Others",
+        "description": "Low"
+      },
+      "ovpPreviousWeightedScore": 5,
+      "ovpViolentWeightedScore": 4,
+      "ovpNonViolentWeightedScore": 0,
+      "ovpAgeWeightedScore": 0,
+      "ovpSexWeightedScore": 5
+    },
+    "ogp": {
+      "ogpStaticWeightedScore": 3,
+      "ogpDynamicWeightedScore": 7,
+      "ogpTotalWeightedScore": 10,
+      "ogp1Year": 4,
+      "ogp2Year": 8,
+      "ogpRisk": {
+        "code": "L",
+        "shortDescription": "No Risk to Others",
+        "description": "Low"
+      }
+    },
+    "rsr": {
+      "rsrPercentageScore": 50.1234,
+      "rsrStaticOrDynamic": "STATIC",
+      "rsrAlgorithmVersion": 11,
+      "rsrRiskRecon": {
+        "code": "L",
+        "shortDescription": "No Risk to Others",
+        "description": "Low"
+      }
+    },
+    "osp": {
+      "ospIndecentPercentageScore": 50.1234,
+      "ospContactPercentageScore": 50.1234,
+      "ospIndecentRiskRecon": {
+        "code": "L",
+        "shortDescription": "No Risk to Others",
+        "description": "Low"
+      },
+      "ospContactRiskRecon": {
+        "code": "L",
+        "shortDescription": "No Risk to Others",
+        "description": "Low"
+      }
+    }
+  }
+]

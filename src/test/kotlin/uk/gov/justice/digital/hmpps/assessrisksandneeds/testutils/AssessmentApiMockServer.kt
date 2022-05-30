@@ -7,7 +7,9 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders
 
 class AssessmentApiMockServer : WireMockServer(9004) {
   private val crn = "X123456"
+  private val badCrn = "X999999"
   private val missingRoshCrn = "X234567"
+
   fun stubGetRoshRisksByCrn() {
     stubFor(
       WireMock.post(
@@ -245,6 +247,30 @@ class AssessmentApiMockServer : WireMockServer(9004) {
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withBody(noRsrPredictorsJson)
+        )
+    )
+  }
+
+  fun stubGetOasysRiskPredictorScores() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/offenders/crn/$crn/predictors/latest?period=YEAR&periodUnits=1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(this::class.java.getResource("/json/oasysRiskPredictorsLatestScore.json")?.readText())
+        )
+    )
+    stubFor(
+      WireMock.get(WireMock.urlEqualTo("/offenders/crn/$badCrn/predictors/latest?period=YEAR&periodUnits=1"))
+        .willReturn(
+          WireMock.aResponse()
+            .withBody(crnNotFoundJson)
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
         )
     )
   }

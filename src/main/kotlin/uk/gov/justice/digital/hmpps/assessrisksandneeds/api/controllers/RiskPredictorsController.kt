@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOff
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
@@ -67,6 +68,20 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   ): List<RsrPredictorDto> {
     log.info("Retrieving RSR score history for crn: $crn")
     return riskPredictorService.getAllRsrHistory(crn)
+  }
+
+  @RequestMapping(path = ["/risks/crn/{crn}/predictors/all"], method = [RequestMethod.GET])
+  @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "200", description = "OK")
+    ]
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> {
+    log.info("Entered getAllRiskScores for crn: $crn")
+    return riskPredictorService.getAllRiskScores(crn)
   }
 
   companion object {

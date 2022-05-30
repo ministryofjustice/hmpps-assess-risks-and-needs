@@ -49,7 +49,7 @@ enum class ScoreType(val type: String) {
 
   companion object {
     fun findByType(type: String): ScoreType? {
-      return values().firstOrNull { value -> value.type == type }
+      return values().firstOrNull { value -> value.type.compareTo(type, true) == 0 }
     }
   }
 }

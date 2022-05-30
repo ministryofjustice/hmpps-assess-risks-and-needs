@@ -206,6 +206,39 @@ class AssessmentApiRestClient {
       .block().also { log.info("Retrieved Predictor scores for crn $crn") }
   }
 
+  fun getRiskScoresForCompletedLastYearAssessments(
+    crn: String,
+  ): List<OasysPredictorsDto>? {
+    log.info("Retrieving risk predictor scores for last year completed Assessments for crn $crn")
+    val path =
+      "/offenders/crn/$crn/predictors/latest?period=YEAR&periodUnits=1"
+    return webClient
+      .get(
+        path
+      )
+      .retrieve()
+      .onStatus(HttpStatus::is4xxClientError) {
+        log.error("4xx Error retrieving risk predictor scores for last year completed Assessments for crn $crn code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .onStatus(HttpStatus::is5xxServerError) {
+        log.error("5xx Error retrieving risk predictor scores for last year completed Assessments for crn $crn code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve risk predictor scores for last year completed Assessments for crn $crn",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
+      .block().also { log.info("Retrieved risk predictor scores for last year completed Assessments for crn $crn") }
+  }
+
   private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(algorithmVersion: String?): OffenderAndOffencesBodyDto {
     return OffenderAndOffencesBodyDto(
       algorithmVersion = algorithmVersion,
