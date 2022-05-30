@@ -160,11 +160,9 @@ class RiskPredictorService(
     return RsrPredictorDto.from(arnRsrPredictors)
   }
 
-  fun getAllRiskScores(crn: String): RiskPredictorsDto {
+  fun getAllRiskScores(crn: String): List<RiskScoresDto> {
     log.debug("Entered getAllRiskScores for crn: $crn")
     val allRisks = assessmentClient.getRiskScoresForCompletedLastYearAssessments(crn)
-    RiskScoresDto.from(allRisks)
-
-    TODO("Not yet implemented")
+    return RiskScoresDto.from(allRisks)
   }
 }

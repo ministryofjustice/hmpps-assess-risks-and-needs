@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
@@ -133,6 +134,39 @@ class RiskPredictorServiceTest {
         )
       }
     }
+
+
+    @Test
+    fun `should return a list of all risk predictors for valid crn`() {
+      // Given
+      val crn = "X12345"
+      every {
+        assessmentApiClient.getRiskScoresForCompletedLastYearAssessments(crn)
+      }.returns(listOf(OasysPredictorsDto()))
+
+      // When
+      val allRiskScores = riskPredictorsService.getAllRiskScores(crn)
+
+      // Should
+      assertThat(allRiskScores.isNotEmpty())
+    }
+
+    @Test
+    fun `should return an empty list of all risk predictors for invalid crn`() {
+      // Given
+      val crn = "X12345"
+      every {
+        assessmentApiClient.getRiskScoresForCompletedLastYearAssessments(crn)
+      }.returns(null)
+
+      // When
+      val allRiskScores = riskPredictorsService.getAllRiskScores(crn)
+
+      // Should
+      assertThat(allRiskScores.isEmpty())
+    }
+
+
 
     @Test
     fun `calculate risk predictors data returns oasys predictors`() {

@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOff
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
@@ -78,12 +79,9 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     ]
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
-  fun getAllRiskScores(
-    @PathVariable crn: String,
-  ) {
-    log.debug("Entered getAllRiskScores for crn: $crn")
-      return riskPredictorService.getAllRiskScores(crn)
-    )
+  fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> {
+    log.info("Entered getAllRiskScores for crn: $crn")
+    return riskPredictorService.getAllRiskScores(crn)
   }
 
   companion object {

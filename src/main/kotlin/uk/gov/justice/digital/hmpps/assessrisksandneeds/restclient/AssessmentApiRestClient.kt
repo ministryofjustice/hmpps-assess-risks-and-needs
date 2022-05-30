@@ -238,7 +238,7 @@ class AssessmentApiRestClient {
       .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
       .block().also { log.info("Retrieved risk predictor scores for last year completed Assessments for crn $crn") }
   }
-  
+
   private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(algorithmVersion: String?): OffenderAndOffencesBodyDto {
     return OffenderAndOffencesBodyDto(
       algorithmVersion = algorithmVersion,
