@@ -12,10 +12,6 @@ class RiskScoresDto(
   val generalPredictorScore: OgpScoreDto? = null,
   val riskOfSeriousRecidivismScore: RsrScoreDto? = null,
   val sexualPredictorScore: OspScoreDto? = null
-  val groupReconvictionScore: OgrScoreDto? = null,
-  val violencePredictorScore: OvpScoreDto? = null,
-  val generalPredictorScore: OgpScoreDto? = null,
-  val riskOfSeriousRecidivismScore: RsrScoreDto? = null
 ) {
 
   companion object {
