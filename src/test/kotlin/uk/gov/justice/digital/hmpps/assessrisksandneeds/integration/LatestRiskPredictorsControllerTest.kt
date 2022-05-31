@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgpScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgrScoreDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OspScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OvpScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreDto
@@ -40,6 +41,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
           .isEqualTo(
             RiskScoresDto(
               completedDate = LocalDateTime.of(2022, 5, 27, 0, 0, 0),
+              assessmentStatus = "COMPLETE",
               groupReconvictionScore = OgrScoreDto(
                 oneYear = BigDecimal.valueOf(3),
                 twoYears = BigDecimal.valueOf(5),
@@ -67,6 +69,12 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                 source = RsrScoreSource.OASYS,
                 algorithmVersion = "11",
                 ScoreLevel.LOW
+              ),
+              sexualPredictorScore = OspScoreDto(
+                ospIndecentPercentageScore = BigDecimal.valueOf(50.1234),
+                ospContactPercentageScore = BigDecimal.valueOf(50.1234),
+                ospIndecentScoreLevel = ScoreLevel.LOW,
+                ospContactScoreLevel = ScoreLevel.LOW
               )
             )
           )

@@ -42,6 +42,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPred
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.Ogrs3Dto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OvpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RsrDto
@@ -116,8 +117,8 @@ class RiskPredictorServiceTest {
   }
 
   @Nested
-  @DisplayName("OASys RSR Calculator")
-  inner class ValidateOASysRSRScores {
+  @DisplayName("OASys Scores")
+  inner class ValidateOASysScores {
 
     private val riskCalculatorService = OASysCalculatorServiceImpl(assessmentApiClient)
     private val riskPredictorsService =
@@ -196,6 +197,20 @@ class RiskPredictorServiceTest {
             shortDescription = "ogpShortDescription",
             description = "Very High"
           )
+        ),
+        osp = OspDto(
+          ospIndecentPercentageScore = BigDecimal(14),
+          ospContactPercentageScore = BigDecimal(15),
+          ospIndecentRiskRecon = RefElementDto(
+            code = "ospCode",
+            shortDescription = "ospShortDescription",
+            description = "Very High"
+          ),
+          ospContactRiskRecon = RefElementDto(
+            code = "ospCode",
+            shortDescription = "ospShortDescription",
+            description = "Low"
+          )
         )
       )
 
@@ -233,6 +248,11 @@ class RiskPredictorServiceTest {
         assertThat(generalPredictorScore?.ogp1Year).isEqualTo(BigDecimal(12))
         assertThat(generalPredictorScore?.ogp2Year).isEqualTo(BigDecimal(13))
         assertThat(generalPredictorScore?.ogpRisk).isEqualTo(VERY_HIGH)
+
+        assertThat(sexualPredictorScore?.ospIndecentPercentageScore).isEqualTo(BigDecimal(14))
+        assertThat(sexualPredictorScore?.ospContactPercentageScore).isEqualTo(BigDecimal(15))
+        assertThat(sexualPredictorScore?.ospIndecentScoreLevel).isEqualTo(VERY_HIGH)
+        assertThat(sexualPredictorScore?.ospContactScoreLevel).isEqualTo(LOW)
       }
     }
 

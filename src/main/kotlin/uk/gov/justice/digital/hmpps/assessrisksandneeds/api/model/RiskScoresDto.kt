@@ -6,10 +6,12 @@ import java.time.LocalDateTime
 
 class RiskScoresDto(
   val completedDate: LocalDateTime? = null,
+  val assessmentStatus: String? = null,
   val groupReconvictionScore: OgrScoreDto? = null,
   val violencePredictorScore: OvpScoreDto? = null,
   val generalPredictorScore: OgpScoreDto? = null,
-  val riskOfSeriousRecidivismScore: RsrScoreDto? = null
+  val riskOfSeriousRecidivismScore: RsrScoreDto? = null,
+  val sexualPredictorScore: OspScoreDto? = null
 ) {
 
   companion object {
@@ -21,6 +23,7 @@ class RiskScoresDto(
       with(oasysPredictorsDto) {
         return RiskScoresDto(
           completedDate = completedDate,
+          assessmentStatus = assessmentStatus,
           groupReconvictionScore = OgrScoreDto(
             oneYear = ogr3?.ogrs3_1Year,
             twoYears = ogr3?.ogrs3_2Year,
@@ -48,6 +51,12 @@ class RiskScoresDto(
             source = RsrScoreSource.OASYS,
             algorithmVersion = rsr?.rsrAlgorithmVersion?.toString(),
             scoreLevel = ScoreLevel.findByType(rsr?.rsrRiskRecon?.description)
+          ),
+          sexualPredictorScore = OspScoreDto(
+            ospIndecentPercentageScore = osp?.ospIndecentPercentageScore,
+            ospContactPercentageScore = osp?.ospContactPercentageScore,
+            ospIndecentScoreLevel = ScoreLevel.findByType(osp?.ospIndecentRiskRecon?.description),
+            ospContactScoreLevel = ScoreLevel.findByType(osp?.ospContactRiskRecon?.description)
           )
         )
       }
