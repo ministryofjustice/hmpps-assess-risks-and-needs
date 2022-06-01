@@ -255,7 +255,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/offenders/crn/$crn/predictors/latest?period=YEAR&periodUnits=1"
+          "/offenders/crn/$crn/predictors/all?period=YEAR&periodUnits=1"
         )
       )
         .willReturn(
@@ -265,7 +265,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
         )
     )
     stubFor(
-      WireMock.get(WireMock.urlEqualTo("/offenders/crn/$badCrn/predictors/latest?period=YEAR&periodUnits=1"))
+      WireMock.get(WireMock.urlEqualTo("/offenders/crn/$badCrn/predictors/all?period=YEAR&periodUnits=1"))
         .willReturn(
           WireMock.aResponse()
             .withBody(crnNotFoundJson)

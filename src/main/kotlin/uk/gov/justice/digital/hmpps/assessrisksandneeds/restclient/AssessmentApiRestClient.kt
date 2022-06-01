@@ -211,7 +211,7 @@ class AssessmentApiRestClient {
   ): List<OasysPredictorsDto>? {
     log.info("Retrieving risk predictor scores for last year completed Assessments for crn $crn")
     val path =
-      "/offenders/crn/$crn/predictors/latest?period=YEAR&periodUnits=1"
+      "/offenders/crn/$crn/predictors/all?period=YEAR&periodUnits=1"
     return webClient
       .get(
         path
