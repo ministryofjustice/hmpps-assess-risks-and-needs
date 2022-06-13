@@ -19,7 +19,7 @@ class OrdsApiRestClient {
   /*
     TODO: remove me - just for testing
    */
-  fun getTestConfig(): String? {
+  fun getTestConfig() : String? {
     val path = "/authtest/config2"
 
     return webClient.get(path).retrieve().bodyToMono(String::class.java).block()
