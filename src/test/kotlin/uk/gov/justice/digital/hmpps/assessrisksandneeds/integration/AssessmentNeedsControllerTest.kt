@@ -39,6 +39,17 @@ class AssessmentNeedsControllerTest : IntegrationTestBase() {
       .expectStatus().isNotFound
   }
 
+  /*
+    TODO : remove me
+   */
+  @Test
+  fun callTestOrdsEndpoint() {
+    webTestClient.get().uri("/ords/test")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+  }
+
   private fun unscoredNeeds() = listOf(
     AssessmentNeedDto(
       section = "THINKING_AND_BEHAVIOUR",

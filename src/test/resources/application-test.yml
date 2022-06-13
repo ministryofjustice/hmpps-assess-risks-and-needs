@@ -1,6 +1,6 @@
 feature:
   flags:
-    disable-auth: true
+    disable-auth: false
 
 server:
   tomcat:
@@ -31,7 +31,7 @@ assessment-api:
   base-url: http://localhost:9004
 oauth:
   endpoint:
-    url: http://localhost:9010/auth
+    url: http://localhost:9090/auth
 
 onnx-predictors:
   onnx-path: classpath:/onnx/rsr.onnx
