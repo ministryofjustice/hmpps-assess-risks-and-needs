@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -37,6 +38,18 @@ class AssessmentNeedsControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
+  }
+
+  /*
+    TODO : remove me
+   */
+  @Test
+  @Disabled
+  fun callTestOrdsEndpoint() {
+    webTestClient.get().uri("/ords/test")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
   }
 
   private fun unscoredNeeds() = listOf(

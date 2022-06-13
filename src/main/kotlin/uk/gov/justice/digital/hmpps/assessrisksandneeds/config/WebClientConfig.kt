@@ -26,6 +26,9 @@ class WebClientConfig {
   @Value("\${assessment-api.base-url}")
   private lateinit var assessmentApiBaseUrl: String
 
+  @Value("\${ords-api.base-url}")
+  private lateinit var ordsApiBaseUrl: String
+
   @Value("\${feature.flags.disable-auth:false}")
   private val disableAuthentication = false
 
@@ -61,11 +64,20 @@ class WebClientConfig {
     return authorizedClientManager
   }
 
-  @Bean
+  @Bean()
   fun assessmentApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
     return AuthenticatingRestClient(
       webClientFactory(assessmentApiBaseUrl, authorizedClientManager, bufferByteSize),
       "assessment-api-client",
+      disableAuthentication
+    )
+  }
+
+  @Bean()
+  fun ordsApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
+    return AuthenticatingRestClient(
+      webClientFactory(ordsApiBaseUrl, authorizedClientManager, bufferByteSize),
+      "ords-api-client",
       disableAuthentication
     )
   }

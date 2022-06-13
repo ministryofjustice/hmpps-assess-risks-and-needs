@@ -24,9 +24,19 @@ spring:
             client-authentication-method: basic
             authorization-grant-type: client_credentials
             provider: oauth-service
+          ords-api-client:
+            client-name: ords-api-client
+            client-id: ${ords.client.id}
+            client-secret: ${ords.client.secret}
+            client-authentication-method: basic
+            authorization-grant-type: client_credentials
+            provider: ords-oauth-service
         provider:
           oauth-service:
             token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
+          ords-oauth-service:
+            token-uri: ${ords.oauth.endpoint.url:https://ords.t1.oasys.service.justice.gov.uk/eor/oasys}/oauth/token
+
       resourceserver:
         jwt:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
@@ -109,6 +119,9 @@ logging:
 
 assessment-api:
   base-url: http://localhost:9004
+
+ords-api:
+  base-url: https://ords.t1.oasys.service.justice.gov.uk/eor/oasys
 
 onnx-predictors:
   onnx-path: classpath:/const_rsr_extended.onnx
