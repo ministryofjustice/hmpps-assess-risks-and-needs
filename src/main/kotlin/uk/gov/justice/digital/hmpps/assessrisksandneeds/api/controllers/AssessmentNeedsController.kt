@@ -35,4 +35,12 @@ class AssessmentNeedsController(
   ): AssessmentNeedsDto {
     return assessmentNeedsService.getAssessmentNeeds(crn)
   }
+
+  /*
+    TODO: remove me
+   */
+  @RequestMapping(path = ["/ords/test"], method = [RequestMethod.GET])
+  fun callOrdsEndpoint(): String? {
+    return ordsApiRestClient.getTestConfig()
+  }
 }

@@ -1,6 +1,7 @@
 feature:
   flags:
-    disable-auth: false
+    auth-enabled: false
+    ords-auth-enabled: false
 
 server:
   tomcat:
