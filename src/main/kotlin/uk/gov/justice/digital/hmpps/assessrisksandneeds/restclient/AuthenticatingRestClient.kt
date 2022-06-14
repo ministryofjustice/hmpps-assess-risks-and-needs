@@ -7,17 +7,17 @@ import org.springframework.web.reactive.function.client.WebClient
 class AuthenticatingRestClient(
   private val webClient: WebClient,
   private val oauthClient: String,
-  private val disableAuth: Boolean
+  private val authEnabled: Boolean
 ) {
   fun get(path: String): WebClient.RequestHeadersSpec<*> {
     val request = webClient
       .get()
       .uri(path)
       .accept(MediaType.APPLICATION_JSON)
-    return if (disableAuth)
-      request
-    else
+    return if (authEnabled)
       request.attributes(clientRegistrationId(oauthClient))
+    else
+      request
   }
 
   fun post(path: String, body: Any): WebClient.RequestHeadersSpec<*> {
@@ -25,10 +25,10 @@ class AuthenticatingRestClient(
       .post()
       .uri(path)
       .accept(MediaType.APPLICATION_JSON)
-    val authed = if (disableAuth)
-      request
-    else
+    val authed = if (authEnabled)
       request.attributes(clientRegistrationId(oauthClient))
+    else
+      request
     return authed.bodyValue(body)
   }
 
@@ -37,10 +37,10 @@ class AuthenticatingRestClient(
       .put()
       .uri(path)
       .accept(MediaType.APPLICATION_JSON)
-    val authed = if (disableAuth)
-      request
-    else
+    val authed = if (authEnabled)
       request.attributes(clientRegistrationId(oauthClient))
+    else
+      request
     return authed.bodyValue(body)
   }
 }
