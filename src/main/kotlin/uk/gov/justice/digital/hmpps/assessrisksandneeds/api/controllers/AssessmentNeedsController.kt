@@ -10,14 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OrdsApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
 
 @RestController
-class AssessmentNeedsController(
-  private val assessmentNeedsService: AssessmentNeedsService,
-  private val ordsApiRestClient: OrdsApiRestClient
-) {
+class AssessmentNeedsController(private val assessmentNeedsService: AssessmentNeedsService) {
 
   @RequestMapping(path = ["/needs/crn/{crn}"], method = [RequestMethod.GET])
   @Operation(description = "Gets criminogenic needs for crn")
@@ -34,13 +30,5 @@ class AssessmentNeedsController(
     @PathVariable crn: String,
   ): AssessmentNeedsDto {
     return assessmentNeedsService.getAssessmentNeeds(crn)
-  }
-
-  /*
-    TODO: remove me
-   */
-  @RequestMapping(path = ["/ords/test"], method = [RequestMethod.GET])
-  fun callOrdsEndpoint(): String? {
-    return ordsApiRestClient.getTestConfig()
   }
 }
