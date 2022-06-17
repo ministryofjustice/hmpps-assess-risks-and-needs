@@ -12,7 +12,6 @@ generic-service:
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
-    ORDS_OAUTH_ENDPOINT_URL: https://ords.t1.oasys.service.justice.gov.uk/eor/oasys
     ASSESSMENT_API_BASE_URL: https://offender-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
     SENTRY_ENVIRONMENT: "dev"
     SPRING_PROFILES_ACTIVE: "logstash,postgres,onnx-rsr"

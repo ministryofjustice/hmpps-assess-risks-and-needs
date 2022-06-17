@@ -8,6 +8,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
@@ -237,6 +238,41 @@ class AssessmentApiRestClient {
       }
       .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
       .block().also { log.info("Retrieved risk predictor scores for last year completed Assessments for crn $crn") }
+  }
+
+  fun getAssessmentOffence(
+    crn: String,
+    limitedAccessOffender: String,
+    assessmentStatus: String,
+    nthLatestAssessment: Short
+  ): AssessmentOffenceDto? {
+    log.info("Retrieving assessment offence for crn $crn")
+    val path = "/assessments/offence/$crn/$limitedAccessOffender/$assessmentStatus/$nthLatestAssessment"
+    return webClient
+      .get(
+        path
+      )
+      .retrieve()
+      .onStatus(HttpStatus::is4xxClientError) {
+        log.error("4xx Error retrieving assessment offence for crn $crn code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .onStatus(HttpStatus::is5xxServerError) {
+        log.error("5xx Error retrieving assessment offence for crn $crn code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve assessment offence for crn $crn",
+          HttpMethod.POST,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .bodyToMono(AssessmentOffenceDto::class.java)
+      .block().also { log.info("Retrieved assessment offence for crn $crn") }
   }
 
   private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(algorithmVersion: String?): OffenderAndOffencesBodyDto {
