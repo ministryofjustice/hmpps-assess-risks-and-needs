@@ -221,6 +221,35 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
+  fun stubGetAssessmentOffenceByCrn() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/offence/$crn/LIMIT/COMPLETE/1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(this::class.java.getResource("/json/ordsAssessmentOffence.json")?.readText())
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/offence/NOT_FOUND/LIMIT/COMPLETE/1"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withBody("{}")
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+        )
+    )
+  }
+
   fun stubGetOffenderPredictors() {
     stubFor(
       WireMock.get(

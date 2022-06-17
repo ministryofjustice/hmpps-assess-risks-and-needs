@@ -1,0 +1,63 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "crn": "X123456",
+    "status": "COMPLETE",
+    "laoPrivilege": "LIMIT",
+    "nth": "1"
+  },
+  "crn": "X123456",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "assessmentPk": 9635351,
+      "dateCompleted": "2022-06-15T18:23:52",
+      "assessorSignedDate": null,
+      "initiationDate": "2022-06-10T18:23:51",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": false,
+      "laterCompleteAssessmentExists": false,
+      "offence": "TBA",
+      "disinhibitors": [
+        "Alcohol"
+      ],
+      "patternOfOffending": "TBA",
+      "offenceInvolved": [
+        "Carrying or using a weapon"
+      ],
+      "specificWeapon": "TBA",
+      "victimPerpetratorRelationship": "mmmmmm",
+      "victimOtherInfo": "blah",
+      "evidencedMotivations": [
+        "Sexual motivation"
+      ],
+      "offenceDetails": [
+        {
+          "type": "CONCURRENT",
+          "offenceDate": "2021-11-01T00:00:00",
+          "offenceCode": "028",
+          "offenceSubCode": "00",
+          "offence": "Burglary in a dwelling",
+          "subOffence": "Burglary in a dwelling    [Use this code only if you are unable to determine which subcoded Offence applies]"
+        },
+        {
+          "type": "CURRENT",
+          "offenceDate": "2021-12-25T00:00:00",
+          "offenceCode": "020",
+          "offenceSubCode": "05",
+          "offence": "Sexual assault on a female",
+          "subOffence": "Sexual assault on a female"
+        }
+      ],
+      "victimDetails": [
+        {
+          "age": "21-25",
+          "gender": "Male",
+          "ethnicCategory": "White - Irish",
+          "victimRelation": "Stranger"
+        }
+      ]
+    }
+  ]
+}
