@@ -225,7 +225,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/offence/$crn/LIMIT/COMPLETE/1"
+          "/assessments/offence/$crn/LIMIT/COMPLETE/0"
         )
       )
         .willReturn(
@@ -238,7 +238,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/offence/NOT_FOUND/LIMIT/COMPLETE/1"
+          "/assessments/offence/NOT_FOUND/LIMIT/COMPLETE/0"
         )
       )
         .willReturn(

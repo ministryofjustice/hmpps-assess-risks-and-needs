@@ -92,6 +92,25 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment?.victimDetails?.get(0)?.gender).isEqualTo("Male")
     assertThat(assessment?.victimDetails?.get(0)?.ethnicCategory).isEqualTo("White - Irish")
     assertThat(assessment?.victimDetails?.get(0)?.victimRelation).isEqualTo("Stranger")
+
+    val timeLine = assessmentOffenceDto?.timeLine
+    assertThat(timeLine).hasSize(4)
+
+    assertThat(timeLine?.get(0)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 1, 15, 37, 9))
+    assertThat(timeLine?.get(0)?.status).isEqualTo("LOCKED_INCOMPLETE")
+    assertThat(timeLine?.get(0)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 9, 7))
+
+    assertThat(timeLine?.get(1)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 10, 17))
+    assertThat(timeLine?.get(1)?.status).isEqualTo("COMPLETE")
+    assertThat(timeLine?.get(1)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 8, 17, 57, 50))
+
+    assertThat(timeLine?.get(2)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 16, 21, 0))
+    assertThat(timeLine?.get(2)?.status).isEqualTo("COMPLETE")
+    assertThat(timeLine?.get(2)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 3, 44))
+
+    assertThat(timeLine?.get(3)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 5, 38))
+    assertThat(timeLine?.get(3)?.status).isEqualTo("COMPLETE")
+    assertThat(timeLine?.get(3)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 27, 7))
   }
 
   @Test
