@@ -8,10 +8,10 @@ data class AssessmentOffenceDto(
 
   val crn: String,
   var assessments: List<AssessmentDto> = emptyList(),
-  var timeLine: List<TimeLineDto> = emptyList()
+  var timeline: List<TimelineDto> = emptyList()
 )
 
-data class TimeLineDto(
+data class TimelineDto(
 
   val initiationDate: LocalDateTime,
   val status: String,

@@ -242,12 +242,10 @@ class AssessmentApiRestClient {
 
   fun getAssessmentOffence(
     crn: String,
-    limitedAccessOffender: String,
-    assessmentStatus: String,
-    nthLatestAssessment: Short
+    limitedAccessOffender: String
   ): AssessmentOffenceDto? {
     log.info("Retrieving assessment offence for crn $crn")
-    val path = "/assessments/offence/$crn/$limitedAccessOffender/$assessmentStatus/$nthLatestAssessment"
+    val path = "/assessments/offence/$crn/$limitedAccessOffender"
     return webClient
       .get(
         path

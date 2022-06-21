@@ -23,13 +23,13 @@ class AssessmentOffenceServiceTest {
   fun `should call offender Api to retrieve offence data for a given CRN`() {
     // Given
     val crn = "X12345"
-    every { assessmentClient.getAssessmentOffence(any(), any(), any(), any()) }.returns(AssessmentOffenceDto(crn = crn))
+    every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(AssessmentOffenceDto(crn = crn))
 
     // When
     assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
-    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "LIMIT", "COMPLETE", 0) }
+    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "LIMIT") }
   }
 
   @Test
@@ -38,8 +38,6 @@ class AssessmentOffenceServiceTest {
     val crn = "DOES_NOT_EXIST"
     every {
       assessmentClient.getAssessmentOffence(
-        any(),
-        any(),
         any(),
         any()
       )

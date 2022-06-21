@@ -93,7 +93,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment?.victimDetails?.get(0)?.ethnicCategory).isEqualTo("White - Irish")
     assertThat(assessment?.victimDetails?.get(0)?.victimRelation).isEqualTo("Stranger")
 
-    val timeLine = assessmentOffenceDto?.timeLine
+    val timeLine = assessmentOffenceDto?.timeline
     assertThat(timeLine).hasSize(4)
 
     assertThat(timeLine?.get(0)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 1, 15, 37, 9))
