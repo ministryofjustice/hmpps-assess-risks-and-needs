@@ -11,13 +11,15 @@ data class AssessmentOffenceDto(
   var timeline: List<TimelineDto> = emptyList()
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class TimelineDto(
 
   val initiationDate: LocalDateTime,
   val status: String,
-  val completedDate: LocalDateTime,
+  val completedDate: LocalDateTime?,
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class AssessmentDto(
 
   val dateCompleted: LocalDateTime?,
@@ -35,6 +37,7 @@ data class AssessmentDto(
   val victimDetails: List<VictimDetailDto> = emptyList(),
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class VictimDetailDto(
 
   val age: String,
@@ -43,6 +46,7 @@ data class VictimDetailDto(
   val victimRelation: String
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class OffenceDetailDto(
 
   val type: String,
