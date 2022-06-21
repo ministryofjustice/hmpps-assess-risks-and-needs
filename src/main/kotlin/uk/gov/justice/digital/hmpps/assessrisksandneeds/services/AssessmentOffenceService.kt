@@ -18,9 +18,7 @@ class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestCl
 
     return assessmentClient.getAssessmentOffence(
       crn = crn,
-      limitedAccessOffender = "LIMIT",
-      assessmentStatus = "COMPLETE",
-      nthLatestAssessment = 1
+      limitedAccessOffender = "LIMIT"
     ) ?: throw EntityNotFoundException("Assessment offence not found for CRN: $crn")
   }
 }

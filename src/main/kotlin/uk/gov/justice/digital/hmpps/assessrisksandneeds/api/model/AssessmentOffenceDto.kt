@@ -7,7 +7,15 @@ import java.time.LocalDateTime
 data class AssessmentOffenceDto(
 
   val crn: String,
-  var assessments: List<AssessmentDto> = emptyList()
+  var assessments: List<AssessmentDto> = emptyList(),
+  var timeline: List<TimelineDto> = emptyList()
+)
+
+data class TimelineDto(
+
+  val initiationDate: LocalDateTime,
+  val status: String,
+  val completedDate: LocalDateTime,
 )
 
 data class AssessmentDto(

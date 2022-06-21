@@ -8,6 +8,27 @@
   },
   "crn": "X123456",
   "limitedAccessOffender": false,
+  "timeline": [{
+    "assessmentPk": 2998,
+    "initiationDate": "2011-02-01T15:37:09",
+    "status": "LOCKED_INCOMPLETE",
+    "completedDate": "2011-02-07T17:09:07"
+  }, {
+    "assessmentPk": 3432,
+    "initiationDate": "2011-02-07T17:10:17",
+    "status": "COMPLETE",
+    "completedDate": "2011-02-08T17:57:50"
+  }, {
+    "assessmentPk": 4186,
+    "initiationDate": "2011-02-28T16:21:00",
+    "status": "COMPLETE",
+    "completedDate": "2011-02-28T19:03:44"
+  }, {
+    "assessmentPk": 4199,
+    "initiationDate": "2011-02-28T19:05:38",
+    "status": "COMPLETE",
+    "completedDate": "2011-02-28T19:27:07"
+    }],
   "assessments": [
     {
       "assessmentPk": 9635351,
