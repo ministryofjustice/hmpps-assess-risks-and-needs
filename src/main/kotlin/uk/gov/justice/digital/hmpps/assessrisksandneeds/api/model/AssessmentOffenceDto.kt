@@ -16,7 +16,7 @@ data class TimelineDto(
 
   val initiationDate: LocalDateTime,
   val status: String,
-  val completedDate: LocalDateTime,
+  val completedDate: LocalDateTime?,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
