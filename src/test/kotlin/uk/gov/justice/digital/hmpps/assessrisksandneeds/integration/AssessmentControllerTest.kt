@@ -55,62 +55,56 @@ class AssessmentControllerTest : IntegrationTestBase() {
     println(jacksonObjectMapper().registerModule(JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).writeValueAsString(assessmentOffenceDto))
 
     assertThat(assessmentOffenceDto?.crn).isEqualTo(crn)
-    val assessment = assessmentOffenceDto?.assessments?.get(0)
-    assertThat(assessment?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 6, 15, 18, 23, 52))
-    assertThat(assessment?.offence).isEqualTo("TBA")
-    assertThat(assessment?.assessmentStatus).isEqualTo("COMPLETE")
-    assertThat(assessment?.disinhibitors?.get(0)).isEqualTo("Alcohol")
-    assertThat(assessment?.patternOfOffending).isEqualTo("TBA")
-    assertThat(assessment?.disinhibitors?.get(0)).isEqualTo("Alcohol")
-    assertThat(assessment?.offenceInvolved?.get(0)).isEqualTo("Carrying or using a weapon")
-    assertThat(assessment?.specificWeapon).isEqualTo("TBA")
-    assertThat(assessment?.victimPerpetratorRelationship).isEqualTo("mmmmmm")
-    assertThat(assessment?.victimOtherInfo).isEqualTo("blah")
-    assertThat(assessment?.evidencedMotivations?.get(0)).isEqualTo("Sexual motivation")
+    val assessment1 = assessmentOffenceDto?.assessments?.get(0)
+    assertThat(assessment1?.dateCompleted).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 9, 7))
+    assertThat(assessment1?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 1, 15, 37, 9))
+    assertThat(assessment1?.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
 
-    assertThat(assessment?.offenceDetails?.get(0)?.type).isEqualTo("CONCURRENT")
-    assertThat(assessment?.offenceDetails?.get(0)?.offenceDate).isEqualTo(
+    val assessment2 = assessmentOffenceDto?.assessments?.get(1)
+    assertThat(assessment2?.dateCompleted).isNull()
+    assertThat(assessment2?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 10, 17))
+    assertThat(assessment2?.assessmentStatus).isEqualTo("SIGNED")
+
+    val assessment3 = assessmentOffenceDto?.assessments?.get(2)
+    assertThat(assessment3?.dateCompleted).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 27, 7))
+    assertThat(assessment3?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 5, 38))
+    assertThat(assessment3?.offence).isEqualTo("TBA")
+    assertThat(assessment3?.assessmentStatus).isEqualTo("COMPLETE")
+    assertThat(assessment3?.disinhibitors?.get(0)).isEqualTo("Alcohol")
+    assertThat(assessment3?.patternOfOffending).isEqualTo("TBA")
+    assertThat(assessment3?.disinhibitors?.get(0)).isEqualTo("Alcohol")
+    assertThat(assessment3?.offenceInvolved?.get(0)).isEqualTo("Carrying or using a weapon")
+    assertThat(assessment3?.specificWeapon).isEqualTo("TBA")
+    assertThat(assessment3?.victimPerpetratorRelationship).isEqualTo("mmmmmm")
+    assertThat(assessment3?.victimOtherInfo).isEqualTo("blah")
+    assertThat(assessment3?.evidencedMotivations?.get(0)).isEqualTo("Sexual motivation")
+
+    assertThat(assessment3?.offenceDetails?.get(0)?.type).isEqualTo("CONCURRENT")
+    assertThat(assessment3?.offenceDetails?.get(0)?.offenceDate).isEqualTo(
       LocalDateTime.of(2021, 11, 1, 0, 0, 0)
     )
-    assertThat(assessment?.offenceDetails?.get(0)?.offenceCode).isEqualTo("028")
-    assertThat(assessment?.offenceDetails?.get(0)?.offenceSubCode).isEqualTo("00")
-    assertThat(assessment?.offenceDetails?.get(0)?.offence).isEqualTo("Burglary in a dwelling")
-    assertThat(assessment?.offenceDetails?.get(0)?.subOffence).isEqualTo(
+    assertThat(assessment3?.offenceDetails?.get(0)?.offenceCode).isEqualTo("028")
+    assertThat(assessment3?.offenceDetails?.get(0)?.offenceSubCode).isEqualTo("00")
+    assertThat(assessment3?.offenceDetails?.get(0)?.offence).isEqualTo("Burglary in a dwelling")
+    assertThat(assessment3?.offenceDetails?.get(0)?.subOffence).isEqualTo(
       "Burglary in a dwelling    [Use this code only if you are unable to determine which subcoded Offence applies]"
     )
 
-    assertThat(assessment?.offenceDetails?.get(1)?.type).isEqualTo("CURRENT")
-    assertThat(assessment?.offenceDetails?.get(1)?.offenceDate).isEqualTo(
+    assertThat(assessment3?.offenceDetails?.get(1)?.type).isEqualTo("CURRENT")
+    assertThat(assessment3?.offenceDetails?.get(1)?.offenceDate).isEqualTo(
       LocalDateTime.of(2021, 12, 25, 0, 0, 0)
     )
-    assertThat(assessment?.offenceDetails?.get(1)?.offenceCode).isEqualTo("020")
-    assertThat(assessment?.offenceDetails?.get(1)?.offenceSubCode).isEqualTo("05")
-    assertThat(assessment?.offenceDetails?.get(1)?.offence).isEqualTo("Sexual assault on a female")
-    assertThat(assessment?.offenceDetails?.get(1)?.subOffence).isEqualTo("Sexual assault on a female")
+    assertThat(assessment3?.offenceDetails?.get(1)?.offenceCode).isEqualTo("020")
+    assertThat(assessment3?.offenceDetails?.get(1)?.offenceSubCode).isEqualTo("05")
+    assertThat(assessment3?.offenceDetails?.get(1)?.offence).isEqualTo("Sexual assault on a female")
+    assertThat(assessment3?.offenceDetails?.get(1)?.subOffence).isEqualTo("Sexual assault on a female")
 
-    assertThat(assessment?.victimDetails?.get(0)?.age).isEqualTo("21-25")
-    assertThat(assessment?.victimDetails?.get(0)?.gender).isEqualTo("Male")
-    assertThat(assessment?.victimDetails?.get(0)?.ethnicCategory).isEqualTo("White - Irish")
-    assertThat(assessment?.victimDetails?.get(0)?.victimRelation).isEqualTo("Stranger")
+    assertThat(assessment3?.victimDetails?.get(0)?.age).isEqualTo("21-25")
+    assertThat(assessment3?.victimDetails?.get(0)?.gender).isEqualTo("Male")
+    assertThat(assessment3?.victimDetails?.get(0)?.ethnicCategory).isEqualTo("White - Irish")
+    assertThat(assessment3?.victimDetails?.get(0)?.victimRelation).isEqualTo("Stranger")
 
-    val timeLine = assessmentOffenceDto?.timeline
-    assertThat(timeLine).hasSize(4)
-
-    assertThat(timeLine?.get(0)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 1, 15, 37, 9))
-    assertThat(timeLine?.get(0)?.status).isEqualTo("LOCKED_INCOMPLETE")
-    assertThat(timeLine?.get(0)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 9, 7))
-
-    assertThat(timeLine?.get(1)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 10, 17))
-    assertThat(timeLine?.get(1)?.status).isEqualTo("COMPLETE")
-    assertThat(timeLine?.get(1)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 8, 17, 57, 50))
-
-    assertThat(timeLine?.get(2)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 16, 21, 0))
-    assertThat(timeLine?.get(2)?.status).isEqualTo("COMPLETE")
-    assertThat(timeLine?.get(2)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 3, 44))
-
-    assertThat(timeLine?.get(3)?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 5, 38))
-    assertThat(timeLine?.get(3)?.status).isEqualTo("COMPLETE")
-    assertThat(timeLine?.get(3)?.completedDate).isEqualTo(LocalDateTime.of(2011, 2, 28, 19, 27, 7))
+    assertThat(assessmentOffenceDto?.timeline).isEmpty()
   }
 
   @Test
