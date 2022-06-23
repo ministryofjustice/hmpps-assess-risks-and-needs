@@ -27,10 +27,11 @@ class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestCl
   }
 
   private fun mapTimelineToAssessments(assessmentOffenceDto: AssessmentOffenceDto) {
-
-    val filteredTimeLine = assessmentOffenceDto.timeline.filter { it.status != "COMPLETE" }
+    val assessmentIds = assessmentOffenceDto.assessments.map { it.assessmentId }
+    val filteredTimeLine = assessmentOffenceDto.timeline.filter { it.assessmentId !in assessmentIds }
     val assessmentDtos = filteredTimeLine.map {
       AssessmentDto(
+        assessmentId = it.assessmentId,
         dateCompleted = it.completedDate,
         assessmentStatus = it.status,
         initiationDate = it.initiationDate

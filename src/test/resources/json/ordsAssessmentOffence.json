@@ -2,9 +2,7 @@
   "source": "OASys",
   "inputs": {
     "crn": "X123456",
-    "status": "COMPLETE",
-    "laoPrivilege": "LIMIT",
-    "nth": "1"
+    "laoPrivilege": "LIMIT"
   },
   "crn": "X123456",
   "limitedAccessOffender": false,

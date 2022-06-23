@@ -33,6 +33,7 @@ class AssessmentOffenceServiceTest {
       crn = crn,
       assessments = listOf(
         AssessmentDto(
+          assessmentId = 3,
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
@@ -42,16 +43,19 @@ class AssessmentOffenceServiceTest {
       ),
       timeline = listOf(
         TimelineDto(
+          assessmentId = 1,
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
+          assessmentId = 2,
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
+          assessmentId = 3,
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
@@ -72,23 +76,170 @@ class AssessmentOffenceServiceTest {
           crn = crn,
           assessments = listOf(
             AssessmentDto(
+              assessmentId = 1,
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
             ),
             AssessmentDto(
+              assessmentId = 2,
               dateCompleted = null,
               initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
               assessmentStatus = "SIGNED",
             ),
             AssessmentDto(
+              assessmentId = 3,
+              dateCompleted = dateCompleted,
+              initiationDate = initiationDate,
+              assessmentStatus = "COMPLETE",
+              patternOfOffending = "patternOfOffending",
+              offenceInvolved = listOf("Carrying or using a weapon")
+            )
+          )
+        )
+      )
+  }
+
+  @Test
+  fun `should successfully map a offender api response where not all complete assessments are present`() {
+    // Given
+    val crn = "X12345"
+    val dateCompleted = LocalDateTime.of(2022, 1, 7, 12, 0)
+    val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
+    val assessmentOffenceDto = AssessmentOffenceDto(
+      crn = crn,
+      assessments = listOf(
+        AssessmentDto(
+          assessmentId = 3,
+          dateCompleted = dateCompleted,
+          initiationDate = initiationDate,
+          assessmentStatus = "COMPLETE",
+          patternOfOffending = "patternOfOffending",
+          offenceInvolved = listOf("Carrying or using a weapon")
+        )
+      ),
+      timeline = listOf(
+        TimelineDto(
+          assessmentId = 1,
+          initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
+          status = "LOCKED_INCOMPLETE",
+          completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
+        ),
+        TimelineDto(
+          assessmentId = 2,
+          initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
+          status = "SIGNED",
+          completedDate = null,
+        ),
+        TimelineDto(
+          assessmentId = 3,
+          initiationDate = initiationDate,
+          status = "COMPLETE",
+          completedDate = dateCompleted,
+        ),
+        TimelineDto(
+          assessmentId = 4,
+          initiationDate = initiationDate.plusDays(1),
+          status = "COMPLETE",
+          completedDate = dateCompleted.plusDays(1),
+        )
+      )
+    )
+    every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
+
+    // When
+    val result = assessmentOffenceService.getAssessmentOffence(crn)
+
+    // Then
+    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "LIMIT") }
+    assertThat(result.timeline).isEmpty()
+    assertThat(result)
+      .isEqualTo(
+        AssessmentOffenceDto(
+          crn = crn,
+          assessments = listOf(
+            AssessmentDto(
+              assessmentId = 1,
+              dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
+              initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
+              assessmentStatus = "LOCKED_INCOMPLETE",
+            ),
+            AssessmentDto(
+              assessmentId = 2,
+              dateCompleted = null,
+              initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
+              assessmentStatus = "SIGNED",
+            ),
+            AssessmentDto(
+              assessmentId = 3,
               dateCompleted = dateCompleted,
               initiationDate = initiationDate,
               assessmentStatus = "COMPLETE",
               patternOfOffending = "patternOfOffending",
               offenceInvolved = listOf("Carrying or using a weapon")
             ),
-          ),
+            AssessmentDto(
+              assessmentId = 4,
+              dateCompleted = dateCompleted.plusDays(1),
+              initiationDate = initiationDate.plusDays(1),
+              assessmentStatus = "COMPLETE",
+              patternOfOffending = null,
+              offenceInvolved = emptyList()
+            )
+          )
+        )
+      )
+  }
+
+  @Test
+  fun `should successfully map a offender api response with no complete assessments`() {
+    // Given
+    val crn = "X12345"
+    val dateCompleted = LocalDateTime.of(2022, 1, 7, 12, 0)
+    val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
+    val assessmentOffenceDto = AssessmentOffenceDto(
+      crn = crn,
+      timeline = listOf(
+        TimelineDto(
+          assessmentId = 1,
+          initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
+          status = "LOCKED_INCOMPLETE",
+          completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
+        ),
+        TimelineDto(
+          assessmentId = 2,
+          initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
+          status = "SIGNED",
+          completedDate = null,
+        )
+      )
+    )
+    every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
+
+    // When
+    val result = assessmentOffenceService.getAssessmentOffence(crn)
+
+    // Then
+    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "LIMIT") }
+    assertThat(result.timeline).isEmpty()
+    assertThat(result)
+      .isEqualTo(
+        AssessmentOffenceDto(
+          crn = crn,
+          assessments = listOf(
+            AssessmentDto(
+              assessmentId = 1,
+              dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
+              initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
+              assessmentStatus = "LOCKED_INCOMPLETE",
+            ),
+            AssessmentDto(
+              assessmentId = 2,
+              dateCompleted = null,
+              initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
+              assessmentStatus = "SIGNED",
+            )
+          )
         )
       )
   }

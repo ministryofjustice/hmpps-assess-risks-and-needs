@@ -238,6 +238,19 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
+          "/assessments/offence/X654321/LIMIT"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(this::class.java.getResource("/json/ordsAssessmentOffenceNoCompleteAssessments.json")?.readText())
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
           "/assessments/offence/NOT_FOUND/LIMIT"
         )
       )
