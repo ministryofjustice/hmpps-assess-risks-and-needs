@@ -8,12 +8,20 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.*
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OffenderAndOffencesBodyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
@@ -52,9 +60,8 @@ class AssessmentApiRestClient {
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
-          "4xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: ${
-          it.statusCode().value()
-          }"
+          "4xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: " +
+            "${it.statusCode().value()}"
         )
         handle4xxError(
           it,
@@ -65,9 +72,8 @@ class AssessmentApiRestClient {
       }
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
-          "5xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: ${
-          it.statusCode().value()
-          }"
+          "5xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: " +
+            "${it.statusCode().value()}"
         )
         handle5xxError(
           "Failed to retrieve Rosh sections for last year completed Assessment for crn $crn",
@@ -131,9 +137,8 @@ class AssessmentApiRestClient {
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
-          "4xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: ${
-          it.statusCode().value()
-          }"
+          "4xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: " +
+            "${it.statusCode().value()}"
         )
         handle4xxError(
           it,
@@ -144,9 +149,8 @@ class AssessmentApiRestClient {
       }
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
-          "5xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: ${
-          it.statusCode().value()
-          }"
+          "5xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: " +
+            "${it.statusCode().value()}"
         )
         handle5xxError(
           "Failed to calculate $predictorType scoring for offender with crn ${offenderAndOffences.crn}",
@@ -172,9 +176,7 @@ class AssessmentApiRestClient {
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
-          "4xx Error retrieving Predictor scores for crn $crn code: ${
-          it.statusCode().value()
-          }"
+          "4xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}"
         )
         handle4xxError(
           it,
@@ -185,9 +187,7 @@ class AssessmentApiRestClient {
       }
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
-          "5xx Error retrieving Predictor scores for crn $crn code: ${
-          it.statusCode().value()
-          }"
+          "5xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}"
         )
         handle5xxError(
           "Failed to retrieve Predictor scores for crn $crn",
@@ -334,7 +334,33 @@ class AssessmentApiRestClient {
     )
   }
 
-  fun getRiskManagementPlan(crn: String, limitedAccessOffender: String): RiskManagementPlanORDSDetailsDto? {
-    TODO("Not yet implemented")
+  fun getRiskManagementPlan(crn: String, limitedAccessOffender: String): OasysRiskManagementPlanDetailsDto? {
+    log.info("Retrieving risk management plan for crn: $crn")
+    val path = "/assessments/risk-management-plans/$crn/$limitedAccessOffender"
+    return webClient
+      .get(
+        path
+      )
+      .retrieve()
+      .onStatus(HttpStatus::is4xxClientError) {
+        log.error("4xx Error retrieving risk management plan for crn $crn code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .onStatus(HttpStatus::is5xxServerError) {
+        log.error("5xx Error retrieving risk management plan for crn $crn code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve risk management plan for crn $crn",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .bodyToMono(OasysRiskManagementPlanDetailsDto::class.java)
+      .block().also { log.info("Retrieved risk management plan for crn $crn") }
   }
 }

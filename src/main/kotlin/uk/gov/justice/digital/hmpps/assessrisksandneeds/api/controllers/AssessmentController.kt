@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlanORDSDetailsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffenceService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskManagementPlanService
@@ -71,7 +71,7 @@ class AssessmentController(
   fun getRiskManagementPlan(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable crn: String,
-  ): RiskManagementPlanORDSDetailsDto {
+  ): RiskManagementPlansDto {
     return riskManagementPlanService.getRiskManagementPlans(crn)
   }
 }

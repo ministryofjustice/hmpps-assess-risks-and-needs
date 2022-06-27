@@ -263,6 +263,48 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
+  fun stubGetRiskManagementPlansByCrn() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/risk-management-plans/$crn/LIMIT"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(this::class.java.getResource("/json/ordsRiskManagementPlan.json")?.readText())
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/risk-management-plans/X654321/LIMIT"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(this::class.java.getResource("/json/ordsRiskManagementPlan.json")?.readText())
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/risk-management-plans/NOT_FOUND/LIMIT"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withBody("{}")
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+        )
+    )
+  }
+
   fun stubGetOffenderPredictors() {
     stubFor(
       WireMock.get(

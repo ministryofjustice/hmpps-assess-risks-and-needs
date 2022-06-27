@@ -5,10 +5,14 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.*
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import java.time.LocalDateTime
 
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Assessment Tests")
 class AssessmentControllerTest : IntegrationTestBase() {
 
@@ -130,14 +134,16 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskManagementPlanORDSDetailsDto>()
+      .expectBody<RiskManagementPlansDto>()
       .returnResult().responseBody
 
     if (riskManagementPlanDetails != null) {
-      with(riskManagementPlanDetails.riskManagementPlan){
+      with(riskManagementPlanDetails.riskManagementPlan[0]) {
 
-        assertThat(this.assessmentPk).isEqualTo(676026)
-        assertThat(this.dateCompleted).isEqualTo(null)
+        assertThat(this.assessmentId).isEqualTo(667025L)
+        assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 38, 57))
+        assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 47, 17))
+        assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
         assertThat(this.keyConsiderationsCurrentSituation).isEqualTo(null)
         assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
         assertThat(this.supervision).isEqualTo(null)
@@ -145,12 +151,25 @@ class AssessmentControllerTest : IntegrationTestBase() {
         assertThat(this.interventionsAndTreatment).isEqualTo(null)
         assertThat(this.victimSafetyPlanning).isEqualTo(null)
         assertThat(this.contingencyPlans).isEqualTo(null)
+      }
+      with(riskManagementPlanDetails.riskManagementPlan[4]) {
 
+        assertThat(this.assessmentId).isEqualTo(676026L)
+        assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 50, 2))
+        assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 5, 10, 56, 37))
+        assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
+        assertThat(this.keyConsiderationsCurrentSituation).isEqualTo("Key considerations")
+        assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo("Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.")
+        assertThat(this.supervision).isEqualTo(null)
+        assertThat(this.monitoringAndControl).isEqualTo("3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.")
+        assertThat(this.interventionsAndTreatment).isEqualTo("5. Additional conditions/requirements to manage the specific risks.")
+        assertThat(this.victimSafetyPlanning).isEqualTo("7. Contingency")
+        assertThat(this.contingencyPlans).isEqualTo(null)
       }
     }
   }
 
-    @Test
+  @Test
   fun `get assessment offence details not found`() {
     webTestClient.get().uri("/assessments/crn/NOT_FOUND/offence")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
