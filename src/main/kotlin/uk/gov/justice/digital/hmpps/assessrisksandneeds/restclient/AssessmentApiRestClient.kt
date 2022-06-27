@@ -8,14 +8,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.*
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences
@@ -339,5 +332,9 @@ class AssessmentApiRestClient {
       this.robbery,
       this.offencesWithWeapon
     )
+  }
+
+  fun getRiskManagementPlan(crn: String, limitedAccessOffender: String): RiskManagementPlanORDSDetailsDto? {
+    TODO("Not yet implemented")
   }
 }

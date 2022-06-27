@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlanORDSDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffenceService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskManagementPlanService
 
 @RestController
 class AssessmentController(
   private val assessmentNeedsService: AssessmentNeedsService,
-  private val assessmentOffenceService: AssessmentOffenceService
+  private val assessmentOffenceService: AssessmentOffenceService,
+  private val riskManagementPlanService: RiskManagementPlanService
 ) {
 
   @RequestMapping(path = ["/needs/crn/{crn}"], method = [RequestMethod.GET])
@@ -39,7 +42,7 @@ class AssessmentController(
   }
 
   @RequestMapping(path = ["/assessments/crn/{crn}/offence"], method = [RequestMethod.GET])
-  @Operation(description = "Gets offence details from latest complete assessment for crn")
+  @Operation(description = "Gets offence details from latest complete assessments for crn")
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
@@ -53,5 +56,22 @@ class AssessmentController(
     @PathVariable crn: String,
   ): AssessmentOffenceDto {
     return assessmentOffenceService.getAssessmentOffence(crn)
+  }
+
+  @RequestMapping(path = ["/assessments/crn/{crn}/riskManagementPlan"], method = [RequestMethod.GET])
+  @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK")
+    ]
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  fun getRiskManagementPlan(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @PathVariable crn: String,
+  ): RiskManagementPlanORDSDetailsDto {
+    return riskManagementPlanService.getRiskManagementPlans(crn)
   }
 }

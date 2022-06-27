@@ -11,6 +11,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 @Service
 class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestClient) {
 
+  private val limitedAccess = "LIMIT"
+  private val completeStatus = "COMPLETE"
+
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
@@ -19,7 +22,7 @@ class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestCl
 
     val assessmentOffenceDto = assessmentClient.getAssessmentOffence(
       crn = crn,
-      limitedAccessOffender = "LIMIT"
+      limitedAccessOffender = limitedAccess
     ) ?: throw EntityNotFoundException("Assessment offence not found for CRN: $crn")
     mapTimelineToAssessments(assessmentOffenceDto)
 
@@ -28,7 +31,7 @@ class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestCl
 
   private fun mapTimelineToAssessments(assessmentOffenceDto: AssessmentOffenceDto) {
 
-    val filteredTimeLine = assessmentOffenceDto.timeline.filter { it.status != "COMPLETE" }
+    val filteredTimeLine = assessmentOffenceDto.timeline.filter { it.status != completeStatus }
     val assessmentDtos = filteredTimeLine.map {
       AssessmentDto(
         dateCompleted = it.completedDate,

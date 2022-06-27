@@ -8,10 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.*
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
@@ -108,6 +105,33 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get risk management plans by crn`() {
+    val riskManagementPlanDetails = webTestClient.get().uri("/assessments/crn/$crn/riskManagementPlan")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RiskManagementPlanORDSDetailsDto>()
+      .returnResult().responseBody
+
+    if (riskManagementPlanDetails != null) {
+      with(riskManagementPlanDetails.riskManagementPlan){
+
+        assertThat(this.assessmentPk).isEqualTo(676026)
+        assertThat(this.dateCompleted).isEqualTo(null)
+        assertThat(this.keyConsiderationsCurrentSituation).isEqualTo(null)
+        assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
+        assertThat(this.supervision).isEqualTo(null)
+        assertThat(this.monitoringAndControl).isEqualTo(null)
+        assertThat(this.interventionsAndTreatment).isEqualTo(null)
+        assertThat(this.victimSafetyPlanning).isEqualTo(null)
+        assertThat(this.contingencyPlans).isEqualTo(null)
+
+      }
+    }
+  }
+
+
+    @Test
   fun `get assessment offence details not found`() {
     webTestClient.get().uri("/assessments/crn/NOT_FOUND/offence")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
