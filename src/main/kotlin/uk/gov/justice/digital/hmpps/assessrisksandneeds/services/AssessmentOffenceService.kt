@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestClient) {
 
   private val limitedAccess = "LIMIT"
-  private val completeStatus = "COMPLETE"
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -31,9 +30,11 @@ class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestCl
 
   private fun mapTimelineToAssessments(assessmentOffenceDto: AssessmentOffenceDto) {
 
-    val filteredTimeLine = assessmentOffenceDto.timeline.filter { it.status != completeStatus }
+    val assessmentIds = assessmentOffenceDto.assessments.map { it.assessmentId }
+    val filteredTimeLine = assessmentOffenceDto.timeline.filter { it.assessmentId !in assessmentIds }
     val assessmentDtos = filteredTimeLine.map {
       AssessmentDto(
+        assessmentId = it.assessmentId,
         dateCompleted = it.completedDate,
         assessmentStatus = it.status,
         initiationDate = it.initiationDate

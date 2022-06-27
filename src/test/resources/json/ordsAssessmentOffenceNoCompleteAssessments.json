@@ -1,0 +1,20 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "crn": "X654321",
+    "laoPrivilege": "LIMIT"
+  },
+  "crn": "X654321",
+  "limitedAccessOffender": false,
+  "timeline": [{
+    "assessmentPk": 2998,
+    "initiationDate": "2011-02-01T15:37:09",
+    "status": "LOCKED_INCOMPLETE",
+    "completedDate": "2011-02-07T17:09:07"
+  }, {
+    "assessmentPk": 3432,
+    "initiationDate": "2011-02-07T17:10:17",
+    "status": "SIGNED",
+    "completedDate": null
+  }]
+}
