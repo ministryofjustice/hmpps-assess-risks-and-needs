@@ -5,10 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.*
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
@@ -152,7 +149,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
       }
     }
   }
-
 
     @Test
   fun `get assessment offence details not found`() {
