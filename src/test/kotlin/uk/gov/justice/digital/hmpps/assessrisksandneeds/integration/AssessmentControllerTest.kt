@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -51,8 +48,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody<AssessmentOffenceDto>()
       .returnResult().responseBody
-
-    println(jacksonObjectMapper().registerModule(JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).writeValueAsString(assessmentOffenceDto))
 
     assertThat(assessmentOffenceDto?.crn).isEqualTo(crn)
     val assessment1 = assessmentOffenceDto?.assessments?.get(0)
@@ -115,8 +110,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody<AssessmentOffenceDto>()
       .returnResult().responseBody
-
-    println(jacksonObjectMapper().registerModule(JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).writeValueAsString(assessmentOffenceDto))
 
     assertThat(assessmentOffenceDto?.crn).isEqualTo("X654321")
     assertThat(assessmentOffenceDto?.assessments?.size).isEqualTo(2)
