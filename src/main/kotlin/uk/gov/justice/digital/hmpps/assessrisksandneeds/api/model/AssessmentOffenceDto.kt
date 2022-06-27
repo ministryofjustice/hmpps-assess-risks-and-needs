@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,6 +18,8 @@ data class AssessmentOffenceDto(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TimelineDto(
 
+  @JsonProperty("assessmentPk")
+  val assessmentId: Int,
   val initiationDate: LocalDateTime,
   val status: String,
   val completedDate: LocalDateTime?,
@@ -26,6 +29,8 @@ data class TimelineDto(
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class AssessmentDto(
 
+  @JsonProperty("assessmentPk")
+  val assessmentId: Int,
   val dateCompleted: LocalDateTime?,
   val initiationDate: LocalDateTime,
   val assessmentStatus: String,

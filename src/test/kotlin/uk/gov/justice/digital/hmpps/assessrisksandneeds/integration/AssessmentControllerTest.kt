@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -51,8 +48,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody<AssessmentOffenceDto>()
       .returnResult().responseBody
-
-    println(jacksonObjectMapper().registerModule(JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).writeValueAsString(assessmentOffenceDto))
 
     assertThat(assessmentOffenceDto?.crn).isEqualTo(crn)
     val assessment1 = assessmentOffenceDto?.assessments?.get(0)
@@ -103,6 +98,31 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment3?.victimDetails?.get(0)?.gender).isEqualTo("Male")
     assertThat(assessment3?.victimDetails?.get(0)?.ethnicCategory).isEqualTo("White - Irish")
     assertThat(assessment3?.victimDetails?.get(0)?.victimRelation).isEqualTo("Stranger")
+
+    assertThat(assessmentOffenceDto?.timeline).isEmpty()
+  }
+
+  @Test
+  fun `get assessment offence details with no complete assessments`() {
+    val assessmentOffenceDto = webTestClient.get().uri("/assessments/crn/X654321/offence")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentOffenceDto>()
+      .returnResult().responseBody
+
+    assertThat(assessmentOffenceDto?.crn).isEqualTo("X654321")
+    assertThat(assessmentOffenceDto?.assessments?.size).isEqualTo(2)
+
+    val assessment1 = assessmentOffenceDto?.assessments?.get(0)
+    assertThat(assessment1?.dateCompleted).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 9, 7))
+    assertThat(assessment1?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 1, 15, 37, 9))
+    assertThat(assessment1?.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
+
+    val assessment2 = assessmentOffenceDto?.assessments?.get(1)
+    assertThat(assessment2?.dateCompleted).isNull()
+    assertThat(assessment2?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 10, 17))
+    assertThat(assessment2?.assessmentStatus).isEqualTo("SIGNED")
 
     assertThat(assessmentOffenceDto?.timeline).isEmpty()
   }
