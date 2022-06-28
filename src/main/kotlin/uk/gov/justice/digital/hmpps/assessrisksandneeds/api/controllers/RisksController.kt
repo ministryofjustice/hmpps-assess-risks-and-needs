@@ -12,13 +12,18 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskManagementPlanService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
 
 @RestController
-class RisksController(private val riskService: RiskService) {
+class RisksController(
+  private val riskService: RiskService,
+  private val riskManagementPlanService: RiskManagementPlanService
+) {
 
   @RequestMapping(path = ["/risks/crn/{crn}/summary"], method = [RequestMethod.GET])
   @Operation(description = "Gets rosh summary for crn")
@@ -90,5 +95,22 @@ class RisksController(private val riskService: RiskService) {
     @PathVariable crn: String,
   ): AllRoshRiskDto {
     return riskService.getRoshRisksByCrn(crn)
+  }
+
+  @RequestMapping(path = ["/risks/crn/{crn}/risk-management-plan"], method = [RequestMethod.GET])
+  @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK")
+    ]
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  fun getRiskManagementPlan(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @PathVariable crn: String,
+  ): RiskManagementPlansDto {
+    return riskManagementPlanService.getRiskManagementPlans(crn)
   }
 }
