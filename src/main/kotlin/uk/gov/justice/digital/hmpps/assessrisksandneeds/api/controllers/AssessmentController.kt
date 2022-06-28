@@ -39,7 +39,7 @@ class AssessmentController(
   }
 
   @RequestMapping(path = ["/assessments/crn/{crn}/offence"], method = [RequestMethod.GET])
-  @Operation(description = "Gets offence details from latest complete assessments for crn")
+  @Operation(description = "Gets offence details from latest complete assessment for crn")
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
