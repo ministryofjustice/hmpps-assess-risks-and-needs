@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRisk
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDto
 import java.time.LocalDateTime
 
-class RiskManagementPlansDto(
+data class RiskManagementPlansDto(
   val crn: String,
   val riskManagementPlan: List<RiskManagementPlanDto> = emptyList()
 ) {
@@ -32,7 +32,7 @@ class RiskManagementPlansDto(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-class RiskManagementPlanDto(
+data class RiskManagementPlanDto(
   val assessmentId: Long,
   val dateCompleted: LocalDateTime?,
   val initiationDate: LocalDateTime,
