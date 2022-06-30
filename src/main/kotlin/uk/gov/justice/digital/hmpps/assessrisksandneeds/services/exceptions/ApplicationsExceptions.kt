@@ -32,7 +32,8 @@ class ExternalApiForbiddenException(
   msg: String? = "",
   val method: HttpMethod,
   val url: String,
-  val client: ExternalService
+  val client: ExternalService,
+  var moreInfo: List<String> = emptyList()
 ) : RuntimeException(msg)
 
 class ExternalApiInvalidRequestException(
