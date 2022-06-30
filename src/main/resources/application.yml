@@ -26,8 +26,8 @@ spring:
             provider: oauth-service
           community-api-client:
             client-name: community-api-client
-            client-id: ${api.client.id:sentence-plan-api-client}
-            client-secret: ${api.client.secret:clientsecret}
+            client-id: ${community.api.client.id:sentence-plan-api-client}
+            client-secret: ${community.api.client.secret:clientsecret}
             client-authentication-method: basic
             authorization-grant-type: client_credentials
             provider: oauth-service
