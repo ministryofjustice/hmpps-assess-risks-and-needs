@@ -5,11 +5,16 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
 @Service
-class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestClient) {
+class AssessmentOffenceService(
+  private val assessmentClient: AssessmentApiRestClient,
+  private val communityClient: CommunityApiRestClient
+) {
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -17,9 +22,11 @@ class AssessmentOffenceService(private val assessmentClient: AssessmentApiRestCl
   fun getAssessmentOffence(crn: String): AssessmentOffenceDto {
     log.info("Get assessment offence for CRN: $crn")
 
+    communityClient.verifyUserAccess(crn, RequestData.getUserName())
+
     val assessmentOffenceDto = assessmentClient.getAssessmentOffence(
       crn = crn,
-      limitedAccessOffender = "LIMIT"
+      limitedAccessOffender = "ALLOW"
     ) ?: throw EntityNotFoundException("Assessment offence not found for CRN: $crn")
     mapTimelineToAssessments(assessmentOffenceDto)
 

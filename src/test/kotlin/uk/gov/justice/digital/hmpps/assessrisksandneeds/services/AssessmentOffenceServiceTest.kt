@@ -4,15 +4,20 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.TimelineDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.time.LocalDateTime
 
@@ -21,7 +26,15 @@ class AssessmentOffenceServiceTest {
 
   @MockK
   private val assessmentClient: AssessmentApiRestClient = mockk()
-  private val assessmentOffenceService = AssessmentOffenceService(assessmentClient)
+  private val communityClient: CommunityApiRestClient = mockk()
+  private val assessmentOffenceService = AssessmentOffenceService(assessmentClient, communityClient)
+
+  @BeforeEach
+  fun setup() {
+    every { communityClient.verifyUserAccess(any(), any()) } returns UserAccessResponse(null, null, false, false)
+    mockkStatic(MDC::class)
+    every { MDC.get(any()) } returns "userName"
+  }
 
   @Test
   fun `should call offender Api to retrieve offence data for a given CRN`() {
@@ -68,7 +81,7 @@ class AssessmentOffenceServiceTest {
     val result = assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
-    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "LIMIT") }
+    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
     assertThat(result.timeline).isEmpty()
     assertThat(result)
       .isEqualTo(
@@ -151,7 +164,7 @@ class AssessmentOffenceServiceTest {
     val result = assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
-    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "LIMIT") }
+    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
     assertThat(result.timeline).isEmpty()
     assertThat(result)
       .isEqualTo(
@@ -220,7 +233,7 @@ class AssessmentOffenceServiceTest {
     val result = assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
-    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "LIMIT") }
+    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
     assertThat(result.timeline).isEmpty()
     assertThat(result)
       .isEqualTo(
