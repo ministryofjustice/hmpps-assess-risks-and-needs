@@ -13,19 +13,26 @@ data class RiskManagementPlansDto(
 
   companion object {
     fun from(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto): RiskManagementPlansDto {
-      val assessmentIdsWithPlans = oasysRiskManagementPlanDetails.riskManagementPlans.map { it.assessmentPk }
-      val assessmentsWithoutPlans = oasysRiskManagementPlanDetails.timeline
-        .filterNot { it.assessmentId in assessmentIdsWithPlans }
+      val riskManagementPlan = createRiskManagementPlans(oasysRiskManagementPlanDetails)
+      val assessmentSummaries = createAssessmentSummaries(oasysRiskManagementPlanDetails, riskManagementPlan.map { it.assessmentId })
+      return RiskManagementPlansDto(
+        crn = oasysRiskManagementPlanDetails.crn,
+        riskManagementPlan = (assessmentSummaries + riskManagementPlan).sortedBy { it.initiationDate }
+      )
+    }
+
+    private fun createRiskManagementPlans(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto): List<RiskManagementPlanDto> {
+      return oasysRiskManagementPlanDetails.riskManagementPlans.map {
+        RiskManagementPlanDto.from(it)
+      }
+    }
+
+    private fun createAssessmentSummaries(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto, riskManagementPlanAssessmentIds: List<Long>): List<RiskManagementPlanDto> {
+      return oasysRiskManagementPlanDetails.timeline
+        .filterNot { it.assessmentId in riskManagementPlanAssessmentIds }
         .map {
           RiskManagementPlanDto.from(it)
         }
-      val assessmentsWithPlans = oasysRiskManagementPlanDetails.riskManagementPlans.map {
-        RiskManagementPlanDto.from(it)
-      }
-      return RiskManagementPlansDto(
-        crn = oasysRiskManagementPlanDetails.crn,
-        riskManagementPlan = (assessmentsWithoutPlans + assessmentsWithPlans).sortedBy { it.initiationDate }
-      )
     }
   }
 }
