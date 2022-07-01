@@ -12,13 +12,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
+import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
@@ -272,5 +275,18 @@ class AssessmentOffenceServiceTest {
     assertThrows<EntityNotFoundException>() {
       assessmentOffenceService.getAssessmentOffence(crn)
     }
+  }
+
+  @Test
+  fun `should NOT call get assessment offence when user is forbidden to access CRN`() {
+    // Given
+    val crn = "X12345"
+    every { communityClient.verifyUserAccess(crn, any()) }.throws(ExternalApiEntityNotFoundException(msg = "User cannot access $crn", HttpMethod.GET, "url", ExternalService.COMMUNITY_API))
+
+    // When
+    assertThrows<ExternalApiEntityNotFoundException> { assessmentOffenceService.getAssessmentOffence(crn) }
+
+    // Then
+    verify(exactly = 0) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
   }
 }

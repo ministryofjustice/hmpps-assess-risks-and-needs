@@ -153,7 +153,19 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .expectBody<ApiErrorResponse>()
       .returnResult().responseBody
 
-    assertThat(response.developerMessage).isEqualTo("No such offender, or no such User")
+    assertThat(response.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+  }
+
+  @Test
+  fun `should return not found when Delius cannot find user`() {
+    val response = webTestClient.get().uri("/assessments/crn/X123456/offence")
+      .headers(setAuthorisation(user = "USER_NOT_FOUND", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response.developerMessage).isEqualTo("No such user for username: USER_NOT_FOUND")
   }
 
   private fun unscoredNeeds() = listOf(

@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -29,7 +30,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
     webTestClient.get()
       .uri("/risks/crn/$crn/predictors/all")
       .header("Content-Type", "application/json")
-      .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
       .exchange()
       // Then
       .expectStatus().isEqualTo(HttpStatus.OK)
@@ -87,5 +88,37 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `should return forbidden when user has insufficient privileges to access crn`() {
+    webTestClient.get().uri("/risks/crn/FORBIDDEN/predictors/all")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `should return not found when Delius cannot find crn`() {
+    val response = webTestClient.get().uri("/risks/crn/USER_ACCESS_NOT_FOUND/predictors/all")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+  }
+
+  @Test
+  fun `should return not found when Delius cannot find user`() {
+    val response = webTestClient.get().uri("/risks/crn/X123456/predictors/all")
+      .headers(setAuthorisation(user = "USER_NOT_FOUND", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response.developerMessage).isEqualTo("No such user for username: USER_NOT_FOUND")
   }
 }

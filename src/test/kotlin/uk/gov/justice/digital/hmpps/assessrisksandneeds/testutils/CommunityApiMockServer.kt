@@ -11,7 +11,7 @@ class CommunityApiMockServer : WireMockServer(9096) {
     stubFor(
       WireMock.get(
         WireMock.urlPathMatching(
-          "/secure/offenders/crn/(?:X123456|NOT_FOUND|X654321)/user/assess-risks-needs/userAccess"
+          "/secure/offenders/crn/(?:X123456|NOT_FOUND|X654321|X999999)/user/assess-risks-needs/userAccess"
         )
       )
         .willReturn(
@@ -45,6 +45,20 @@ class CommunityApiMockServer : WireMockServer(9096) {
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(404)
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/secure/offenders/crn/X123456/user/USER_NOT_FOUND/userAccess"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withStatus(404)
+            .withBody("Can't resolve user: USER_NOT_FOUND")
         )
     )
   }

@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
+import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
@@ -34,10 +36,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.MED
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.VERY_HIGH
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType.STATIC
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OgpDto
@@ -46,6 +51,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OvpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RsrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 import java.math.BigDecimal
@@ -58,6 +64,7 @@ import java.util.UUID
 class RiskPredictorServiceTest {
 
   private val assessmentApiClient: AssessmentApiRestClient = mockk()
+  private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()
 
@@ -114,6 +121,7 @@ class RiskPredictorServiceTest {
   fun setup() {
     MDC.put(RequestData.USER_NAME_HEADER, "User name")
     every { objectMapper.writeValueAsString(any()) } returns sourceAnswersJson
+    every { communityApiRestClient.verifyUserAccess(any(), any()) } returns UserAccessResponse(null, null, false, false)
   }
 
   @Nested
@@ -124,6 +132,7 @@ class RiskPredictorServiceTest {
     private val riskPredictorsService =
       RiskPredictorService(
         assessmentApiClient,
+        communityApiRestClient,
         offenderPredictorsHistoryRepository,
         riskCalculatorService,
         objectMapper
@@ -451,6 +460,19 @@ class RiskPredictorServiceTest {
         )
       }
     }
+
+    @Test
+    fun `should NOT call risk predictor service when user is forbidden to access CRN`() {
+      // Given
+      val crn = "X12345"
+      every { communityApiRestClient.verifyUserAccess(crn, any()) }.throws(ExternalApiEntityNotFoundException(msg = "User cannot access $crn", HttpMethod.GET, "url", ExternalService.COMMUNITY_API))
+
+      // When
+      assertThrows<ExternalApiEntityNotFoundException> { riskPredictorsService.getAllRiskScores(crn) }
+
+      // Then
+      verify(exactly = 0) { assessmentApiClient.getRiskScoresForCompletedLastYearAssessments(crn) }
+    }
   }
 
   @Nested
@@ -461,6 +483,7 @@ class RiskPredictorServiceTest {
     private val riskPredictorsService =
       RiskPredictorService(
         assessmentApiClient,
+        communityApiRestClient,
         offenderPredictorsHistoryRepository,
         riskCalculatorService,
         objectMapper
