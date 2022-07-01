@@ -19,7 +19,7 @@ data class AssessmentOffenceDto(
 data class TimelineDto(
 
   @JsonProperty("assessmentPk")
-  val assessmentId: Int,
+  val assessmentId: Long,
   val initiationDate: LocalDateTime,
   val status: String,
   val completedDate: LocalDateTime?,
@@ -30,7 +30,7 @@ data class TimelineDto(
 data class AssessmentDto(
 
   @JsonProperty("assessmentPk")
-  val assessmentId: Int,
+  val assessmentId: Long,
   val dateCompleted: LocalDateTime?,
   val initiationDate: LocalDateTime,
   val assessmentStatus: String,

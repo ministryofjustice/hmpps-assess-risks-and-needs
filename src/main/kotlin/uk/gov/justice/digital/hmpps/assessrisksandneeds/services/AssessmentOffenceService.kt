@@ -16,6 +16,8 @@ class AssessmentOffenceService(
   private val communityClient: CommunityApiRestClient
 ) {
 
+  private val limitedAccess = "ALLOW"
+
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
@@ -26,7 +28,7 @@ class AssessmentOffenceService(
 
     val assessmentOffenceDto = assessmentClient.getAssessmentOffence(
       crn = crn,
-      limitedAccessOffender = "ALLOW"
+      limitedAccessOffender = limitedAccess
     ) ?: throw EntityNotFoundException("Assessment offence not found for CRN: $crn")
     mapTimelineToAssessments(assessmentOffenceDto)
 
@@ -34,6 +36,7 @@ class AssessmentOffenceService(
   }
 
   private fun mapTimelineToAssessments(assessmentOffenceDto: AssessmentOffenceDto) {
+
     val assessmentIds = assessmentOffenceDto.assessments.map { it.assessmentId }
     val filteredTimeLine = assessmentOffenceDto.timeline.filter { it.assessmentId !in assessmentIds }
     val assessmentDtos = filteredTimeLine.map {

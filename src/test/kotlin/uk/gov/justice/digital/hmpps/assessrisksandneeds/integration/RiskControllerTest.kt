@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisks
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 import java.time.LocalDateTime
@@ -318,5 +319,43 @@ class RiskControllerTest : IntegrationTestBase() {
           )
         )
       }
+  }
+
+  @Test
+  fun `get risk management plans by crn`() {
+    val riskManagementPlanDetails = webTestClient.get().uri("/risks/crn/$crn/risk-management-plan")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RiskManagementPlansDto>()
+      .returnResult().responseBody
+
+    assertThat(riskManagementPlanDetails!!.riskManagementPlan).hasSize(5)
+    with(riskManagementPlanDetails.riskManagementPlan[0]) {
+      assertThat(this.assessmentId).isEqualTo(667025L)
+      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 38, 57))
+      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 47, 17))
+      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
+      assertThat(this.keyConsiderationsCurrentSituation).isEqualTo(null)
+      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
+      assertThat(this.supervision).isEqualTo(null)
+      assertThat(this.monitoringAndControl).isEqualTo(null)
+      assertThat(this.interventionsAndTreatment).isEqualTo(null)
+      assertThat(this.victimSafetyPlanning).isEqualTo(null)
+      assertThat(this.contingencyPlans).isEqualTo(null)
+    }
+    with(riskManagementPlanDetails.riskManagementPlan[4]) {
+      assertThat(this.assessmentId).isEqualTo(676026L)
+      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 50, 2))
+      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 5, 10, 56, 37))
+      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
+      assertThat(this.keyConsiderationsCurrentSituation).isEqualTo("Key considerations")
+      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo("Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.")
+      assertThat(this.supervision).isEqualTo(null)
+      assertThat(this.monitoringAndControl).isEqualTo("3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.")
+      assertThat(this.interventionsAndTreatment).isEqualTo("5. Additional conditions/requirements to manage the specific risks.")
+      assertThat(this.victimSafetyPlanning).isEqualTo("7. Contingency")
+      assertThat(this.contingencyPlans).isEqualTo(null)
+    }
   }
 }

@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import java.time.LocalDateTime
 
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Assessment Tests")
 class AssessmentControllerTest : IntegrationTestBase() {
 
