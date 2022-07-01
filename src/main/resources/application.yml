@@ -24,6 +24,13 @@ spring:
             client-authentication-method: basic
             authorization-grant-type: client_credentials
             provider: oauth-service
+          community-api-client:
+            client-name: community-api-client
+            client-id: ${community.api.client.id:sentence-plan-api-client}
+            client-secret: ${community.api.client.secret:clientsecret}
+            client-authentication-method: basic
+            authorization-grant-type: client_credentials
+            provider: oauth-service
         provider:
           oauth-service:
             token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
@@ -109,6 +116,9 @@ logging:
 
 assessment-api:
   base-url: http://localhost:9004
+
+community-api:
+  base-url: http://localhost:9096
 
 onnx-predictors:
   onnx-path: classpath:/const_rsr_extended.onnx

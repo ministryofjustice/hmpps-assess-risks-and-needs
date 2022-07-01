@@ -29,6 +29,10 @@ graceful:
 
 assessment-api:
   base-url: http://localhost:9004
+
+community-api:
+  base-url: http://localhost:9096
+
 oauth:
   endpoint:
     url: http://localhost:9090/auth

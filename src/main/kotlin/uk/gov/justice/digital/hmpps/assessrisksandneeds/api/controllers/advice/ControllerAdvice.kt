@@ -34,123 +34,113 @@ class ControllerAdvice {
   @ExceptionHandler(EntityNotFoundException::class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   fun handle(e: EntityNotFoundException): ResponseEntity<ErrorResponse?> {
-    log.info("EntityNotFoundException: {}", e.message)
+    log.info("EntityNotFoundException: ", e)
     return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
   }
 
   @ExceptionHandler(PredictorCalculationError::class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   fun handle(e: PredictorCalculationError): ResponseEntity<ErrorResponse?> {
-    log.info("PredictorCalculationError: {}", e.message)
+    log.info("PredictorCalculationError: ", e)
     return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
   }
 
   @ExceptionHandler(IncorrectInputParametersException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   fun handle(e: IncorrectInputParametersException): ResponseEntity<ErrorResponse?> {
-    log.info("IncorrectInputParametersException: {}", e.message)
+    log.info("IncorrectInputParametersException: ", e)
     return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 
   @ExceptionHandler(MethodArgumentNotValidException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   fun handle(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse?> {
-    log.info("MethodArgumentNotValidException: {}", e.message)
+    log.info("MethodArgumentNotValidException: ", e)
     return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 
   @ExceptionHandler(HttpMessageConversionException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   fun handle(e: HttpMessageConversionException): ResponseEntity<*> {
-    log.error("HttpMessageConversionException: {}", e.message)
+    log.error("HttpMessageConversionException: ", e)
     return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 
   @ExceptionHandler(HttpMessageNotReadableException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   fun handle(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse?> {
-    log.error("HttpMessageNotReadableException: {}", e.message)
+    log.error("HttpMessageNotReadableException: ", e)
     return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 
   @ExceptionHandler(UserNameNotFoundException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   fun handle(e: UserNameNotFoundException): ResponseEntity<ErrorResponse?> {
-    log.error("UserNameNotFoundException: {}", e.message)
+    log.error("UserNameNotFoundException: ", e)
     return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 
   @ExceptionHandler(value = [org.springframework.security.access.AccessDeniedException::class])
   @ResponseStatus(HttpStatus.FORBIDDEN)
   fun handle(e: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse?> {
-    log.error("AccessDeniedException: {}", e.message)
+    log.error("AccessDeniedException: ", e)
     return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.message), HttpStatus.FORBIDDEN)
   }
 
   @ExceptionHandler(DuplicateSourceRecordFound::class)
   @ResponseStatus(HttpStatus.CONFLICT)
   fun handle(e: DuplicateSourceRecordFound): ResponseEntity<SupplementaryRiskDto?> {
-    log.error("DuplicateSourceRecordFound: {}", e.message)
+    log.error("DuplicateSourceRecordFound: ", e)
     return ResponseEntity(e.supplementaryRiskDto, HttpStatus.CONFLICT)
   }
 
   @ExceptionHandler(ExternalApiEntityNotFoundException::class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   fun handle(e: ExternalApiEntityNotFoundException): ResponseEntity<ErrorResponse?> {
-    log.warn("ApiClientEntityNotFoundException for external client ${e.client} method ${e.method} and url ${e.url}: {}", e)
+    log.warn("ApiClientEntityNotFoundException for external client ${e.client} method ${e.method} and url ${e.url}: ", e)
     return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
   }
 
   @ExceptionHandler(ExternalApiUnknownException::class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   fun handle(e: ExternalApiUnknownException): ResponseEntity<ErrorResponse?> {
-    log.error(
-      "ExternalClientUnknownException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
-      e.message
-    )
+    log.error("ExternalApiUnknownException for external client ${e.client} method ${e.method} and url ${e.url}: ", e)
     return ResponseEntity(ErrorResponse(status = 500, developerMessage = e.message), HttpStatus.INTERNAL_SERVER_ERROR)
   }
 
   @ExceptionHandler(ExternalApiInvalidRequestException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   fun handle(e: ExternalApiInvalidRequestException): ResponseEntity<ErrorResponse?> {
-    log.error(
-      "InvalidRequestException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
-      e.message
-    )
+    log.error("InvalidRequestException for external client ${e.client} method ${e.method} and url ${e.url}: ", e)
     return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 
   @ExceptionHandler(ExternalApiAuthorisationException::class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   fun handle(e: ExternalApiAuthorisationException): ResponseEntity<ErrorResponse?> {
-    log.error(
-      "ApiClientAuthorisationException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
-      e.message
-    )
+    log.error("ApiClientAuthorisationException for external client ${e.client} method ${e.method} and url ${e.url}: ", e)
     return ResponseEntity(ErrorResponse(status = 401, developerMessage = e.message), HttpStatus.UNAUTHORIZED)
   }
 
   @ExceptionHandler(ExternalApiForbiddenException::class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
   fun handle(e: ExternalApiForbiddenException): ResponseEntity<ErrorResponse?> {
     log.error(
-      "ApiForbiddenException for external client ${e.client} method ${e.method} and url ${e.url}: {}",
-      e.message
+      "ApiForbiddenException for external client ${e.client} method ${e.method} and url ${e.url}: ", e
     )
-    return ResponseEntity(ErrorResponse(status = 401, developerMessage = e.message), HttpStatus.UNAUTHORIZED)
+    return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.message, moreInfo = e.moreInfo.joinToString { "," }), HttpStatus.FORBIDDEN)
   }
 
   @ExceptionHandler(ExternalApiDuplicateOffenderRecordException::class)
   fun handle(e: ExternalApiDuplicateOffenderRecordException): ResponseEntity<ErrorResponse?> {
-    log.error("DuplicateOffenderRecordException: {}", e.message)
+    log.error("DuplicateOffenderRecordException: ", e)
     return ResponseEntity(ErrorResponse(status = 409, developerMessage = e.message, userMessage = e.message), HttpStatus.CONFLICT)
   }
 
   @ExceptionHandler(Exception::class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   fun handle(e: Exception): ResponseEntity<ErrorResponse?> {
-    log.error("Exception: {}", e.message)
+    log.error("Exception: ", e)
     return ResponseEntity(
       ErrorResponse(
         status = 500,

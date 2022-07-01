@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeed
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
@@ -133,6 +134,26 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `should return forbidden when user cannot access crn`() {
+    webTestClient.get().uri("/assessments/crn/FORBIDDEN/offence")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `should return not found when Delius cannot find crn`() {
+    val response = webTestClient.get().uri("/assessments/crn/USER_ACCESS_NOT_FOUND/offence")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response.developerMessage).isEqualTo("No such offender, or no such User")
   }
 
   private fun unscoredNeeds() = listOf(

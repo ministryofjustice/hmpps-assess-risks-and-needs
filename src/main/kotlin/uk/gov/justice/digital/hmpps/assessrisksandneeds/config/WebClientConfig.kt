@@ -26,11 +26,11 @@ class WebClientConfig {
   @Value("\${assessment-api.base-url}")
   private lateinit var assessmentApiBaseUrl: String
 
+  @Value("\${community-api.base-url}")
+  private lateinit var communityApiBaseUrl: String
+
   @Value("\${feature.flags.auth-enabled:true}")
   private val authenticationEnabled = true
-
-  @Value("\${feature.flags.ords-auth-enabled:true}")
-  private val ordsAuthenticationEnabled = true
 
   @Value("\${web.client.connect-timeout-ms}")
   private val connectTimeoutMs: Int? = null
@@ -69,6 +69,15 @@ class WebClientConfig {
     return AuthenticatingRestClient(
       webClientFactory(assessmentApiBaseUrl, authorizedClientManager, bufferByteSize),
       "assessment-api-client",
+      authenticationEnabled
+    )
+  }
+
+  @Bean
+  fun communityApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
+    return AuthenticatingRestClient(
+      webClientFactory(communityApiBaseUrl, authorizedClientManager, bufferByteSize),
+      "community-api-client",
       authenticationEnabled
     )
   }

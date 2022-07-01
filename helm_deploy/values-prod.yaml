@@ -13,6 +13,7 @@ generic-service:
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
     ASSESSMENT_API_BASE_URL: https://offender-prod.aks-live-1.studio-hosting.service.justice.gov.uk
+    COMMUNITY_API_BASE_URL:  https://community-api.probation.service.justice.gov.uk/
     SENTRY_ENVIRONMENT: "prod"
     SPRING_PROFILES_ACTIVE: "logstash,postgres,oasys-rsr"
 generic-prometheus-alerts:
