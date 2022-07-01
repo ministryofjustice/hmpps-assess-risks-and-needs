@@ -42,8 +42,11 @@ class AssessmentController(
   @Operation(description = "Gets offence details from latest complete assessment for crn")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(responseCode = "404", description = "Offender does not exist for CRN"),
+      ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
+      ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
+      ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )

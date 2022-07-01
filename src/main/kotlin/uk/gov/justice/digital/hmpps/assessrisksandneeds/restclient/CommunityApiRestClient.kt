@@ -28,11 +28,11 @@ class CommunityApiRestClient(
       .get(path)
       .retrieve()
       .onStatus({ it == HttpStatus.NOT_FOUND }, {
-        it.bodyToMono(UserAccessResponse::class.java)
+        it.bodyToMono(String::class.java)
           .switchIfEmpty(
             Mono.error(
               ExternalApiEntityNotFoundException(
-                "No such offender, or no such User",
+                "No such offender for CRN: $crn",
                 HttpMethod.GET,
                 path,
                 ExternalService.COMMUNITY_API
@@ -41,7 +41,7 @@ class CommunityApiRestClient(
           )
           .map { error ->
             ExternalApiEntityNotFoundException(
-              "No such offender, or no such User",
+              "No such user for username: $deliusUsername",
               HttpMethod.GET,
               path,
               ExternalService.COMMUNITY_API

@@ -74,7 +74,11 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
+      ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
+      ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
+      ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
