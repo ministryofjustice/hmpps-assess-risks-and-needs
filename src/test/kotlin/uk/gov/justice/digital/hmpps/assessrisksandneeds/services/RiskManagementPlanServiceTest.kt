@@ -261,6 +261,6 @@ class RiskManagementPlanServiceTest {
     assertThrows<ExternalApiEntityNotFoundException> { riskManagementPlanService.getRiskManagementPlans(crn) }
 
     // Then
-    verify(exactly = 0) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
+    verify(exactly = 0) { assessmentClient.getRiskManagementPlan(crn, "ALLOW") }
   }
 }
