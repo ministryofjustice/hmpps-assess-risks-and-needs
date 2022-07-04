@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
@@ -357,5 +358,37 @@ class RiskControllerTest : IntegrationTestBase() {
       assertThat(this.victimSafetyPlanning).isEqualTo("7. Contingency")
       assertThat(this.contingencyPlans).isEqualTo(null)
     }
+  }
+
+  @Test
+  fun `should return forbidden when user cannot access crn`() {
+    webTestClient.get().uri("/risks/crn/FORBIDDEN/risk-management-plan")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `should return not found when Delius cannot find crn`() {
+    val response = webTestClient.get().uri("/risks/crn/USER_ACCESS_NOT_FOUND/risk-management-plan")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+  }
+
+  @Test
+  fun `should return not found when Delius cannot find user`() {
+    val response = webTestClient.get().uri("/risks/crn/$crn/risk-management-plan")
+      .headers(setAuthorisation(user = "USER_NOT_FOUND", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response.developerMessage).isEqualTo("No such user for username: USER_NOT_FOUND")
   }
 }

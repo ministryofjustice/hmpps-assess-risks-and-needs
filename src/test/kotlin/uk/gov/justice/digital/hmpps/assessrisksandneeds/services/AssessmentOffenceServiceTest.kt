@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -27,7 +26,6 @@ import java.time.LocalDateTime
 @ExtendWith(MockKExtension::class)
 class AssessmentOffenceServiceTest {
 
-  @MockK
   private val assessmentClient: AssessmentApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
   private val assessmentOffenceService = AssessmentOffenceService(assessmentClient, communityClient)

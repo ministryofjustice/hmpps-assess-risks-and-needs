@@ -1,29 +1,43 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.MDC
+import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlanDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.TimelineDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 class RiskManagementPlanServiceTest {
 
-  @MockK
   private val assessmentClient: AssessmentApiRestClient = mockk()
-  private val riskManagementPlanService = RiskManagementPlanService(assessmentClient)
+  private val communityClient: CommunityApiRestClient = mockk()
+  private val riskManagementPlanService = RiskManagementPlanService(assessmentClient, communityClient)
+
+  @BeforeEach
+  fun setup() {
+    every { communityClient.verifyUserAccess(any(), any()) } returns UserAccessResponse(null, null, false, false)
+    mockkStatic(MDC::class)
+    every { MDC.get(any()) } returns "userName"
+  }
 
   @Test
   fun `get latest risk management plan for a given CRN from offender-assessments-api`() {
@@ -72,7 +86,7 @@ class RiskManagementPlanServiceTest {
 
     val result = riskManagementPlanService.getRiskManagementPlans(crn)
 
-    verify(exactly = 1) { assessmentClient.getRiskManagementPlan(crn, "LIMIT") }
+    verify(exactly = 1) { assessmentClient.getRiskManagementPlan(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(
         RiskManagementPlansDto(
@@ -161,7 +175,7 @@ class RiskManagementPlanServiceTest {
 
     val result = riskManagementPlanService.getRiskManagementPlans(crn)
 
-    verify(exactly = 1) { assessmentClient.getRiskManagementPlan(crn, "LIMIT") }
+    verify(exactly = 1) { assessmentClient.getRiskManagementPlan(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(
         RiskManagementPlansDto(
@@ -235,5 +249,18 @@ class RiskManagementPlanServiceTest {
     assertThrows<EntityNotFoundException> {
       riskManagementPlanService.getRiskManagementPlans(crn)
     }
+  }
+
+  @Test
+  fun `should NOT call get risk management plan when user is forbidden to access CRN`() {
+    // Given
+    val crn = "X12345"
+    every { communityClient.verifyUserAccess(crn, any()) }.throws(ExternalApiEntityNotFoundException(msg = "User cannot access $crn", HttpMethod.GET, "url", ExternalService.COMMUNITY_API))
+
+    // When
+    assertThrows<ExternalApiEntityNotFoundException> { riskManagementPlanService.getRiskManagementPlans(crn) }
+
+    // Then
+    verify(exactly = 0) { assessmentClient.getRiskManagementPlan(crn, "ALLOW") }
   }
 }
