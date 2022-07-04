@@ -267,7 +267,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/risk-management-plans/$crn/LIMIT"
+          "/assessments/risk-management-plans/$crn/ALLOW"
         )
       )
         .willReturn(
@@ -280,7 +280,7 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/risk-management-plans/X654321/LIMIT"
+          "/assessments/risk-management-plans/X654321/ALLOW"
         )
       )
         .willReturn(
