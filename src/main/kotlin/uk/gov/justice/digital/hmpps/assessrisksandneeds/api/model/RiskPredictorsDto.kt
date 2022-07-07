@@ -45,7 +45,7 @@ enum class PredictorType {
 }
 
 enum class ScoreType(val type: String) {
-  STATIC("Static"), DYNAMIC("Dynamic");
+  STATIC("STATIC"), DYNAMIC("DYNAMIC");
 
   companion object {
     fun findByType(type: String): ScoreType? {

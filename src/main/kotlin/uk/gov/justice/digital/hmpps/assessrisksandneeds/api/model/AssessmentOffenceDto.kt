@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 data class AssessmentOffenceDto(
 
   val crn: String,

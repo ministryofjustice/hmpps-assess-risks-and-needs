@@ -167,7 +167,7 @@ class RiskPredictorService(
 
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
-    val allRisks = assessmentClient.getRiskScoresForCompletedLastYearAssessments(crn)
-    return RiskScoresDto.from(allRisks)
+    val oasysRiskPredictorsDto = assessmentClient.getRiskPredictorsForCompletedAssessments(crn)
+    return RiskScoresDto.from(oasysRiskPredictorsDto)
   }
 }
