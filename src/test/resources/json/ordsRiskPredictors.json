@@ -1,0 +1,217 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "crn": "D006296",
+    "laoPrivilege": "ALLOW",
+    "status": "COMPLETE",
+    "nth": "0"
+  },
+  "crn": "D006296",
+  "limitedAccessOffender": false,
+  "timeline": [
+    {
+      "assessmentPk": 9630348,
+      "assessmentType": "LAYER1",
+      "initiationDate": "2022-04-27T12:42:25",
+      "status": "COMPLETE",
+      "completedDate": "2022-04-27T12:46:39"
+    },
+    {
+      "assessmentPk": 9632348,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-05-31T10:37:05",
+      "status": "LOCKED_INCOMPLETE",
+      "completedDate": "2022-06-09T15:13:18"
+    },
+    {
+      "assessmentPk": 9634348,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-06-09T15:13:55",
+      "status": "COMPLETE",
+      "completedDate": "2022-06-09T15:16:21"
+    },
+    {
+      "assessmentPk": 9635350,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-06-10T18:22:02",
+      "status": "COMPLETE",
+      "completedDate": "2022-06-10T18:23:20"
+    },
+    {
+      "assessmentPk": 9635351,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-06-10T18:23:51",
+      "status": "OPEN"
+    }
+  ],
+  "assessments": [
+    {
+      "assessmentPk": 9635350,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2022-06-10T18:23:20",
+      "assessorSignedDate": "2022-06-10T18:23:20",
+      "initiationDate": "2022-06-10T18:22:02",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": true,
+      "latestWIPDate": "2022-06-10T18:23:51",
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": null,
+      "laterPartCompAssessmentExists": false,
+      "latestPartCompDate": "2022-05-31T10:37:05",
+      "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2022-06-10T18:23:20",
+      "OGP": {
+        "ogpStWesc": 3,
+        "ogpDyWesc": 7,
+        "ogpTotWesc": 10,
+        "ogp1Year": 4,
+        "ogp2Year": 8,
+        "ogpRisk": "Low"
+      },
+      "OVP": {
+        "ovpStWesc": 14,
+        "ovpDyWesc": 3,
+        "ovpTotWesc": 17,
+        "ovp1Year": 4,
+        "ovp2Year": 7,
+        "ovpRisk": "Low",
+        "ovpPrevWesc": 5,
+        "ovpNonVioWesc": 0,
+        "ovpAgeWesc": 8,
+        "ovpVioWesc": 4,
+        "ovpSexWesc": 5
+      },
+      "OGRS": {
+        "ogrs31Year": 3,
+        "ogrs32Year": 5,
+        "ogrs3RiskRecon": "Low"
+      },
+      "RSR": {
+        "rsrStaticOrDynamic": "DYNAMIC",
+        "rsrExceptionError": null,
+        "rsrAlgorithmVersion": 11,
+        "rsrPercentageScore": 50.1234,
+        "scoreLevel": "Medium"
+      },
+      "OSP": {
+        "ospImagePercentageScore": 2.81,
+        "ospContactPercentageScore": 1.07,
+        "ospImageScoreLevel": "Medium",
+        "ospContactScoreLevel": "Medium"
+      }
+    },
+    {
+      "assessmentPk": 9630348,
+      "assessmentType": "LAYER1",
+      "dateCompleted": "2022-04-27T12:46:39",
+      "assessorSignedDate": "2022-04-27T12:46:39",
+      "initiationDate": "2022-04-27T12:42:25",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": true,
+      "latestWIPDate": "2022-06-10T18:23:51",
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": null,
+      "laterPartCompAssessmentExists": true,
+      "latestPartCompDate": "2022-05-31T10:37:05",
+      "laterCompleteAssessmentExists": true,
+      "latestCompleteDate": "2022-06-10T18:23:20",
+      "OGP": {
+        "ogpStWesc": null,
+        "ogpDyWesc": null,
+        "ogpTotWesc": null,
+        "ogp1Year": null,
+        "ogp2Year": null,
+        "ogpRisk": null
+      },
+      "OVP": {
+        "ovpStWesc": null,
+        "ovpDyWesc": null,
+        "ovpTotWesc": null,
+        "ovp1Year": null,
+        "ovp2Year": null,
+        "ovpRisk": null,
+        "ovpPrevWesc": null,
+        "ovpNonVioWesc": null,
+        "ovpAgeWesc": null,
+        "ovpVioWesc": null,
+        "ovpSexWesc": null
+      },
+      "OGRS": {
+        "ogrs31Year": null,
+        "ogrs32Year": null,
+        "ogrs3RiskRecon": null
+      },
+      "RSR": {
+        "rsrStaticOrDynamic": "STATIC",
+        "rsrExceptionError": null,
+        "rsrAlgorithmVersion": 3,
+        "rsrPercentageScore": 0.32,
+        "scoreLevel": "Low"
+      },
+      "OSP": {
+        "ospImagePercentageScore": null,
+        "ospContactPercentageScore": null,
+        "ospImageScoreLevel": null,
+        "ospContactScoreLevel": null
+      }
+    },
+    {
+      "assessmentPk": 9634348,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2022-06-09T15:16:21",
+      "assessorSignedDate": "2022-06-09T15:16:21",
+      "initiationDate": "2022-06-09T15:13:55",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": true,
+      "latestWIPDate": "2022-06-10T18:23:51",
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": null,
+      "laterPartCompAssessmentExists": false,
+      "latestPartCompDate": "2022-05-31T10:37:05",
+      "laterCompleteAssessmentExists": true,
+      "latestCompleteDate": "2022-06-10T18:23:20",
+      "OGP": {
+        "ogpStWesc": 7,
+        "ogpDyWesc": 4,
+        "ogpTotWesc": 11,
+        "ogp1Year": 5,
+        "ogp2Year": 8,
+        "ogpRisk": "Low"
+      },
+      "OVP": {
+        "ovpStWesc": 22,
+        "ovpDyWesc": 13,
+        "ovpTotWesc": 35,
+        "ovp1Year": 12,
+        "ovp2Year": 21,
+        "ovpRisk": "Low",
+        "ovpPrevWesc": 5,
+        "ovpNonVioWesc": 0,
+        "ovpAgeWesc": 8,
+        "ovpVioWesc": 4,
+        "ovpSexWesc": 5
+      },
+      "OGRS": {
+        "ogrs31Year": 6,
+        "ogrs32Year": 12,
+        "ogrs3RiskRecon": "Low"
+      },
+      "RSR": {
+        "rsrStaticOrDynamic": "DYNAMIC",
+        "rsrExceptionError": null,
+        "rsrAlgorithmVersion": 3,
+        "rsrPercentageScore": 4.12,
+        "scoreLevel": "Medium"
+      },
+      "OSP": {
+        "ospImagePercentageScore": 2.81,
+        "ospContactPercentageScore": 1.07,
+        "ospImageScoreLevel": "Medium",
+        "ospContactScoreLevel": "Medium"
+      }
+    }
+  ]
+}

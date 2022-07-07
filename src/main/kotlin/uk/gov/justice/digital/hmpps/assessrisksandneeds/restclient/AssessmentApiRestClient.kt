@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicSc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OffenderAndOffencesBodyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
@@ -200,12 +201,43 @@ class AssessmentApiRestClient {
       .block().also { log.info("Retrieved Predictor scores for crn $crn") }
   }
 
+  fun getRiskPredictorsForCompletedAssessments(
+    crn: String,
+  ): OasysRiskPredictorsDto? {
+    log.info("Entered getRiskPredictorsForCompletedAssessments($crn)")
+    val path = "/assessments/all-risk-predictors/$crn/ALLOW"
+    return webClient
+      .get(
+        path
+      )
+      .retrieve()
+      .onStatus(HttpStatus::is4xxClientError) {
+        log.error("4xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .onStatus(HttpStatus::is5xxServerError) {
+        log.error("5xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve risk predictor scores for completed Assessments for crn $crn",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .bodyToMono(OasysRiskPredictorsDto::class.java)
+      .block().also { log.info("Retrieved risk predictor scores for completed Assessments for crn $crn") }
+  }
+
   fun getRiskScoresForCompletedLastYearAssessments(
     crn: String,
   ): List<OasysPredictorsDto>? {
     log.info("Retrieving risk predictor scores for last year completed Assessments for crn $crn")
-    val path =
-      "/offenders/crn/$crn/predictors/all?period=YEAR&periodUnits=1"
+    val path = "/offenders/crn/$crn/predictors/all?period=YEAR&periodUnits=1"
     return webClient
       .get(
         path

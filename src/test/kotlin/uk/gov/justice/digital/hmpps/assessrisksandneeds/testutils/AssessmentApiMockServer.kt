@@ -335,21 +335,21 @@ class AssessmentApiMockServer : WireMockServer(9004) {
     )
   }
 
-  fun stubGetOasysRiskPredictorScores() {
+  fun stubGetRiskPredictorScores() {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/offenders/crn/$crn/predictors/all?period=YEAR&periodUnits=1"
+          "/assessments/all-risk-predictors/$crn/ALLOW"
         )
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(this::class.java.getResource("/json/oasysRiskPredictorsLatestScore.json")?.readText())
+            .withBody(this::class.java.getResource("/json/ordsRiskPredictors.json")?.readText())
         )
     )
     stubFor(
-      WireMock.get(WireMock.urlEqualTo("/offenders/crn/$badCrn/predictors/all?period=YEAR&periodUnits=1"))
+      WireMock.get(WireMock.urlEqualTo("/assessments/all-risk-predictors/$badCrn/ALLOW"))
         .willReturn(
           WireMock.aResponse()
             .withBody(crnNotFoundJson)

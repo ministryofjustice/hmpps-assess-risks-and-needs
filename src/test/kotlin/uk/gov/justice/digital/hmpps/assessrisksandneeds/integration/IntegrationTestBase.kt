@@ -39,7 +39,7 @@ abstract class IntegrationTestBase {
       assessmentApiMockServer.stubGetRSRPredictorScoring()
       assessmentApiMockServer.stubGetOffenderPredictors()
       assessmentApiMockServer.stubGetOffenderPredictorsNoRsr()
-      assessmentApiMockServer.stubGetOasysRiskPredictorScores()
+      assessmentApiMockServer.stubGetRiskPredictorScores()
       assessmentApiMockServer.stubGetAssessmentOffenceByCrn()
       assessmentApiMockServer.stubGetRiskManagementPlansByCrn()
 

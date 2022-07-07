@@ -36,12 +36,11 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<RiskScoresDto>>()
       .consumeWith {
-        assertThat(it.responseBody)
-          .hasSize(1)
+        assertThat(it.responseBody).hasSize(3)
         assertThat(it.responseBody[0]).usingRecursiveComparison()
           .isEqualTo(
             RiskScoresDto(
-              completedDate = LocalDateTime.of(2022, 5, 27, 0, 0, 0),
+              completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
               assessmentStatus = "COMPLETE",
               groupReconvictionScore = OgrScoreDto(
                 oneYear = BigDecimal.valueOf(3),
@@ -66,16 +65,16 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
               ),
               riskOfSeriousRecidivismScore = RsrScoreDto(
                 percentageScore = BigDecimal.valueOf(50.1234),
-                staticOrDynamic = ScoreType.STATIC,
+                staticOrDynamic = ScoreType.DYNAMIC,
                 source = RsrScoreSource.OASYS,
                 algorithmVersion = "11",
-                ScoreLevel.LOW
+                ScoreLevel.MEDIUM
               ),
               sexualPredictorScore = OspScoreDto(
-                ospIndecentPercentageScore = BigDecimal.valueOf(50.1234),
-                ospContactPercentageScore = BigDecimal.valueOf(50.1234),
-                ospIndecentScoreLevel = ScoreLevel.LOW,
-                ospContactScoreLevel = ScoreLevel.LOW
+                ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
+                ospContactPercentageScore = BigDecimal.valueOf(1.07),
+                ospIndecentScoreLevel = ScoreLevel.MEDIUM,
+                ospContactScoreLevel = ScoreLevel.MEDIUM
               )
             )
           )
