@@ -1,30 +1,5 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    "docker:disable"
-  ],
-  "timezone": "Europe/London",
-  "schedule": [
-    "after 9am every weekday",
-    "before 5pm every weekday"
-  ],
-  "enabledManagers": ["gradle", "gradle-wrapper", "dockerfile", "docker-compose", "helmv3", "helm-values", "circleci"],
-  "rangeStrategy": "replace",
-  "prCreation": "not-pending",
-  "rollbackPrs": true,
-  "packageRules": [
-    {
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "groupName": "all non-major dependencies",
-      "groupSlug": "all-minor-patch"
-    }
-  ],
-  "prConcurrentLimit": 1
+  "extends": ["github>ministryofjustice//hmpps-assess-risks-and-needs//default"
+  ]
 }
+
