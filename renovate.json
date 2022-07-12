@@ -1,5 +1,5 @@
 {
-  "extends": ["github>ministryofjustice//mpps-assess-risks-and-needs/default"
+  "extends": ["github>ministryofjustice/hmpps-assess-risks-and-needs/default"
   ]
 }
 
