@@ -1,5 +1,4 @@
 {
-  "extends": ["github>ministryofjustice/arn-renovate-config"
-  ]
+  "extends": ["local>ministryofjustice/arn-renovate-config"]
 }
 
