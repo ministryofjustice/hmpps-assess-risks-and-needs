@@ -1,7 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:base",
+    "docker:disable"
   ],
   "timezone": "Europe/London",
   "schedule": [
@@ -9,6 +10,9 @@
     "before 5pm every weekday"
   ],
   "enabledManagers": ["gradle", "gradle-wrapper", "dockerfile", "docker-compose", "helmv3", "helm-values", "circleci"],
+  "rangeStrategy": "replace",
+  "prCreation": "not-pending",
+  "rollbackPrs": true,
   "packageRules": [
     {
       "matchPackagePatterns": [
