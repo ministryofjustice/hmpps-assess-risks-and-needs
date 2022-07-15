@@ -31,7 +31,7 @@ dependencies {
   implementation("com.microsoft.onnxruntime:onnxruntime:1.11.0")
   implementation("net.logstash.logback:logstash-logback-encoder:7.2")
   runtimeOnly("com.h2database:h2:2.1.214")
-  runtimeOnly("org.flywaydb:flyway-core:8.5.13")
+  runtimeOnly("org.flywaydb:flyway-core:9.0.1")
   testRuntimeOnly("com.h2database:h2:2.1.214")
   testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
