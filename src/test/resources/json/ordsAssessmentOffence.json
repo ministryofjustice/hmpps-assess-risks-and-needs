@@ -2,36 +2,73 @@
   "source": "OASys",
   "inputs": {
     "crn": "X123456",
-    "laoPrivilege": "LIMIT"
+    "laoPrivilege": "ALLOW"
   },
   "crn": "X123456",
   "limitedAccessOffender": false,
-  "timeline": [{
-    "assessmentPk": 2998,
-    "initiationDate": "2011-02-01T15:37:09",
-    "status": "LOCKED_INCOMPLETE",
-    "completedDate": "2011-02-07T17:09:07"
-  }, {
-    "assessmentPk": 3432,
-    "initiationDate": "2011-02-07T17:10:17",
-    "status": "SIGNED",
-    "completedDate": null
-  }, {
-    "assessmentPk": 4199,
-    "initiationDate": "2011-02-28T19:05:38",
-    "status": "COMPLETE",
-    "completedDate": "2011-02-28T19:27:07"
-  }],
+  "timeline": [
+    {
+      "assessmentPk": 9630348,
+      "assessmentType": "LAYER1",
+      "initiationDate": "2022-04-27T12:42:25",
+      "status": "COMPLETE",
+      "completedDate": "2022-04-27T12:46:39"
+    },
+    {
+      "assessmentPk": 9632348,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-05-31T10:37:05",
+      "status": "LOCKED_INCOMPLETE",
+      "partcompStatus": "Unsigned",
+      "completedDate": "2022-06-09T15:13:18"
+    },
+    {
+      "assessmentPk": 9634348,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-06-09T15:13:55",
+      "status": "COMPLETE",
+      "completedDate": "2022-06-09T15:16:21"
+    },
+    {
+      "assessmentPk": 9635350,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-06-10T18:22:02",
+      "status": "COMPLETE",
+      "completedDate": "2022-06-10T18:23:20"
+    },
+    {
+      "assessmentPk": 9635351,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-06-10T18:23:51",
+      "status": "COMPLETE",
+      "completedDate": "2022-07-21T15:43:12"
+    },
+    {
+      "assessmentPk": 9639348,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2022-07-21T15:43:58",
+      "status": "OPEN"
+    }
+  ],
   "assessments": [
     {
-      "assessmentPk": 4199,
-      "dateCompleted": "2011-02-28T19:27:07",
-      "assessorSignedDate": null,
-      "initiationDate": "2011-02-28T19:05:38",
+      "assessmentPk": 9635351,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2022-07-21T15:43:12",
+      "assessorSignedDate": "2022-07-21T15:43:12",
+      "initiationDate": "2022-06-10T18:23:51",
       "assessmentStatus": "COMPLETE",
       "superStatus": "COMPLETE",
-      "laterWIPAssessmentExists": false,
+      "laterWIPAssessmentExists": true,
+      "latestWIPDate": "2022-07-21T15:43:58",
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": null,
+      "laterPartCompUnsignedAssessmentExists": false,
+      "latestPartCompUnsignedDate": "2022-05-31T10:37:05",
+      "laterPartCompSignedAssessmentExists": false,
+      "latestPartCompSignedDate": null,
       "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2022-07-21T15:43:12",
       "offence": "TBA",
       "disinhibitors": [
         "Alcohol"
@@ -41,11 +78,12 @@
         "Carrying or using a weapon"
       ],
       "specificWeapon": "TBA",
-      "victimPerpetratorRelationship": "mmmmmm",
-      "victimOtherInfo": "blah",
+      "victimPerpetratorRelationship": "blah",
+      "victimOtherInfo": "mmmmmm",
       "evidencedMotivations": [
         "Sexual motivation"
       ],
+      "otherMotivation": null,
       "offenceDetails": [
         {
           "type": "CONCURRENT",
@@ -66,10 +104,16 @@
       ],
       "victimDetails": [
         {
-          "age": "21-25",
+          "age": "26-49",
           "gender": "Male",
           "ethnicCategory": "White - Irish",
           "victimRelation": "Stranger"
+        },
+        {
+          "age": "50-64",
+          "gender": "Male",
+          "ethnicCategory": "Chinese or other ethnic group - Chinese TEST 080212",
+          "victimRelation": "Spouse/Partner - live in"
         }
       ]
     }

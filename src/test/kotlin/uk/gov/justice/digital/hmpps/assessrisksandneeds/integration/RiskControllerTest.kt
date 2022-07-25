@@ -337,6 +337,7 @@ class RiskControllerTest : IntegrationTestBase() {
       assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 38, 57))
       assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 47, 17))
       assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
+      assertThat(this.assessmentType).isEqualTo("LAYER3")
       assertThat(this.keyConsiderationsCurrentSituation).isEqualTo(null)
       assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
       assertThat(this.supervision).isEqualTo(null)
@@ -350,6 +351,7 @@ class RiskControllerTest : IntegrationTestBase() {
       assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 50, 2))
       assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 5, 10, 56, 37))
       assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
+      assertThat(this.assessmentType).isEqualTo("LAYER3")
       assertThat(this.keyConsiderationsCurrentSituation).isEqualTo("Key considerations")
       assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo("Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.")
       assertThat(this.supervision).isEqualTo(null)
@@ -357,6 +359,16 @@ class RiskControllerTest : IntegrationTestBase() {
       assertThat(this.interventionsAndTreatment).isEqualTo("5. Additional conditions/requirements to manage the specific risks.")
       assertThat(this.victimSafetyPlanning).isEqualTo("7. Contingency")
       assertThat(this.contingencyPlans).isEqualTo(null)
+      assertThat(this.laterWIPAssessmentExists).isEqualTo(false)
+      assertThat(this.latestWIPDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 58))
+      assertThat(this.laterSignLockAssessmentExists).isEqualTo(false)
+      assertThat(this.latestSignLockDate).isNull()
+      assertThat(this.laterPartCompUnsignedAssessmentExists).isEqualTo(false)
+      assertThat(this.latestPartCompUnsignedDate).isEqualTo(LocalDateTime.of(2022, 5, 31, 10, 37, 5))
+      assertThat(this.laterPartCompSignedAssessmentExists).isEqualTo(false)
+      assertThat(this.latestPartCompSignedDate).isNull()
+      assertThat(this.laterCompleteAssessmentExists).isEqualTo(false)
+      assertThat(this.latestCompleteDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
     }
   }
 
