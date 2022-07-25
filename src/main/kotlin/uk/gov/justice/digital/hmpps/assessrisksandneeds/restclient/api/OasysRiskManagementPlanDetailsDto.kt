@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CommonAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.TimelineDto
 import java.time.LocalDateTime
 
@@ -19,9 +20,11 @@ class OasysRiskManagementPlanDetailsDto(
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 class OasysRiskManagementPlanDto(
   val assessmentPk: Long,
+  val assessmentType: String,
   val dateCompleted: LocalDateTime?,
   val initiationDate: LocalDateTime,
   val assessmentStatus: String,
+  val superStatus: String? = null,
   val keyConsiderationsCurrentSituation: String?,
   val furtherConsiderationsCurrentSituation: String?,
   val supervision: String?,
@@ -29,4 +32,4 @@ class OasysRiskManagementPlanDto(
   val interventionsAndTreatment: String?,
   val victimSafetyPlanning: String?,
   val contingencyPlans: String?
-)
+) : CommonAssessmentDto()

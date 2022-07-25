@@ -42,9 +42,11 @@ class AssessmentOffenceService(
     val assessmentDtos = filteredTimeLine.map {
       AssessmentDto(
         assessmentId = it.assessmentId,
+        assessmentType = it.assessmentType,
         dateCompleted = it.completedDate,
         assessmentStatus = it.status,
-        initiationDate = it.initiationDate
+        initiationDate = it.initiationDate,
+        partcompStatus = it.partcompStatus
       )
     }
     assessmentOffenceDto.assessments = (assessmentOffenceDto.assessments + assessmentDtos).sortedBy { it.initiationDate }

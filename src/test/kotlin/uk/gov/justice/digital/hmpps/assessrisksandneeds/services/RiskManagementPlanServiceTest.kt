@@ -49,6 +49,7 @@ class RiskManagementPlanServiceTest {
       riskManagementPlans = listOf(
         OasysRiskManagementPlanDto(
           assessmentPk = 3,
+          assessmentType = "LAYER1",
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
@@ -64,18 +65,21 @@ class RiskManagementPlanServiceTest {
       timeline = listOf(
         TimelineDto(
           assessmentId = 1,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
           assessmentId = 2,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
           assessmentId = 3,
+          assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
@@ -94,18 +98,21 @@ class RiskManagementPlanServiceTest {
           riskManagementPlan = listOf(
             RiskManagementPlanDto(
               assessmentId = 1,
+              assessmentType = "LAYER1",
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
             ),
             RiskManagementPlanDto(
               assessmentId = 2,
+              assessmentType = "LAYER1",
               dateCompleted = null,
               initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
               assessmentStatus = "SIGNED",
             ),
             RiskManagementPlanDto(
               assessmentId = 3,
+              assessmentType = "LAYER1",
               dateCompleted = dateCompleted,
               initiationDate = initiationDate,
               assessmentStatus = "COMPLETE",
@@ -132,6 +139,7 @@ class RiskManagementPlanServiceTest {
       riskManagementPlans = listOf(
         OasysRiskManagementPlanDto(
           assessmentPk = 3,
+          assessmentType = "LAYER1",
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
@@ -147,24 +155,28 @@ class RiskManagementPlanServiceTest {
       timeline = listOf(
         TimelineDto(
           assessmentId = 1,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
           assessmentId = 2,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
           assessmentId = 3,
+          assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
         ),
         TimelineDto(
           assessmentId = 4,
+          assessmentType = "LAYER1",
           initiationDate = initiationDate.plusDays(1),
           status = "COMPLETE",
           completedDate = dateCompleted.plusDays(1),
@@ -183,18 +195,21 @@ class RiskManagementPlanServiceTest {
           riskManagementPlan = listOf(
             RiskManagementPlanDto(
               assessmentId = 1,
+              assessmentType = "LAYER1",
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
             ),
             RiskManagementPlanDto(
               assessmentId = 2,
+              assessmentType = "LAYER1",
               dateCompleted = null,
               initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
               assessmentStatus = "SIGNED",
             ),
             RiskManagementPlanDto(
               assessmentId = 3,
+              assessmentType = "LAYER1",
               dateCompleted = dateCompleted,
               initiationDate = initiationDate,
               assessmentStatus = "COMPLETE",
@@ -208,6 +223,7 @@ class RiskManagementPlanServiceTest {
             ),
             RiskManagementPlanDto(
               assessmentId = 4,
+              assessmentType = "LAYER1",
               dateCompleted = dateCompleted.plusDays(1),
               initiationDate = initiationDate.plusDays(1),
               assessmentStatus = "COMPLETE",

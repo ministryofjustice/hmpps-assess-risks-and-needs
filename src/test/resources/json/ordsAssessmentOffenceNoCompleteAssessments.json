@@ -8,11 +8,13 @@
   "limitedAccessOffender": false,
   "timeline": [{
     "assessmentPk": 2998,
+    "assessmentType": "LAYER1",
     "initiationDate": "2011-02-01T15:37:09",
     "status": "LOCKED_INCOMPLETE",
     "completedDate": "2011-02-07T17:09:07"
   }, {
     "assessmentPk": 3432,
+    "assessmentType": "LAYER1",
     "initiationDate": "2011-02-07T17:10:17",
     "status": "SIGNED",
     "completedDate": null

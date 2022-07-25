@@ -48,28 +48,33 @@ class AssessmentOffenceServiceTest {
       assessments = listOf(
         AssessmentDto(
           assessmentId = 3,
+          assessmentType = "LAYER1",
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
           patternOfOffending = "patternOfOffending",
-          offenceInvolved = listOf("Carrying or using a weapon")
+          offenceInvolved = listOf("Carrying or using a weapon"),
+          laterWIPAssessmentExists = true
         )
       ),
       timeline = listOf(
         TimelineDto(
           assessmentId = 1,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
           assessmentId = 2,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
           assessmentId = 3,
+          assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
@@ -94,12 +99,14 @@ class AssessmentOffenceServiceTest {
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
+              assessmentType = "LAYER1",
             ),
             AssessmentDto(
               assessmentId = 2,
               dateCompleted = null,
               initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
               assessmentStatus = "SIGNED",
+              assessmentType = "LAYER1",
             ),
             AssessmentDto(
               assessmentId = 3,
@@ -107,7 +114,9 @@ class AssessmentOffenceServiceTest {
               initiationDate = initiationDate,
               assessmentStatus = "COMPLETE",
               patternOfOffending = "patternOfOffending",
-              offenceInvolved = listOf("Carrying or using a weapon")
+              offenceInvolved = listOf("Carrying or using a weapon"),
+              assessmentType = "LAYER1",
+              laterWIPAssessmentExists = true
             )
           )
         )
@@ -125,6 +134,7 @@ class AssessmentOffenceServiceTest {
       assessments = listOf(
         AssessmentDto(
           assessmentId = 3,
+          assessmentType = "LAYER1",
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
@@ -135,24 +145,28 @@ class AssessmentOffenceServiceTest {
       timeline = listOf(
         TimelineDto(
           assessmentId = 1,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
           assessmentId = 2,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
           assessmentId = 3,
+          assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
         ),
         TimelineDto(
           assessmentId = 4,
+          assessmentType = "LAYER1",
           initiationDate = initiationDate.plusDays(1),
           status = "COMPLETE",
           completedDate = dateCompleted.plusDays(1),
@@ -177,12 +191,14 @@ class AssessmentOffenceServiceTest {
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
+              assessmentType = "LAYER1",
             ),
             AssessmentDto(
               assessmentId = 2,
               dateCompleted = null,
               initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
               assessmentStatus = "SIGNED",
+              assessmentType = "LAYER1",
             ),
             AssessmentDto(
               assessmentId = 3,
@@ -190,7 +206,8 @@ class AssessmentOffenceServiceTest {
               initiationDate = initiationDate,
               assessmentStatus = "COMPLETE",
               patternOfOffending = "patternOfOffending",
-              offenceInvolved = listOf("Carrying or using a weapon")
+              offenceInvolved = listOf("Carrying or using a weapon"),
+              assessmentType = "LAYER1",
             ),
             AssessmentDto(
               assessmentId = 4,
@@ -198,7 +215,8 @@ class AssessmentOffenceServiceTest {
               initiationDate = initiationDate.plusDays(1),
               assessmentStatus = "COMPLETE",
               patternOfOffending = null,
-              offenceInvolved = emptyList()
+              offenceInvolved = emptyList(),
+              assessmentType = "LAYER1",
             )
           )
         )
@@ -216,12 +234,14 @@ class AssessmentOffenceServiceTest {
       timeline = listOf(
         TimelineDto(
           assessmentId = 1,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
           assessmentId = 2,
+          assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
@@ -246,12 +266,14 @@ class AssessmentOffenceServiceTest {
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
+              assessmentType = "LAYER1",
             ),
             AssessmentDto(
               assessmentId = 2,
               dateCompleted = null,
               initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
               assessmentStatus = "SIGNED",
+              assessmentType = "LAYER1",
             )
           )
         )
