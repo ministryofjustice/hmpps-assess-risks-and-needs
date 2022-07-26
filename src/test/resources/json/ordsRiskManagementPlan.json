@@ -33,6 +33,7 @@
       "assessmentType": "LAYER3",
       "initiationDate": "2020-06-25T13:04:56",
       "status": "LOCKED_INCOMPLETE",
+      "partcompStatus": "Unsigned",
       "completedDate": "2020-11-02T14:49:39"
     },
     {
@@ -62,7 +63,7 @@
       "latestPartCompSignedDate": null,
       "laterCompleteAssessmentExists": false,
       "latestCompleteDate": "2022-07-21T15:43:12",
-      "keyConsiderationsCurrentSituation": "Key considerations",
+      "keyInformationCurrentSituation": "Key considerations",
       "furtherConsiderationsCurrentSituation": "Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.",
       "supervision": null,
       "monitoringAndControl": "3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.",

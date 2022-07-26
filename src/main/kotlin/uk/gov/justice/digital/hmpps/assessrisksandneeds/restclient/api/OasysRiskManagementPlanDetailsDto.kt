@@ -25,11 +25,32 @@ class OasysRiskManagementPlanDto(
   val initiationDate: LocalDateTime,
   val assessmentStatus: String,
   val superStatus: String? = null,
-  val keyConsiderationsCurrentSituation: String?,
+  val keyInformationCurrentSituation: String?,
   val furtherConsiderationsCurrentSituation: String?,
   val supervision: String?,
   val monitoringAndControl: String?,
   val interventionsAndTreatment: String?,
   val victimSafetyPlanning: String?,
-  val contingencyPlans: String?
-) : CommonAssessmentDto()
+  val contingencyPlans: String?,
+  laterWIPAssessmentExists: Boolean? = null,
+  latestWIPDate: LocalDateTime? = null,
+  laterSignLockAssessmentExists: Boolean? = null,
+  latestSignLockDate: LocalDateTime? = null,
+  laterPartCompUnsignedAssessmentExists: Boolean? = null,
+  latestPartCompUnsignedDate: LocalDateTime? = null,
+  laterPartCompSignedAssessmentExists: Boolean? = null,
+  latestPartCompSignedDate: LocalDateTime? = null,
+  laterCompleteAssessmentExists: Boolean? = null,
+  latestCompleteDate: LocalDateTime? = null
+) : CommonAssessmentDto(
+  laterWIPAssessmentExists,
+  latestWIPDate,
+  laterSignLockAssessmentExists,
+  latestSignLockDate,
+  laterPartCompUnsignedAssessmentExists,
+  latestPartCompUnsignedDate,
+  laterPartCompSignedAssessmentExists,
+  latestPartCompSignedDate,
+  laterCompleteAssessmentExists,
+  latestCompleteDate
+)
