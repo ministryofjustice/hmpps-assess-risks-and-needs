@@ -42,11 +42,12 @@ data class RiskManagementPlansDto(
 data class RiskManagementPlanDto(
   val assessmentId: Long,
   val dateCompleted: LocalDateTime?,
+  val partcompStatus: String? = null,
   val initiationDate: LocalDateTime,
   val assessmentStatus: String,
   val assessmentType: String,
   val superStatus: String? = null,
-  val keyConsiderationsCurrentSituation: String? = null,
+  val keyInformationCurrentSituation: String? = null,
   val furtherConsiderationsCurrentSituation: String? = null,
   val supervision: String? = null,
   val monitoringAndControl: String? = null,
@@ -74,6 +75,7 @@ data class RiskManagementPlanDto(
           dateCompleted = completedDate,
           assessmentStatus = status,
           initiationDate = initiationDate,
+          partcompStatus = partcompStatus
         )
       }
     }
@@ -86,7 +88,7 @@ data class RiskManagementPlanDto(
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = assessmentStatus,
-          keyConsiderationsCurrentSituation = keyConsiderationsCurrentSituation,
+          keyInformationCurrentSituation = keyInformationCurrentSituation,
           furtherConsiderationsCurrentSituation = furtherConsiderationsCurrentSituation,
           supervision = supervision,
           monitoringAndControl = monitoringAndControl,

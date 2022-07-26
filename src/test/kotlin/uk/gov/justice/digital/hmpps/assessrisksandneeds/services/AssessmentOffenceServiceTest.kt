@@ -64,6 +64,7 @@ class AssessmentOffenceServiceTest {
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
+          partcompStatus = "Signed",
         ),
         TimelineDto(
           assessmentId = 2,
@@ -100,6 +101,7 @@ class AssessmentOffenceServiceTest {
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
               assessmentType = "LAYER1",
+              partcompStatus = "Signed",
             ),
             AssessmentDto(
               assessmentId = 2,

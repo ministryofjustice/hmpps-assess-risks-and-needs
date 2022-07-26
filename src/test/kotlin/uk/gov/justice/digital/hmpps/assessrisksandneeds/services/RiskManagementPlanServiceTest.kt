@@ -53,13 +53,15 @@ class RiskManagementPlanServiceTest {
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
-          keyConsiderationsCurrentSituation = "patternOfOffending",
+          keyInformationCurrentSituation = "patternOfOffending",
           furtherConsiderationsCurrentSituation = "",
           supervision = "",
           monitoringAndControl = "",
           interventionsAndTreatment = "",
           victimSafetyPlanning = "",
-          contingencyPlans = ""
+          contingencyPlans = "",
+          laterWIPAssessmentExists = false,
+          latestWIPDate = null,
         )
       ),
       timeline = listOf(
@@ -116,13 +118,15 @@ class RiskManagementPlanServiceTest {
               dateCompleted = dateCompleted,
               initiationDate = initiationDate,
               assessmentStatus = "COMPLETE",
-              keyConsiderationsCurrentSituation = "patternOfOffending",
+              keyInformationCurrentSituation = "patternOfOffending",
               furtherConsiderationsCurrentSituation = "",
               supervision = "",
               monitoringAndControl = "",
               interventionsAndTreatment = "",
               victimSafetyPlanning = "",
-              contingencyPlans = ""
+              contingencyPlans = "",
+              laterWIPAssessmentExists = false,
+              latestWIPDate = null,
             )
           )
         )
@@ -143,13 +147,15 @@ class RiskManagementPlanServiceTest {
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
-          keyConsiderationsCurrentSituation = "patternOfOffending",
+          keyInformationCurrentSituation = "patternOfOffending",
           furtherConsiderationsCurrentSituation = "",
           supervision = "",
           monitoringAndControl = "",
           interventionsAndTreatment = "",
           victimSafetyPlanning = "",
-          contingencyPlans = ""
+          contingencyPlans = "",
+          laterWIPAssessmentExists = false,
+          latestWIPDate = null,
         )
       ),
       timeline = listOf(
@@ -159,6 +165,7 @@ class RiskManagementPlanServiceTest {
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
+          partcompStatus = "Signed"
         ),
         TimelineDto(
           assessmentId = 2,
@@ -199,6 +206,7 @@ class RiskManagementPlanServiceTest {
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
+              partcompStatus = "Signed"
             ),
             RiskManagementPlanDto(
               assessmentId = 2,
@@ -213,13 +221,15 @@ class RiskManagementPlanServiceTest {
               dateCompleted = dateCompleted,
               initiationDate = initiationDate,
               assessmentStatus = "COMPLETE",
-              keyConsiderationsCurrentSituation = "patternOfOffending",
+              keyInformationCurrentSituation = "patternOfOffending",
               furtherConsiderationsCurrentSituation = "",
               supervision = "",
               monitoringAndControl = "",
               interventionsAndTreatment = "",
               victimSafetyPlanning = "",
-              contingencyPlans = ""
+              contingencyPlans = "",
+              laterWIPAssessmentExists = false,
+              latestWIPDate = null,
             ),
             RiskManagementPlanDto(
               assessmentId = 4,
