@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
 
-private const val onnxVersion = "1.0.0"
+private const val unknownOnnxVersion = "Unknown"
 
 @Profile("onnx-rsr")
 @Service
@@ -37,7 +37,7 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
 
     val validationErrors = validateInputParams(offenderAndOffences)
     if (validationErrors.isNotEmpty()) return RiskPredictorsDto(
-      onnxVersion,
+      unknownOnnxVersion,
       LocalDateTime.now(),
       PredictorType.RSR,
       null,
@@ -48,6 +48,8 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
 
     log.info("Generating RSR score using ONNX runtime for CRN ${offenderAndOffences.crn}")
     val results = getResults(buildTensorsFromInputParameters(offenderAndOffences))
+
+    val onnxVersion: String = (results["rsr_version"]?.value as? String) ?: unknownOnnxVersion
 
     val rsr1YearBriefProb = getBigDecimalResultFor("rsr_brief_1yr_prob", results)
     val rsr2YearBriefProb = getBigDecimalResultFor("rsr_brief_2yr_prob", results)
@@ -60,8 +62,8 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     val ospC2YearProb = getBigDecimalResultFor("osp_c_2yr_prob", results)
     val ospI1YearProb = getBigDecimalResultFor("osp_i_1yr_prob", results)
     val ospI2YearProb = getBigDecimalResultFor("osp_i_2yr_prob", results)
-    val ospCBand = getScoreBandResultFor("osp_4band", results)
-    val ospIBand = getScoreBandResultFor("osp_iband", results)
+    val ospCBand = getScoreBandResultFor("osp_c_band", results)
+    val ospIBand = getScoreBandResultFor("osp_i_band", results)
 
     val snsv1YearBriefProb = getBigDecimalResultFor("snsv_brief_1yr_prob", results)
     val snsv2YearBriefProb = getBigDecimalResultFor("snsv_brief_2yr_prob", results)
@@ -158,17 +160,8 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
   }
 
   private fun getScoreBandResultFor(outputFieldName: String, results: Map<String, OnnxValue>): ScoreLevel? {
-    when (results[outputFieldName]?.value) {
-      is FloatArray -> return ScoreLevel.findByOrdinal(
-        (results[outputFieldName]?.value as? FloatArray)?.getOrNull(0)?.toInt()
-      )
-      is LongArray -> return ScoreLevel.findByOrdinal(
-        (results[outputFieldName]?.value as? LongArray)?.getOrNull(0)?.toInt()
-      )
-    }
-
-    return ScoreLevel.findByOrdinal(
-      (results[outputFieldName]?.value as? FloatArray)?.getOrNull(0)?.toInt()
+    return ScoreLevel.findByType(
+      (results[outputFieldName]?.value as? Array<String>)?.getOrNull(0)
     )
   }
 

@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 @DisplayName("ONNX Risk Predictors Tests")
 @ActiveProfiles("test", "onnx-rsr", inheritProfiles = false)
 // Use mock ONNX file const_rsr_extended.onnx
-@TestPropertySource(properties = ["onnx-predictors.onnx-path=classpath:/const_rsr_extended.onnx"])
+@TestPropertySource(properties = ["onnx-predictors.onnx-path=classpath:/onnx/rsr_v0.0.0_const_extended.onnx"])
 class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
 
   @Test
