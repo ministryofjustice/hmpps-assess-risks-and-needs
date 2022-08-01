@@ -51,7 +51,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(assessmentOffenceDto?.crn).isEqualTo(crn)
+    assertThat(assessmentOffenceDto?.limitedAccessOffender).isEqualTo(false)
     val assessment1 = assessmentOffenceDto?.assessments?.get(0)
+    assertThat(assessment1?.assessmentId).isEqualTo(9630348)
     assertThat(assessment1?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
     assertThat(assessment1?.initiationDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 42, 25))
     assertThat(assessment1?.assessmentStatus).isEqualTo("COMPLETE")
@@ -59,6 +61,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment1?.partcompStatus).isNull()
 
     val assessment2 = assessmentOffenceDto?.assessments?.get(1)
+    assertThat(assessment2?.assessmentId).isEqualTo(9632348)
     assertThat(assessment2?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 6, 9, 15, 13, 18))
     assertThat(assessment2?.initiationDate).isEqualTo(LocalDateTime.of(2022, 5, 31, 10, 37, 5))
     assertThat(assessment2?.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
@@ -66,6 +69,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment2?.partcompStatus).isEqualTo("Unsigned")
 
     val assessment3 = assessmentOffenceDto?.assessments?.get(2)
+    assertThat(assessment3?.assessmentId).isEqualTo(9634348)
     assertThat(assessment3?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 6, 9, 15, 16, 21))
     assertThat(assessment3?.initiationDate).isEqualTo(LocalDateTime.of(2022, 6, 9, 15, 13, 55))
     assertThat(assessment3?.assessmentStatus).isEqualTo("COMPLETE")
@@ -73,6 +77,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment3?.partcompStatus).isNull()
 
     val assessment4 = assessmentOffenceDto?.assessments?.get(3)
+    assertThat(assessment4?.assessmentId).isEqualTo(9635350)
     assertThat(assessment4?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
     assertThat(assessment4?.initiationDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 22, 2))
     assertThat(assessment4?.assessmentStatus).isEqualTo("COMPLETE")
@@ -80,6 +85,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment4?.partcompStatus).isNull()
 
     val assessment5 = assessmentOffenceDto?.assessments?.get(4)
+    assertThat(assessment5?.assessmentId).isEqualTo(9635351)
     assertThat(assessment5?.assessmentType).isEqualTo("LAYER3")
     assertThat(assessment5?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
     assertThat(assessment5?.initiationDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 51))
@@ -141,13 +147,12 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment5?.partcompStatus).isNull()
 
     val assessment6 = assessmentOffenceDto?.assessments?.get(5)
+    assertThat(assessment6?.assessmentId).isEqualTo(9639348)
     assertThat(assessment6?.dateCompleted).isNull()
     assertThat(assessment6?.initiationDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 58))
     assertThat(assessment6?.assessmentStatus).isEqualTo("OPEN")
     assertThat(assessment6?.assessmentType).isEqualTo("LAYER3")
     assertThat(assessment6?.partcompStatus).isNull()
-
-    assertThat(assessmentOffenceDto?.timeline).isEmpty()
   }
 
   @Test
@@ -171,8 +176,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(assessment2?.dateCompleted).isNull()
     assertThat(assessment2?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 10, 17))
     assertThat(assessment2?.assessmentStatus).isEqualTo("SIGNED")
-
-    assertThat(assessmentOffenceDto?.timeline).isEmpty()
   }
 
   @Test

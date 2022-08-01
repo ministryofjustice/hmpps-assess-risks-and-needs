@@ -14,13 +14,13 @@ import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlanDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import java.time.LocalDateTime
@@ -46,6 +46,7 @@ class RiskManagementPlanServiceTest {
     val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
     val oasysRiskManagementPlans = OasysRiskManagementPlanDetailsDto(
       crn = crn,
+      limitedAccessOffender = false,
       riskManagementPlans = listOf(
         OasysRiskManagementPlanDto(
           assessmentPk = 3,
@@ -66,21 +67,21 @@ class RiskManagementPlanServiceTest {
       ),
       timeline = listOf(
         TimelineDto(
-          assessmentId = 1,
+          assessmentPk = 1,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
-          assessmentId = 2,
+          assessmentPk = 2,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
-          assessmentId = 3,
+          assessmentPk = 3,
           assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
@@ -97,6 +98,7 @@ class RiskManagementPlanServiceTest {
       .isEqualTo(
         RiskManagementPlansDto(
           crn = crn,
+          limitedAccessOffender = false,
           riskManagementPlan = listOf(
             RiskManagementPlanDto(
               assessmentId = 1,
@@ -140,6 +142,7 @@ class RiskManagementPlanServiceTest {
     val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
     val oasysRiskManagementPlans = OasysRiskManagementPlanDetailsDto(
       crn = crn,
+      limitedAccessOffender = false,
       riskManagementPlans = listOf(
         OasysRiskManagementPlanDto(
           assessmentPk = 3,
@@ -160,7 +163,7 @@ class RiskManagementPlanServiceTest {
       ),
       timeline = listOf(
         TimelineDto(
-          assessmentId = 1,
+          assessmentPk = 1,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
@@ -168,21 +171,21 @@ class RiskManagementPlanServiceTest {
           partcompStatus = "Signed"
         ),
         TimelineDto(
-          assessmentId = 2,
+          assessmentPk = 2,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
-          assessmentId = 3,
+          assessmentPk = 3,
           assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
         ),
         TimelineDto(
-          assessmentId = 4,
+          assessmentPk = 4,
           assessmentType = "LAYER1",
           initiationDate = initiationDate.plusDays(1),
           status = "COMPLETE",
@@ -199,6 +202,7 @@ class RiskManagementPlanServiceTest {
       .isEqualTo(
         RiskManagementPlansDto(
           crn = crn,
+          limitedAccessOffender = false,
           riskManagementPlan = listOf(
             RiskManagementPlanDto(
               assessmentId = 1,

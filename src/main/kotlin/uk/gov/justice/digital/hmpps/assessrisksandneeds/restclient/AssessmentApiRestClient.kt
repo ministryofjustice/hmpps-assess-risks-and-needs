@@ -8,7 +8,6 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
@@ -19,6 +18,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffenc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
@@ -268,7 +268,7 @@ class AssessmentApiRestClient {
   fun getAssessmentOffence(
     crn: String,
     limitedAccessOffender: String
-  ): AssessmentOffenceDto? {
+  ): OasysAssessmentOffenceDto? {
     log.info("Retrieving assessment offence for crn $crn")
     val path = "/assessments/offence/$crn/$limitedAccessOffender"
     return webClient
@@ -294,7 +294,7 @@ class AssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API
         )
       }
-      .bodyToMono(AssessmentOffenceDto::class.java)
+      .bodyToMono(OasysAssessmentOffenceDto::class.java)
       .block().also { log.info("Retrieved assessment offence for crn $crn") }
   }
 

@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
 import java.time.LocalDateTime
 
 data class RiskManagementPlansDto(
   val crn: String,
+  val limitedAccessOffender: Boolean,
   val riskManagementPlan: List<RiskManagementPlanDto> = emptyList()
 ) {
 
@@ -17,6 +19,7 @@ data class RiskManagementPlansDto(
       val assessmentSummaries = createAssessmentSummaries(oasysRiskManagementPlanDetails, riskManagementPlan.map { it.assessmentId })
       return RiskManagementPlansDto(
         crn = oasysRiskManagementPlanDetails.crn,
+        limitedAccessOffender = oasysRiskManagementPlanDetails.limitedAccessOffender,
         riskManagementPlan = (assessmentSummaries + riskManagementPlan).sortedBy { it.initiationDate }
       )
     }
@@ -29,7 +32,7 @@ data class RiskManagementPlansDto(
 
     private fun createAssessmentSummaries(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto, riskManagementPlanAssessmentIds: List<Long>): List<RiskManagementPlanDto> {
       return oasysRiskManagementPlanDetails.timeline
-        .filterNot { it.assessmentId in riskManagementPlanAssessmentIds }
+        .filterNot { it.assessmentPk in riskManagementPlanAssessmentIds }
         .map {
           RiskManagementPlanDto.from(it)
         }
@@ -70,7 +73,7 @@ data class RiskManagementPlanDto(
     fun from(timelineDto: TimelineDto): RiskManagementPlanDto {
       with(timelineDto) {
         return RiskManagementPlanDto(
-          assessmentId = assessmentId,
+          assessmentId = assessmentPk,
           assessmentType = assessmentType,
           dateCompleted = completedDate,
           assessmentStatus = status,

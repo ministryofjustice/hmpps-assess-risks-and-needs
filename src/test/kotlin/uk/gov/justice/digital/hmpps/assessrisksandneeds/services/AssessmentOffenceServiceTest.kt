@@ -14,11 +14,13 @@ import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import java.time.LocalDateTime
@@ -43,11 +45,12 @@ class AssessmentOffenceServiceTest {
     val crn = "X12345"
     val dateCompleted = LocalDateTime.of(2022, 1, 7, 12, 0)
     val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
-    val assessmentOffenceDto = AssessmentOffenceDto(
+    val assessmentOffenceDto = OasysAssessmentOffenceDto(
       crn = crn,
+      limitedAccessOffender = false,
       assessments = listOf(
-        AssessmentDto(
-          assessmentId = 3,
+        OasysAssessmentDto(
+          assessmentPk = 3,
           assessmentType = "LAYER1",
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
@@ -59,7 +62,7 @@ class AssessmentOffenceServiceTest {
       ),
       timeline = listOf(
         TimelineDto(
-          assessmentId = 1,
+          assessmentPk = 1,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
@@ -67,14 +70,14 @@ class AssessmentOffenceServiceTest {
           partcompStatus = "Signed",
         ),
         TimelineDto(
-          assessmentId = 2,
+          assessmentPk = 2,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
-          assessmentId = 3,
+          assessmentPk = 3,
           assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
@@ -89,11 +92,11 @@ class AssessmentOffenceServiceTest {
 
     // Then
     verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
-    assertThat(result.timeline).isEmpty()
     assertThat(result)
       .isEqualTo(
         AssessmentOffenceDto(
           crn = crn,
+          limitedAccessOffender = false,
           assessments = listOf(
             AssessmentDto(
               assessmentId = 1,
@@ -131,11 +134,12 @@ class AssessmentOffenceServiceTest {
     val crn = "X12345"
     val dateCompleted = LocalDateTime.of(2022, 1, 7, 12, 0)
     val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
-    val assessmentOffenceDto = AssessmentOffenceDto(
+    val assessmentOffenceDto = OasysAssessmentOffenceDto(
       crn = crn,
+      limitedAccessOffender = false,
       assessments = listOf(
-        AssessmentDto(
-          assessmentId = 3,
+        OasysAssessmentDto(
+          assessmentPk = 3,
           assessmentType = "LAYER1",
           dateCompleted = dateCompleted,
           initiationDate = initiationDate,
@@ -146,28 +150,28 @@ class AssessmentOffenceServiceTest {
       ),
       timeline = listOf(
         TimelineDto(
-          assessmentId = 1,
+          assessmentPk = 1,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
-          assessmentId = 2,
+          assessmentPk = 2,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
         ),
         TimelineDto(
-          assessmentId = 3,
+          assessmentPk = 3,
           assessmentType = "LAYER1",
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
         ),
         TimelineDto(
-          assessmentId = 4,
+          assessmentPk = 4,
           assessmentType = "LAYER1",
           initiationDate = initiationDate.plusDays(1),
           status = "COMPLETE",
@@ -182,11 +186,11 @@ class AssessmentOffenceServiceTest {
 
     // Then
     verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
-    assertThat(result.timeline).isEmpty()
     assertThat(result)
       .isEqualTo(
         AssessmentOffenceDto(
           crn = crn,
+          limitedAccessOffender = false,
           assessments = listOf(
             AssessmentDto(
               assessmentId = 1,
@@ -231,18 +235,19 @@ class AssessmentOffenceServiceTest {
     val crn = "X12345"
     val dateCompleted = LocalDateTime.of(2022, 1, 7, 12, 0)
     val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
-    val assessmentOffenceDto = AssessmentOffenceDto(
+    val assessmentOffenceDto = OasysAssessmentOffenceDto(
       crn = crn,
+      limitedAccessOffender = false,
       timeline = listOf(
         TimelineDto(
-          assessmentId = 1,
+          assessmentPk = 1,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
         ),
         TimelineDto(
-          assessmentId = 2,
+          assessmentPk = 2,
           assessmentType = "LAYER1",
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
@@ -257,11 +262,11 @@ class AssessmentOffenceServiceTest {
 
     // Then
     verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
-    assertThat(result.timeline).isEmpty()
     assertThat(result)
       .isEqualTo(
         AssessmentOffenceDto(
           crn = crn,
+          limitedAccessOffender = false,
           assessments = listOf(
             AssessmentDto(
               assessmentId = 1,
