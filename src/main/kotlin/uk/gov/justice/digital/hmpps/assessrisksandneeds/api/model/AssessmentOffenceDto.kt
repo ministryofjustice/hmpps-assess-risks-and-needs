@@ -2,35 +2,20 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class AssessmentOffenceDto(
 
   val crn: String,
+  val limitedAccessOffender: Boolean,
   var assessments: List<AssessmentDto> = emptyList(),
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  var timeline: List<TimelineDto> = emptyList()
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class TimelineDto(
-
-  @JsonProperty("assessmentPk")
-  val assessmentId: Long,
-  val assessmentType: String,
-  val initiationDate: LocalDateTime,
-  val status: String,
-  val completedDate: LocalDateTime? = null,
-  val partcompStatus: String? = null
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class AssessmentDto(
 
-  @JsonProperty("assessmentPk")
   val assessmentId: Long,
   val assessmentType: String,
   val partcompStatus: String? = null,
