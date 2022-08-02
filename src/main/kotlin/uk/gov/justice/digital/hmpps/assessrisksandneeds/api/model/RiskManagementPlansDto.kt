@@ -67,7 +67,7 @@ data class RiskManagementPlanDto(
   override val latestPartCompSignedDate: LocalDateTime? = null,
   override val laterCompleteAssessmentExists: Boolean? = null,
   override val latestCompleteDate: LocalDateTime? = null,
-) : CommonAssessmentDto() {
+) : RelatedAssessmentState {
   companion object {
 
     fun from(timelineDto: TimelineDto): RiskManagementPlanDto {

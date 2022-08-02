@@ -44,7 +44,7 @@ data class AssessmentDto(
   override val latestPartCompSignedDate: LocalDateTime? = null,
   override val laterCompleteAssessmentExists: Boolean? = null,
   override val latestCompleteDate: LocalDateTime? = null,
-) : CommonAssessmentDto()
+) : RelatedAssessmentState
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class VictimDetailDto(

@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CommonAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RelatedAssessmentState
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,25 +32,14 @@ class OasysRiskManagementPlanDto(
   val interventionsAndTreatment: String?,
   val victimSafetyPlanning: String?,
   val contingencyPlans: String?,
-  laterWIPAssessmentExists: Boolean? = null,
-  latestWIPDate: LocalDateTime? = null,
-  laterSignLockAssessmentExists: Boolean? = null,
-  latestSignLockDate: LocalDateTime? = null,
-  laterPartCompUnsignedAssessmentExists: Boolean? = null,
-  latestPartCompUnsignedDate: LocalDateTime? = null,
-  laterPartCompSignedAssessmentExists: Boolean? = null,
-  latestPartCompSignedDate: LocalDateTime? = null,
-  laterCompleteAssessmentExists: Boolean? = null,
-  latestCompleteDate: LocalDateTime? = null
-) : CommonAssessmentDto(
-  laterWIPAssessmentExists,
-  latestWIPDate,
-  laterSignLockAssessmentExists,
-  latestSignLockDate,
-  laterPartCompUnsignedAssessmentExists,
-  latestPartCompUnsignedDate,
-  laterPartCompSignedAssessmentExists,
-  latestPartCompSignedDate,
-  laterCompleteAssessmentExists,
-  latestCompleteDate
-)
+  override val laterWIPAssessmentExists: Boolean? = null,
+  override val latestWIPDate: LocalDateTime? = null,
+  override val laterSignLockAssessmentExists: Boolean? = null,
+  override val latestSignLockDate: LocalDateTime? = null,
+  override val laterPartCompUnsignedAssessmentExists: Boolean? = null,
+  override val latestPartCompUnsignedDate: LocalDateTime? = null,
+  override val laterPartCompSignedAssessmentExists: Boolean? = null,
+  override val latestPartCompSignedDate: LocalDateTime? = null,
+  override val laterCompleteAssessmentExists: Boolean? = null,
+  override val latestCompleteDate: LocalDateTime? = null
+) : RelatedAssessmentState
