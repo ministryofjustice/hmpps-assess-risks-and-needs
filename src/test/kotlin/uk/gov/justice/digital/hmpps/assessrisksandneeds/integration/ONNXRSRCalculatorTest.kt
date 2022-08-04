@@ -60,8 +60,8 @@ class ONNXRSRCalculatorTest() : IntegrationTestBase() {
     @JvmStatic
     fun offenderInputsAndOutputs(): Stream<Arguments> {
 
-      val inputJsonFile = "./src/test/resources/onnx-test-fixtures/rsr_input_python.json"
-      val outputJsonFile = "./src/test/resources/onnx-test-fixtures/rsr_output_python.json"
+      val inputJsonFile = "./src/test/resources/onnx-test-fixtures/rsr_input.json"
+      val outputJsonFile = "./src/test/resources/onnx-test-fixtures/rsr_output.json"
       val parameters: MutableList<Pair<OffenderAndOffencesDto, RiskPredictorsDto>> = mutableListOf()
       val parser = Parser.default()
       val inputJson = parser.parse(inputJsonFile) as JsonArray<JsonObject>
@@ -138,14 +138,14 @@ class ONNXRSRCalculatorTest() : IntegrationTestBase() {
             ),
             PredictorSubType.RSR_2YR_BRIEF to Score(
               score = outputJson[index].float("rsr_brief_2yr_prob")?.toBigDecimal(), isValid = true,
-              level = ScoreLevel.findByOrdinal(outputJson[index].int("rsr_band_brief"))
+              level = ScoreLevel.findByType(outputJson[index].string("rsr_band_brief"))
             ),
             PredictorSubType.RSR_1YR_EXTENDED to Score(
               score = outputJson[index].float("rsr_extended_1yr_prob")?.toBigDecimal(), isValid = true, level = null
             ),
             PredictorSubType.RSR_2YR_EXTENDED to Score(
               score = outputJson[index].float("rsr_extended_2yr_prob")?.toBigDecimal(), isValid = true,
-              level = ScoreLevel.findByOrdinal(outputJson[index].int("rsr_band_extended"))
+              level = ScoreLevel.findByType(outputJson[index].string("rsr_band_extended"))
             ),
             PredictorSubType.OSPI_1YR to Score(
               score = outputJson[index].float("osp_i_1yr_prob")?.toBigDecimal(),
@@ -165,7 +165,7 @@ class ONNXRSRCalculatorTest() : IntegrationTestBase() {
             PredictorSubType.OSPC_2YR to Score(
               score = outputJson[index].float("osp_c_2yr_prob")?.toBigDecimal(),
               isValid = true,
-              level = ScoreLevel.findByOrdinal(outputJson[index].int("osp_4band"))
+              level = ScoreLevel.findByType(outputJson[index].string("osp_c_band"))
             ),
             PredictorSubType.SNSV_1YR_BRIEF to Score(
               score = outputJson[index].float("snsv_brief_1yr_prob")?.toBigDecimal(), isValid = true, level = null
