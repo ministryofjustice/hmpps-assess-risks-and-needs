@@ -119,6 +119,3 @@ assessment-api:
 
 community-api:
   base-url: http://localhost:9096
-
-onnx-predictors:
-  onnx-path: classpath:/const_rsr_extended.onnx

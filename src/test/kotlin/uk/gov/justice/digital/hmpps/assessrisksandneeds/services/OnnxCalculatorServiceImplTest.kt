@@ -29,8 +29,8 @@ class OnnxCalculatorServiceImplTest {
 
   private val ortEnvironment = OrtEnvironment.getEnvironment()
 
-  private val briefOnnxFile = "./src/test/resources/onnx/const_rsr_brief.onnx"
-  private val extendedOnnxFile = "./src/test/resources/onnx/const_rsr_extended.onnx"
+  private val briefOnnxFile = "./src/test/resources/onnx/rsr_v0.0.0_const_brief.onnx"
+  private val extendedOnnxFile = "./src/test/resources/onnx/rsr_v0.0.0_const_extended.onnx"
   private val ortSessionBrief = ortEnvironment.createSession(briefOnnxFile)
   private val ortSessionExtended = ortEnvironment.createSession(extendedOnnxFile)
   private val briefOnnxCalculatorService = OnnxCalculatorServiceImpl(ortEnvironment, ortSessionBrief)
@@ -84,7 +84,7 @@ class OnnxCalculatorServiceImplTest {
       assertThat(result.scores[PredictorSubType.OSPI_1YR]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.038087))
       assertThat(result.scores[PredictorSubType.OSPI_1YR]?.level).isNull()
       assertThat(result.scores[PredictorSubType.OSPI_2YR]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.057949))
-      assertThat(result.scores[PredictorSubType.OSPI_2YR]?.level).isNull()
+      assertThat(result.scores[PredictorSubType.OSPI_2YR]?.level).isEqualTo(ScoreLevel.HIGH)
 
       assertThat(result.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
@@ -150,7 +150,7 @@ class OnnxCalculatorServiceImplTest {
       assertThat(result.scores[PredictorSubType.OSPC]?.score).isEqualByComparingTo(BigDecimal.valueOf(22.85))
       assertThat(result.scores[PredictorSubType.OSPC]?.level).isEqualTo(ScoreLevel.VERY_HIGH)
       assertThat(result.scores[PredictorSubType.OSPI]?.score).isEqualByComparingTo(BigDecimal.valueOf(5.79))
-      assertThat(result.scores[PredictorSubType.OSPI]?.level).isNull()
+      assertThat(result.scores[PredictorSubType.OSPI]?.level).isEqualTo(ScoreLevel.HIGH)
       assertThat(result.scores[PredictorSubType.SNSV]?.score).isEqualByComparingTo(BigDecimal.valueOf(0.78))
       assertThat(result.scores[PredictorSubType.SNSV]?.level).isNull()
     }
