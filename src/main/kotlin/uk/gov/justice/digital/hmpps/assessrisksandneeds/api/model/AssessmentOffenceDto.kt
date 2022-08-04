@@ -12,7 +12,6 @@ data class AssessmentOffenceDto(
   var assessments: List<AssessmentDto> = emptyList(),
 )
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class AssessmentDto(
 
@@ -25,9 +24,9 @@ data class AssessmentDto(
   val assessmentStatus: String,
   val superStatus: String? = null,
   val offence: String? = null,
-  var disinhibitors: List<String>? = emptyList(),
+  val disinhibitors: List<String>? = emptyList(),
   val patternOfOffending: String? = null,
-  var offenceInvolved: List<String>? = emptyList(),
+  val offenceInvolved: List<String>? = emptyList(),
   val specificWeapon: String? = null,
   val victimPerpetratorRelationship: String? = null,
   val victimOtherInfo: String? = null,
@@ -46,7 +45,6 @@ data class AssessmentDto(
   override val latestCompleteDate: LocalDateTime? = null,
 ) : RelatedAssessmentState
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class VictimDetailDto(
 
   val age: String,
@@ -55,7 +53,6 @@ data class VictimDetailDto(
   val victimRelation: String
 )
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class OffenceDetailDto(
 
   val type: String,

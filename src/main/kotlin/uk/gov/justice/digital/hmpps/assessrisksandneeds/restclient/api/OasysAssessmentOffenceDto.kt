@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenceDetailDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RelatedAssessmentState
@@ -13,7 +12,6 @@ data class OasysAssessmentOffenceDto(
   val crn: String,
   val limitedAccessOffender: Boolean,
   var assessments: List<OasysAssessmentDto> = emptyList(),
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   var timeline: List<TimelineDto> = emptyList()
 )
 
@@ -30,7 +28,6 @@ class TimelineDto(
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 class OasysAssessmentDto(
 
   val assessmentPk: Long,
@@ -42,9 +39,9 @@ class OasysAssessmentDto(
   val assessmentStatus: String,
   val superStatus: String? = null,
   val offence: String? = null,
-  var disinhibitors: List<String>? = emptyList(),
+  val disinhibitors: List<String>? = emptyList(),
   val patternOfOffending: String? = null,
-  var offenceInvolved: List<String>? = emptyList(),
+  val offenceInvolved: List<String>? = emptyList(),
   val specificWeapon: String? = null,
   val victimPerpetratorRelationship: String? = null,
   val victimOtherInfo: String? = null,
