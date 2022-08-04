@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDto
@@ -40,7 +39,6 @@ data class RiskManagementPlansDto(
   }
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class RiskManagementPlanDto(
   val assessmentId: Long,

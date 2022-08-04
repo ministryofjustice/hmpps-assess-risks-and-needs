@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 class OasysRiskManagementPlanDetailsDto(
   val crn: String,
   val limitedAccessOffender: Boolean,
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   var timeline: List<TimelineDto> = emptyList(),
   @JsonAlias("assessments")
   val riskManagementPlans: List<OasysRiskManagementPlanDto>
