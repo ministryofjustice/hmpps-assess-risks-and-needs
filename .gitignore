@@ -72,4 +72,6 @@ ecr.repo
 /helm_deploy/hmpps-assess-risks-and-needs/Chart.lock
 
 # RSR ONNX Files
+/src/main/resources/onnx/*
+!/src/main/resources/onnx/*_const_*.onnx
 /src/test/resources/onnx-test-fixtures/
