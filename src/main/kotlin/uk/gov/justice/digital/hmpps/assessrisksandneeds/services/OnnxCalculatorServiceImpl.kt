@@ -49,7 +49,7 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     log.info("Generating RSR score using ONNX runtime for CRN ${offenderAndOffences.crn}")
     val results = getResults(buildTensorsFromInputParameters(offenderAndOffences))
 
-    val onnxVersion: String = (results["rsr_version"]?.value as? String) ?: unknownOnnxVersion
+    val onnxVersion: String = (results["rsr_version"]?.value as? Array<String>)?.get(0) ?: unknownOnnxVersion
 
     val rsr1YearBriefProb = getBigDecimalResultFor("rsr_brief_1yr_prob", results)
     val rsr2YearBriefProb = getBigDecimalResultFor("rsr_brief_2yr_prob", results)
