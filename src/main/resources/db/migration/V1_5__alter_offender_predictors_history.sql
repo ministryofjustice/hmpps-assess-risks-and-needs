@@ -1,1 +1,1 @@
-ALTER TABLE offender_predictors_history ALTER COLUMN algorithm_version VARCHAR(64);
+ALTER TABLE offender_predictors_history ALTER COLUMN algorithm_version type VARCHAR(64);
