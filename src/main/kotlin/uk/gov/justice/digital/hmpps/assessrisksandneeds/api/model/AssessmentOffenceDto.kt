@@ -45,20 +45,22 @@ data class AssessmentDto(
   override val latestCompleteDate: LocalDateTime? = null,
 ) : RelatedAssessmentState
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class VictimDetailDto(
 
-  val age: String,
-  val gender: String,
-  val ethnicCategory: String,
-  val victimRelation: String
+  val age: String? = null,
+  val gender: String? = null,
+  val ethnicCategory: String? = null,
+  val victimRelation: String? = null
 )
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class OffenceDetailDto(
 
-  val type: String,
-  val offenceDate: LocalDateTime,
-  val offenceCode: String,
-  val offenceSubCode: String,
-  val offence: String,
-  val subOffence: String,
+  val type: String? = null,
+  val offenceDate: LocalDateTime? = null,
+  val offenceCode: String? = null,
+  val offenceSubCode: String? = null,
+  val offence: String? = null,
+  val subOffence: String? = null,
 )
