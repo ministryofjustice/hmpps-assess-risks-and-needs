@@ -26,8 +26,16 @@ private const val unknownOnnxVersion = "Unknown"
 
 @Profile("onnx-rsr")
 @Service
-class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, private val ortSession: OrtSession) :
+class OnnxCalculatorServiceImpl(
+  private val ortEnvironment: OrtEnvironment,
+  private val ortSession: OrtSession,
+  private val offenceCodeValidator: OffenceCodeValidator
+) :
   RiskCalculatorService {
+
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
 
   override fun calculatePredictorScores(
     predictorType: PredictorType,
@@ -44,7 +52,7 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
       emptyMap(),
       validationErrors,
       validationErrors.count()
-    ).also { log.info("${validationErrors.count()} found for CRN ${offenderAndOffences.crn}") }
+    ).also { log.warn("${validationErrors.count()} found for CRN ${offenderAndOffences.crn}. Errors: $validationErrors.") }
 
     log.info("Generating RSR score using ONNX runtime for CRN ${offenderAndOffences.crn}")
     val results = getResults(buildTensorsFromInputParameters(offenderAndOffences))
@@ -175,6 +183,8 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
     val errors = mutableListOf<String>()
 
     with(offenderAndOffences) {
+
+      if (!offenceCodeValidator.validate(currentOffence)) errors.add("Offence code ${currentOffence.offenceCode + currentOffence.offenceSubcode} is not supported")
 
       if (dateOfCurrentConviction.isAfter(LocalDate.now())) errors.add("Date of current conviction cannot be in the future")
       if (dateOfCurrentConviction.isBefore(dateOfFirstSanction)) errors.add("Date of current conviction cannot be before the date of first conviction")
@@ -425,9 +435,5 @@ class OnnxCalculatorServiceImpl(private val ortEnvironment: OrtEnvironment, priv
   fun getDateAsString(date: LocalDateTime?): Array<String> {
     if (date == null) return arrayOf("null")
     return arrayOf(date.format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-  }
-
-  companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 }

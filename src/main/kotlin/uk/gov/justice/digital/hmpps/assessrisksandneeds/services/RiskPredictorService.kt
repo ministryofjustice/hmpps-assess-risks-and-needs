@@ -47,7 +47,7 @@ class RiskPredictorService(
     if (offenderAndOffences.crn == null && final) throw IncorrectInputParametersException("Crn can't be null for a final Predictor calculation")
     val predictors = riskCalculatorService.calculatePredictorScores(predictorType, offenderAndOffences, algorithmVersion)
 
-    if (final) {
+    if (final && predictors.errorCount == 0) {
       log.info("Saving predictors calculation for offender with CRN ${offenderAndOffences.crn} and $predictorType")
       offenderPredictorsHistoryRepository.save(
         predictors.toOffenderPredictorsHistory(

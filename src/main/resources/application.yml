@@ -119,3 +119,8 @@ assessment-api:
 
 community-api:
   base-url: http://localhost:9096
+
+
+onnx-predictors:
+  onnx-path: classpath:/onnx/rsr_v0.0.0_const_brief.onnx
+  offence-codes-path: classpath:/onnx/offence_codes_v0.0.0.json

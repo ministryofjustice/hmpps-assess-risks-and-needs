@@ -74,4 +74,5 @@ ecr.repo
 # RSR ONNX Files
 /src/main/resources/onnx/*
 !/src/main/resources/onnx/*_const_*.onnx
+!/src/main/resources/onnx/*.json
 /src/test/resources/onnx-test-fixtures/
