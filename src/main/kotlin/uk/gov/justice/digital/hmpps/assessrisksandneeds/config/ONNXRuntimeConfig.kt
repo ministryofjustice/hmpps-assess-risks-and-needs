@@ -36,6 +36,6 @@ class ONNXRuntimeConfig(@Value("\${onnx-predictors.onnx-path}") private val onnx
 
   @Bean
   fun getSupportedOffenceCodes(@Value("\${onnx-predictors.offence-codes-path}") offenceCodesPath: Resource): List<Int> {
-    return objectMapper.readValue(File(offenceCodesPath.file.absolutePath))
+    return objectMapper.readValue(File(offenceCodesPath.file.path))
   }
 }
