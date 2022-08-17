@@ -1,8 +1,11 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
 import ai.onnxruntime.OrtEnvironment
+import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -33,8 +36,14 @@ class OnnxCalculatorServiceImplTest {
   private val extendedOnnxFile = "./src/test/resources/onnx/rsr_v0.0.0_const_extended.onnx"
   private val ortSessionBrief = ortEnvironment.createSession(briefOnnxFile)
   private val ortSessionExtended = ortEnvironment.createSession(extendedOnnxFile)
-  private val briefOnnxCalculatorService = OnnxCalculatorServiceImpl(ortEnvironment, ortSessionBrief)
-  private val extendedOnnxCalculatorService = OnnxCalculatorServiceImpl(ortEnvironment, ortSessionExtended)
+  private val offenceCodeValidator: OffenceCodeValidator = mockk()
+  private val briefOnnxCalculatorService = OnnxCalculatorServiceImpl(ortEnvironment, ortSessionBrief, offenceCodeValidator)
+  private val extendedOnnxCalculatorService = OnnxCalculatorServiceImpl(ortEnvironment, ortSessionExtended, offenceCodeValidator)
+
+  @BeforeEach
+  fun setup() {
+    every { offenceCodeValidator.validate(any()) }.returns(true)
+  }
 
   @Nested
   @DisplayName("RSR outputs")
@@ -424,6 +433,24 @@ class OnnxCalculatorServiceImplTest {
       assertThat(result.scores).isEmpty()
       assertThat(result.errors).containsAll(expectedErrors)
     }
+  }
+
+  @Test
+  fun `should return validation error when offence code is unsupported`() {
+    // Given
+    val inputParameters = getExtendedInputParameters()
+
+    every { offenceCodeValidator.validate(any()) }.returns(false)
+    // When
+    val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
+
+    // Then
+    val expectedErrors = listOf("Offence code 13800 is not supported")
+
+    assertThat(result.scoreType).isNull()
+    assertThat(result.type).isEqualTo(PredictorType.RSR)
+    assertThat(result.scores).isEmpty()
+    assertThat(result.errors).containsAll(expectedErrors)
   }
 
   private fun getExtendedInputParameters(): OffenderAndOffencesDto {
