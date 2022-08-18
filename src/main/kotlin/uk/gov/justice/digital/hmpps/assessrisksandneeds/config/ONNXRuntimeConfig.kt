@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.OnnxCalculatorServiceImpl
-import java.io.File
 
 @Profile("onnx-rsr")
 @Configuration
@@ -36,8 +34,7 @@ class ONNXRuntimeConfig(@Value("\${onnx-predictors.onnx-path}") private val onnx
   }
 
   @Bean
-  fun getSupportedOffenceCodes(@Value("\${onnx-predictors.offence-codes-path}") offenceCodesPath: Resource): List<Int> {
-    val resource: File = ClassPathResource("onnx/offence_codes_v0.0.0.json").file
-    return objectMapper.readValue(resource)
+  fun getSupportedOffenceCodes(@Value("\${onnx-predictors.offence-codes-path}") offenceCodesResource: Resource): List<Int> {
+    return objectMapper.readValue(offenceCodesResource.inputStream)
   }
 }
