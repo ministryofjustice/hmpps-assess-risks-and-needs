@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.core.io.Resource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.OnnxCalculatorServiceImpl
-import java.io.File
 
 @Profile("onnx-rsr")
 @Configuration
@@ -35,7 +34,7 @@ class ONNXRuntimeConfig(@Value("\${onnx-predictors.onnx-path}") private val onnx
   }
 
   @Bean
-  fun getSupportedOffenceCodes(@Value("\${onnx-predictors.offence-codes-path}") offenceCodesPath: Resource): List<Int> {
-    return objectMapper.readValue(File(offenceCodesPath.file.path))
+  fun getSupportedOffenceCodes(@Value("\${onnx-predictors.offence-codes-path}") offenceCodesResource: Resource): List<Int> {
+    return objectMapper.readValue(offenceCodesResource.inputStream)
   }
 }
