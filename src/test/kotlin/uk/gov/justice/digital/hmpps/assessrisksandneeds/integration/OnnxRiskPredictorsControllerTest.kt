@@ -3,6 +3,9 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
@@ -12,6 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmploymentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Gender
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffencesDto
@@ -20,6 +24,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDt
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.stream.Stream
 
 @AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("ONNX Risk Predictors Tests")
@@ -27,6 +32,16 @@ import java.time.LocalDateTime
 // Use mock ONNX file const_rsr_extended.onnx
 @TestPropertySource(properties = ["onnx-predictors.onnx-path=classpath:/onnx/rsr_v0.0.0_const_extended.onnx"])
 class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
+
+  companion object {
+    @JvmStatic
+    fun currentOffenceDtos(): Stream<Arguments> {
+      return return Stream.of(
+        Arguments.of(CurrentOffenceDto("138", ""), "offenceSubcode is a mandatory field and cannot be null or empty"),
+        Arguments.of(CurrentOffenceDto("", "00"), "offenceCode is a mandatory field and cannot be null or empty"),
+      )
+    }
+  }
 
   @Test
   fun `store ONNX scores in predictor history`() {
@@ -75,6 +90,25 @@ class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
       .bodyValue(requestBody)
       .exchange()
       .expectStatus().isBadRequest
+  }
+
+  @ParameterizedTest
+  @MethodSource("currentOffenceDtos")
+  fun `should return bad request status code for empty offence codes`(currentOffence: CurrentOffenceDto, expectedErrorMessage: String) {
+
+    val crn = "X234567"
+    val requestBody = createOffenderAndOffencesDto(crn, currentOffence)
+
+    val responseBody = webTestClient.post()
+      .uri("/risks/predictors/RSR?final=true&source=ASSESSMENTS_API&sourceId=90f2b674-ae1c-488d-8b85-0251708ef6b6")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "Gary C", roles = listOf("ROLE_PROBATION")))
+      .bodyValue(requestBody)
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody(ErrorResponse::class.java).returnResult().responseBody
+
+    assertThat(responseBody.developerMessage).contains(expectedErrorMessage)
   }
 
   private fun createOffenderAndOffencesDto(crn: String, currentOffence: CurrentOffenceDto) = OffenderAndOffencesDto(

@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictors
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
+import javax.validation.Valid
 
 @RestController
 class RiskPredictorsController(private val riskPredictorService: RiskPredictorService) {
@@ -39,7 +40,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @RequestParam(value = "source", required = true) source: PredictorSource,
     @RequestParam(value = "sourceId", required = true) sourceId: String,
     @RequestParam(value = "algorithmVersion", required = false) algorithmVersion: String?,
-    @RequestBody offenderAndOffences: OffenderAndOffencesDto
+    @Valid @RequestBody offenderAndOffences: OffenderAndOffencesDto
   ): RiskPredictorsDto {
     log.info("Calculate predictors for parameters final:$final source:$source, sourceId:$sourceId, algorithmVersion:$algorithmVersion and offender and offences:$offenderAndOffences and $predictorType")
     return riskPredictorService.calculatePredictorScores(
