@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 
 data class OffenderAndOffencesDto(
   @Schema(description = "Offender CRN", example = "DX12340A")
@@ -21,6 +23,7 @@ data class OffenderAndOffencesDto(
   val assessmentDate: LocalDateTime,
 
   @Schema(description = "Current Offence")
+  @field:Valid
   val currentOffence: CurrentOffenceDto,
 
   @Schema(description = "Date of first sanction for the offender", example = "2000-01-01")
@@ -191,7 +194,13 @@ data class PreviousOffencesDto(
   val offencesWithWeapon: Boolean?
 )
 
-data class CurrentOffenceDto(val offenceCode: String, val offenceSubcode: String)
+class CurrentOffenceDto(
+  @field:NotBlank(message = "offenceCode is a mandatory field and cannot be null or empty")
+  val offenceCode: String,
+
+  @field:NotBlank(message = "offenceSubcode is a mandatory field and cannot be null or empty")
+  val offenceSubcode: String
+)
 
 enum class EmploymentType(val score: Int? = null) {
   NO(0), NOT_AVAILABLE_FOR_WORK(0), YES(2), MISSING;
