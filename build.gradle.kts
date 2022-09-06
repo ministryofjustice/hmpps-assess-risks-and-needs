@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.4.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.4.3"
   kotlin("plugin.spring") version "1.7.10"
   kotlin("plugin.jpa") version "1.7.10"
 }
@@ -21,12 +21,12 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.apache.commons:commons-lang3")
-  implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.9")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.9")
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.11")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.11")
   implementation("com.zaxxer:HikariCP:5.0.1")
-  implementation("org.postgresql:postgresql:42.4.1")
-  implementation("com.vladmihalcea:hibernate-types-52:2.17.3")
+  implementation("org.postgresql:postgresql:42.5.0")
+  implementation("com.vladmihalcea:hibernate-types-52:2.19.0")
   implementation("com.beust:klaxon:5.6")
   implementation("com.microsoft.onnxruntime:onnxruntime:1.12.1")
   implementation("net.logstash.logback:logstash-logback-encoder:7.2")
