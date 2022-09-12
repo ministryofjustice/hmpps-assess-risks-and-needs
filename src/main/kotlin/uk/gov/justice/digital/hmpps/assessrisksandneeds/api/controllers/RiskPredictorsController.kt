@@ -8,51 +8,15 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
-import javax.validation.Valid
 
 @RestController
 class RiskPredictorsController(private val riskPredictorService: RiskPredictorService) {
-  @RequestMapping(path = ["/risks/predictors/{predictorType}"], method = [RequestMethod.POST])
-  @Operation(description = "Gets risk predictors for a specific predictor type")
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
-  )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
-  fun getRiskPredictorsByPredictorType(
-    @Parameter(description = "Predictor type", required = true, example = "RSR")
-    @PathVariable predictorType: PredictorType,
-    @RequestParam(value = "final", required = true) final: Boolean,
-    @RequestParam(value = "source", required = true) source: PredictorSource,
-    @RequestParam(value = "sourceId", required = true) sourceId: String,
-    @RequestParam(value = "algorithmVersion", required = false) algorithmVersion: String?,
-    @Valid @RequestBody offenderAndOffences: OffenderAndOffencesDto
-  ): RiskPredictorsDto {
-    log.info("Calculate predictors for parameters final:$final source:$source, sourceId:$sourceId, algorithmVersion:$algorithmVersion and offender and offences:$offenderAndOffences and $predictorType")
-    return riskPredictorService.calculatePredictorScores(
-      predictorType,
-      offenderAndOffences,
-      final,
-      source,
-      sourceId,
-      algorithmVersion
-    )
-  }
-
   @RequestMapping(path = ["/risks/crn/{crn}/predictors/rsr/history"], method = [RequestMethod.GET])
   @Operation(description = "Gets RSR score history for a CRN")
   @ApiResponses(
