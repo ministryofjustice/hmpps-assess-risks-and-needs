@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.4.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.0"
   kotlin("plugin.spring") version "1.7.10"
   kotlin("plugin.jpa") version "1.7.10"
 }
@@ -26,7 +26,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.11")
   implementation("com.zaxxer:HikariCP:5.0.1")
   implementation("org.postgresql:postgresql:42.5.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.19.1")
+  implementation("com.vladmihalcea:hibernate-types-52:2.19.2")
   implementation("com.beust:klaxon:5.6")
   implementation("com.microsoft.onnxruntime:onnxruntime:1.12.1")
   implementation("net.logstash.logback:logstash-logback-encoder:7.2")
