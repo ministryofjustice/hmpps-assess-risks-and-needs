@@ -25,6 +25,7 @@ generic-service:
     cloudplatform-live1-2: "3.8.51.207/32"
     cloudplatform-live1-3: "35.177.252.54/32"
     dxw: "54.76.254.148/32"
+    global-protect: "35.176.93.186/32"
 
 generic-prometheus-alerts:
   enabled: false
