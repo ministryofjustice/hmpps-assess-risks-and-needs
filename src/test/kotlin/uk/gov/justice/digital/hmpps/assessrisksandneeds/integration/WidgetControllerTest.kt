@@ -27,10 +27,10 @@ class WidgetControllerTest : IntegrationTestBase() {
             hasBeenCompleted = true,
             overallRisk = "VERY_HIGH",
             lastUpdated = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-            riskToChildrenInCommunity = "LOW",
-            riskToPublicInCommunity = "MEDIUM",
-            riskToKnownAdultInCommunity = "LOW",
-            riskToStaffInCommunity = "HIGH",
+            riskToChildren = "LOW",
+            riskToPublic = "MEDIUM",
+            riskToKnownAdult = "LOW",
+            riskToStaff = "HIGH",
           )
         )
       }
@@ -49,10 +49,10 @@ class WidgetControllerTest : IntegrationTestBase() {
             hasBeenCompleted = true,
             overallRisk = "VERY_HIGH",
             lastUpdated = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-            riskToChildrenInCommunity = "LOW",
-            riskToPublicInCommunity = "MEDIUM",
-            riskToKnownAdultInCommunity = "LOW",
-            riskToStaffInCommunity = "HIGH",
+            riskToChildren = "LOW",
+            riskToPublic = "MEDIUM",
+            riskToKnownAdult = "LOW",
+            riskToStaff = "HIGH",
           )
         )
       }

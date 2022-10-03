@@ -42,16 +42,16 @@ data class RoshRiskWidgetDto(
   val lastUpdated: LocalDateTime? = null,
 
   @Schema(description = "Risk to children in the community", example = "HIGH")
-  val riskToChildrenInCommunity: String? = null,
+  val riskToChildren: String? = null,
 
   @Schema(description = "Risk to public in the community", example = "MEDIUM")
-  val riskToPublicInCommunity: String? = null,
+  val riskToPublic: String? = null,
 
   @Schema(description = "Risk to known adult in the community", example = "LOW")
-  val riskToKnownAdultInCommunity: String? = null,
+  val riskToKnownAdult: String? = null,
 
   @Schema(description = "Risk to staff in the community", example = "VERY_HIGH")
-  val riskToStaffInCommunity: String? = null,
+  val riskToStaff: String? = null,
 ) {
   companion object {
     fun from(riskSummary: RiskRoshSummaryDto): RoshRiskWidgetDto {
@@ -59,10 +59,10 @@ data class RoshRiskWidgetDto(
         hasBeenCompleted = true,
         overallRisk = convertRiskLevelToString(riskSummary.overallRiskLevel),
         lastUpdated = riskSummary.assessedOn,
-        riskToChildrenInCommunity = getRiskLevel(riskSummary.riskInCommunity, "Children"),
-        riskToPublicInCommunity = getRiskLevel(riskSummary.riskInCommunity, "Public"),
-        riskToKnownAdultInCommunity = getRiskLevel(riskSummary.riskInCommunity, "Known Adult"),
-        riskToStaffInCommunity = getRiskLevel(riskSummary.riskInCommunity, "Staff"),
+        riskToChildren = getRiskLevel(riskSummary.riskInCommunity, "Children"),
+        riskToPublic = getRiskLevel(riskSummary.riskInCommunity, "Public"),
+        riskToKnownAdult = getRiskLevel(riskSummary.riskInCommunity, "Known Adult"),
+        riskToStaff = getRiskLevel(riskSummary.riskInCommunity, "Staff"),
       )
     }
   }
