@@ -36,8 +36,7 @@ class WidgetController(
     @PathVariable crn: String
   ): RoshRiskWidgetDto {
     return try {
-      val risks = riskService.getRoshRiskSummaryByCrn(crn)
-      RoshRiskWidgetDto.from(risks)
+      riskService.getRoshRiskWidgetDataForCrn(crn)
     } catch (e: Exception) {
       when (e::class) {
         ExternalApiEntityNotFoundException::class -> RoshRiskWidgetDto(hasBeenCompleted = false)

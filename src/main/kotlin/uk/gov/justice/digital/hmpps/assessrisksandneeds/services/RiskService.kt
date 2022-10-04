@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskWidgetDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.QuestionAnswerDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
@@ -57,8 +58,8 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
   private fun SectionAnswersDto?.toRiskRoshSummaryDto(): RiskRoshSummaryDto {
     val roshSumAnswers = this?.sections?.get(SectionHeader.ROSH_SUMMARY.value)
 
-    val riskInCommunity = roshSumAnswers.toRiskInCommunity()
-    val riskInCustody = roshSumAnswers.toRiskInCustody()
+    val riskInCommunity = roshSumAnswers.toRiskInCommunityMap().asGroups()
+    val riskInCustody = roshSumAnswers.toRiskInCustodyMap().asGroups()
 
     return RiskRoshSummaryDto(
       findAnswer(RoshQuestionCodes.WHO_IS_AT_RISK, roshSumAnswers)?.freeFormText,
@@ -80,35 +81,6 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     if (riskLevelsWithItems.contains(RiskLevel.MEDIUM)) return RiskLevel.MEDIUM
     if (riskLevelsWithItems.contains(RiskLevel.LOW)) return RiskLevel.LOW
     return null
-  }
-
-  private fun Collection<QuestionAnswerDto>?.toRiskInCustody(): Map<RiskLevel?, List<String>> {
-    val children = RiskLevel.fromString(findAnswer(RoshQuestionCodes.CHILDREN_IN_CUSTODY_RISK, this)?.staticText)
-    val public = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PUBLIC_IN_CUSTODY_RISK, this)?.staticText)
-    val knowAdult = RiskLevel.fromString(findAnswer(RoshQuestionCodes.KNOWN_ADULT_IN_CUSTODY_RISK, this)?.staticText)
-    val staff = RiskLevel.fromString(findAnswer(RoshQuestionCodes.STAFF_IN_CUSTODY_RISK, this)?.staticText)
-    val prisoners = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PRISONERS_IN_CUSTODY_RISK, this)?.staticText)
-
-    return listOf(
-      "Children" to children,
-      "Public" to public,
-      "Known Adult" to knowAdult,
-      "Staff" to staff,
-      "Prisoners" to prisoners
-    ).groupBy({ it.second }, { it.first }).filterKeys { it != null }
-  }
-
-  private fun Collection<QuestionAnswerDto>?.toRiskInCommunity(): Map<RiskLevel?, List<String>> {
-    val children = RiskLevel.fromString(findAnswer(RoshQuestionCodes.CHILDREN_IN_COMMUNITY_RISK, this)?.staticText)
-    val public = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PUBLIC_IN_COMMUNITY_RISK, this)?.staticText)
-    val knowAdult = RiskLevel.fromString(findAnswer(RoshQuestionCodes.KNOWN_ADULT_IN_COMMUNITY_RISK, this)?.staticText)
-    val staff = RiskLevel.fromString(findAnswer(RoshQuestionCodes.STAFF_IN_COMMUNITY_RISK, this)?.staticText)
-    return listOf(
-      "Children" to children,
-      "Public" to public,
-      "Known Adult" to knowAdult,
-      "Staff" to staff
-    ).groupBy({ it.second }, { it.first }).filterKeys { it != null }
   }
 
   private fun SectionAnswersDto?.toOtherRoshRisksDto(): OtherRoshRisksDto {
@@ -242,5 +214,68 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
 
   private fun findAnswer(questionCode: RoshQuestionCodes, answers: Collection<QuestionAnswerDto>?): QuestionAnswerDto? {
     return answers?.find { q -> q.refQuestionCode.equals(questionCode.value) }
+  }
+
+  fun getRoshRiskWidgetDataForCrn(crn: String): RoshRiskWidgetDto {
+    log.info("Get Rosh Risk widget data for crn $crn")
+    val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
+    log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
+    return sectionsAnswers.toRoshRiskWidgetDto()
+  }
+
+  private fun SectionAnswersDto?.toRoshRiskWidgetDto(): RoshRiskWidgetDto {
+    val roshSumAnswers = this?.sections?.get(SectionHeader.ROSH_SUMMARY.value)
+
+    val riskInCommunity = roshSumAnswers.toRiskInCommunityMap()
+    val riskInCustody = roshSumAnswers.toRiskInCustodyMap()
+
+    return RoshRiskWidgetDto(
+      hasBeenCompleted = true,
+      lastUpdated = this?.assessedOn,
+      overallRisk = RoshRiskWidgetDto.riskLevelToString(calculateWidgetOverallRiskLevel(riskInCommunity, riskInCustody)),
+      riskInCommunity = RoshRiskWidgetDto.mapRiskLevelsToStrings(riskInCommunity),
+      riskInCustody = RoshRiskWidgetDto.mapRiskLevelsToStrings(riskInCustody),
+    )
+  }
+
+  private fun calculateWidgetOverallRiskLevel(riskInCommunity: Map<String, RiskLevel?>, riskInCustody: Map<String, RiskLevel?>): RiskLevel? {
+    val riskInCommunityGroup = riskInCommunity.asGroups()
+    val riskInCustodyGroup = riskInCustody.asGroups()
+
+    return calculateOverallRiskLevel(riskInCommunityGroup + riskInCustodyGroup)
+  }
+
+  private fun Map<String, RiskLevel?>.asGroups(): Map<RiskLevel?, List<String>> {
+    return this.map { it.key to it.value }.groupBy({ it.second }, { it.first }).filterKeys { it != null }
+  }
+
+  private fun Collection<QuestionAnswerDto>?.toRiskInCustodyMap(): Map<String, RiskLevel?> {
+    val children = RiskLevel.fromString(findAnswer(RoshQuestionCodes.CHILDREN_IN_CUSTODY_RISK, this)?.staticText)
+    val public = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PUBLIC_IN_CUSTODY_RISK, this)?.staticText)
+    val knowAdult = RiskLevel.fromString(findAnswer(RoshQuestionCodes.KNOWN_ADULT_IN_CUSTODY_RISK, this)?.staticText)
+    val staff = RiskLevel.fromString(findAnswer(RoshQuestionCodes.STAFF_IN_CUSTODY_RISK, this)?.staticText)
+    val prisoners = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PRISONERS_IN_CUSTODY_RISK, this)?.staticText)
+
+    return mapOf(
+      "Children" to children,
+      "Public" to public,
+      "Known Adult" to knowAdult,
+      "Staff" to staff,
+      "Prisoners" to prisoners
+    )
+  }
+
+  private fun Collection<QuestionAnswerDto>?.toRiskInCommunityMap(): Map<String, RiskLevel?> {
+    val children = RiskLevel.fromString(findAnswer(RoshQuestionCodes.CHILDREN_IN_COMMUNITY_RISK, this)?.staticText)
+    val public = RiskLevel.fromString(findAnswer(RoshQuestionCodes.PUBLIC_IN_COMMUNITY_RISK, this)?.staticText)
+    val knowAdult = RiskLevel.fromString(findAnswer(RoshQuestionCodes.KNOWN_ADULT_IN_COMMUNITY_RISK, this)?.staticText)
+    val staff = RiskLevel.fromString(findAnswer(RoshQuestionCodes.STAFF_IN_COMMUNITY_RISK, this)?.staticText)
+
+    return mapOf(
+      "Children" to children,
+      "Public" to public,
+      "Known Adult" to knowAdult,
+      "Staff" to staff
+    )
   }
 }

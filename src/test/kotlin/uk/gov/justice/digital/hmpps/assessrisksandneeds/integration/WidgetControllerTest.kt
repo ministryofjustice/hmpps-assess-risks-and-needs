@@ -26,11 +26,13 @@ class WidgetControllerTest : IntegrationTestBase() {
           RoshRiskWidgetDto(
             hasBeenCompleted = true,
             overallRisk = "VERY_HIGH",
-            lastUpdated = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-            riskToChildren = "LOW",
-            riskToPublic = "MEDIUM",
-            riskToKnownAdult = "LOW",
-            riskToStaff = "HIGH",
+            lastUpdated = null,
+            riskInCommunity = mapOf(
+              "Children" to "LOW",
+              "Public" to "MEDIUM",
+              "Known Adult" to "LOW",
+              "Staff" to "HIGH",
+            ),
           )
         )
       }
@@ -49,10 +51,19 @@ class WidgetControllerTest : IntegrationTestBase() {
             hasBeenCompleted = true,
             overallRisk = "VERY_HIGH",
             lastUpdated = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-            riskToChildren = "LOW",
-            riskToPublic = "MEDIUM",
-            riskToKnownAdult = "LOW",
-            riskToStaff = "HIGH",
+            riskInCommunity = mapOf(
+              "Children" to "LOW",
+              "Public" to "MEDIUM",
+              "Known Adult" to "LOW",
+              "Staff" to "HIGH",
+            ),
+            riskInCustody = mapOf(
+              "Children" to "LOW",
+              "Public" to "LOW",
+              "Known Adult" to "LOW",
+              "Staff" to "VERY_HIGH",
+              "Prisoners" to "HIGH",
+            ),
           )
         )
       }
