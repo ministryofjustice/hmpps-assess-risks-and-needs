@@ -9,17 +9,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel.VERY
 import java.time.LocalDateTime
 
 data class RoshRiskWidgetDto(
-  @Schema(description = "Has a RoSH risk assessment been complete?", example = "true")
-  @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val hasBeenCompleted: Boolean? = null,
-
   @Schema(description = "Overall ROSH risk score", example = "VERY_HIGH")
   @JsonView(View.CrsProvider::class, View.RiskView::class)
   val overallRisk: String? = null,
 
   @Schema(description = "Assessed on", example = "2021-10-10")
   @JsonView(View.Probation::class, View.SingleRisksView::class)
-  val lastUpdated: LocalDateTime? = null,
+  val assessedOn: LocalDateTime? = null,
 
   @Schema(
     description = "Risk in the community",

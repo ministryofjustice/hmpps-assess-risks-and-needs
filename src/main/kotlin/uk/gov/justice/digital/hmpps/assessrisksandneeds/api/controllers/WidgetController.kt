@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskWidgetDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 
 @RestController
 class WidgetController(
@@ -35,13 +34,6 @@ class WidgetController(
     @JsonView(View.SingleRisksView::class)
     @PathVariable crn: String
   ): RoshRiskWidgetDto {
-    return try {
-      riskService.getRoshRiskWidgetDataForCrn(crn)
-    } catch (e: Exception) {
-      when (e::class) {
-        ExternalApiEntityNotFoundException::class -> RoshRiskWidgetDto(hasBeenCompleted = false)
-        else -> throw e
-      }
-    }
+    return riskService.getRoshRiskWidgetDataForCrn(crn)
   }
 }

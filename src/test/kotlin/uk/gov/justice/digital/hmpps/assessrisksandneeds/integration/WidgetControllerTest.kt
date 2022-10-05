@@ -24,9 +24,8 @@ class WidgetControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskWidgetDto(
-            hasBeenCompleted = true,
             overallRisk = "VERY_HIGH",
-            lastUpdated = null,
+            assessedOn = null,
             riskInCommunity = mapOf(
               "Children" to "LOW",
               "Public" to "MEDIUM",
@@ -48,9 +47,8 @@ class WidgetControllerTest : IntegrationTestBase() {
       .consumeWith {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskWidgetDto(
-            hasBeenCompleted = true,
             overallRisk = "VERY_HIGH",
-            lastUpdated = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
             riskInCommunity = mapOf(
               "Children" to "LOW",
               "Public" to "MEDIUM",
@@ -65,20 +63,6 @@ class WidgetControllerTest : IntegrationTestBase() {
               "Prisoners" to "HIGH",
             ),
           )
-        )
-      }
-  }
-
-  @Test
-  fun `get risk for unknown crn returns not found`() {
-    webTestClient.get().uri("/risks/crn/RANDOMCRN/widget")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
-      .exchange()
-      .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
-      .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskWidgetDto(hasBeenCompleted = false)
         )
       }
   }

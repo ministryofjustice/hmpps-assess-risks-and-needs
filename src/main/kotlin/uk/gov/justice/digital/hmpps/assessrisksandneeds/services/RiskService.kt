@@ -230,8 +230,7 @@ class RiskService(private val assessmentClient: AssessmentApiRestClient) {
     val riskInCustody = roshSumAnswers.toRiskInCustodyMap()
 
     return RoshRiskWidgetDto(
-      hasBeenCompleted = true,
-      lastUpdated = this?.assessedOn,
+      assessedOn = this?.assessedOn,
       overallRisk = RoshRiskWidgetDto.riskLevelToString(calculateWidgetOverallRiskLevel(riskInCommunity, riskInCustody)),
       riskInCommunity = RoshRiskWidgetDto.mapRiskLevelsToStrings(riskInCommunity),
       riskInCustody = RoshRiskWidgetDto.mapRiskLevelsToStrings(riskInCustody),
