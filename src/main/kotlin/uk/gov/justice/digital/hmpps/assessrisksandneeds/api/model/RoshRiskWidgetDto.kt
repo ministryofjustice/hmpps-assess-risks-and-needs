@@ -20,9 +20,9 @@ data class RoshRiskWidgetDto(
   @Schema(
     description = "Risk in the community",
     example = "{" +
-      "  \"Public\": \"HIGH\"" +
-      "  \"Children\": \"LOW\"" +
-      "  \"Known Adult\": \"MEDIUM\"" +
+      "  \"Public\": \"HIGH\"," +
+      "  \"Children\": \"LOW\"," +
+      "  \"Known Adult\": \"MEDIUM\"," +
       "  \"Staff\": \"VERY_HIGH\"" +
       "}"
   )
@@ -32,10 +32,10 @@ data class RoshRiskWidgetDto(
   @Schema(
     description = "Risk in custody",
     example = "{" +
-      "  \"Public\": \"HIGH\"" +
-      "  \"Children\": \"LOW\"" +
-      "  \"Known Adult\": \"MEDIUM\"" +
-      "  \"Staff\": \"VERY_HIGH\"" +
+      "  \"Public\": \"HIGH\"," +
+      "  \"Children\": \"LOW\"," +
+      "  \"Known Adult\": \"MEDIUM\"," +
+      "  \"Staff\": \"VERY_HIGH\"," +
       "  \"Prisoners\": \"MEDIUM\"" +
       "}"
   )
