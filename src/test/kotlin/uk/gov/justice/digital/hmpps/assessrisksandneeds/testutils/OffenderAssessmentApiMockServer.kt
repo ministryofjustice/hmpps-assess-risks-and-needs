@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 
-class AssessmentApiMockServer : WireMockServer(9004) {
+class OffenderAssessmentApiMockServer : WireMockServer(9004) {
   private val crn = "X123456"
   private val badCrn = "X999999"
   private val missingRoshCrn = "X234567"
@@ -252,6 +252,36 @@ class AssessmentApiMockServer : WireMockServer(9004) {
       WireMock.get(
         WireMock.urlEqualTo(
           "/assessments/offence/NOT_FOUND/ALLOW"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withBody("{}")
+            .withStatus(404)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+        )
+    )
+  }
+
+  fun stubGetAssessmentTimelineByCrn() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/timeline/X123456/ALLOW"
+        )
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withStatus(200)
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText())
+        )
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/assessments/timeline/crn/NOT_FOUND/ALLOW"
         )
       )
         .willReturn(

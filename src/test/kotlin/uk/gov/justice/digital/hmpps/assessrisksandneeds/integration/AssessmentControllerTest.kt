@@ -187,6 +187,27 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `should return HTTP not found when assessment timeline not present`() {
+    webTestClient.get().uri("/assessments/timeline/crn/NOT_FOUND/ALLOW")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `should return assessment timeline`() {
+    val responseBody = webTestClient.get().uri("/assessments/timeline/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    val ordsJson = this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText()
+    assertThat(responseBody).isEqualTo(ordsJson)
+  }
+
+  @Test
   fun `should return forbidden when user cannot access crn`() {
     webTestClient.get().uri("/assessments/crn/FORBIDDEN/offence")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))

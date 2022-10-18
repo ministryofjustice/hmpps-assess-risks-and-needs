@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
 @Service
 class AssessmentOffenceService(
-  private val assessmentClient: AssessmentApiRestClient,
+  private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient,
   private val communityClient: CommunityApiRestClient
 ) {
 
@@ -29,12 +29,17 @@ class AssessmentOffenceService(
 
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
-    val assessmentOffenceDto = assessmentClient.getAssessmentOffence(
+    val assessmentOffenceDto = offenderAssessmentApiRestClient.getAssessmentOffence(
       crn = crn,
       limitedAccessOffender = limitedAccess
     ) ?: throw EntityNotFoundException("Assessment offence not found for CRN: $crn")
 
     return mapTimelineToAssessments(assessmentOffenceDto)
+  }
+
+  fun getAssessmentTimeline(crn: String): String {
+    log.info("Entered getAssessmentTimeline($crn)")
+    return offenderAssessmentApiRestClient.getAssessmentTimeline(crn) ?: throw EntityNotFoundException("Assessment timeline not found for CRN: $crn")
   }
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {

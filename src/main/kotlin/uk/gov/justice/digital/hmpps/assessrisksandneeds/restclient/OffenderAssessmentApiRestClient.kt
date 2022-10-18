@@ -31,10 +31,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 import java.time.temporal.ChronoUnit.YEARS
 
 @Component
-// offender assessments api
-class AssessmentApiRestClient {
+class OffenderAssessmentApiRestClient {
   @Autowired
-  @Qualifier("assessmentApiWebClient")
+  @Qualifier("offenderAssessmentApiWebClient")
   internal lateinit var webClient: AuthenticatingRestClient
 
   companion object {
@@ -126,8 +125,7 @@ class AssessmentApiRestClient {
     algorithmVersion: String? = null
   ): OasysRSRPredictorsDto? {
     log.info("Calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn}")
-    val path =
-      "/offenders/risks/predictors/$predictorType"
+    val path = "/offenders/risks/predictors/$predictorType"
     val body = offenderAndOffences.toOffenderAndOffencesBodyDto(algorithmVersion)
     log.info("Calculating $predictorType scoring with $body")
     return webClient
@@ -231,6 +229,38 @@ class AssessmentApiRestClient {
       }
       .bodyToMono(OasysRiskPredictorsDto::class.java)
       .block().also { log.info("Retrieved risk predictor scores for completed Assessments for crn $crn") }
+  }
+
+  fun getAssessmentTimeline(
+    crn: String,
+  ): String? {
+    log.info("Entered getAssessmentTimeline($crn)")
+    val path = "/assessments/timeline/$crn/ALLOW"
+    return webClient
+      .get(
+        path
+      )
+      .retrieve()
+      .onStatus(HttpStatus::is4xxClientError) {
+        log.error("4xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .onStatus(HttpStatus::is5xxServerError) {
+        log.error("5xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve assessment timeline for crn: $crn",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API
+        )
+      }
+      .bodyToMono(String::class.java)
+      .block().also { log.info("Retrieved assessment timeline for crn $crn") }
   }
 
   fun getRiskScoresForCompletedLastYearAssessments(

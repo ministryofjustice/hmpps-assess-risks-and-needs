@@ -11,8 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.AssessmentApiMockServer
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.CommunityApiMockServer
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.OffenderAssessmentApiMockServer
 import java.time.Duration
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -27,21 +27,22 @@ abstract class IntegrationTestBase {
   internal lateinit var jwtHelper: JwtAuthHelper
 
   companion object {
-    internal val assessmentApiMockServer = AssessmentApiMockServer()
+    internal val offenderAssessmentApiMockServer = OffenderAssessmentApiMockServer()
     internal val communityApiMockServer = CommunityApiMockServer()
 
     @BeforeAll
     @JvmStatic
     fun startMocks() {
-      assessmentApiMockServer.start()
-      assessmentApiMockServer.stubGetRoshRisksByCrn()
-      assessmentApiMockServer.stubGetLatestNeedsByCrn()
-      assessmentApiMockServer.stubGetRSRPredictorScoring()
-      assessmentApiMockServer.stubGetOffenderPredictors()
-      assessmentApiMockServer.stubGetOffenderPredictorsNoRsr()
-      assessmentApiMockServer.stubGetRiskPredictorScores()
-      assessmentApiMockServer.stubGetAssessmentOffenceByCrn()
-      assessmentApiMockServer.stubGetRiskManagementPlansByCrn()
+      offenderAssessmentApiMockServer.start()
+      offenderAssessmentApiMockServer.stubGetRoshRisksByCrn()
+      offenderAssessmentApiMockServer.stubGetLatestNeedsByCrn()
+      offenderAssessmentApiMockServer.stubGetRSRPredictorScoring()
+      offenderAssessmentApiMockServer.stubGetOffenderPredictors()
+      offenderAssessmentApiMockServer.stubGetOffenderPredictorsNoRsr()
+      offenderAssessmentApiMockServer.stubGetRiskPredictorScores()
+      offenderAssessmentApiMockServer.stubGetAssessmentOffenceByCrn()
+      offenderAssessmentApiMockServer.stubGetRiskManagementPlansByCrn()
+      offenderAssessmentApiMockServer.stubGetAssessmentTimelineByCrn()
 
       communityApiMockServer.start()
       communityApiMockServer.stubGetUserAccess()
@@ -50,7 +51,7 @@ abstract class IntegrationTestBase {
     @AfterAll
     @JvmStatic
     fun stopMocks() {
-      assessmentApiMockServer.stop()
+      offenderAssessmentApiMockServer.stop()
       communityApiMockServer.stop()
     }
   }

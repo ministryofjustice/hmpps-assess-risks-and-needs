@@ -19,8 +19,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
@@ -32,7 +32,7 @@ import java.time.LocalDateTime
 @DisplayName("Risk Predictors Service RSR Tests")
 class RiskPredictorServiceRsrTest {
 
-  private val assessmentApiClient: AssessmentApiRestClient = mockk()
+  private val assessmentApiClient: OffenderAssessmentApiRestClient = mockk()
   private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()

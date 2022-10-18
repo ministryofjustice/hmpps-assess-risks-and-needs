@@ -7,13 +7,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeed
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
 const val currentStatus = "CURRENT"
 
 @Service
-class AssessmentNeedsService(private val assessmentClient: AssessmentApiRestClient) {
+class AssessmentNeedsService(private val assessmentClient: OffenderAssessmentApiRestClient) {
   fun getAssessmentNeeds(crn: String): AssessmentNeedsDto {
     log.info("Get needs for CRN: $crn")
     val offenderNeeds = assessmentClient.getNeedsForCompletedLastYearAssessment(crn)

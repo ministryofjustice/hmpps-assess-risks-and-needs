@@ -9,14 +9,14 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictors
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 
 @Profile("oasys-rsr")
 @Service
 class OASysCalculatorServiceImpl(
-  private val assessmentClient: AssessmentApiRestClient,
+  private val assessmentClient: OffenderAssessmentApiRestClient,
 ) : RiskCalculatorService {
 
   override fun calculatePredictorScores(

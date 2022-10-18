@@ -13,15 +13,15 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeed
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("Assessment Need Service Tests")
 class AssessmentNeedsServiceTest {
-  private val assessmentApiRestClient: AssessmentApiRestClient = mockk()
-  private val assessmentNeedsService = AssessmentNeedsService(assessmentApiRestClient)
+  private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient = mockk()
+  private val assessmentNeedsService = AssessmentNeedsService(offenderAssessmentApiRestClient)
 
   @Test
   fun `get assessment needs by crn returns identified needs`() {
@@ -30,7 +30,7 @@ class AssessmentNeedsServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
     } returns OffenderNeedsDto(
       needs = allOffenderNeeds(),
       historicStatus = "CURRENT",
@@ -51,7 +51,7 @@ class AssessmentNeedsServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
     } returns OffenderNeedsDto(
       needs = offenderNeedsWithUnanswered(),
       historicStatus = "CURRENT",
@@ -72,7 +72,7 @@ class AssessmentNeedsServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
     } returns
       OffenderNeedsDto(
         needs = offenderNeedsWithNotIdentified(),
@@ -93,7 +93,7 @@ class AssessmentNeedsServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
     } returns OffenderNeedsDto(
       emptyList(),
       date,
@@ -115,7 +115,7 @@ class AssessmentNeedsServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
     } returns OffenderNeedsDto(
       allOffenderNeeds(),
       date,

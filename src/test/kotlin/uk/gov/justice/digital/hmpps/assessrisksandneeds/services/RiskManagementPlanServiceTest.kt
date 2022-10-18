@@ -15,9 +15,9 @@ import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlanDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 @ExtendWith(MockKExtension::class)
 class RiskManagementPlanServiceTest {
 
-  private val assessmentClient: AssessmentApiRestClient = mockk()
+  private val assessmentClient: OffenderAssessmentApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
   private val riskManagementPlanService = RiskManagementPlanService(assessmentClient, communityClient)
 
