@@ -65,7 +65,7 @@ class WebClientConfig {
   }
 
   @Bean
-  fun assessmentApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
+  fun offenderAssessmentApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
     return AuthenticatingRestClient(
       webClientFactory(assessmentApiBaseUrl, authorizedClientManager, bufferByteSize),
       "assessment-api-client",

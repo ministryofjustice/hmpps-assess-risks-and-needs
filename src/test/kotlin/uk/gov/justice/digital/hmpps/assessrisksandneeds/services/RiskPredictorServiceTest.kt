@@ -40,9 +40,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResp
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
@@ -63,7 +63,7 @@ import java.util.UUID
 @DisplayName("Risk Predictors Service Tests")
 class RiskPredictorServiceTest {
 
-  private val assessmentApiClient: AssessmentApiRestClient = mockk()
+  private val assessmentApiClient: OffenderAssessmentApiRestClient = mockk()
   private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()

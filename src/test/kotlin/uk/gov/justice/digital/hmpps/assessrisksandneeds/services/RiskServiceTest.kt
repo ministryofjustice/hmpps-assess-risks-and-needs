@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.AssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.QuestionAnswerDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
 import java.time.LocalDateTime
@@ -17,8 +17,8 @@ import java.time.LocalDateTime
 @DisplayName("Risk Service Tests")
 class RiskServiceTest {
 
-  private val assessmentApiRestClient: AssessmentApiRestClient = mockk()
-  private val riskService = RiskService(assessmentApiRestClient)
+  private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient = mockk()
+  private val riskService = RiskService(offenderAssessmentApiRestClient)
 
   @Test
   fun `risk Summary contains highest overall Risk Level Custody Very High`() {
@@ -27,7 +27,7 @@ class RiskServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     } returns SectionAnswersDto(
       assessmentId = 1,
       sections = mapOf(
@@ -54,7 +54,7 @@ class RiskServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     } returns SectionAnswersDto(
       assessmentId = 1,
       sections = mapOf(
@@ -80,7 +80,7 @@ class RiskServiceTest {
     val date = LocalDateTime.now()
 
     every {
-      assessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
+      offenderAssessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     } returns SectionAnswersDto(
       assessmentId = 1,
       sections = mapOf(
