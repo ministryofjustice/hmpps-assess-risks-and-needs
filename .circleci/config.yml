@@ -1,12 +1,12 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@6.0
+  hmpps: ministryofjustice/hmpps@6
 
 parameters:
   alerts-slack-channel:
     type: string
-    default: "hmpps-assessments-dev"
+    default: "hmpps-assessments-notifications"
 
 jobs:
   validate:
