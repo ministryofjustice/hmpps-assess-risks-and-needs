@@ -46,7 +46,7 @@ class RisksController(
   @RequestMapping(path = ["/risks/crn/{crn}/self"], method = [RequestMethod.GET])
   @Operation(
     description = "Gets ROSH to individual for crn. Only returns freeform text where answer to " +
-    "corresponding risk question is Yes. Returns only assessments completed withing the last year"
+      "corresponding risk question is Yes. Returns only assessments completed withing the last year"
   )
   @ApiResponses(
     value = [
@@ -85,7 +85,7 @@ class RisksController(
   @RequestMapping(path = ["/risks/crn/{crn}"], method = [RequestMethod.GET])
   @Operation(
     description = "Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes." +
-    "Returns only assessments completed withing the last year"
+      "Returns only assessments completed withing the last year"
   )
   @ApiResponses(
     value = [
@@ -106,7 +106,7 @@ class RisksController(
   @RequestMapping(path = ["/risks/crn/{crn}/fulltext"], method = [RequestMethod.GET])
   @Operation(
     description = "Gets ROSH risks for crn. Returns freeform corncerns text regardless of answer to corresponding risk question. " +
-    "Returns only assessments completed withing the last year"
+      "Returns only assessments completed withing the last year"
   )
   @ApiResponses(
     value = [
