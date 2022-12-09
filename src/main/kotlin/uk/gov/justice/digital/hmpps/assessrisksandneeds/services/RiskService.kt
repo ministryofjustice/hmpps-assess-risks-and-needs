@@ -32,6 +32,17 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
       assessedOn = sectionsAnswers?.assessedOn
     )
   }
+  fun getFulltextRoshRisksByCrn(crn: String): AllRoshRiskDto {
+    log.info("Get Full Text Rosh Risk for crn $crn")
+    val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
+    log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
+    return AllRoshRiskDto(
+      riskToSelf = sectionsAnswers.toRoshRiskToSelfDto(fullText = true),
+      otherRisks = sectionsAnswers.toOtherRoshRisksDto(),
+      summary = sectionsAnswers.toRiskRoshSummaryDto(),
+      assessedOn = sectionsAnswers?.assessedOn
+    )
+  }
 
   fun getOtherRoshRisk(crn: String): OtherRoshRisksDto {
     log.info("Get Other Rosh Risk for crn $crn")
@@ -99,7 +110,7 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
     )
   }
 
-  private fun SectionAnswersDto?.toRoshRiskToSelfDto(): RoshRiskToSelfDto {
+  private fun SectionAnswersDto?.toRoshRiskToSelfDto(fullText: Boolean = false): RoshRiskToSelfDto {
     val roshFullAnswers = this?.sections?.get(SectionHeader.ROSH_FULL_ANALYSIS.value)
     val roshAnswers = this?.sections?.get(SectionHeader.ROSH_SCREENING.value)
     val selfHarmCurrentRisk = roshFullAnswers.toResponseForQuestion(RoshQuestionCodes.SELF_HARM_CURRENT_RISK)
@@ -123,13 +134,15 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
         previousConcernsText = findConcernsFreeText(
           suicidePreviousRisk,
           roshFullAnswers,
-          RoshQuestionCodes.SUICIDE_SELF_HARM_PREVIOUS_RISK_TEXT
+          RoshQuestionCodes.SUICIDE_SELF_HARM_PREVIOUS_RISK_TEXT,
+          fullText
         ),
         current = suicideCurrentRisk,
         currentConcernsText = findConcernsFreeText(
           suicideCurrentRisk,
           roshFullAnswers,
-          RoshQuestionCodes.SUICIDE_SELF_HARM_CURRENT_RISK_TEXT
+          RoshQuestionCodes.SUICIDE_SELF_HARM_CURRENT_RISK_TEXT,
+          fullText
         )
       ),
       selfHarm = RiskDto(
@@ -138,13 +151,15 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
         previousConcernsText = findConcernsFreeText(
           selfHarmPreviousRisk,
           roshFullAnswers,
-          RoshQuestionCodes.SUICIDE_SELF_HARM_PREVIOUS_RISK_TEXT
+          RoshQuestionCodes.SUICIDE_SELF_HARM_PREVIOUS_RISK_TEXT,
+          fullText
         ),
         current = selfHarmCurrentRisk,
         currentConcernsText = findConcernsFreeText(
           selfHarmCurrentRisk,
           roshFullAnswers,
-          RoshQuestionCodes.SUICIDE_SELF_HARM_CURRENT_RISK_TEXT
+          RoshQuestionCodes.SUICIDE_SELF_HARM_CURRENT_RISK_TEXT,
+          fullText
         )
       ),
       custody = RiskDto(
@@ -153,13 +168,15 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
         previousConcernsText = findConcernsFreeText(
           custodyPreviousRisk,
           roshFullAnswers,
-          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_PREVIOUS_RISK_TEXT
+          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_PREVIOUS_RISK_TEXT,
+          fullText
         ),
         current = custodyCurrentRisk,
         currentConcernsText = findConcernsFreeText(
           custodyCurrentRisk,
           roshFullAnswers,
-          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_CURRENT_RISK_TEXT
+          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_CURRENT_RISK_TEXT,
+          fullText
         )
       ),
       hostelSetting = RiskDto(
@@ -168,13 +185,15 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
         previousConcernsText = findConcernsFreeText(
           hostelSettingPreviousRisk,
           roshFullAnswers,
-          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_PREVIOUS_RISK_TEXT
+          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_PREVIOUS_RISK_TEXT,
+          fullText
         ),
         current = hostelSettingCurrentRisk,
         currentConcernsText = findConcernsFreeText(
           hostelSettingCurrentRisk,
           roshFullAnswers,
-          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_CURRENT_RISK_TEXT
+          RoshQuestionCodes.CUSTODY_HOSTEL_SETTING_CURRENT_RISK_TEXT,
+          fullText
         )
       ),
       vulnerability = RiskDto(
@@ -183,13 +202,15 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
         previousConcernsText = findConcernsFreeText(
           vulnerabilityPreviousRisk,
           roshFullAnswers,
-          RoshQuestionCodes.VULNERABILITY_PREVIOUS_RISK_TEXT
+          RoshQuestionCodes.VULNERABILITY_PREVIOUS_RISK_TEXT,
+          fullText
         ),
         current = vulnerabilityCurrentRisk,
         currentConcernsText = findConcernsFreeText(
           vulnerabilityCurrentRisk,
           roshFullAnswers,
-          RoshQuestionCodes.VULNERABILITY_CURRENT_RISK_TEXT
+          RoshQuestionCodes.VULNERABILITY_CURRENT_RISK_TEXT,
+          fullText
         )
       ),
       this?.assessedOn
@@ -207,8 +228,9 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
   private fun findConcernsFreeText(
     riskResponse: ResponseDto?,
     answers: Collection<QuestionAnswerDto>?,
-    questionCode: RoshQuestionCodes
-  ) = if (riskResponse == ResponseDto.YES) {
+    questionCode: RoshQuestionCodes,
+    fullText: Boolean
+  ) = if (fullText || riskResponse == ResponseDto.YES) {
     findAnswer(questionCode, answers)?.freeFormText
   } else null
 
