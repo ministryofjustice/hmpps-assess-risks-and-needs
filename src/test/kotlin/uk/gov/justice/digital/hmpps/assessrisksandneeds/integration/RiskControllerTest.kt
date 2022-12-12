@@ -293,6 +293,84 @@ class RiskControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get all risks with fulltext for risk to self by crn for external provider`() {
+    webTestClient.get().uri("/risks/crn/$crn/fulltext")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          AllRoshRiskDto(
+            RoshRiskToSelfDto(
+              suicide = RiskDto(
+                risk = ResponseDto.NO,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Suicide and/or Self-harm current concerns"
+              ),
+              selfHarm = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Suicide and/or Self-harm current concerns"
+              ),
+              custody = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Coping in custody / hostel setting previous concerns",
+                current = ResponseDto.YES,
+                currentConcernsText = "Coping in custody / hostel setting current concerns"
+              ),
+              hostelSetting = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.NO,
+                previousConcernsText = "Coping in custody / hostel setting previous concerns",
+                current = ResponseDto.NO,
+                currentConcernsText = "Coping in custody / hostel setting current concerns"
+              ),
+              vulnerability = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Vulnerability previous concerns free text",
+                current = ResponseDto.YES,
+                currentConcernsText = "Vulnerability current concerns free text"
+              ),
+              assessedOn = null
+            ),
+            OtherRoshRisksDto(
+              ResponseDto.YES,
+              ResponseDto.YES,
+              ResponseDto.DK,
+              ResponseDto.YES,
+              assessedOn = null
+            ),
+            RiskRoshSummaryDto(
+              "whoisAtRisk",
+              "natureOfRisk",
+              "riskImminence",
+              "riskIncreaseFactors",
+              "riskMitigationFactors",
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Known Adult"),
+                RiskLevel.MEDIUM to listOf("Public"),
+                RiskLevel.HIGH to listOf("Staff")
+              ),
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+                RiskLevel.HIGH to listOf("Prisoners"),
+                RiskLevel.VERY_HIGH to listOf("Staff")
+              ),
+              assessedOn = null,
+              overallRiskLevel = RiskLevel.VERY_HIGH
+            ),
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
+          )
+        )
+      }
+  }
+
+  @Test
   fun `allow null rosh scores`() {
     val crn = "X234567"
     webTestClient.get().uri("/risks/crn/$crn")
