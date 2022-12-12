@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

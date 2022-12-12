@@ -25,6 +25,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPred
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RsrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.OASysCalculatorServiceImpl
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.RiskPredictorService
 import java.math.BigDecimal
 import java.time.LocalDateTime
 

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.OffenceCodeValidator
 
 @ExtendWith(MockKExtension::class)
 class OffenceCodeValidatorTest {

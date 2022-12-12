@@ -54,6 +54,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredi
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.OASysCalculatorServiceImpl
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.OnnxCalculatorServiceImpl
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.RiskPredictorService
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
