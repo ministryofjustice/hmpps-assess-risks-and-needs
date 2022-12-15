@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations
 
 import com.beust.klaxon.Klaxon
 import com.fasterxml.jackson.databind.ObjectMapper

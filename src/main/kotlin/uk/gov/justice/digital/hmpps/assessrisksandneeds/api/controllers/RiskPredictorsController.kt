@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.RiskPredictorService
 import javax.validation.Valid
 
 @RestController

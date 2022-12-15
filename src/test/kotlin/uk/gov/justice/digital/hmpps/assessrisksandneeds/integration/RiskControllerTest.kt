@@ -94,19 +94,15 @@ class RiskControllerTest : IntegrationTestBase() {
               currentConcernsText = "Suicide and/or Self-harm current concerns"
             ),
             selfHarm = RiskDto(
-              risk = ResponseDto.YES,
-              previous = ResponseDto.YES,
-              current = ResponseDto.YES,
-              currentConcernsText = "Suicide and/or Self-harm current concerns"
+              risk = ResponseDto.DK
             ),
             custody = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
               previousConcernsText = "Coping in custody / hostel setting previous concerns",
-              current = ResponseDto.YES,
-              currentConcernsText = "Coping in custody / hostel setting current concerns"
+              current = ResponseDto.NA
             ),
-            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.NO, current = ResponseDto.NO),
+            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.DK, current = ResponseDto.NO),
             vulnerability = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
@@ -137,19 +133,15 @@ class RiskControllerTest : IntegrationTestBase() {
               currentConcernsText = "Suicide and/or Self-harm current concerns"
             ),
             selfHarm = RiskDto(
-              risk = ResponseDto.YES,
-              previous = ResponseDto.YES,
-              current = ResponseDto.YES,
-              currentConcernsText = "Suicide and/or Self-harm current concerns"
+              risk = ResponseDto.DK
             ),
             custody = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
               previousConcernsText = "Coping in custody / hostel setting previous concerns",
-              current = ResponseDto.YES,
-              currentConcernsText = "Coping in custody / hostel setting current concerns"
+              current = ResponseDto.NA
             ),
-            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.NO, current = ResponseDto.NO),
+            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.DK, current = ResponseDto.NO),
             vulnerability = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
@@ -238,19 +230,19 @@ class RiskControllerTest : IntegrationTestBase() {
                 currentConcernsText = "Suicide and/or Self-harm current concerns"
               ),
               selfHarm = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns"
+                risk = ResponseDto.DK
               ),
               custody = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.YES,
-                currentConcernsText = "Coping in custody / hostel setting current concerns"
+                current = ResponseDto.NA
               ),
-              hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.NO, current = ResponseDto.NO),
+              hostelSetting = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.DK,
+                current = ResponseDto.NO
+              ),
               vulnerability = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
@@ -310,21 +302,19 @@ class RiskControllerTest : IntegrationTestBase() {
                 currentConcernsText = "Suicide and/or Self-harm current concerns"
               ),
               selfHarm = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
+                risk = ResponseDto.DK,
                 currentConcernsText = "Suicide and/or Self-harm current concerns"
               ),
               custody = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.YES,
+                current = ResponseDto.NA,
                 currentConcernsText = "Coping in custody / hostel setting current concerns"
               ),
               hostelSetting = RiskDto(
                 risk = ResponseDto.YES,
-                previous = ResponseDto.NO,
+                previous = ResponseDto.DK,
                 previousConcernsText = "Coping in custody / hostel setting previous concerns",
                 current = ResponseDto.NO,
                 currentConcernsText = "Coping in custody / hostel setting current concerns"

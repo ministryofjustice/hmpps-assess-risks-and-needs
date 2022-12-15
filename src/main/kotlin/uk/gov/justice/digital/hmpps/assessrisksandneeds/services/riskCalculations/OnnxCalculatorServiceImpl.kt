@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations
 
 import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OnnxValue

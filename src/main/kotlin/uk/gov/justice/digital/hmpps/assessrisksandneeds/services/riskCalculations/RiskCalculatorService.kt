@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations
 
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderAndOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
