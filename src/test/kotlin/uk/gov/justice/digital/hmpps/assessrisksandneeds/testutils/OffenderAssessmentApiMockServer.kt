@@ -426,8 +426,8 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "R3.2",
                 "questionText": "Risk of self-harm",
-                "refAnswerCode": "YES",
-                "staticText": "Yes"
+                "refAnswerCode": "DK",
+                "staticText": "Don't Know"
             },
             {
                 "refQuestionCode": "R3.3",
@@ -495,12 +495,6 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
                 "staticText": "Yes"
             },
             {
-                "refQuestionCode": "FA32",
-                "questionText": "Are there any current concerns about self-harm",
-                "refAnswerCode": "YES",
-                "staticText": "Yes"
-            },
-            {
                 "refQuestionCode": "FA33",
                 "questionText": "Describe circumstances, relevant issues and needs regarding current concerns (refer to sections 1-12 for indicators, particularly Section 10)",
                 "freeFormText": "Suicide and/or Self-harm current concerns"
@@ -518,16 +512,10 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
                 "staticText": "Yes"
             },
             {
-                "refQuestionCode": "FA37",
-                "questionText": "Have there been any concerns about self-harm in the past",
-                "refAnswerCode": "YES",
-                "staticText": "Yes"
-            },
-            {
                 "refQuestionCode": "FA39",
                 "questionText": "Are there any current concerns about coping in custody",
-                "refAnswerCode": "YES",
-                "staticText": "Yes"
+                "refAnswerCode": "N/A",
+                "staticText": "N/A"
             },
             {
                 "refQuestionCode": "FA4",
@@ -554,8 +542,8 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
             {
                 "refQuestionCode": "FA43",
                 "questionText": "Are there any previous concerns about coping in hostel settings",
-                "refAnswerCode": "NO",
-                "staticText": "No"
+                "refAnswerCode": "DK",
+                "staticText": "Don't know"
             },
             {
                 "refQuestionCode": "FA44",
