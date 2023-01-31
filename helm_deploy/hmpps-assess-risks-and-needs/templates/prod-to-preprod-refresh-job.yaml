@@ -28,6 +28,7 @@ spec:
   concurrencyPolicy: "Forbid"
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: 3600
       backoffLimit: 0
       activeDeadlineSeconds: 1200
       template:
@@ -36,7 +37,7 @@ spec:
             runAsUser: 999
           containers:
             - name: dbrefresh
-              image: "postgres:10"
+              image: "postgres:14"
               command:
                 - /bin/entrypoint.sh
               volumeMounts:
