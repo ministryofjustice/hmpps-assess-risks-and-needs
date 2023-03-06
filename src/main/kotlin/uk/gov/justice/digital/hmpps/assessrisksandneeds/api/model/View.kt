@@ -11,13 +11,13 @@ class View {
 
     init {
       MAPPING[Role.ROLE_PROBATION] = Hmpps::class.java
-      MAPPING[Role.ROLE_PRISON] = Hmpps::class.java
+      MAPPING[Role.ROLE_OFFENDER_RISK_RO] = Hmpps::class.java
       MAPPING[Role.ROLE_CRS_PROVIDER] = CrsProvider::class.java
     }
   }
 
   enum class Role {
-    ROLE_PROBATION, ROLE_CRS_PROVIDER, ROLE_PRISON
+    ROLE_PROBATION, ROLE_CRS_PROVIDER, ROLE_OFFENDER_RISK_RO
   }
 
   open class RiskView
