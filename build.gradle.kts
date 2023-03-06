@@ -1,7 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.8.1"
-  kotlin("plugin.spring") version "1.8.0"
-  kotlin("plugin.jpa") version "1.8.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.8.3"
+  kotlin("plugin.spring") version "1.8.10"
+  kotlin("plugin.jpa") version "1.8.10"
 }
 
 configurations {
@@ -25,11 +25,11 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-data-rest:1.6.14")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.14")
   implementation("com.zaxxer:HikariCP:5.0.1")
-  implementation("org.postgresql:postgresql:42.5.1")
+  implementation("org.postgresql:postgresql:42.5.4")
   implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
   implementation("com.beust:klaxon:5.6")
-  implementation("com.microsoft.onnxruntime:onnxruntime:1.13.1")
-  implementation("net.logstash.logback:logstash-logback-encoder:7.2")
+  implementation("com.microsoft.onnxruntime:onnxruntime:1.14.0")
+  implementation("net.logstash.logback:logstash-logback-encoder:7.3")
   runtimeOnly("com.h2database:h2:2.1.214")
   runtimeOnly("org.flywaydb:flyway-core")
   testRuntimeOnly("com.h2database:h2:2.1.214")
@@ -39,7 +39,7 @@ dependencies {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(module = "mockito-core")
   }
-  testImplementation("com.ninja-squad:springmockk:4.0.0")
+  testImplementation("com.ninja-squad:springmockk:4.0.1")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
 }
 repositories {
