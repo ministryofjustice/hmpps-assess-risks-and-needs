@@ -94,7 +94,7 @@ class RisksController(
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'ROLE_OFFENDER_RISK_RO')")
   @JsonView(View.AllRisksView::class)
   fun getRoshRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
