@@ -14,7 +14,7 @@ data class RoshRiskWidgetDto(
   val overallRisk: String? = null,
 
   @Schema(description = "Assessed on", example = "2021-10-10")
-  @JsonView(View.Probation::class, View.SingleRisksView::class)
+  @JsonView(View.Hmpps::class, View.SingleRisksView::class)
   val assessedOn: LocalDateTime? = null,
 
   @Schema(
@@ -39,7 +39,7 @@ data class RoshRiskWidgetDto(
       "  \"Prisoners\": \"MEDIUM\"" +
       "}"
   )
-  @JsonView(View.Probation::class, View.RiskView::class)
+  @JsonView(View.Hmpps::class, View.RiskView::class)
   val riskInCustody: Map<String, String?> = hashMapOf(),
 ) {
   companion object {
