@@ -21,9 +21,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.apache.commons:commons-lang3")
-  implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.14")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.14")
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.15")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.15")
   implementation("com.zaxxer:HikariCP:5.0.1")
   implementation("org.postgresql:postgresql:42.5.4")
   implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
@@ -39,7 +39,7 @@ dependencies {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(module = "mockito-core")
   }
-  testImplementation("com.ninja-squad:springmockk:4.0.1")
+  testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
 }
 repositories {
