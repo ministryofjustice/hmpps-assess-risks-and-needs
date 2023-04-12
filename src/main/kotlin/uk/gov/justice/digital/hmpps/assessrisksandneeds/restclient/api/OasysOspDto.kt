@@ -8,5 +8,5 @@ data class OasysOspDto(
   val ospImagePercentageScore: BigDecimal? = null,
   val ospContactPercentageScore: BigDecimal? = null,
   val ospImageScoreLevel: String? = null,
-  val ospContactScoreLevel: String? = null
+  val ospContactScoreLevel: String? = null,
 )

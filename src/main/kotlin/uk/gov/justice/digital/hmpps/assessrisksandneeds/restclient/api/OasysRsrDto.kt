@@ -9,5 +9,5 @@ data class OasysRsrDto(
   val rsrPercentageScore: BigDecimal? = null,
   val rsrStaticOrDynamic: ScoreType? = null,
   val rsrAlgorithmVersion: String? = null,
-  val scoreLevel: String? = null
+  val scoreLevel: String? = null,
 )

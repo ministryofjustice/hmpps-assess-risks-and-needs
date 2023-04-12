@@ -24,7 +24,7 @@ data class RoshRiskWidgetDto(
       "  \"Children\": \"LOW\"," +
       "  \"Known Adult\": \"MEDIUM\"," +
       "  \"Staff\": \"VERY_HIGH\"" +
-      "}"
+      "}",
   )
   @JsonView(View.CrsProvider::class, View.RiskView::class)
   val riskInCommunity: Map<String, String?> = hashMapOf(),
@@ -37,7 +37,7 @@ data class RoshRiskWidgetDto(
       "  \"Known Adult\": \"MEDIUM\"," +
       "  \"Staff\": \"VERY_HIGH\"," +
       "  \"Prisoners\": \"MEDIUM\"" +
-      "}"
+      "}",
   )
   @JsonView(View.Hmpps::class, View.RiskView::class)
   val riskInCustody: Map<String, String?> = hashMapOf(),

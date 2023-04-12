@@ -22,7 +22,6 @@ class RiskServiceTest {
 
   @Test
   fun `risk Summary contains highest overall Risk Level Custody Very High`() {
-
     val crn = "CRN123"
     val date = LocalDateTime.now()
 
@@ -37,10 +36,10 @@ class RiskServiceTest {
           QuestionAnswerDto("SUM6.2.1", "", "M", "Medium"),
           QuestionAnswerDto("SUM6.2.2", "", "V", "Very High"),
           QuestionAnswerDto("SUM6.3.1", "", "L", "Low"),
-          QuestionAnswerDto("SUM6.3.2", "", "L", "Low")
-        )
+          QuestionAnswerDto("SUM6.3.2", "", "L", "Low"),
+        ),
       ),
-      assessedOn = date
+      assessedOn = date,
     )
 
     val riskSummary = riskService.getRoshRiskSummaryByCrn(crn)
@@ -49,7 +48,6 @@ class RiskServiceTest {
 
   @Test
   fun `risk Summary contains highest overall Risk Level Community Medium`() {
-
     val crn = "CRN123"
     val date = LocalDateTime.now()
 
@@ -63,10 +61,10 @@ class RiskServiceTest {
           QuestionAnswerDto("SUM6.1.2", "", "L", "Low"),
           QuestionAnswerDto("SUM6.2.1", "", "M", "Medium"),
           QuestionAnswerDto("SUM6.3.1", "", "L", "Low"),
-          QuestionAnswerDto("SUM6.3.2", "", "L", "Low")
-        )
+          QuestionAnswerDto("SUM6.3.2", "", "L", "Low"),
+        ),
       ),
-      assessedOn = date
+      assessedOn = date,
     )
 
     val riskSummary = riskService.getRoshRiskSummaryByCrn(crn)
@@ -75,7 +73,6 @@ class RiskServiceTest {
 
   @Test
   fun `overall risk level is null when risks returned`() {
-
     val crn = "CRN123"
     val date = LocalDateTime.now()
 
@@ -84,9 +81,9 @@ class RiskServiceTest {
     } returns SectionAnswersDto(
       assessmentId = 1,
       sections = mapOf(
-        "ROSHSUM" to listOf()
+        "ROSHSUM" to listOf(),
       ),
-      assessedOn = date
+      assessedOn = date,
     )
     val riskSummary = riskService.getRoshRiskSummaryByCrn(crn)
     assertThat(riskSummary.overallRiskLevel).isNull()

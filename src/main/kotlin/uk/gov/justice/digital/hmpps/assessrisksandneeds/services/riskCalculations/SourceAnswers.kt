@@ -90,5 +90,5 @@ class SourceAnswers(
   @JsonProperty("current_possession_firearm")
   val currentFirearmPossession: Boolean?,
   @JsonProperty("current_offence_weapon")
-  val currentOffencesWithWeapon: Boolean?
+  val currentOffencesWithWeapon: Boolean?,
 )

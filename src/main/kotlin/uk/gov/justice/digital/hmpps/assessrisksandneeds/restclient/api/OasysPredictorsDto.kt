@@ -16,7 +16,7 @@ class OasysPredictorsDto(
   val ovp: OvpDto? = null,
   val ogp: OgpDto? = null,
   val rsr: RsrDto? = null,
-  val osp: OspDto? = null
+  val osp: OspDto? = null,
 
 ) {
   fun hasRsrScores(): Boolean {
@@ -30,7 +30,7 @@ class OasysPredictorsDto(
 class Ogrs3Dto(
   val ogrs3_1Year: BigDecimal? = null,
   val ogrs3_2Year: BigDecimal? = null,
-  val reconvictionRisk: RefElementDto? = null
+  val reconvictionRisk: RefElementDto? = null,
 )
 
 class OvpDto(
@@ -44,7 +44,7 @@ class OvpDto(
   val ovpViolentWeightedScore: BigDecimal? = null,
   val ovpNonViolentWeightedScore: BigDecimal? = null,
   val ovpAgeWeightedScore: BigDecimal? = null,
-  val ovpSexWeightedScore: BigDecimal? = null
+  val ovpSexWeightedScore: BigDecimal? = null,
 )
 
 class OgpDto(
@@ -53,25 +53,25 @@ class OgpDto(
   val ogpTotalWeightedScore: BigDecimal? = null,
   val ogp1Year: BigDecimal? = null,
   val ogp2Year: BigDecimal? = null,
-  val ogpRisk: RefElementDto? = null
+  val ogpRisk: RefElementDto? = null,
 )
 
 class RsrDto(
   val rsrPercentageScore: BigDecimal? = null,
   val rsrStaticOrDynamic: String? = null,
   val rsrAlgorithmVersion: Long? = null,
-  val rsrRiskRecon: RefElementDto? = null
+  val rsrRiskRecon: RefElementDto? = null,
 )
 
 data class OspDto(
   val ospIndecentPercentageScore: BigDecimal? = null,
   val ospContactPercentageScore: BigDecimal? = null,
   val ospIndecentRiskRecon: RefElementDto? = null,
-  val ospContactRiskRecon: RefElementDto? = null
+  val ospContactRiskRecon: RefElementDto? = null,
 )
 
 data class RefElementDto(
   val code: String? = null,
   val shortDescription: String? = null,
-  val description: String? = null
+  val description: String? = null,
 )

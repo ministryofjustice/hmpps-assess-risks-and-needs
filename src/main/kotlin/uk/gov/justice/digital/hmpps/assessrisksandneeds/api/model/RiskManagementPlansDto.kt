@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRisk
 data class RiskManagementPlansDto(
   val crn: String,
   val limitedAccessOffender: Boolean,
-  val riskManagementPlan: List<RiskManagementPlanDto> = emptyList()
+  val riskManagementPlan: List<RiskManagementPlanDto> = emptyList(),
 ) {
 
   companion object {
@@ -15,7 +15,7 @@ data class RiskManagementPlansDto(
       return RiskManagementPlansDto(
         crn = oasysRiskManagementPlanDetails.crn,
         limitedAccessOffender = oasysRiskManagementPlanDetails.limitedAccessOffender,
-        riskManagementPlan = (assessmentSummaries + riskManagementPlan).sortedBy { it.initiationDate }
+        riskManagementPlan = (assessmentSummaries + riskManagementPlan).sortedBy { it.initiationDate },
       )
     }
 

@@ -18,7 +18,7 @@ import javax.persistence.Table
 @Table(name = "supplementary_risk")
 @TypeDefs(
   TypeDef(name = "json", typeClass = JsonStringType::class),
-  TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
+  TypeDef(name = "jsonb", typeClass = JsonBinaryType::class),
 )
 class SupplementaryRiskEntity(
   @Id

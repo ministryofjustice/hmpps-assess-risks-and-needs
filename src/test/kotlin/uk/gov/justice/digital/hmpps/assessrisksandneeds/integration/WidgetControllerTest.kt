@@ -32,7 +32,7 @@ class WidgetControllerTest : IntegrationTestBase() {
               "Known Adult" to "LOW",
               "Staff" to "HIGH",
             ),
-          )
+          ),
         )
       }
   }
@@ -62,7 +62,7 @@ class WidgetControllerTest : IntegrationTestBase() {
               "Staff" to "VERY_HIGH",
               "Prisoners" to "HIGH",
             ),
-          )
+          ),
         )
       }
   }

@@ -12,7 +12,7 @@ data class OasysAssessmentOffenceDto(
   val crn: String,
   val limitedAccessOffender: Boolean,
   var assessments: List<OasysAssessmentDto> = emptyList(),
-  var timeline: List<TimelineDto> = emptyList()
+  var timeline: List<TimelineDto> = emptyList(),
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,7 +24,7 @@ class TimelineDto(
   val initiationDate: LocalDateTime,
   val status: String,
   val completedDate: LocalDateTime? = null,
-  val partcompStatus: String? = null
+  val partcompStatus: String? = null,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)

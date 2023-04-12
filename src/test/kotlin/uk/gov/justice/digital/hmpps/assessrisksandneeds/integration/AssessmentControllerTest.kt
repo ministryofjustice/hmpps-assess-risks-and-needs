@@ -116,18 +116,18 @@ class AssessmentControllerTest : IntegrationTestBase() {
 
     assertThat(assessment5?.offenceDetails?.get(0)?.type).isEqualTo("CONCURRENT")
     assertThat(assessment5?.offenceDetails?.get(0)?.offenceDate).isEqualTo(
-      LocalDateTime.of(2021, 11, 1, 0, 0, 0)
+      LocalDateTime.of(2021, 11, 1, 0, 0, 0),
     )
     assertThat(assessment5?.offenceDetails?.get(0)?.offenceCode).isEqualTo("028")
     assertThat(assessment5?.offenceDetails?.get(0)?.offenceSubCode).isEqualTo("00")
     assertThat(assessment5?.offenceDetails?.get(0)?.offence).isEqualTo("Burglary in a dwelling")
     assertThat(assessment5?.offenceDetails?.get(0)?.subOffence).isEqualTo(
-      "Burglary in a dwelling    [Use this code only if you are unable to determine which subcoded Offence applies]"
+      "Burglary in a dwelling    [Use this code only if you are unable to determine which subcoded Offence applies]",
     )
 
     assertThat(assessment5?.offenceDetails?.get(1)?.type).isEqualTo("CURRENT")
     assertThat(assessment5?.offenceDetails?.get(1)?.offenceDate).isEqualTo(
-      LocalDateTime.of(2021, 12, 25, 0, 0, 0)
+      LocalDateTime.of(2021, 12, 25, 0, 0, 0),
     )
     assertThat(assessment5?.offenceDetails?.get(1)?.offenceCode).isEqualTo("020")
     assertThat(assessment5?.offenceDetails?.get(1)?.offenceSubCode).isEqualTo("05")
@@ -242,12 +242,12 @@ class AssessmentControllerTest : IntegrationTestBase() {
   private fun unscoredNeeds() = listOf(
     AssessmentNeedDto(
       section = "THINKING_AND_BEHAVIOUR",
-      name = "Thinking and behaviour"
+      name = "Thinking and behaviour",
     ),
     AssessmentNeedDto(
       section = "ATTITUDES",
-      name = "Attitudes"
-    )
+      name = "Attitudes",
+    ),
   )
 
   private fun scoredNotNeeds() = listOf(
@@ -259,7 +259,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfReoffending = false,
       flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false
+      identifiedAsNeed = false,
     ),
     AssessmentNeedDto(
       section = "FINANCIAL_MANAGEMENT_AND_INCOME",
@@ -269,8 +269,8 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfReoffending = false,
       flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false
-    )
+      identifiedAsNeed = false,
+    ),
   )
 
   private fun identifiedNeeds() = listOf(
@@ -283,7 +283,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     AssessmentNeedDto(
       section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
@@ -294,7 +294,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     AssessmentNeedDto(
       section = "RELATIONSHIPS",
@@ -305,7 +305,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     AssessmentNeedDto(
       section = "LIFESTYLE_AND_ASSOCIATES",
@@ -316,7 +316,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     AssessmentNeedDto(
       section = "DRUG_MISUSE",
@@ -327,7 +327,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     AssessmentNeedDto(
       section = "ALCOHOL_MISUSE",
@@ -338,7 +338,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
-    )
+      needScore = 2,
+    ),
   )
 }

@@ -45,12 +45,11 @@ class RiskPredictorServiceRsrTest {
 
   @Test
   fun `get all RSR scores history from OASys and ARN`() {
-
     every { assessmentApiClient.getPredictorScoresForOffender(crn) } returns listOf(
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1)),
     )
     every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns listOf(
-      getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
+      getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1)),
     )
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
@@ -82,10 +81,10 @@ class RiskPredictorServiceRsrTest {
   fun `get all RSR scores are sorted by completed date`() {
     every { assessmentApiClient.getPredictorScoresForOffender(crn) } returns listOf(
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1)),
-      getOasysPredictor(LocalDateTime.of(2021, 4, 1, 1, 1, 1))
+      getOasysPredictor(LocalDateTime.of(2021, 4, 1, 1, 1, 1)),
     )
     every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns listOf(
-      getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
+      getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1)),
     )
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
@@ -98,7 +97,6 @@ class RiskPredictorServiceRsrTest {
 
   @Test
   fun `get all RSR scores does not include non-rsr predictor scores`() {
-
     every { assessmentApiClient.getPredictorScoresForOffender(crn) } returns listOf(
       getOasysPredictorNoRsr(),
     )
@@ -127,21 +125,21 @@ class RiskPredictorServiceRsrTest {
         rsrAlgorithmVersion = 10L,
         rsrRiskRecon = RefElementDto(
           code = "LOW",
-          description = "Low"
-        )
+          description = "Low",
+        ),
       ),
       osp = OspDto(
         ospIndecentPercentageScore = BigDecimal(10),
         ospIndecentRiskRecon = RefElementDto(
           code = "LOW",
-          description = "Low"
+          description = "Low",
         ),
         ospContactPercentageScore = BigDecimal(10),
         ospContactRiskRecon = RefElementDto(
           code = "LOW",
-          description = "Low"
-        )
-      )
+          description = "Low",
+        ),
+      ),
     )
   }
 
@@ -160,9 +158,9 @@ class RiskPredictorServiceRsrTest {
         PredictorEntity(
           predictorSubType = PredictorSubType.RSR,
           predictorScore = BigDecimal(20.6),
-          predictorLevel = ScoreLevel.MEDIUM
-        )
-      )
+          predictorLevel = ScoreLevel.MEDIUM,
+        ),
+      ),
     )
   }
 }

@@ -18,7 +18,7 @@ import java.util.UUID
 
 @RestController
 class SupplementaryRisksController(
-  val supplementaryRiskService: SupplementaryRiskService
+  val supplementaryRiskService: SupplementaryRiskService,
 ) {
 
   @RequestMapping(path = ["/risks/supplementary/{sourceType}/{sourceId}"], method = [RequestMethod.GET])
@@ -27,15 +27,17 @@ class SupplementaryRisksController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "Supplementary risk source Not Found"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getSupplementaryRiskBySource(
     @Parameter(description = "Source ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
-    @PathVariable sourceId: String,
+    @PathVariable
+    sourceId: String,
     @Parameter(description = "Source Type", required = true, example = "INTERVENTION_REFERRAL")
-    @PathVariable sourceType: Source
+    @PathVariable
+    sourceType: Source,
   ): SupplementaryRiskDto {
     return supplementaryRiskService.getRiskBySourceAndSourceId(sourceType, sourceId)
   }
@@ -46,13 +48,14 @@ class SupplementaryRisksController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "Supplementary risk source Not Found"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getSupplementaryRisksByCrn(
     @Parameter(description = "CRN", required = true, example = "X123456")
-    @PathVariable crn: String
+    @PathVariable
+    crn: String,
   ): List<SupplementaryRiskDto> {
     return supplementaryRiskService.getRisksByCrn(crn)
   }
@@ -63,13 +66,14 @@ class SupplementaryRisksController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "Supplementary risk source Not Found"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
   fun getSupplementaryRiskById(
     @Parameter(description = "Supplementary ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
-    @PathVariable supplementaryRiskId: UUID
+    @PathVariable
+    supplementaryRiskId: UUID,
   ): SupplementaryRiskDto {
     return supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskId)
   }
@@ -79,13 +83,14 @@ class SupplementaryRisksController(
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun createSupplementaryRisk(
     @Parameter(description = "Supplementary Risk", required = true)
-    @RequestBody supplementaryRisk: CreateSupplementaryRiskDto
+    @RequestBody
+    supplementaryRisk: CreateSupplementaryRiskDto,
   ): SupplementaryRiskDto {
     return supplementaryRiskService.createNewSupplementaryRisk(supplementaryRisk)
   }

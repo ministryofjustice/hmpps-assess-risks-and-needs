@@ -126,7 +126,8 @@ class ControllerAdvice {
   @ResponseStatus(HttpStatus.FORBIDDEN)
   fun handle(e: ExternalApiForbiddenException): ResponseEntity<ErrorResponse?> {
     log.error(
-      "ApiForbiddenException for external client ${e.client} method ${e.method} and url ${e.url}: ", e
+      "ApiForbiddenException for external client ${e.client} method ${e.method} and url ${e.url}: ",
+      e,
     )
     return ResponseEntity(ErrorResponse(status = 403, developerMessage = e.message, moreInfo = e.moreInfo.joinToString { "," }), HttpStatus.FORBIDDEN)
   }
@@ -145,9 +146,9 @@ class ControllerAdvice {
       ErrorResponse(
         status = 500,
         developerMessage = "Internal Server Error. Check Logs",
-        userMessage = "An unexpected error has occurred"
+        userMessage = "An unexpected error has occurred",
       ),
-      HttpStatus.INTERNAL_SERVER_ERROR
+      HttpStatus.INTERNAL_SERVER_ERROR,
     )
   }
 }

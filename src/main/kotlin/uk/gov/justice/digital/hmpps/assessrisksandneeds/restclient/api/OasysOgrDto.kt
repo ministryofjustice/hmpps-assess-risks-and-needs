@@ -7,5 +7,5 @@ import java.math.BigDecimal
 data class OasysOgrDto(
   val ogrs31Year: BigDecimal? = null,
   val ogrs32Year: BigDecimal? = null,
-  val ogrs3RiskRecon: String? = null
+  val ogrs3RiskRecon: String? = null,
 )

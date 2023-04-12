@@ -63,7 +63,7 @@ class RiskManagementPlanServiceTest {
           contingencyPlans = "",
           laterWIPAssessmentExists = false,
           latestWIPDate = null,
-        )
+        ),
       ),
       timeline = listOf(
         TimelineDto(
@@ -86,8 +86,8 @@ class RiskManagementPlanServiceTest {
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
-        )
-      )
+        ),
+      ),
     )
     every { assessmentClient.getRiskManagementPlan(any(), any()) }.returns(oasysRiskManagementPlans)
 
@@ -129,9 +129,9 @@ class RiskManagementPlanServiceTest {
               contingencyPlans = "",
               laterWIPAssessmentExists = false,
               latestWIPDate = null,
-            )
-          )
-        )
+            ),
+          ),
+        ),
       )
   }
 
@@ -159,7 +159,7 @@ class RiskManagementPlanServiceTest {
           contingencyPlans = "",
           laterWIPAssessmentExists = false,
           latestWIPDate = null,
-        )
+        ),
       ),
       timeline = listOf(
         TimelineDto(
@@ -168,7 +168,7 @@ class RiskManagementPlanServiceTest {
           initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
           status = "LOCKED_INCOMPLETE",
           completedDate = LocalDateTime.of(2022, 1, 5, 12, 0),
-          partcompStatus = "Signed"
+          partcompStatus = "Signed",
         ),
         TimelineDto(
           assessmentPk = 2,
@@ -190,8 +190,8 @@ class RiskManagementPlanServiceTest {
           initiationDate = initiationDate.plusDays(1),
           status = "COMPLETE",
           completedDate = dateCompleted.plusDays(1),
-        )
-      )
+        ),
+      ),
     )
     every { assessmentClient.getRiskManagementPlan(any(), any()) }.returns(oasysRiskManagementPlans)
 
@@ -210,7 +210,7 @@ class RiskManagementPlanServiceTest {
               dateCompleted = LocalDateTime.of(2022, 1, 5, 12, 0),
               initiationDate = LocalDateTime.of(2022, 1, 1, 12, 0),
               assessmentStatus = "LOCKED_INCOMPLETE",
-              partcompStatus = "Signed"
+              partcompStatus = "Signed",
             ),
             RiskManagementPlanDto(
               assessmentId = 2,
@@ -241,9 +241,9 @@ class RiskManagementPlanServiceTest {
               dateCompleted = dateCompleted.plusDays(1),
               initiationDate = initiationDate.plusDays(1),
               assessmentStatus = "COMPLETE",
-            )
-          )
-        )
+            ),
+          ),
+        ),
       )
   }
 
@@ -254,7 +254,7 @@ class RiskManagementPlanServiceTest {
     every {
       assessmentClient.getRiskManagementPlan(
         any(),
-        any()
+        any(),
       )
     }.throws(EntityNotFoundException("No matching offender"))
 
@@ -271,7 +271,7 @@ class RiskManagementPlanServiceTest {
     every {
       assessmentClient.getRiskManagementPlan(
         any(),
-        any()
+        any(),
       )
     }.throws(EntityNotFoundException("No matching completed risk management plan found for this offender"))
 

@@ -29,7 +29,7 @@ private const val unknownOnnxVersion = "Unknown"
 class OnnxCalculatorServiceImpl(
   private val ortEnvironment: OrtEnvironment,
   private val ortSession: OrtSession,
-  private val offenceCodeValidator: OffenceCodeValidator
+  private val offenceCodeValidator: OffenceCodeValidator,
 ) :
   RiskCalculatorService {
 
@@ -40,19 +40,20 @@ class OnnxCalculatorServiceImpl(
   override fun calculatePredictorScores(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto,
-    algorithmVersion: String?
+    algorithmVersion: String?,
   ): RiskPredictorsDto {
-
     val validationErrors = validateInputParams(offenderAndOffences)
-    if (validationErrors.isNotEmpty()) return RiskPredictorsDto(
-      unknownOnnxVersion,
-      LocalDateTime.now(),
-      PredictorType.RSR,
-      null,
-      emptyMap(),
-      validationErrors,
-      validationErrors.count()
-    ).also { log.warn("${validationErrors.count()} found for CRN ${offenderAndOffences.crn}. Errors: $validationErrors.") }
+    if (validationErrors.isNotEmpty()) {
+      return RiskPredictorsDto(
+        unknownOnnxVersion,
+        LocalDateTime.now(),
+        PredictorType.RSR,
+        null,
+        emptyMap(),
+        validationErrors,
+        validationErrors.count(),
+      ).also { log.warn("${validationErrors.count()} found for CRN ${offenderAndOffences.crn}. Errors: $validationErrors.") }
+    }
 
     log.info("Generating RSR score using ONNX runtime for CRN ${offenderAndOffences.crn}")
     val results = getResults(buildTensorsFromInputParameters(offenderAndOffences))
@@ -89,7 +90,7 @@ class OnnxCalculatorServiceImpl(
       predictorResults[PredictorSubType.RSR] = Score(
         rsrBriefBand,
         rsr2YearBriefProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
-        true
+        true,
       )
     }
 
@@ -102,7 +103,7 @@ class OnnxCalculatorServiceImpl(
       predictorResults[PredictorSubType.RSR] = Score(
         rsrExtendedBand,
         rsr2YearExtendedProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
-        true
+        true,
       )
     }
 
@@ -114,7 +115,7 @@ class OnnxCalculatorServiceImpl(
       predictorResults[PredictorSubType.OSPC] = Score(
         ospCBand,
         ospC2YearProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
-        true
+        true,
       )
     }
 
@@ -126,7 +127,7 @@ class OnnxCalculatorServiceImpl(
       predictorResults[PredictorSubType.OSPI] = Score(
         ospIBand,
         ospI2YearProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
-        true
+        true,
       )
     }
 
@@ -138,7 +139,7 @@ class OnnxCalculatorServiceImpl(
       predictorResults[PredictorSubType.SNSV] = Score(
         null,
         snsv2YearBriefProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
-        true
+        true,
       )
     }
 
@@ -150,7 +151,7 @@ class OnnxCalculatorServiceImpl(
       predictorResults[PredictorSubType.SNSV] = Score(
         null,
         snsv2YearExtendedProb.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP),
-        true
+        true,
       )
     }
 
@@ -159,7 +160,7 @@ class OnnxCalculatorServiceImpl(
       LocalDateTime.now(),
       PredictorType.RSR,
       scoreType,
-      predictorResults
+      predictorResults,
     )
   }
 
@@ -169,7 +170,7 @@ class OnnxCalculatorServiceImpl(
 
   private fun getScoreBandResultFor(outputFieldName: String, results: Map<String, OnnxValue>): ScoreLevel? {
     return ScoreLevel.findByType(
-      (results[outputFieldName]?.value as? Array<String>)?.getOrNull(0)
+      (results[outputFieldName]?.value as? Array<String>)?.getOrNull(0),
     )
   }
 
@@ -179,11 +180,9 @@ class OnnxCalculatorServiceImpl(
   }
 
   fun validateInputParams(offenderAndOffences: OffenderAndOffencesDto): List<String> {
-
     val errors = mutableListOf<String>()
 
     with(offenderAndOffences) {
-
       if (!offenceCodeValidator.validate(currentOffence)) errors.add("Offence code ${currentOffence.offenceCode + currentOffence.offenceSubcode} is not supported")
 
       if (dateOfCurrentConviction.isAfter(LocalDate.now())) errors.add("Date of current conviction cannot be in the future")
@@ -192,16 +191,20 @@ class OnnxCalculatorServiceImpl(
       if (dateOfFirstSanction.isAfter(LocalDate.now())) errors.add("Date of first sanction cannot be in the future")
       if (Period.between(
           dob,
-          dateOfFirstSanction
+          dateOfFirstSanction,
         ).years < 8
-      ) errors.add("The individual must be aged 8 or older on the date of first sanction")
+      ) {
+        errors.add("The individual must be aged 8 or older on the date of first sanction")
+      }
 
       if (earliestReleaseDate.isBefore(dob)) errors.add("Date of earliest possible release from custody must be later than the individual’s date of birth")
       if (Period.between(
           dob,
-          earliestReleaseDate
+          earliestReleaseDate,
         ).years > 110
-      ) errors.add("The individual must be aged 110 or younger on commencement")
+      ) {
+        errors.add("The individual must be aged 110 or younger on commencement")
+      }
 
       if (totalOffences < 1) errors.add("Total offences must be at least 1 including the current offence")
       if (totalViolentOffences > totalOffences) errors.add("Violent offences must less than equal to the total number of offences")
@@ -223,7 +226,7 @@ class OnnxCalculatorServiceImpl(
             totalSexualOffencesInvolvingAnAdult,
             totalSexualOffencesInvolvingAChild,
             totalSexualOffencesInvolvingChildImages,
-            totalNonContactSexualOffences
+            totalNonContactSexualOffences,
           ).sum() < 1
         ) {
           errors.add("At least one sexual offence is required")
@@ -281,11 +284,11 @@ class OnnxCalculatorServiceImpl(
         "currentOffence" to OnnxTensor.createTensor(ortEnvironment, longArrayOf(currentOffence.offenceCode.toLong())),
         "offenceSubcode" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(currentOffence.offenceSubcode.toLong())
+          longArrayOf(currentOffence.offenceSubcode.toLong()),
         ),
         "homeOfficeCode" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf("${currentOffence.offenceCode}${currentOffence.offenceSubcode}".toLong())
+          longArrayOf("${currentOffence.offenceCode}${currentOffence.offenceSubcode}".toLong()),
         ),
         "dateOfFirstSanction" to OnnxTensor.createTensor(ortEnvironment, getDateAsString(dateOfFirstSanction)),
         "totalOffences" to OnnxTensor.createTensor(ortEnvironment, longArrayOf(totalOffences.toLong())),
@@ -294,34 +297,34 @@ class OnnxCalculatorServiceImpl(
         "hasAnySexualOffences" to OnnxTensor.createTensor(ortEnvironment, booleanArrayOf(hasAnySexualOffences)),
         "isCurrentSexualOffence" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(isCurrentSexualOffence ?: false)
+          booleanArrayOf(isCurrentSexualOffence ?: false),
         ),
         "isCurrentOffenceVictimStranger" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(isCurrentOffenceVictimStranger ?: false)
+          booleanArrayOf(isCurrentOffenceVictimStranger ?: false),
         ),
         "mostRecentSexualOffenceDate" to OnnxTensor.createTensor(
           ortEnvironment,
-          getDateAsString(mostRecentSexualOffenceDate)
+          getDateAsString(mostRecentSexualOffenceDate),
         ),
         "totalSexualOffencesInvolvingAnAdult" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(totalSexualOffencesInvolvingAnAdult?.toLong() ?: -1)
+          longArrayOf(totalSexualOffencesInvolvingAnAdult?.toLong() ?: -1),
         ),
         "totalSexualOffencesInvolvingAChild" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(totalSexualOffencesInvolvingAChild?.toLong() ?: -1)
+          longArrayOf(totalSexualOffencesInvolvingAChild?.toLong() ?: -1),
         ),
         "totalSexualOffencesInvolvingChildImages" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(totalSexualOffencesInvolvingChildImages?.toLong() ?: -1)
+          longArrayOf(totalSexualOffencesInvolvingChildImages?.toLong() ?: -1),
         ),
         "totalNonContactSexualOffences" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(totalNonContactSexualOffences?.toLong() ?: -1)
+          longArrayOf(totalNonContactSexualOffences?.toLong() ?: -1),
         ),
         "earliestReleaseDate" to OnnxTensor.createTensor(ortEnvironment, getDateAsString(earliestReleaseDate)),
-        "hasCompletedInterview" to OnnxTensor.createTensor(ortEnvironment, booleanArrayOf(hasCompletedInterview))
+        "hasCompletedInterview" to OnnxTensor.createTensor(ortEnvironment, booleanArrayOf(hasCompletedInterview)),
       )
     }
   }
@@ -331,81 +334,82 @@ class OnnxCalculatorServiceImpl(
       return mapOf(
         "hasSuitableAccommodation" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(this?.hasSuitableAccommodation?.score?.toLong() ?: -1)
+          longArrayOf(this?.hasSuitableAccommodation?.score?.toLong() ?: -1),
         ),
         "employment" to OnnxTensor.createTensor(ortEnvironment, longArrayOf(this?.employment?.score?.toLong() ?: -1)),
         "currentRelationshipWithPartner" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(this?.currentRelationshipWithPartner?.score?.toLong() ?: -1)
+          longArrayOf(this?.currentRelationshipWithPartner?.score?.toLong() ?: -1),
         ),
         "evidenceOfDomesticViolence" to OnnxTensor.createTensor(
-          ortEnvironment, booleanArrayOf(this?.evidenceOfDomesticViolence ?: false)
+          ortEnvironment,
+          booleanArrayOf(this?.evidenceOfDomesticViolence ?: false),
         ),
         "alcoholUseIssues" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(this?.alcoholUseIssues?.score?.toLong() ?: -1)
+          longArrayOf(this?.alcoholUseIssues?.score?.toLong() ?: -1),
         ),
         "bingeDrinkingIssues" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(this?.bingeDrinkingIssues?.score?.toLong() ?: -1)
+          longArrayOf(this?.bingeDrinkingIssues?.score?.toLong() ?: -1),
         ),
         "impulsivityIssues" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(this?.impulsivityIssues?.score?.toLong() ?: -1)
+          longArrayOf(this?.impulsivityIssues?.score?.toLong() ?: -1),
         ),
         "temperControlIssues" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(this?.temperControlIssues?.score?.toLong() ?: -1)
+          longArrayOf(this?.temperControlIssues?.score?.toLong() ?: -1),
         ),
         "proCriminalAttitudes" to OnnxTensor.createTensor(
           ortEnvironment,
-          longArrayOf(this?.proCriminalAttitudes?.score?.toLong() ?: -1)
-        )
+          longArrayOf(this?.proCriminalAttitudes?.score?.toLong() ?: -1),
+        ),
       )
     }
   }
 
   private fun buildPreviousOffencesTensors(
-    offenderAndOffences: OffenderAndOffencesDto
+    offenderAndOffences: OffenderAndOffencesDto,
   ): Map<String, OnnxTensor> {
     with(offenderAndOffences.dynamicScoringOffences?.previousOffences) {
       return mapOf(
         "murderAttempt" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.murderAttempt ?: false)
+          booleanArrayOf(this?.murderAttempt ?: false),
         ),
         "wounding" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.wounding ?: false)
+          booleanArrayOf(this?.wounding ?: false),
         ),
         "aggravatedBurglary" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.aggravatedBurglary ?: false)
+          booleanArrayOf(this?.aggravatedBurglary ?: false),
         ),
         "arson" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.arson ?: false)
+          booleanArrayOf(this?.arson ?: false),
         ),
         "criminalDamage" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.criminalDamage ?: false)
+          booleanArrayOf(this?.criminalDamage ?: false),
         ),
         "kidnapping" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.kidnapping ?: false)
+          booleanArrayOf(this?.kidnapping ?: false),
         ),
         "robbery" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.robbery ?: false)
+          booleanArrayOf(this?.robbery ?: false),
         ),
         "firearmPossession" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.firearmPossession ?: false)
+          booleanArrayOf(this?.firearmPossession ?: false),
         ),
         "offencesWithWeapon" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.offencesWithWeapon ?: false)
-        )
+          booleanArrayOf(this?.offencesWithWeapon ?: false),
+        ),
       )
     }
   }
@@ -417,12 +421,12 @@ class OnnxCalculatorServiceImpl(
       return mapOf(
         "currentfirearmPossession" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.firearmPossession ?: false)
+          booleanArrayOf(this?.firearmPossession ?: false),
         ),
         "currentoffencesWithWeapon" to OnnxTensor.createTensor(
           ortEnvironment,
-          booleanArrayOf(this?.offencesWithWeapon ?: false)
-        )
+          booleanArrayOf(this?.offencesWithWeapon ?: false),
+        ),
       )
     }
   }

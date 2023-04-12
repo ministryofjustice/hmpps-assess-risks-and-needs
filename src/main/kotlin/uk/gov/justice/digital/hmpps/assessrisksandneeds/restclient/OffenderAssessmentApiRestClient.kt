@@ -53,33 +53,33 @@ class OffenderAssessmentApiRestClient {
           setOf(
             SectionHeader.ROSH_SCREENING,
             SectionHeader.ROSH_FULL_ANALYSIS,
-            SectionHeader.ROSH_SUMMARY
-          )
-        )
+            SectionHeader.ROSH_SUMMARY,
+          ),
+        ),
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
           "4xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: " +
-            "${it.statusCode().value()}"
+            "${it.statusCode().value()}",
         )
         handle4xxError(
           it,
           HttpMethod.POST,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
           "5xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: " +
-            "${it.statusCode().value()}"
+            "${it.statusCode().value()}",
         )
         handle5xxError(
           "Failed to retrieve Rosh sections for last year completed Assessment for crn $crn",
           HttpMethod.POST,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(SectionAnswersDto::class.java)
@@ -94,7 +94,7 @@ class OffenderAssessmentApiRestClient {
       "/assessments/crn/$crn/needs/latest?period=YEAR&periodUnits=1"
     return webClient
       .get(
-        path
+        path,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
@@ -103,7 +103,7 @@ class OffenderAssessmentApiRestClient {
           it,
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
@@ -112,7 +112,7 @@ class OffenderAssessmentApiRestClient {
           "Failed to retrieve needs for last year completed Assessment for crn $crn",
           HttpMethod.POST,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(OffenderNeedsDto::class.java)
@@ -122,7 +122,7 @@ class OffenderAssessmentApiRestClient {
   fun calculatePredictorTypeScoring(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto,
-    algorithmVersion: String? = null
+    algorithmVersion: String? = null,
   ): OasysRSRPredictorsDto? {
     log.info("Calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn}")
     val path = "/offenders/risks/predictors/$predictorType"
@@ -131,31 +131,31 @@ class OffenderAssessmentApiRestClient {
     return webClient
       .post(
         path,
-        body
+        body,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
           "4xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: " +
-            "${it.statusCode().value()}"
+            "${it.statusCode().value()}",
         )
         handle4xxError(
           it,
           HttpMethod.POST,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
           "5xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: " +
-            "${it.statusCode().value()}"
+            "${it.statusCode().value()}",
         )
         handle5xxError(
           "Failed to calculate $predictorType scoring for offender with crn ${offenderAndOffences.crn}",
           HttpMethod.POST,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(OasysRSRPredictorsDto::class.java)
@@ -170,29 +170,29 @@ class OffenderAssessmentApiRestClient {
     val path = "/offenders/crn/$crn/predictors"
     return webClient
       .get(
-        path
+        path,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
         log.error(
-          "4xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}"
+          "4xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}",
         )
         handle4xxError(
           it,
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
         log.error(
-          "5xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}"
+          "5xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}",
         )
         handle5xxError(
           "Failed to retrieve Predictor scores for crn $crn",
           HttpMethod.POST,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
@@ -206,7 +206,7 @@ class OffenderAssessmentApiRestClient {
     val path = "/assessments/all-risk-predictors/$crn/ALLOW"
     return webClient
       .get(
-        path
+        path,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
@@ -215,7 +215,7 @@ class OffenderAssessmentApiRestClient {
           it,
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
@@ -224,7 +224,7 @@ class OffenderAssessmentApiRestClient {
           "Failed to retrieve risk predictor scores for completed Assessments for crn $crn",
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(OasysRiskPredictorsDto::class.java)
@@ -238,7 +238,7 @@ class OffenderAssessmentApiRestClient {
     val path = "/assessments/timeline/$crn/ALLOW"
     return webClient
       .get(
-        path
+        path,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
@@ -247,7 +247,7 @@ class OffenderAssessmentApiRestClient {
           it,
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
@@ -256,7 +256,7 @@ class OffenderAssessmentApiRestClient {
           "Failed to retrieve assessment timeline for crn: $crn",
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(String::class.java)
@@ -270,7 +270,7 @@ class OffenderAssessmentApiRestClient {
     val path = "/offenders/crn/$crn/predictors/all?period=YEAR&periodUnits=1"
     return webClient
       .get(
-        path
+        path,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
@@ -279,7 +279,7 @@ class OffenderAssessmentApiRestClient {
           it,
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
@@ -288,7 +288,7 @@ class OffenderAssessmentApiRestClient {
           "Failed to retrieve risk predictor scores for last year completed Assessments for crn $crn",
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
@@ -297,13 +297,13 @@ class OffenderAssessmentApiRestClient {
 
   fun getAssessmentOffence(
     crn: String,
-    limitedAccessOffender: String
+    limitedAccessOffender: String,
   ): OasysAssessmentOffenceDto? {
     log.info("Retrieving assessment offence for crn $crn")
     val path = "/assessments/offence/$crn/$limitedAccessOffender"
     return webClient
       .get(
-        path
+        path,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
@@ -312,7 +312,7 @@ class OffenderAssessmentApiRestClient {
           it,
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
@@ -321,7 +321,7 @@ class OffenderAssessmentApiRestClient {
           "Failed to retrieve assessment offence for crn $crn",
           HttpMethod.POST,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(OasysAssessmentOffenceDto::class.java)
@@ -349,7 +349,7 @@ class OffenderAssessmentApiRestClient {
       totalSexualOffencesInvolvingChildImages = this.totalSexualOffencesInvolvingChildImages,
       totalNonContactSexualOffences = this.totalNonContactSexualOffences,
       earliestReleaseDate = this.earliestReleaseDate,
-      dynamicScoringOffences = this.hasCompletedInterview.let { this.dynamicScoringOffences?.toDynamicScoringOffencesBody(this.hasCompletedInterview) }
+      dynamicScoringOffences = this.hasCompletedInterview.let { this.dynamicScoringOffences?.toDynamicScoringOffencesBody(this.hasCompletedInterview) },
     )
   }
 
@@ -371,14 +371,14 @@ class OffenderAssessmentApiRestClient {
       this.temperControlIssues?.score,
       this.proCriminalAttitudes?.score,
       this.previousOffences?.toPreviousOffencesBody(),
-      this.currentOffences?.toCurrentOffencesBody()
+      this.currentOffences?.toCurrentOffencesBody(),
     )
   }
 
   private fun CurrentOffencesDto.toCurrentOffencesBody(): CurrentOffences {
     return CurrentOffences(
       this.firearmPossession,
-      this.offencesWithWeapon
+      this.offencesWithWeapon,
     )
   }
 
@@ -392,7 +392,7 @@ class OffenderAssessmentApiRestClient {
       this.kidnapping,
       this.firearmPossession,
       this.robbery,
-      this.offencesWithWeapon
+      this.offencesWithWeapon,
     )
   }
 
@@ -401,7 +401,7 @@ class OffenderAssessmentApiRestClient {
     val path = "/assessments/risk-management-plans/$crn/$limitedAccessOffender"
     return webClient
       .get(
-        path
+        path,
       )
       .retrieve()
       .onStatus(HttpStatus::is4xxClientError) {
@@ -410,7 +410,7 @@ class OffenderAssessmentApiRestClient {
           it,
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
@@ -419,7 +419,7 @@ class OffenderAssessmentApiRestClient {
           "Failed to retrieve risk management plan for crn $crn",
           HttpMethod.GET,
           path,
-          ExternalService.ASSESSMENTS_API
+          ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono(OasysRiskManagementPlanDetailsDto::class.java)

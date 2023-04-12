@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStat
 import java.time.LocalDateTime
 
 data class OasysRiskPredictorsDto(
-  var assessments: List<RiskPredictorAssessmentDto>? = emptyList()
+  var assessments: List<RiskPredictorAssessmentDto>? = emptyList(),
 )
 
 data class RiskPredictorAssessmentDto(
@@ -20,5 +20,5 @@ data class RiskPredictorAssessmentDto(
   @JsonProperty("RSR")
   val rsrScoreDto: OasysRsrDto,
   @JsonProperty("OSP")
-  val ospScoreDto: OasysOspDto
+  val ospScoreDto: OasysOspDto,
 )

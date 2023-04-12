@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class OffenderNeedsDto(
   val needs: Collection<OffenderNeedDto>,
   val assessedOn: LocalDateTime,
-  val historicStatus: String
+  val historicStatus: String,
 )
 
 data class OffenderNeedDto(
@@ -17,5 +17,5 @@ data class OffenderNeedDto(
   val flaggedAsNeed: Boolean? = null,
   val severity: NeedSeverity? = null,
   val identifiedAsNeed: Boolean? = null,
-  val needScore: Long? = null
+  val needScore: Long? = null,
 )

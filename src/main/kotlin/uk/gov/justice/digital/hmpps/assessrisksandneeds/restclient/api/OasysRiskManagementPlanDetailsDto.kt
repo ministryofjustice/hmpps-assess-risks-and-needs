@@ -12,7 +12,7 @@ class OasysRiskManagementPlanDetailsDto(
   val limitedAccessOffender: Boolean,
   var timeline: List<TimelineDto> = emptyList(),
   @JsonAlias("assessments")
-  val riskManagementPlans: List<OasysRiskManagementPlanDto>
+  val riskManagementPlans: List<OasysRiskManagementPlanDto>,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -40,5 +40,5 @@ class OasysRiskManagementPlanDto(
   override val laterPartCompSignedAssessmentExists: Boolean? = null,
   override val latestPartCompSignedDate: LocalDateTime? = null,
   override val laterCompleteAssessmentExists: Boolean? = null,
-  override val latestCompleteDate: LocalDateTime? = null
+  override val latestCompleteDate: LocalDateTime? = null,
 ) : RelatedAssessmentState

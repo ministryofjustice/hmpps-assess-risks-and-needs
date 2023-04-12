@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 @Service
 class AssessmentOffenceService(
   private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient,
-  private val communityClient: CommunityApiRestClient
+  private val communityClient: CommunityApiRestClient,
 ) {
 
   private val limitedAccess = "ALLOW"
@@ -31,7 +31,7 @@ class AssessmentOffenceService(
 
     val assessmentOffenceDto = offenderAssessmentApiRestClient.getAssessmentOffence(
       crn = crn,
-      limitedAccessOffender = limitedAccess
+      limitedAccessOffender = limitedAccess,
     ) ?: throw EntityNotFoundException("Assessment offence not found for CRN: $crn")
 
     return mapTimelineToAssessments(assessmentOffenceDto)
@@ -43,7 +43,6 @@ class AssessmentOffenceService(
   }
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {
-
     val assessmentIds = oasysAssessmentOffenceDto.assessments.map { it.assessmentPk }
     val filteredTimeLine = oasysAssessmentOffenceDto.timeline.filter { it.assessmentPk !in assessmentIds }
     val summaryAssessmentDtos = mapSummaryAssessmentDtos(filteredTimeLine)
@@ -53,7 +52,7 @@ class AssessmentOffenceService(
     return AssessmentOffenceDto(
       crn = oasysAssessmentOffenceDto.crn,
       limitedAccessOffender = oasysAssessmentOffenceDto.limitedAccessOffender,
-      assessments = (summaryAssessmentDtos + assessmentDtos).sortedBy { it.initiationDate }
+      assessments = (summaryAssessmentDtos + assessmentDtos).sortedBy { it.initiationDate },
     )
   }
 
@@ -98,7 +97,7 @@ class AssessmentOffenceService(
         dateCompleted = it.completedDate,
         assessmentStatus = it.status,
         initiationDate = it.initiationDate,
-        partcompStatus = it.partcompStatus
+        partcompStatus = it.partcompStatus,
       )
     }
 }

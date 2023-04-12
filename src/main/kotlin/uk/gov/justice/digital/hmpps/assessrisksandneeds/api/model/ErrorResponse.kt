@@ -18,5 +18,5 @@ data class ErrorResponse(
   val userMessage: String? = null,
 
   @Schema(required = false, description = "Additional information about the error", example = "Hard disk failure")
-  val moreInfo: String? = null
+  val moreInfo: String? = null,
 )

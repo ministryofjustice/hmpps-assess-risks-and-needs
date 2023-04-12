@@ -47,16 +47,15 @@ class WebClientConfig {
   @Bean
   fun authorizedClientManager(
     clientRegistrationRepository: ClientRegistrationRepository?,
-    authorizedClientRepository: OAuth2AuthorizedClientRepository?
+    authorizedClientRepository: OAuth2AuthorizedClientRepository?,
   ): OAuth2AuthorizedClientManager {
-
     val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
       .clientCredentials()
       .build()
 
     val authorizedClientManager = DefaultOAuth2AuthorizedClientManager(
       clientRegistrationRepository,
-      authorizedClientRepository
+      authorizedClientRepository,
     )
 
     authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
@@ -69,7 +68,7 @@ class WebClientConfig {
     return AuthenticatingRestClient(
       webClientFactory(assessmentApiBaseUrl, authorizedClientManager, bufferByteSize),
       "assessment-api-client",
-      authenticationEnabled
+      authenticationEnabled,
     )
   }
 
@@ -78,14 +77,14 @@ class WebClientConfig {
     return AuthenticatingRestClient(
       webClientFactory(communityApiBaseUrl, authorizedClientManager, bufferByteSize),
       "community-api-client",
-      authenticationEnabled
+      authenticationEnabled,
     )
   }
 
   private fun webClientFactory(
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,
-    bufferByteCount: Int
+    bufferByteCount: Int,
   ): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
 
