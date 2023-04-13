@@ -59,7 +59,7 @@ class AssessmentNeedsService(private val assessmentClient: OffenderAssessmentApi
     "ALCOHOL_MISUSE" to "Alcohol misuse",
     "EMOTIONAL_WELL_BEING" to "Emotional well being",
     "THINKING_AND_BEHAVIOUR" to "Thinking and behaviour",
-    "ATTITUDES" to "Attitudes"
+    "ATTITUDES" to "Attitudes",
   )
 
   companion object {

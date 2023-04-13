@@ -33,10 +33,9 @@ class RequestData(excludeUris: String?) : HandlerInterceptor {
   }
 
   override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) {
-
     val status = response.status
     val start = LocalDateTime.parse(
-      request.getAttribute("startTime").toString()
+      request.getAttribute("startTime").toString(),
     )
     val duration = Duration.between(start, LocalDateTime.now()).toMillis()
 

@@ -65,7 +65,7 @@ abstract class IntegrationTestBase {
     val token = jwtHelper.createJwt(
       subject = user,
       expiryTime = Duration.ofHours(1L),
-      roles = roles
+      roles = roles,
     )
     return { it.set(HttpHeaders.AUTHORIZATION, "Bearer $token") }
   }

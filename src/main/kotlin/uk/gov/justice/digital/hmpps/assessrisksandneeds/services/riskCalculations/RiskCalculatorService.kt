@@ -8,6 +8,6 @@ interface RiskCalculatorService {
   fun calculatePredictorScores(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto,
-    algorithmVersion: String? = null
+    algorithmVersion: String? = null,
   ): RiskPredictorsDto
 }

@@ -22,9 +22,8 @@ class OASysCalculatorServiceImpl(
   override fun calculatePredictorScores(
     predictorType: PredictorType,
     offenderAndOffences: OffenderAndOffencesDto,
-    algorithmVersion: String?
+    algorithmVersion: String?,
   ): RiskPredictorsDto {
-
     val errorMessage =
       "Oasys Predictor Calculation failed for offender with CRN ${offenderAndOffences.crn} and $predictorType"
 
@@ -48,21 +47,21 @@ class OASysCalculatorServiceImpl(
             PredictorSubType.RSR to Score(
               level = ScoreLevel.findByType(this.rsrBand!!),
               score = this.rsrScore,
-              isValid = this.validRsrScore.toBoolean()
+              isValid = this.validRsrScore.toBoolean(),
             ),
             PredictorSubType.OSPC to Score(
               level = ScoreLevel.findByType(this.ospcBand!!),
               score = this.ospcScore,
-              isValid = this.validOspcScore.toBoolean()
+              isValid = this.validOspcScore.toBoolean(),
             ),
             PredictorSubType.OSPI to Score(
               level = ScoreLevel.findByType(this.ospiBand!!),
               score = this.ospiScore,
-              isValid = this.validOspiScore.toBoolean()
+              isValid = this.validOspiScore.toBoolean(),
             ),
           ),
           errors = this.toErrors(),
-          errorCount = this.errorCount
+          errorCount = this.errorCount,
         )
       }
     }
@@ -77,7 +76,11 @@ class OASysCalculatorServiceImpl(
   }
 
   private fun OasysRSRPredictorsDto.toErrors(): List<String> {
-    return if (this.errorCount > 0) this.errorMessage?.split('\n')?.filter { !it.isNullOrBlank() }
-      ?: emptyList() else emptyList()
+    return if (this.errorCount > 0) {
+      this.errorMessage?.split('\n')?.filter { !it.isNullOrBlank() }
+        ?: emptyList()
+    } else {
+      emptyList()
+    }
   }
 }

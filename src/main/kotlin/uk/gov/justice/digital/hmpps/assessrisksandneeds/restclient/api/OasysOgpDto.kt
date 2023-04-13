@@ -10,5 +10,5 @@ data class OasysOgpDto(
   val ogpTotWesc: BigDecimal? = null,
   val ogp1Year: BigDecimal? = null,
   val ogp2Year: BigDecimal? = null,
-  val ogpRisk: String? = null
+  val ogpRisk: String? = null,
 )

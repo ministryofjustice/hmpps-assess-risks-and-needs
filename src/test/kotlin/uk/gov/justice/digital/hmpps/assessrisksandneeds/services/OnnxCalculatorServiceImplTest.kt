@@ -63,27 +63,27 @@ class OnnxCalculatorServiceImplTest {
 
       assertThat(result.scores[PredictorSubType.RSR_1YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.18834394
-        )
+          0.18834394,
+        ),
       )
       assertThat(result.scores[PredictorSubType.RSR_1YR_BRIEF]?.level).isNull()
       assertThat(result.scores[PredictorSubType.RSR_2YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.30561092
-        )
+          0.30561092,
+        ),
       )
       assertThat(result.scores[PredictorSubType.RSR_2YR_BRIEF]?.level).isEqualTo(ScoreLevel.HIGH)
 
       assertThat(result.scores[PredictorSubType.RSR_1YR_EXTENDED]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.18209533
-        )
+          0.18209533,
+        ),
       )
       assertThat(result.scores[PredictorSubType.RSR_1YR_EXTENDED]?.level).isNull()
       assertThat(result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.2943015
-        )
+          0.2943015,
+        ),
       )
       assertThat(result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.level).isEqualTo(ScoreLevel.HIGH)
 
@@ -99,27 +99,27 @@ class OnnxCalculatorServiceImplTest {
 
       assertThat(result.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.010533482
-        )
+          0.010533482,
+        ),
       )
       assertThat(result.scores[PredictorSubType.SNSV_1YR_BRIEF]?.level).isNull()
       assertThat(result.scores[PredictorSubType.SNSV_2YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.019143075
-        )
+          0.019143075,
+        ),
       )
       assertThat(result.scores[PredictorSubType.SNSV_2YR_BRIEF]?.level).isNull()
 
       assertThat(result.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.004284886
-        )
+          0.004284886,
+        ),
       )
       assertThat(result.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.level).isNull()
       assertThat(result.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.007833679
-        )
+          0.007833679,
+        ),
       )
       assertThat(result.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.level).isNull()
     }
@@ -134,14 +134,14 @@ class OnnxCalculatorServiceImplTest {
       assertThat(result.errors).isEmpty()
       assertThat(result.scores[PredictorSubType.RSR_1YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.18834394
-        )
+          0.18834394,
+        ),
       )
       assertThat(result.scores[PredictorSubType.RSR_1YR_BRIEF]?.level).isNull()
       assertThat(result.scores[PredictorSubType.RSR_2YR_BRIEF]?.score).isEqualByComparingTo(
         BigDecimal.valueOf(
-          0.30561092
-        )
+          0.30561092,
+        ),
       )
       assertThat(result.scores[PredictorSubType.RSR_2YR_BRIEF]?.level).isEqualTo(ScoreLevel.HIGH)
     }
@@ -196,7 +196,7 @@ class OnnxCalculatorServiceImplTest {
         "Kidnapping/false imprisonment",
         "Possession of a firearm with intent to endanger life or resist arrest is required",
         "Robbery is required",
-        "Any other offence involving possession and/or use of weapons is required"
+        "Any other offence involving possession and/or use of weapons is required",
       )
 
       assertThat(result.scoreType).isNull()
@@ -225,7 +225,7 @@ class OnnxCalculatorServiceImplTest {
       val inputParameters = getExtendedInputParameters()
         .copy(
           dateOfCurrentConviction = LocalDate.of(2019, 1, 1),
-          dateOfFirstSanction = LocalDate.of(2019, 1, 2)
+          dateOfFirstSanction = LocalDate.of(2019, 1, 2),
         )
 
       val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
@@ -243,7 +243,7 @@ class OnnxCalculatorServiceImplTest {
     fun `should return validation error when date of first sanction is in the future`() {
       val inputParameters = getExtendedInputParameters()
         .copy(
-          dateOfFirstSanction = LocalDate.now().plusDays(1)
+          dateOfFirstSanction = LocalDate.now().plusDays(1),
         )
 
       val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
@@ -261,7 +261,7 @@ class OnnxCalculatorServiceImplTest {
       val inputParameters = getExtendedInputParameters()
         .copy(
           dob = LocalDate.of(2010, 1, 1),
-          dateOfFirstSanction = LocalDate.of(2017, 12, 31)
+          dateOfFirstSanction = LocalDate.of(2017, 12, 31),
         )
 
       val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
@@ -280,7 +280,7 @@ class OnnxCalculatorServiceImplTest {
       val inputParameters = getExtendedInputParameters()
         .copy(
           dob = LocalDate.of(2010, 1, 2),
-          earliestReleaseDate = LocalDate.of(2010, 1, 1)
+          earliestReleaseDate = LocalDate.of(2010, 1, 1),
         )
 
       val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
@@ -299,7 +299,7 @@ class OnnxCalculatorServiceImplTest {
       val inputParameters = getExtendedInputParameters()
         .copy(
           dob = LocalDate.of(1900, 1, 1),
-          earliestReleaseDate = LocalDate.of(2011, 1, 1)
+          earliestReleaseDate = LocalDate.of(2011, 1, 1),
         )
 
       val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
@@ -369,7 +369,7 @@ class OnnxCalculatorServiceImplTest {
         "Number of previous or current sanctions involving contact child sexual or sexually motivated offences is required",
         "Number of previous or current sanctions involving indecent child image sexual or sexually motivated offences is required",
         "Number of previous or current sanctions involving other non-contact sexual or sexually motivated offences is required",
-        "At least one sexual offence is required"
+        "At least one sexual offence is required",
       )
 
       assertThat(result.scoreType).isNull()
@@ -405,7 +405,7 @@ class OnnxCalculatorServiceImplTest {
     fun `should return validation error when date of most recent sexual offence is in the future`() {
       val inputParameters = getExtendedInputParameters()
         .copy(
-          mostRecentSexualOffenceDate = LocalDate.now().plusDays(1)
+          mostRecentSexualOffenceDate = LocalDate.now().plusDays(1),
         )
 
       val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
@@ -423,7 +423,7 @@ class OnnxCalculatorServiceImplTest {
       val inputParameters = getExtendedInputParameters()
         .copy(
           dob = LocalDate.of(2000, 1, 2),
-          mostRecentSexualOffenceDate = LocalDate.of(2000, 1, 1)
+          mostRecentSexualOffenceDate = LocalDate.of(2000, 1, 1),
         )
 
       val result = extendedOnnxCalculatorService.calculatePredictorScores(PredictorType.RSR, inputParameters)
@@ -456,7 +456,6 @@ class OnnxCalculatorServiceImplTest {
   }
 
   private fun getExtendedInputParameters(): OffenderAndOffencesDto {
-
     return OffenderAndOffencesDto(
       crn = "X1345",
       gender = Gender.MALE,
@@ -497,18 +496,17 @@ class OnnxCalculatorServiceImplTest {
           kidnapping = true,
           firearmPossession = true,
           robbery = true,
-          offencesWithWeapon = true
+          offencesWithWeapon = true,
         ),
         currentOffences = CurrentOffencesDto(
           firearmPossession = true,
-          offencesWithWeapon = true
-        )
-      )
+          offencesWithWeapon = true,
+        ),
+      ),
     )
   }
 
   private fun getBriefInputParameters(): OffenderAndOffencesDto {
-
     return OffenderAndOffencesDto(
       crn = "X1345",
       gender = Gender.MALE,
@@ -528,7 +526,7 @@ class OnnxCalculatorServiceImplTest {
       totalSexualOffencesInvolvingChildImages = 2,
       totalNonContactSexualOffences = 2,
       earliestReleaseDate = LocalDate.of(2021, 1, 1).plusMonths(10),
-      hasCompletedInterview = false
+      hasCompletedInterview = false,
     )
   }
 }

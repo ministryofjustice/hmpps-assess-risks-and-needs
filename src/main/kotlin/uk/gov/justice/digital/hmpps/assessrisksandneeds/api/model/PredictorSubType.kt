@@ -13,7 +13,8 @@ enum class PredictorSubType {
   SNSV_1YR_BRIEF,
   SNSV_2YR_BRIEF,
   SNSV_1YR_EXTENDED,
-  SNSV_2YR_EXTENDED;
+  SNSV_2YR_EXTENDED,
+  ;
 
   companion object {
     fun fromString(enumValue: String?): PredictorSubType {

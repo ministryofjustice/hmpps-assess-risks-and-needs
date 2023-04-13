@@ -45,7 +45,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
               groupReconvictionScore = OgrScoreDto(
                 oneYear = BigDecimal.valueOf(3),
                 twoYears = BigDecimal.valueOf(5),
-                scoreLevel = ScoreLevel.LOW
+                scoreLevel = ScoreLevel.LOW,
               ),
               violencePredictorScore = OvpScoreDto(
                 ovpStaticWeightedScore = BigDecimal.valueOf(14),
@@ -53,7 +53,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                 ovpTotalWeightedScore = BigDecimal.valueOf(17),
                 oneYear = BigDecimal.valueOf(4),
                 twoYears = BigDecimal.valueOf(7),
-                ovpRisk = ScoreLevel.LOW
+                ovpRisk = ScoreLevel.LOW,
               ),
               generalPredictorScore = OgpScoreDto(
                 ogpStaticWeightedScore = BigDecimal.valueOf(3),
@@ -61,22 +61,22 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                 ogpTotalWeightedScore = BigDecimal.valueOf(10),
                 ogp1Year = BigDecimal.valueOf(4),
                 ogp2Year = BigDecimal.valueOf(8),
-                ogpRisk = ScoreLevel.LOW
+                ogpRisk = ScoreLevel.LOW,
               ),
               riskOfSeriousRecidivismScore = RsrScoreDto(
                 percentageScore = BigDecimal.valueOf(50.1234),
                 staticOrDynamic = ScoreType.DYNAMIC,
                 source = RsrScoreSource.OASYS,
                 algorithmVersion = "11",
-                ScoreLevel.MEDIUM
+                ScoreLevel.MEDIUM,
               ),
               sexualPredictorScore = OspScoreDto(
                 ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
                 ospContactPercentageScore = BigDecimal.valueOf(1.07),
                 ospIndecentScoreLevel = ScoreLevel.MEDIUM,
-                ospContactScoreLevel = ScoreLevel.MEDIUM
-              )
-            )
+                ospContactScoreLevel = ScoreLevel.MEDIUM,
+              ),
+            ),
           )
       }
   }

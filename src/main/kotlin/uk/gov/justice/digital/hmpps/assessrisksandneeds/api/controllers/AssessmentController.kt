@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffen
 @RestController
 class AssessmentController(
   private val assessmentNeedsService: AssessmentNeedsService,
-  private val assessmentOffenceService: AssessmentOffenceService
+  private val assessmentOffenceService: AssessmentOffenceService,
 ) {
 
   @RequestMapping(path = ["/needs/crn/{crn}"], method = [RequestMethod.GET])
@@ -26,14 +26,14 @@ class AssessmentController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
-
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getCriminogenicNeedsByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
-    @PathVariable crn: String,
+    @PathVariable
+    crn: String,
   ): AssessmentNeedsDto {
     return assessmentNeedsService.getAssessmentNeeds(crn)
   }
@@ -47,13 +47,14 @@ class AssessmentController(
       ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
       ApiResponse(responseCode = "401", description = "Unauthorised"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getAssessmentOffenceDetails(
     @Parameter(description = "CRN", required = true, example = "D1974X")
-    @PathVariable crn: String,
+    @PathVariable
+    crn: String,
   ): AssessmentOffenceDto {
     return assessmentOffenceService.getAssessmentOffence(crn)
   }
@@ -64,14 +65,14 @@ class AssessmentController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
-
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getAssessmentTimelineByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
-    @PathVariable crn: String,
+    @PathVariable
+    crn: String,
   ): String {
     return assessmentOffenceService.getAssessmentTimeline(crn)
   }

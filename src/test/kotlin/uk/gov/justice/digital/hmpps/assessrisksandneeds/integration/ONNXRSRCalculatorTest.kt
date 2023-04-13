@@ -43,7 +43,7 @@ private const val offset = 0.00001
 @EnabledIfEnvironmentVariable(
   named = "ENABLE_ONNX_INTEGRATION_TESTS",
   matches = "true",
-  disabledReason = "ONNX Integration Tests disabled until ONNX file can be deployed at runtime into tests"
+  disabledReason = "ONNX Integration Tests disabled until ONNX file can be deployed at runtime into tests",
 )
 class ONNXRSRCalculatorTest() : IntegrationTestBase() {
 
@@ -59,7 +59,6 @@ class ONNXRSRCalculatorTest() : IntegrationTestBase() {
 
     @JvmStatic
     fun offenderInputsAndOutputs(): Stream<Arguments> {
-
       val inputJsonFile = "./src/test/resources/onnx-test-fixtures/rsr_input_v0.0.0.json"
       val outputJsonFile = "./src/test/resources/onnx-test-fixtures/rsr_output_v0.0.0.json"
       val parameters: MutableList<Pair<OffenderAndOffencesDto, RiskPredictorsDto>> = mutableListOf()
@@ -75,25 +74,25 @@ class ONNXRSRCalculatorTest() : IntegrationTestBase() {
             dob = convertLongDateToLocalDate(jsonObject.string("dob")?.toLong())!!,
             assessmentDate = LocalDateTime.of(
               convertLongDateToLocalDate(
-                jsonObject.string("assessmentDate")?.toLong()
+                jsonObject.string("assessmentDate")?.toLong(),
               )!!,
-              LocalTime.MIN
+              LocalTime.MIN,
             ),
             currentOffence = CurrentOffenceDto(
               jsonObject.int("currentOffence").toString(),
-              jsonObject.int("offenceSubcode").toString().padStart(2, '0')
+              jsonObject.int("offenceSubcode").toString().padStart(2, '0'),
             ),
             dateOfFirstSanction = convertLongDateToLocalDate(jsonObject.string("dateOfFirstSanction")?.toLong())!!,
             totalOffences = jsonObject.int("totalOffences")!!,
             totalViolentOffences = jsonObject.int("totalViolentOffences")!!,
             dateOfCurrentConviction = convertLongDateToLocalDate(
-              jsonObject.string("dateOfCurrentConviction")?.toLong()
+              jsonObject.string("dateOfCurrentConviction")?.toLong(),
             )!!,
             hasAnySexualOffences = jsonObject.boolean("hasAnySexualOffences")!!,
             isCurrentSexualOffence = jsonObject.boolean("isCurrentSexualOffence"),
             isCurrentOffenceVictimStranger = jsonObject.boolean("isCurrentOffenceVictimStranger"),
             mostRecentSexualOffenceDate = convertLongDateToLocalDate(
-              jsonObject.string("mostRecentSexualOffenceDate")?.toLong()
+              jsonObject.string("mostRecentSexualOffenceDate")?.toLong(),
             ),
             totalSexualOffencesInvolvingAnAdult = jsonObject.int("totalSexualOffencesInvolvingAnAdult"),
             totalSexualOffencesInvolvingAChild = jsonObject.int("totalSexualOffencesInvolvingAChild"),
@@ -121,68 +120,83 @@ class ONNXRSRCalculatorTest() : IntegrationTestBase() {
                 kidnapping = jsonObject.boolean("kidnapping"),
                 firearmPossession = jsonObject.boolean("firearmPossession"),
                 robbery = jsonObject.boolean("robbery"),
-                offencesWithWeapon = jsonObject.boolean("offencesWithWeapon")
+                offencesWithWeapon = jsonObject.boolean("offencesWithWeapon"),
               ),
               currentOffences = CurrentOffencesDto(
                 firearmPossession = jsonObject.boolean("currentfirearmPossession"),
                 offencesWithWeapon = jsonObject.boolean("currentoffencesWithWeapon"),
-              )
-            )
+              ),
+            ),
           )
 
         val result = RiskPredictorsDto(
           type = PredictorType.RSR,
           scores = mapOf(
             PredictorSubType.RSR_1YR_BRIEF to Score(
-              score = outputJson[index].float("rsr_brief_1yr_prob")?.toBigDecimal(), isValid = true, level = null
+              score = outputJson[index].float("rsr_brief_1yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = null,
             ),
             PredictorSubType.RSR_2YR_BRIEF to Score(
-              score = outputJson[index].float("rsr_brief_2yr_prob")?.toBigDecimal(), isValid = true,
-              level = ScoreLevel.findByType(outputJson[index].string("rsr_band_brief"))
+              score = outputJson[index].float("rsr_brief_2yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = ScoreLevel.findByType(outputJson[index].string("rsr_band_brief")),
             ),
             PredictorSubType.RSR_1YR_EXTENDED to Score(
-              score = outputJson[index].float("rsr_extended_1yr_prob")?.toBigDecimal(), isValid = true, level = null
+              score = outputJson[index].float("rsr_extended_1yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = null,
             ),
             PredictorSubType.RSR_2YR_EXTENDED to Score(
-              score = outputJson[index].float("rsr_extended_2yr_prob")?.toBigDecimal(), isValid = true,
-              level = ScoreLevel.findByType(outputJson[index].string("rsr_band_extended"))
+              score = outputJson[index].float("rsr_extended_2yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = ScoreLevel.findByType(outputJson[index].string("rsr_band_extended")),
             ),
             PredictorSubType.OSPI_1YR to Score(
               score = outputJson[index].float("osp_i_1yr_prob")?.toBigDecimal(),
               isValid = true,
-              level = null
+              level = null,
             ),
             PredictorSubType.OSPI_2YR to Score(
               score = outputJson[index].float("osp_i_2yr_prob")?.toBigDecimal(),
               isValid = true,
-              level = null
+              level = null,
             ),
             PredictorSubType.OSPC_1YR to Score(
               score = outputJson[index].float("osp_c_1yr_prob")?.toBigDecimal(),
               isValid = true,
-              level = null
+              level = null,
             ),
             PredictorSubType.OSPC_2YR to Score(
               score = outputJson[index].float("osp_c_2yr_prob")?.toBigDecimal(),
               isValid = true,
-              level = ScoreLevel.findByType(outputJson[index].string("osp_c_band"))
+              level = ScoreLevel.findByType(outputJson[index].string("osp_c_band")),
             ),
             PredictorSubType.SNSV_1YR_BRIEF to Score(
-              score = outputJson[index].float("snsv_brief_1yr_prob")?.toBigDecimal(), isValid = true, level = null
+              score = outputJson[index].float("snsv_brief_1yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = null,
             ),
             PredictorSubType.SNSV_2YR_BRIEF to Score(
-              score = outputJson[index].float("snsv_brief_2yr_prob")?.toBigDecimal(), isValid = true, level = null
+              score = outputJson[index].float("snsv_brief_2yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = null,
             ),
             PredictorSubType.SNSV_1YR_EXTENDED to Score(
-              score = outputJson[index].float("snsv_extended_1yr_prob")?.toBigDecimal(), isValid = true, level = null
+              score = outputJson[index].float("snsv_extended_1yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = null,
             ),
             PredictorSubType.SNSV_2YR_EXTENDED to Score(
-              score = outputJson[index].float("snsv_extended_2yr_prob")?.toBigDecimal(), isValid = true, level = null
-            )
+              score = outputJson[index].float("snsv_extended_2yr_prob")?.toBigDecimal(),
+              isValid = true,
+              level = null,
+            ),
           ),
           errorCount = 0,
           calculatedAt = LocalDateTime.now(),
-          algorithmVersion = "", scoreType = null
+          algorithmVersion = "",
+          scoreType = null,
         )
         parameters.add(Pair(offenderAndOffencesDto, result))
       }
@@ -208,99 +222,110 @@ class ONNXRSRCalculatorTest() : IntegrationTestBase() {
           .isEqualTo(0)
 
         SoftAssertions.assertSoftly {
-
           if (output.scores[PredictorSubType.RSR_2YR_EXTENDED]?.level != null) {
             assertThat(
-              result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.level?.ordinal
+              result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.level?.ordinal,
             ).isEqualTo(
-              output.scores[PredictorSubType.RSR_2YR_EXTENDED]?.level?.ordinal
+              output.scores[PredictorSubType.RSR_2YR_EXTENDED]?.level?.ordinal,
             )
           }
           if (output.scores[PredictorSubType.RSR_2YR_BRIEF]?.level != null) {
             assertThat(
-              result.scores[PredictorSubType.RSR_2YR_BRIEF]?.level?.ordinal
+              result.scores[PredictorSubType.RSR_2YR_BRIEF]?.level?.ordinal,
             ).isEqualTo(
-              output.scores[PredictorSubType.RSR_2YR_BRIEF]?.level?.ordinal
+              output.scores[PredictorSubType.RSR_2YR_BRIEF]?.level?.ordinal,
             )
           }
           if (output.scores[PredictorSubType.OSPC_2YR]?.level != null) {
             assertThat(
-              result.scores[PredictorSubType.OSPC_2YR]?.level?.ordinal
+              result.scores[PredictorSubType.OSPC_2YR]?.level?.ordinal,
             ).isEqualTo(
-              output.scores[PredictorSubType.OSPC_2YR]?.level?.ordinal
+              output.scores[PredictorSubType.OSPC_2YR]?.level?.ordinal,
             )
           }
 
           if (output.scores[PredictorSubType.RSR_2YR_EXTENDED]?.score != null) {
             assertThat(
-              result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.score
+              result.scores[PredictorSubType.RSR_2YR_EXTENDED]?.score,
             ).isCloseTo(
-              output.scores[PredictorSubType.RSR_2YR_EXTENDED]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.RSR_2YR_EXTENDED]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.RSR_1YR_EXTENDED]?.score != null) {
             assertThat(
-              result.scores[PredictorSubType.RSR_1YR_EXTENDED]?.score
+              result.scores[PredictorSubType.RSR_1YR_EXTENDED]?.score,
             ).isCloseTo(
-              output.scores[PredictorSubType.RSR_1YR_EXTENDED]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.RSR_1YR_EXTENDED]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.RSR_2YR_BRIEF]?.score != null) {
             assertThat(result.scores[PredictorSubType.RSR_2YR_BRIEF]?.score).isCloseTo(
-              output.scores[PredictorSubType.RSR_2YR_BRIEF]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.RSR_2YR_BRIEF]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.RSR_1YR_BRIEF]?.score != null) {
             assertThat(result.scores[PredictorSubType.RSR_1YR_BRIEF]?.score).isCloseTo(
-              output.scores[PredictorSubType.RSR_1YR_BRIEF]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.RSR_1YR_BRIEF]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.score != null) {
             assertThat(
-              result.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.score
+              result.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.score,
             ).isCloseTo(
-              output.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.SNSV_2YR_EXTENDED]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.score != null) {
             assertThat(
-              result.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.score
+              result.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.score,
             ).isCloseTo(
-              output.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.SNSV_1YR_EXTENDED]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.SNSV_2YR_BRIEF]?.score != null) {
             assertThat(
-              result.scores[PredictorSubType.SNSV_2YR_BRIEF]?.score
+              result.scores[PredictorSubType.SNSV_2YR_BRIEF]?.score,
             ).isCloseTo(
-              output.scores[PredictorSubType.SNSV_2YR_BRIEF]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.SNSV_2YR_BRIEF]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score != null) {
             assertThat(
-              result.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score
+              result.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score,
             ).isCloseTo(
-              output.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.SNSV_1YR_BRIEF]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.OSPI_2YR]?.score != null) {
             assertThat(result.scores[PredictorSubType.OSPI_2YR]?.score).isCloseTo(
-              output.scores[PredictorSubType.OSPI_2YR]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.OSPI_2YR]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.OSPI_1YR]?.score != null) {
             assertThat(result.scores[PredictorSubType.OSPI_1YR]?.score).isCloseTo(
-              output.scores[PredictorSubType.OSPI_1YR]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.OSPI_1YR]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.OSPC_2YR]?.score != null) {
             assertThat(result.scores[PredictorSubType.OSPC_2YR]?.score).isCloseTo(
-              output.scores[PredictorSubType.OSPC_2YR]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.OSPC_2YR]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
           if (output.scores[PredictorSubType.OSPC_1YR]?.score != null) {
             assertThat(result.scores[PredictorSubType.OSPC_1YR]?.score).isCloseTo(
-              output.scores[PredictorSubType.OSPC_1YR]?.score, Offset.offset(BigDecimal.valueOf(offset))
+              output.scores[PredictorSubType.OSPC_1YR]?.score,
+              Offset.offset(BigDecimal.valueOf(offset)),
             )
           }
         }

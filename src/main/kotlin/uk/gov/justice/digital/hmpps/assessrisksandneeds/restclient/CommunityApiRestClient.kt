@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Exte
 class CommunityApiRestClient(
 
   @Qualifier("communityApiWebClient")
-  val webClient: AuthenticatingRestClient
+  val webClient: AuthenticatingRestClient,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -35,19 +35,19 @@ class CommunityApiRestClient(
                 "No such offender for CRN: $crn",
                 HttpMethod.GET,
                 path,
-                ExternalService.COMMUNITY_API
-              )
-            )
+                ExternalService.COMMUNITY_API,
+              ),
+            ),
           )
           .map { error ->
             ExternalApiEntityNotFoundException(
               "No such user for username: $deliusUsername",
               HttpMethod.GET,
               path,
-              ExternalService.COMMUNITY_API
+              ExternalService.COMMUNITY_API,
             )
           }
-      })
+      },)
       .onStatus({ it == HttpStatus.FORBIDDEN }, {
         it.bodyToMono(UserAccessResponse::class.java)
           .map { error ->
@@ -56,16 +56,16 @@ class CommunityApiRestClient(
               HttpMethod.GET,
               path,
               ExternalService.COMMUNITY_API,
-              listOfNotNull(error.exclusionMessage, error.restrictionMessage)
+              listOfNotNull(error.exclusionMessage, error.restrictionMessage),
             )
           }
-      })
+      },)
       .onStatus(HttpStatus::is4xxClientError) {
         handle4xxError(
           it,
           HttpMethod.GET,
           path,
-          ExternalService.COMMUNITY_API
+          ExternalService.COMMUNITY_API,
         )
       }
       .onStatus(HttpStatus::is5xxServerError) {
@@ -73,7 +73,7 @@ class CommunityApiRestClient(
           "Failed to retrieve LAO details for crn: $crn",
           HttpMethod.GET,
           path,
-          ExternalService.COMMUNITY_API
+          ExternalService.COMMUNITY_API,
         )
       }
       .bodyToMono(UserAccessResponse::class.java)

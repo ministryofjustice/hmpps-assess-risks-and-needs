@@ -8,5 +8,5 @@ class OvpScoreDto(
   val ovpTotalWeightedScore: BigDecimal? = null,
   val oneYear: BigDecimal? = null,
   val twoYears: BigDecimal? = null,
-  val ovpRisk: ScoreLevel? = null
+  val ovpRisk: ScoreLevel? = null,
 )

@@ -29,18 +29,20 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getRiskPredictorsByPredictorType(
     @Parameter(description = "Predictor type", required = true, example = "RSR")
-    @PathVariable predictorType: PredictorType,
+    @PathVariable
+    predictorType: PredictorType,
     @RequestParam(value = "final", required = true) final: Boolean,
     @RequestParam(value = "source", required = true) source: PredictorSource,
     @RequestParam(value = "sourceId", required = true) sourceId: String,
     @RequestParam(value = "algorithmVersion", required = false) algorithmVersion: String?,
-    @Valid @RequestBody offenderAndOffences: OffenderAndOffencesDto
+    @Valid @RequestBody
+    offenderAndOffences: OffenderAndOffencesDto,
   ): RiskPredictorsDto {
     log.info("Calculate predictors for parameters final:$final source:$source, sourceId:$sourceId, algorithmVersion:$algorithmVersion and offender and offences:$offenderAndOffences and $predictorType")
     return riskPredictorService.calculatePredictorScores(
@@ -49,7 +51,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
       final,
       source,
       sourceId,
-      algorithmVersion
+      algorithmVersion,
     )
   }
 
@@ -58,13 +60,14 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getRsrScoresByCrn(
     @Parameter(description = "CRN", required = true)
-    @PathVariable crn: String,
+    @PathVariable
+    crn: String,
 
   ): List<RsrPredictorDto> {
     log.info("Retrieving RSR score history for crn: $crn")
@@ -80,8 +83,8 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
       ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
       ApiResponse(responseCode = "401", description = "Unauthorised"),
-      ApiResponse(responseCode = "200", description = "OK")
-    ]
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> {

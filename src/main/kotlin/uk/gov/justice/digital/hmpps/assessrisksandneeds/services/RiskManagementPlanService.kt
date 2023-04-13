@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 @Service
 class RiskManagementPlanService(
   private val assessmentClient: OffenderAssessmentApiRestClient,
-  private val communityClient: CommunityApiRestClient
+  private val communityClient: CommunityApiRestClient,
 ) {
 
   private val limitedAccess = "ALLOW"
@@ -28,7 +28,7 @@ class RiskManagementPlanService(
 
     val riskManagementPlanOrdsDto = assessmentClient.getRiskManagementPlan(
       crn = crn,
-      limitedAccessOffender = limitedAccess
+      limitedAccessOffender = limitedAccess,
     ) ?: throw EntityNotFoundException("Risk Management Plan not found for CRN: $crn")
 
     return RiskManagementPlansDto.from(riskManagementPlanOrdsDto)

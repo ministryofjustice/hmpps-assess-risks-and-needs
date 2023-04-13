@@ -6,5 +6,5 @@ class OspScoreDto(
   val ospIndecentPercentageScore: BigDecimal? = null,
   val ospContactPercentageScore: BigDecimal? = null,
   val ospIndecentScoreLevel: ScoreLevel? = null,
-  val ospContactScoreLevel: ScoreLevel? = null
+  val ospContactScoreLevel: ScoreLevel? = null,
 )

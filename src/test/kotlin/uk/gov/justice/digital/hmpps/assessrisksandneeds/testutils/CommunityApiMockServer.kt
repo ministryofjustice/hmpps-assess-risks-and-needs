@@ -11,55 +11,55 @@ class CommunityApiMockServer : WireMockServer(9096) {
     stubFor(
       WireMock.get(
         WireMock.urlPathMatching(
-          "/secure/offenders/crn/(?:X123456|NOT_FOUND|X654321|X999999)/user/assess-risks-needs/userAccess"
-        )
+          "/secure/offenders/crn/(?:X123456|NOT_FOUND|X654321|X999999)/user/assess-risks-needs/userAccess",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(laoSuccess)
-        )
+            .withBody(laoSuccess),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/secure/offenders/crn/FORBIDDEN/user/assess-risks-needs/userAccess"
-        )
+          "/secure/offenders/crn/FORBIDDEN/user/assess-risks-needs/userAccess",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(403)
-            .withBody(laoFailure)
-        )
+            .withBody(laoFailure),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/secure/offenders/crn/USER_ACCESS_NOT_FOUND/user/assess-risks-needs/userAccess"
-        )
+          "/secure/offenders/crn/USER_ACCESS_NOT_FOUND/user/assess-risks-needs/userAccess",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withStatus(404)
-        )
+            .withStatus(404),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/secure/offenders/crn/X123456/user/USER_NOT_FOUND/userAccess"
-        )
+          "/secure/offenders/crn/X123456/user/USER_NOT_FOUND/userAccess",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(404)
-            .withBody("Can't resolve user: USER_NOT_FOUND")
-        )
+            .withBody("Can't resolve user: USER_NOT_FOUND"),
+        ),
     )
   }
 

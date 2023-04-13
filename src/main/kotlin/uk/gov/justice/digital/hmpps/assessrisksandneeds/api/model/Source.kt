@@ -1,7 +1,8 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 enum class Source {
-  INTERVENTION_REFERRAL;
+  INTERVENTION_REFERRAL,
+  ;
 
   companion object {
     fun fromString(enumValue: String?): Source {

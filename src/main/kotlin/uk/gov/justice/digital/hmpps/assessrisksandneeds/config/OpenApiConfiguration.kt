@@ -25,8 +25,8 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
   fun customOpenAPI(buildProperties: BuildProperties): OpenAPI? = OpenAPI()
     .info(
       Info().title("HMPPS Risks and Needs API").version(version).description(
-        "API for managing risks and needs"
+        "API for managing risks and needs",
       )
-        .contact(Contact().name("HMPPS Digital Studio").email("feedback@digital.justice.gov.uk"))
+        .contact(Contact().name("HMPPS Digital Studio").email("feedback@digital.justice.gov.uk")),
     )
 }

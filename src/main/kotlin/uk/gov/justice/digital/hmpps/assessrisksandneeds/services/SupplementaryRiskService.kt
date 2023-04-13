@@ -21,7 +21,7 @@ import java.util.UUID
 @Service
 class SupplementaryRiskService(
   private val supplementaryRiskRepository: SupplementaryRiskRepository,
-  @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper
+  @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -52,11 +52,12 @@ class SupplementaryRiskService(
     with(supplementaryRiskDto) {
       log.info("Create new supplementary risk for crn: $crn")
       val existingRisk = supplementaryRiskRepository.findBySourceAndSourceId(source.name, sourceId)
-      if (existingRisk != null)
+      if (existingRisk != null) {
         throw DuplicateSourceRecordFound(
           "Duplicate supplementary risk found for source: $source with sourceId: $sourceId",
-          existingRisk.toSupplementaryRiskDto("for source: $source and sourceId: $sourceId")
+          existingRisk.toSupplementaryRiskDto("for source: $source and sourceId: $sourceId"),
         )
+      }
       return supplementaryRiskRepository.save(this.toSupplementaryRiskEntity())
         .toSupplementaryRiskDto("for crn: $crn").also { log.info("Supplementary risk record created for crn: $crn") }
     }
@@ -73,7 +74,7 @@ class SupplementaryRiskService(
       this.createdByUserType.lowercase(),
       this.createdDate,
       toRedactedOasysRisk(this.riskAnswers),
-      this.riskComments
+      this.riskComments,
     )
   }
 
@@ -86,20 +87,24 @@ class SupplementaryRiskService(
       createdByUserType = UserType.fromString(this.createdByUserType).name,
       createdDate = this.createdDate,
       riskAnswers = toJson(this.redactedRisk) ?: mapOf(),
-      riskComments = this.riskSummaryComments
+      riskComments = this.riskSummaryComments,
     )
   }
 
   fun toJson(redactedRiskDto: RedactedOasysRiskDto?): Map<String, Any>? {
-    return if (redactedRiskDto == null)
+    return if (redactedRiskDto == null) {
       null
-    else
+    } else {
       Klaxon().parse<Map<String, Any>>(objectMapper.writeValueAsString(redactedRiskDto))
+    }
   }
 
   fun toRedactedOasysRisk(json: Map<String, Any>?): RedactedOasysRiskDto? {
-    return if (json.isNullOrEmpty()) null
-    else Klaxon().parse<RedactedOasysRiskDto>(objectMapper.writeValueAsString(json))
+    return if (json.isNullOrEmpty()) {
+      null
+    } else {
+      Klaxon().parse<RedactedOasysRiskDto>(objectMapper.writeValueAsString(json))
+    }
   }
 
   fun List<SupplementaryRiskEntity>.toSupplementaryRiskDtos(message: String): List<SupplementaryRiskDto> {
