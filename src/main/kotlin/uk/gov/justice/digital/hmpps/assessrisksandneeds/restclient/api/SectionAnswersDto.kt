@@ -8,6 +8,6 @@ data class SectionAnswersDto(
 
   val sections: Map<String?, Collection<QuestionAnswerDto>>,
 
-  val assessedOn: LocalDateTime?
+  val assessedOn: LocalDateTime?,
 
 )

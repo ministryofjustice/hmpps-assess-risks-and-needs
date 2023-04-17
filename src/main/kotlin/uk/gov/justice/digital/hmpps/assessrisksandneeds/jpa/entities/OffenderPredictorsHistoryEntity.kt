@@ -29,7 +29,7 @@ import javax.persistence.Table
 @Table(name = "offender_predictors_history")
 @TypeDefs(
   TypeDef(name = "json", typeClass = JsonStringType::class),
-  TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
+  TypeDef(name = "jsonb", typeClass = JsonBinaryType::class),
 )
 data class OffenderPredictorsHistoryEntity(
 

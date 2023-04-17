@@ -42,7 +42,7 @@ data class RsrPredictorDto(
           staticOrDynamic = ScoreType.valueOf(rsr.rsrStaticOrDynamic?.uppercase()!!),
           source = RsrScoreSource.OASYS,
           status = AssessmentStatus.valueOf(assessmentStatus!!),
-          algorithmVersion = rsr.rsrAlgorithmVersion.toString()
+          algorithmVersion = rsr.rsrAlgorithmVersion.toString(),
         )
       }
     }

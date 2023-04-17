@@ -23,5 +23,5 @@ data class OtherRoshRisksDto(
 
   @Schema(description = "The date and time that the assessment was completed")
   @JsonView(View.Hmpps::class, View.SingleRisksView::class)
-  val assessedOn: LocalDateTime?
+  val assessedOn: LocalDateTime?,
 )

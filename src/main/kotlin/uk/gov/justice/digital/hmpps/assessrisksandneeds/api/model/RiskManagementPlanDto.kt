@@ -42,7 +42,7 @@ data class RiskManagementPlanDto(
           dateCompleted = completedDate,
           assessmentStatus = status,
           initiationDate = initiationDate,
-          partcompStatus = partcompStatus
+          partcompStatus = partcompStatus,
         )
       }
     }
@@ -72,7 +72,7 @@ data class RiskManagementPlanDto(
           laterPartCompSignedAssessmentExists = laterPartCompSignedAssessmentExists,
           latestPartCompSignedDate = latestPartCompSignedDate,
           laterCompleteAssessmentExists = laterCompleteAssessmentExists,
-          latestCompleteDate = latestCompleteDate
+          latestCompleteDate = latestCompleteDate,
         )
       }
     }

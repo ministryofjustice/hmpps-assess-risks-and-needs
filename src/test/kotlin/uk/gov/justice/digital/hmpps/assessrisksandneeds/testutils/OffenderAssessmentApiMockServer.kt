@@ -15,64 +15,64 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
       WireMock.post(
         WireMock.urlEqualTo(
           "/assessments/crn/$crn/sections/answers?assessmentStatus=COMPLETE" +
-            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1"
-        )
+            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1",
+        ),
       )
         .withRequestBody(
           WireMock.equalToJson(
             "{ \"sectionCodes\": [\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]}",
             true,
-            true
-          )
+            true,
+          ),
         )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(assessmentJson)
-        )
+            .withBody(assessmentJson),
+        ),
     )
 
     stubFor(
       WireMock.post(
         WireMock.urlEqualTo(
           "/assessments/crn/RANDOMCRN/sections/answers?assessmentStatus=COMPLETE" +
-            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1"
-        )
+            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1",
+        ),
       )
         .withRequestBody(
           WireMock.equalToJson(
             "{ \"sectionCodes\": [\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]}",
             true,
-            true
-          )
+            true,
+          ),
         )
         .willReturn(
           WireMock.aResponse()
             .withBody(crnNotFoundJson)
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-        )
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
     )
 
     stubFor(
       WireMock.post(
         WireMock.urlEqualTo(
           "/assessments/crn/$missingRoshCrn/sections/answers?assessmentStatus=COMPLETE" +
-            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1"
-        )
+            "&assessmentTypes=LAYER_1,LAYER_3&period=YEAR&periodUnits=1",
+        ),
       )
         .withRequestBody(
           WireMock.equalToJson(
             "{ \"sectionCodes\": [\"ROSH_SCREENING\", \"ROSH_FULL_ANALYSIS\", \"ROSH_SUMMARY\"]}",
             true,
-            true
-          )
+            true,
+          ),
         )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(assessmentJsonMissingRoshData)
-        )
+            .withBody(assessmentJsonMissingRoshData),
+        ),
     )
   }
 
@@ -80,8 +80,8 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.post(
         WireMock.urlEqualTo(
-          "/offenders/risks/predictors/RSR"
-        )
+          "/offenders/risks/predictors/RSR",
+        ),
       ).withRequestBody(
         WireMock.equalToJson(
           "{ " +
@@ -137,8 +137,8 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
             "}" +
             "}",
           true,
-          true
-        )
+          true,
+        ),
       )
         .willReturn(
           WireMock.aResponse()
@@ -159,9 +159,9 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
                 "    \"snsvScore\": 0.31," +
                 "    \"errorCount\": 0," +
                 "    \"calculationDateAndTime\": \"2021-07-30 16:10:02\"" +
-                "}"
-            )
-        )
+                "}",
+            ),
+        ),
     )
   }
 
@@ -169,55 +169,55 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/crn/$crn/needs/latest?period=YEAR&periodUnits=1"
-        )
+          "/assessments/crn/$crn/needs/latest?period=YEAR&periodUnits=1",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(needsJson)
-        )
+            .withBody(needsJson),
+        ),
     )
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/crn/NOT_FOUND/needs/latest?period=YEAR&periodUnits=1"
-        )
+          "/assessments/crn/NOT_FOUND/needs/latest?period=YEAR&periodUnits=1",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withBody(crnNotFoundJson)
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-        )
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/crn/NOT_CURRENT/needs/latest?period=YEAR&periodUnits=1"
-        )
+          "/assessments/crn/NOT_CURRENT/needs/latest?period=YEAR&periodUnits=1",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withBody(notCurrentNeedsJson)
-            .withStatus(404)
-        )
+            .withStatus(404),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/crn/NO_NEEDS/needs/latest?period=YEAR&periodUnits=1"
-        )
+          "/assessments/crn/NO_NEEDS/needs/latest?period=YEAR&periodUnits=1",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withBody(emptyNeedsJson)
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-        )
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
     )
   }
 
@@ -225,41 +225,41 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/offence/$crn/ALLOW"
-        )
+          "/assessments/offence/$crn/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(this::class.java.getResource("/json/ordsAssessmentOffence.json")?.readText())
-        )
+            .withBody(this::class.java.getResource("/json/ordsAssessmentOffence.json")?.readText()),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/offence/X654321/ALLOW"
-        )
+          "/assessments/offence/X654321/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(this::class.java.getResource("/json/ordsAssessmentOffenceNoCompleteAssessments.json")?.readText())
-        )
+            .withBody(this::class.java.getResource("/json/ordsAssessmentOffenceNoCompleteAssessments.json")?.readText()),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/offence/NOT_FOUND/ALLOW"
-        )
+          "/assessments/offence/NOT_FOUND/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withBody("{}")
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-        )
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
     )
   }
 
@@ -267,29 +267,29 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/timeline/X123456/ALLOW"
-        )
+          "/assessments/timeline/X123456/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(200)
-            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText())
-        )
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText()),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/timeline/crn/NOT_FOUND/ALLOW"
-        )
+          "/assessments/timeline/crn/NOT_FOUND/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withBody("{}")
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-        )
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
     )
   }
 
@@ -297,41 +297,41 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/risk-management-plans/$crn/ALLOW"
-        )
+          "/assessments/risk-management-plans/$crn/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(this::class.java.getResource("/json/ordsRiskManagementPlan.json")?.readText())
-        )
+            .withBody(this::class.java.getResource("/json/ordsRiskManagementPlan.json")?.readText()),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/risk-management-plans/X654321/ALLOW"
-        )
+          "/assessments/risk-management-plans/X654321/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(this::class.java.getResource("/json/ordsRiskManagementPlan.json")?.readText())
-        )
+            .withBody(this::class.java.getResource("/json/ordsRiskManagementPlan.json")?.readText()),
+        ),
     )
 
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/risk-management-plans/NOT_FOUND/LIMIT"
-        )
+          "/assessments/risk-management-plans/NOT_FOUND/LIMIT",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withBody("{}")
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-        )
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
     )
   }
 
@@ -339,14 +339,14 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/offenders/crn/$crn/predictors"
-        )
+          "/offenders/crn/$crn/predictors",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(rsrPredictorsJson)
-        )
+            .withBody(rsrPredictorsJson),
+        ),
     )
   }
 
@@ -354,14 +354,14 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/offenders/crn/$missingRoshCrn/predictors"
-        )
+          "/offenders/crn/$missingRoshCrn/predictors",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(noRsrPredictorsJson)
-        )
+            .withBody(noRsrPredictorsJson),
+        ),
     )
   }
 
@@ -369,14 +369,14 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/assessments/all-risk-predictors/$crn/ALLOW"
-        )
+          "/assessments/all-risk-predictors/$crn/ALLOW",
+        ),
       )
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(this::class.java.getResource("/json/ordsRiskPredictors.json")?.readText())
-        )
+            .withBody(this::class.java.getResource("/json/ordsRiskPredictors.json")?.readText()),
+        ),
     )
     stubFor(
       WireMock.get(WireMock.urlEqualTo("/assessments/all-risk-predictors/$badCrn/ALLOW"))
@@ -384,8 +384,8 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
           WireMock.aResponse()
             .withBody(crnNotFoundJson)
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-        )
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
     )
   }
 

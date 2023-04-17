@@ -10,7 +10,7 @@ class RiskScoresDto(
   val violencePredictorScore: OvpScoreDto? = null,
   val generalPredictorScore: OgpScoreDto? = null,
   val riskOfSeriousRecidivismScore: RsrScoreDto? = null,
-  val sexualPredictorScore: OspScoreDto? = null
+  val sexualPredictorScore: OspScoreDto? = null,
 ) {
 
   companion object {
@@ -23,7 +23,7 @@ class RiskScoresDto(
           groupReconvictionScore = OgrScoreDto(
             oneYear = it.ogrScoreDto.ogrs31Year,
             twoYears = it.ogrScoreDto.ogrs32Year,
-            scoreLevel = ScoreLevel.findByType(it.ogrScoreDto.ogrs3RiskRecon)
+            scoreLevel = ScoreLevel.findByType(it.ogrScoreDto.ogrs3RiskRecon),
           ),
           violencePredictorScore = OvpScoreDto(
             ovpStaticWeightedScore = it.ovpScoreDto.ovpStWesc,
@@ -31,7 +31,7 @@ class RiskScoresDto(
             ovpTotalWeightedScore = it.ovpScoreDto.ovpTotWesc,
             oneYear = it.ovpScoreDto.ovp1Year,
             twoYears = it.ovpScoreDto.ovp2Year,
-            ovpRisk = ScoreLevel.findByType(it.ovpScoreDto.ovpRisk)
+            ovpRisk = ScoreLevel.findByType(it.ovpScoreDto.ovpRisk),
           ),
           generalPredictorScore = OgpScoreDto(
             ogpStaticWeightedScore = it.ogpScoreDto.ogpStWesc,
@@ -39,21 +39,21 @@ class RiskScoresDto(
             ogpTotalWeightedScore = it.ogpScoreDto.ogpTotWesc,
             ogp1Year = it.ogpScoreDto.ogp1Year,
             ogp2Year = it.ogpScoreDto.ogp2Year,
-            ogpRisk = ScoreLevel.findByType(it.ogpScoreDto.ogpRisk)
+            ogpRisk = ScoreLevel.findByType(it.ogpScoreDto.ogpRisk),
           ),
           riskOfSeriousRecidivismScore = RsrScoreDto(
             percentageScore = it.rsrScoreDto.rsrPercentageScore,
             staticOrDynamic = it.rsrScoreDto.rsrStaticOrDynamic,
             source = RsrScoreSource.OASYS,
             algorithmVersion = it.rsrScoreDto.rsrAlgorithmVersion,
-            scoreLevel = ScoreLevel.findByType(it.rsrScoreDto.scoreLevel)
+            scoreLevel = ScoreLevel.findByType(it.rsrScoreDto.scoreLevel),
           ),
           sexualPredictorScore = OspScoreDto(
             ospIndecentPercentageScore = it.ospScoreDto.ospImagePercentageScore,
             ospContactPercentageScore = it.ospScoreDto.ospContactPercentageScore,
             ospIndecentScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospImageScoreLevel),
-            ospContactScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospContactScoreLevel)
-          )
+            ospContactScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospContactScoreLevel),
+          ),
         )
       }.orEmpty()
     }

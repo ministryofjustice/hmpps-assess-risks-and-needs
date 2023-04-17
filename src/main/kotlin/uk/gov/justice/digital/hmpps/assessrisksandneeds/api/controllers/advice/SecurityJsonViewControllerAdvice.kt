@@ -19,7 +19,7 @@ internal class SecurityJsonViewControllerAdvice() : AbstractMappingJacksonRespon
     contentType: MediaType?,
     returnType: MethodParameter?,
     request: ServerHttpRequest?,
-    response: ServerHttpResponse?
+    response: ServerHttpResponse?,
   ) {
     if (SecurityContextHolder.getContext().authentication != null &&
       SecurityContextHolder.getContext().authentication.authorities != null

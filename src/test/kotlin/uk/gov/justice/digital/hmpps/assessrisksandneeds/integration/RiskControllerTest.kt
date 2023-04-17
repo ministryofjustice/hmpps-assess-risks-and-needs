@@ -36,11 +36,11 @@ class RiskControllerTest : IntegrationTestBase() {
             riskInCommunity = mapOf(
               RiskLevel.LOW to listOf("Children", "Known Adult"),
               RiskLevel.MEDIUM to listOf("Public"),
-              RiskLevel.HIGH to listOf("Staff")
+              RiskLevel.HIGH to listOf("Staff"),
             ),
             assessedOn = null,
-            overallRiskLevel = RiskLevel.VERY_HIGH
-          )
+            overallRiskLevel = RiskLevel.VERY_HIGH,
+          ),
         )
       }
   }
@@ -63,16 +63,16 @@ class RiskControllerTest : IntegrationTestBase() {
             mapOf(
               RiskLevel.LOW to listOf("Children", "Known Adult"),
               RiskLevel.MEDIUM to listOf("Public"),
-              RiskLevel.HIGH to listOf("Staff")
+              RiskLevel.HIGH to listOf("Staff"),
             ),
             mapOf(
               RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
               RiskLevel.HIGH to listOf("Prisoners"),
-              RiskLevel.VERY_HIGH to listOf("Staff")
+              RiskLevel.VERY_HIGH to listOf("Staff"),
             ),
             assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-            RiskLevel.VERY_HIGH
-          )
+            RiskLevel.VERY_HIGH,
+          ),
         )
       }
   }
@@ -91,16 +91,16 @@ class RiskControllerTest : IntegrationTestBase() {
               risk = ResponseDto.NO,
               previous = ResponseDto.YES,
               current = ResponseDto.YES,
-              currentConcernsText = "Suicide and/or Self-harm current concerns"
+              currentConcernsText = "Suicide and/or Self-harm current concerns",
             ),
             selfHarm = RiskDto(
-              risk = ResponseDto.DK
+              risk = ResponseDto.DK,
             ),
             custody = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
               previousConcernsText = "Coping in custody / hostel setting previous concerns",
-              current = ResponseDto.NA
+              current = ResponseDto.NA,
             ),
             hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.DK, current = ResponseDto.NO),
             vulnerability = RiskDto(
@@ -108,10 +108,10 @@ class RiskControllerTest : IntegrationTestBase() {
               previous = ResponseDto.YES,
               previousConcernsText = "Vulnerability previous concerns free text",
               current = ResponseDto.YES,
-              currentConcernsText = "Vulnerability current concerns free text"
+              currentConcernsText = "Vulnerability current concerns free text",
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
-          )
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+          ),
         )
       }
   }
@@ -130,16 +130,16 @@ class RiskControllerTest : IntegrationTestBase() {
               risk = ResponseDto.NO,
               previous = ResponseDto.YES,
               current = ResponseDto.YES,
-              currentConcernsText = "Suicide and/or Self-harm current concerns"
+              currentConcernsText = "Suicide and/or Self-harm current concerns",
             ),
             selfHarm = RiskDto(
-              risk = ResponseDto.DK
+              risk = ResponseDto.DK,
             ),
             custody = RiskDto(
               risk = ResponseDto.YES,
               previous = ResponseDto.YES,
               previousConcernsText = "Coping in custody / hostel setting previous concerns",
-              current = ResponseDto.NA
+              current = ResponseDto.NA,
             ),
             hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.DK, current = ResponseDto.NO),
             vulnerability = RiskDto(
@@ -147,10 +147,10 @@ class RiskControllerTest : IntegrationTestBase() {
               previous = ResponseDto.YES,
               previousConcernsText = "Vulnerability previous concerns free text",
               current = ResponseDto.YES,
-              currentConcernsText = "Vulnerability current concerns free text"
+              currentConcernsText = "Vulnerability current concerns free text",
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
-          )
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+          ),
         )
       }
   }
@@ -166,8 +166,8 @@ class RiskControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           ErrorResponse(
             status = 404,
-            developerMessage = "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN"
-          )
+            developerMessage = "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN",
+          ),
         )
       }
   }
@@ -186,8 +186,8 @@ class RiskControllerTest : IntegrationTestBase() {
             null,
             null,
             null,
-            null
-          )
+            null,
+          ),
         )
       }
   }
@@ -206,8 +206,8 @@ class RiskControllerTest : IntegrationTestBase() {
             controlIssuesDisruptiveBehaviour = ResponseDto.YES,
             breachOfTrust = ResponseDto.DK,
             riskToOtherPrisoners = ResponseDto.YES,
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
-          )
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+          ),
         )
       }
   }
@@ -227,37 +227,37 @@ class RiskControllerTest : IntegrationTestBase() {
                 risk = ResponseDto.NO,
                 previous = ResponseDto.YES,
                 current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns"
+                currentConcernsText = "Suicide and/or Self-harm current concerns",
               ),
               selfHarm = RiskDto(
-                risk = ResponseDto.DK
+                risk = ResponseDto.DK,
               ),
               custody = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.NA
+                current = ResponseDto.NA,
               ),
               hostelSetting = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.DK,
-                current = ResponseDto.NO
+                current = ResponseDto.NO,
               ),
               vulnerability = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 previousConcernsText = "Vulnerability previous concerns free text",
                 current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text"
+                currentConcernsText = "Vulnerability current concerns free text",
               ),
-              assessedOn = null
+              assessedOn = null,
             ),
             OtherRoshRisksDto(
               ResponseDto.YES,
               ResponseDto.YES,
               ResponseDto.DK,
               ResponseDto.YES,
-              assessedOn = null
+              assessedOn = null,
             ),
             RiskRoshSummaryDto(
               "whoisAtRisk",
@@ -268,18 +268,18 @@ class RiskControllerTest : IntegrationTestBase() {
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff")
+                RiskLevel.HIGH to listOf("Staff"),
               ),
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
                 RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff")
+                RiskLevel.VERY_HIGH to listOf("Staff"),
               ),
               assessedOn = null,
-              overallRiskLevel = RiskLevel.VERY_HIGH
+              overallRiskLevel = RiskLevel.VERY_HIGH,
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
-          )
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+          ),
         )
       }
   }
@@ -299,41 +299,41 @@ class RiskControllerTest : IntegrationTestBase() {
                 risk = ResponseDto.NO,
                 previous = ResponseDto.YES,
                 current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns"
+                currentConcernsText = "Suicide and/or Self-harm current concerns",
               ),
               selfHarm = RiskDto(
                 risk = ResponseDto.DK,
-                currentConcernsText = "Suicide and/or Self-harm current concerns"
+                currentConcernsText = "Suicide and/or Self-harm current concerns",
               ),
               custody = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 previousConcernsText = "Coping in custody / hostel setting previous concerns",
                 current = ResponseDto.NA,
-                currentConcernsText = "Coping in custody / hostel setting current concerns"
+                currentConcernsText = "Coping in custody / hostel setting current concerns",
               ),
               hostelSetting = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.DK,
                 previousConcernsText = "Coping in custody / hostel setting previous concerns",
                 current = ResponseDto.NO,
-                currentConcernsText = "Coping in custody / hostel setting current concerns"
+                currentConcernsText = "Coping in custody / hostel setting current concerns",
               ),
               vulnerability = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 previousConcernsText = "Vulnerability previous concerns free text",
                 current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text"
+                currentConcernsText = "Vulnerability current concerns free text",
               ),
-              assessedOn = null
+              assessedOn = null,
             ),
             OtherRoshRisksDto(
               ResponseDto.YES,
               ResponseDto.YES,
               ResponseDto.DK,
               ResponseDto.YES,
-              assessedOn = null
+              assessedOn = null,
             ),
             RiskRoshSummaryDto(
               "whoisAtRisk",
@@ -344,18 +344,18 @@ class RiskControllerTest : IntegrationTestBase() {
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff")
+                RiskLevel.HIGH to listOf("Staff"),
               ),
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
                 RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff")
+                RiskLevel.VERY_HIGH to listOf("Staff"),
               ),
               assessedOn = null,
-              overallRiskLevel = RiskLevel.VERY_HIGH
+              overallRiskLevel = RiskLevel.VERY_HIGH,
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4)
-          )
+            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+          ),
         )
       }
   }
@@ -381,11 +381,11 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.MEDIUM to listOf("Public"),
             ),
             mapOf(
-              RiskLevel.LOW to listOf("Public", "Known Adult")
+              RiskLevel.LOW to listOf("Public", "Known Adult"),
             ),
             assessedOn = null,
-            RiskLevel.MEDIUM
-          )
+            RiskLevel.MEDIUM,
+          ),
         )
       }
   }

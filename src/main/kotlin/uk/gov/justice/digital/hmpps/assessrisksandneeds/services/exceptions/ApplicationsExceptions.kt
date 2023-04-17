@@ -18,14 +18,14 @@ class ExternalApiEntityNotFoundException(
   msg: String? = "",
   val method: HttpMethod,
   val url: String,
-  val client: ExternalService
+  val client: ExternalService,
 ) : RuntimeException(msg)
 
 class ExternalApiAuthorisationException(
   msg: String? = "",
   val method: HttpMethod,
   val url: String,
-  val client: ExternalService
+  val client: ExternalService,
 ) : RuntimeException(msg)
 
 class ExternalApiForbiddenException(
@@ -33,26 +33,26 @@ class ExternalApiForbiddenException(
   val method: HttpMethod,
   val url: String,
   val client: ExternalService,
-  var moreInfo: List<String> = emptyList()
+  var moreInfo: List<String> = emptyList(),
 ) : RuntimeException(msg)
 
 class ExternalApiInvalidRequestException(
   msg: String? = "",
   val method: HttpMethod,
   val url: String,
-  val client: ExternalService
+  val client: ExternalService,
 ) : RuntimeException(msg)
 
 class ExternalApiUnknownException(
   msg: String? = "",
   val method: HttpMethod,
   val url: String,
-  val client: ExternalService
+  val client: ExternalService,
 ) : RuntimeException(msg)
 
 class ExternalApiDuplicateOffenderRecordException(
   msg: String? = "",
   val method: HttpMethod,
   val url: String,
-  val client: ExternalService
+  val client: ExternalService,
 ) : RuntimeException(msg)

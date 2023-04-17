@@ -16,13 +16,12 @@ class SupplementaryRiskDtoTest {
 
   @Test
   fun `test Source from unknown String source throws Exception`() {
-
     val exception = assertThrows<IllegalArgumentException> {
       Source.fromString("UNKNOWN")
     }
     assertEquals(
       "Unknown Source UNKNOWN",
-      exception.message
+      exception.message,
     )
   }
 
@@ -35,13 +34,12 @@ class SupplementaryRiskDtoTest {
 
   @Test
   fun `test User Type from from unknown String user type throws Exception`() {
-
     val exception = assertThrows<IllegalArgumentException> {
       UserType.fromString("BLABLA")
     }
     assertEquals(
       "Unknown User Type BLABLA",
-      exception.message
+      exception.message,
     )
   }
 }

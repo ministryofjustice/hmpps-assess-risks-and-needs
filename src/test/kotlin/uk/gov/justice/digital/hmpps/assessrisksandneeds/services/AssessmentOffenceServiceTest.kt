@@ -57,8 +57,8 @@ class AssessmentOffenceServiceTest {
           assessmentStatus = "COMPLETE",
           patternOfOffending = "patternOfOffending",
           offenceInvolved = listOf("Carrying or using a weapon"),
-          laterWIPAssessmentExists = true
-        )
+          laterWIPAssessmentExists = true,
+        ),
       ),
       timeline = listOf(
         TimelineDto(
@@ -82,8 +82,8 @@ class AssessmentOffenceServiceTest {
           initiationDate = initiationDate,
           status = "COMPLETE",
           completedDate = dateCompleted,
-        )
-      )
+        ),
+      ),
     )
     every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
 
@@ -121,10 +121,10 @@ class AssessmentOffenceServiceTest {
               patternOfOffending = "patternOfOffending",
               offenceInvolved = listOf("Carrying or using a weapon"),
               assessmentType = "LAYER1",
-              laterWIPAssessmentExists = true
-            )
-          )
-        )
+              laterWIPAssessmentExists = true,
+            ),
+          ),
+        ),
       )
   }
 
@@ -145,8 +145,8 @@ class AssessmentOffenceServiceTest {
           initiationDate = initiationDate,
           assessmentStatus = "COMPLETE",
           patternOfOffending = "patternOfOffending",
-          offenceInvolved = listOf("Carrying or using a weapon")
-        )
+          offenceInvolved = listOf("Carrying or using a weapon"),
+        ),
       ),
       timeline = listOf(
         TimelineDto(
@@ -176,8 +176,8 @@ class AssessmentOffenceServiceTest {
           initiationDate = initiationDate.plusDays(1),
           status = "COMPLETE",
           completedDate = dateCompleted.plusDays(1),
-        )
-      )
+        ),
+      ),
     )
     every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
 
@@ -223,9 +223,9 @@ class AssessmentOffenceServiceTest {
               patternOfOffending = null,
               offenceInvolved = emptyList(),
               assessmentType = "LAYER1",
-            )
-          )
-        )
+            ),
+          ),
+        ),
       )
   }
 
@@ -252,8 +252,8 @@ class AssessmentOffenceServiceTest {
           initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
           status = "SIGNED",
           completedDate = null,
-        )
-      )
+        ),
+      ),
     )
     every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
 
@@ -281,9 +281,9 @@ class AssessmentOffenceServiceTest {
               initiationDate = LocalDateTime.of(2022, 1, 2, 12, 0),
               assessmentStatus = "SIGNED",
               assessmentType = "LAYER1",
-            )
-          )
-        )
+            ),
+          ),
+        ),
       )
   }
 
@@ -294,7 +294,7 @@ class AssessmentOffenceServiceTest {
     every {
       assessmentClient.getAssessmentOffence(
         any(),
-        any()
+        any(),
       )
     }.throws(EntityNotFoundException("Bad crn"))
 

@@ -14,5 +14,5 @@ data class AllRoshRiskDto(
   val summary: RiskRoshSummaryDto,
 
   @JsonView(View.AllRisksView::class)
-  val assessedOn: LocalDateTime?
+  val assessedOn: LocalDateTime?,
 )

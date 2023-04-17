@@ -28,5 +28,5 @@ data class RoshRiskToSelfDto(
 
   @Schema(description = "The date and time that the assessment was completed")
   @JsonView(View.CrsProvider::class, View.SingleRisksView::class)
-  val assessedOn: LocalDateTime?
+  val assessedOn: LocalDateTime?,
 )

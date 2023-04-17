@@ -36,19 +36,18 @@ import java.time.LocalDateTime
 @SqlGroup(
   Sql(
     scripts = ["classpath:rsrPredictorHistory/before-test.sql"],
-    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
+    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
   ),
   Sql(
     scripts = ["classpath:rsrPredictorHistory/after-test.sql"],
     config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
-    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-  )
+    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+  ),
 )
 class RiskPredictorsControllerTest : IntegrationTestBase() {
 
   @Test
   fun `calculate rsr predictors returns rsr scoring`() {
-
     val requestBody = OffenderAndOffencesDto(
       crn = "X1345",
       gender = Gender.MALE,
@@ -89,13 +88,13 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
           kidnapping = true,
           firearmPossession = true,
           robbery = true,
-          offencesWithWeapon = true
+          offencesWithWeapon = true,
         ),
         currentOffences = CurrentOffencesDto(
           firearmPossession = true,
-          offencesWithWeapon = true
-        )
-      )
+          offencesWithWeapon = true,
+        ),
+      ),
     )
 
     webTestClient.post()
@@ -115,24 +114,29 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
             scoreType = ScoreType.STATIC,
             scores = mapOf(
               PredictorSubType.RSR to Score(
-                level = ScoreLevel.HIGH, score = BigDecimal("11.34"), isValid = true
+                level = ScoreLevel.HIGH,
+                score = BigDecimal("11.34"),
+                isValid = true,
               ),
               PredictorSubType.OSPC to Score(
-                level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+                level = ScoreLevel.NOT_APPLICABLE,
+                score = BigDecimal("0"),
+                isValid = false,
               ),
               PredictorSubType.OSPI to Score(
-                level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
+                level = ScoreLevel.NOT_APPLICABLE,
+                score = BigDecimal("0"),
+                isValid = false,
               ),
             ),
-            errorCount = 0
-          )
+            errorCount = 0,
+          ),
         )
       }
   }
 
   @Test
   fun `calculate rsr predictors returns bad request if crn is null and calculation should be stored`() {
-
     val requestBody = OffenderAndOffencesDto(
       crn = null,
       gender = Gender.MALE,
@@ -173,13 +177,13 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
           kidnapping = true,
           firearmPossession = true,
           robbery = true,
-          offencesWithWeapon = true
+          offencesWithWeapon = true,
         ),
         currentOffences = CurrentOffencesDto(
           firearmPossession = true,
-          offencesWithWeapon = true
-        )
-      )
+          offencesWithWeapon = true,
+        ),
+      ),
     )
 
     webTestClient.post()

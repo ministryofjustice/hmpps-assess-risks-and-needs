@@ -51,7 +51,7 @@ data class VictimDetailDto(
   val age: String? = null,
   val gender: String? = null,
   val ethnicCategory: String? = null,
-  val victimRelation: String? = null
+  val victimRelation: String? = null,
 )
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)

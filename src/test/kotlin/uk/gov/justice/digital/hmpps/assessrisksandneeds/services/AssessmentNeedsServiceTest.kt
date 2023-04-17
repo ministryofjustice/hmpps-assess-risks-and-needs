@@ -25,7 +25,6 @@ class AssessmentNeedsServiceTest {
 
   @Test
   fun `get assessment needs by crn returns identified needs`() {
-
     val crn = "CRN123"
     val date = LocalDateTime.now()
 
@@ -34,7 +33,7 @@ class AssessmentNeedsServiceTest {
     } returns OffenderNeedsDto(
       needs = allOffenderNeeds(),
       historicStatus = "CURRENT",
-      assessedOn = date
+      assessedOn = date,
     )
 
     val needs = assessmentNeedsService.getAssessmentNeeds(crn)
@@ -46,7 +45,6 @@ class AssessmentNeedsServiceTest {
 
   @Test
   fun `get assessment needs by crn includes unanswered needs`() {
-
     val crn = "CRN123"
     val date = LocalDateTime.now()
 
@@ -55,7 +53,7 @@ class AssessmentNeedsServiceTest {
     } returns OffenderNeedsDto(
       needs = offenderNeedsWithUnanswered(),
       historicStatus = "CURRENT",
-      assessedOn = date
+      assessedOn = date,
     )
 
     val needs = assessmentNeedsService.getAssessmentNeeds(crn)
@@ -67,7 +65,6 @@ class AssessmentNeedsServiceTest {
 
   @Test
   fun `get assessment needs by crn includes not identified needs`() {
-
     val crn = "CRN123"
     val date = LocalDateTime.now()
 
@@ -77,7 +74,7 @@ class AssessmentNeedsServiceTest {
       OffenderNeedsDto(
         needs = offenderNeedsWithNotIdentified(),
         historicStatus = "CURRENT",
-        assessedOn = date
+        assessedOn = date,
       )
 
     val needs = assessmentNeedsService.getAssessmentNeeds(crn)
@@ -97,7 +94,7 @@ class AssessmentNeedsServiceTest {
     } returns OffenderNeedsDto(
       emptyList(),
       date,
-      "CURRENT"
+      "CURRENT",
     )
 
     val exception = assertThrows<EntityNotFoundException> {
@@ -105,7 +102,7 @@ class AssessmentNeedsServiceTest {
     }
     assertEquals(
       "No needs found for CRN: $crn",
-      exception.message
+      exception.message,
     )
   }
 
@@ -119,7 +116,7 @@ class AssessmentNeedsServiceTest {
     } returns OffenderNeedsDto(
       allOffenderNeeds(),
       date,
-      "HISTORIC"
+      "HISTORIC",
     )
 
     val exception = assertThrows<EntityNotFoundException> {
@@ -127,19 +124,19 @@ class AssessmentNeedsServiceTest {
     }
     assertEquals(
       "Current needs for CRN: $crn could not be found",
-      exception.message
+      exception.message,
     )
   }
 
   private fun unansweredNeeds() = listOf(
     AssessmentNeedDto(
       section = "THINKING_AND_BEHAVIOUR",
-      name = "Thinking and behaviour"
+      name = "Thinking and behaviour",
     ),
     AssessmentNeedDto(
       section = "ATTITUDES",
-      name = "Attitudes"
-    )
+      name = "Attitudes",
+    ),
   )
 
   private fun notIdentifiedNeeds() = listOf(
@@ -151,7 +148,7 @@ class AssessmentNeedsServiceTest {
       riskOfReoffending = false,
       flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false
+      identifiedAsNeed = false,
     ),
     AssessmentNeedDto(
       section = "ATTITUDES",
@@ -161,8 +158,8 @@ class AssessmentNeedsServiceTest {
       riskOfReoffending = false,
       flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false
-    )
+      identifiedAsNeed = false,
+    ),
   )
 
   private fun allOffenderNeeds() = listOf(
@@ -175,7 +172,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "FINANCIAL_MANAGEMENT_AND_INCOME",
@@ -186,7 +183,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "ACCOMMODATION",
@@ -197,7 +194,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
@@ -208,7 +205,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "RELATIONSHIPS",
@@ -219,7 +216,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "LIFESTYLE_AND_ASSOCIATES",
@@ -230,7 +227,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "DRUG_MISUSE",
@@ -241,7 +238,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "ALCOHOL_MISUSE",
@@ -252,7 +249,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "THINKING_AND_BEHAVIOUR",
@@ -263,7 +260,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "ATTITUDES",
@@ -274,8 +271,8 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
-    )
+      needScore = 2,
+    ),
   )
 
   private fun offenderNeedsWithNotIdentified() = listOf(
@@ -288,7 +285,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "FINANCIAL_MANAGEMENT_AND_INCOME",
@@ -299,7 +296,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "ACCOMMODATION",
@@ -310,7 +307,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
@@ -321,7 +318,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "RELATIONSHIPS",
@@ -332,7 +329,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "LIFESTYLE_AND_ASSOCIATES",
@@ -343,7 +340,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "DRUG_MISUSE",
@@ -354,7 +351,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "ALCOHOL_MISUSE",
@@ -365,7 +362,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "THINKING_AND_BEHAVIOUR",
@@ -375,7 +372,7 @@ class AssessmentNeedsServiceTest {
       riskOfReoffending = false,
       flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false
+      identifiedAsNeed = false,
     ),
     OffenderNeedDto(
       section = "ATTITUDES",
@@ -385,8 +382,8 @@ class AssessmentNeedsServiceTest {
       riskOfReoffending = false,
       flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false
-    )
+      identifiedAsNeed = false,
+    ),
   )
 
   private fun offenderNeedsWithUnanswered() = listOf(
@@ -399,7 +396,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "FINANCIAL_MANAGEMENT_AND_INCOME",
@@ -410,7 +407,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "ACCOMMODATION",
@@ -421,7 +418,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
@@ -432,7 +429,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "RELATIONSHIPS",
@@ -443,7 +440,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "LIFESTYLE_AND_ASSOCIATES",
@@ -454,7 +451,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "DRUG_MISUSE",
@@ -465,7 +462,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
+      needScore = 2,
     ),
     OffenderNeedDto(
       section = "ALCOHOL_MISUSE",
@@ -476,7 +473,7 @@ class AssessmentNeedsServiceTest {
       flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
       identifiedAsNeed = true,
-      needScore = 2
-    )
+      needScore = 2,
+    ),
   )
 }

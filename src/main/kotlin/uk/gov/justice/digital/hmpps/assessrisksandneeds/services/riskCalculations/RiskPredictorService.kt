@@ -29,7 +29,7 @@ class RiskPredictorService(
   private val communityClient: CommunityApiRestClient,
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository,
   private val riskCalculatorService: RiskCalculatorService,
-  @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper
+  @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -41,9 +41,8 @@ class RiskPredictorService(
     final: Boolean,
     source: PredictorSource,
     sourceId: String,
-    algorithmVersion: String? = null
+    algorithmVersion: String? = null,
   ): RiskPredictorsDto {
-
     if (offenderAndOffences.crn == null && final) throw IncorrectInputParametersException("Crn can't be null for a final Predictor calculation")
     val predictors = riskCalculatorService.calculatePredictorScores(predictorType, offenderAndOffences, algorithmVersion)
 
@@ -53,8 +52,8 @@ class RiskPredictorService(
         predictors.toOffenderPredictorsHistory(
           offenderAndOffences,
           source,
-          sourceId
-        )
+          sourceId,
+        ),
       )
     }
     return predictors
@@ -63,9 +62,8 @@ class RiskPredictorService(
   private fun RiskPredictorsDto.toOffenderPredictorsHistory(
     offenderAndOffencesDto: OffenderAndOffencesDto,
     source: PredictorSource,
-    sourceId: String
+    sourceId: String,
   ): OffenderPredictorsHistoryEntity {
-
     val offenderPredictorsHistoryEntity = OffenderPredictorsHistoryEntity(
       predictorType = type,
       algorithmVersion = algorithmVersion,
@@ -76,7 +74,7 @@ class RiskPredictorService(
       sourceAnswers = offenderAndOffencesDto.toSourceAnswers(offenderAndOffencesDto.crn),
       createdBy = RequestData.getUserName(),
       assessmentCompletedDate = offenderAndOffencesDto.assessmentDate,
-      scoreType = scoreType!!
+      scoreType = scoreType!!,
     )
     this.scores.toPredictors(offenderPredictorsHistoryEntity)
     return offenderPredictorsHistoryEntity
@@ -137,7 +135,7 @@ class RiskPredictorService(
     )
 
     return Klaxon().parse<Map<String, Any>>(
-      objectMapper.writeValueAsString(sourceAnswers)
+      objectMapper.writeValueAsString(sourceAnswers),
     ) ?: throw PredictorCalculationError("Error parsing answers for CRN: $crn")
   }
 

@@ -19,5 +19,5 @@ data class OasysRSRPredictorsDto(
   val errorCount: Int,
   val errorMessage: String? = null,
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  val calculationDateAndTime: LocalDateTime
+  val calculationDateAndTime: LocalDateTime,
 )

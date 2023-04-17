@@ -7,5 +7,5 @@ class RsrScoreDto(
   val staticOrDynamic: ScoreType? = null,
   val source: RsrScoreSource,
   val algorithmVersion: String? = null,
-  val scoreLevel: ScoreLevel? = null
+  val scoreLevel: ScoreLevel? = null,
 )

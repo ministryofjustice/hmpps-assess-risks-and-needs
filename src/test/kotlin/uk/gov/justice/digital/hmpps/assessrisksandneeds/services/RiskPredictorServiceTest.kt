@@ -111,13 +111,13 @@ class RiskPredictorServiceTest {
         kidnapping = true,
         firearmPossession = true,
         robbery = true,
-        offencesWithWeapon = true
+        offencesWithWeapon = true,
       ),
       currentOffences = CurrentOffencesDto(
         firearmPossession = true,
-        offencesWithWeapon = true
-      )
-    )
+        offencesWithWeapon = true,
+      ),
+    ),
   )
 
   @BeforeEach
@@ -138,7 +138,7 @@ class RiskPredictorServiceTest {
         communityApiRestClient,
         offenderPredictorsHistoryRepository,
         riskCalculatorService,
-        objectMapper
+        objectMapper,
       )
 
     @Test
@@ -154,7 +154,7 @@ class RiskPredictorServiceTest {
           offencesAndOffencesDto,
           false,
           PredictorSource.ASSESSMENTS_API,
-          "sourceId"
+          "sourceId",
         )
       }
     }
@@ -176,7 +176,7 @@ class RiskPredictorServiceTest {
               ogpTotWesc = BigDecimal.valueOf(10),
               ogp1Year = BigDecimal.valueOf(4),
               ogp2Year = BigDecimal.valueOf(8),
-              ogpRisk = LOW.type
+              ogpRisk = LOW.type,
             ),
             ovpScoreDto = OasysOvpDto(
               ovpStWesc = BigDecimal.valueOf(14),
@@ -184,27 +184,27 @@ class RiskPredictorServiceTest {
               ovpTotWesc = BigDecimal.valueOf(17),
               ovp1Year = BigDecimal.valueOf(4),
               ovp2Year = BigDecimal.valueOf(7),
-              ovpRisk = LOW.type
+              ovpRisk = LOW.type,
             ),
             ogrScoreDto = OasysOgrDto(
               ogrs31Year = BigDecimal.valueOf(3),
               ogrs32Year = BigDecimal.valueOf(5),
-              ogrs3RiskRecon = LOW.type
+              ogrs3RiskRecon = LOW.type,
             ),
             rsrScoreDto = OasysRsrDto(
               rsrPercentageScore = BigDecimal.valueOf(50.1234),
               rsrStaticOrDynamic = ScoreType.DYNAMIC,
               rsrAlgorithmVersion = "11",
-              scoreLevel = MEDIUM.type
+              scoreLevel = MEDIUM.type,
             ),
             ospScoreDto = OasysOspDto(
               ospImagePercentageScore = BigDecimal.valueOf(2.81),
               ospContactPercentageScore = BigDecimal.valueOf(1.07),
               ospImageScoreLevel = MEDIUM.type,
-              ospContactScoreLevel = MEDIUM.type
-            )
-          )
-        )
+              ospContactScoreLevel = MEDIUM.type,
+            ),
+          ),
+        ),
       )
 
       every {
@@ -282,7 +282,7 @@ class RiskPredictorServiceTest {
         ospiBand = "Not Applicable",
         validOspiScore = "A",
         errorCount = 0,
-        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
+        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25),
       )
 
       val predictorScores = riskPredictorsService.calculatePredictorScores(
@@ -290,7 +290,7 @@ class RiskPredictorServiceTest {
         offencesAndOffencesDto,
         false,
         PredictorSource.ASSESSMENTS_API,
-        "sourceId"
+        "sourceId",
       )
 
       assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
@@ -298,18 +298,24 @@ class RiskPredictorServiceTest {
       assertThat(predictorScores.scoreType).isEqualTo(STATIC)
       assertThat(predictorScores.scores[PredictorSubType.RSR]).isEqualTo(
         Score(
-          level = HIGH, score = BigDecimal("11.34"), isValid = true
-        )
+          level = HIGH,
+          score = BigDecimal("11.34"),
+          isValid = true,
+        ),
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC]).isEqualTo(
         Score(
-          level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-        )
+          level = ScoreLevel.NOT_APPLICABLE,
+          score = BigDecimal("0"),
+          isValid = false,
+        ),
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPI]).isEqualTo(
         Score(
-          level = ScoreLevel.NOT_APPLICABLE, score = BigDecimal("0"), isValid = false
-        )
+          level = ScoreLevel.NOT_APPLICABLE,
+          score = BigDecimal("0"),
+          isValid = false,
+        ),
       )
     }
 
@@ -332,7 +338,7 @@ class RiskPredictorServiceTest {
         validOspiScore = "A",
         errorCount = 9,
         errorMessage = "Missing detail on previous murder (R1.2).\nMissing detail on previous wounding or gbh (R1.2).\nMissing detail on previous kidnapping (R1.2).\nMissing detail on previous firearm (R1.2).\nMissing detail on previous robbery (R1.2).\nMissing detail on previous aggravated burglary (R1.2).\nMissing detail on previous weapon (R1.2).\nMissing detail on previous criminal damage with intent to endanger life (R1.2).\nMissing detail on previous arson (R1.2).\n",
-        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
+        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25),
       )
 
       val predictorScores = riskPredictorsService.calculatePredictorScores(
@@ -375,7 +381,7 @@ class RiskPredictorServiceTest {
         ospiBand = "Not Applicable",
         validOspiScore = "A",
         errorCount = 0,
-        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25)
+        calculationDateAndTime = LocalDateTime.of(2021, 7, 30, 16, 24, 25),
       )
 
       val source = PredictorSource.ASSESSMENTS_API
@@ -384,7 +390,7 @@ class RiskPredictorServiceTest {
 
       every {
         offenderPredictorsHistoryRepository.save(
-          capture(offenderPredictorsHistoryEntitySlot)
+          capture(offenderPredictorsHistoryEntitySlot),
         )
       } returns OffenderPredictorsHistoryEntity(
         offenderPredictorId = 1,
@@ -397,7 +403,7 @@ class RiskPredictorServiceTest {
         predictorTriggerSourceId = sourceId,
         createdBy = RequestData.getUserName(),
         assessmentCompletedDate = LocalDateTime.of(2021, 7, 30, 16, 0),
-        scoreType = ScoreType.DYNAMIC
+        scoreType = ScoreType.DYNAMIC,
       )
 
       riskPredictorsService.calculatePredictorScores(
@@ -406,7 +412,7 @@ class RiskPredictorServiceTest {
         true,
         source,
         sourceId,
-        algorithmVersion
+        algorithmVersion,
       )
 
       with(offenderPredictorsHistoryEntitySlot.captured) {
@@ -440,7 +446,7 @@ class RiskPredictorServiceTest {
           offencesAndOffencesDto.copy(crn = null),
           true,
           PredictorSource.ASSESSMENTS_API,
-          "sourceId"
+          "sourceId",
         )
       }
     }
@@ -470,7 +476,7 @@ class RiskPredictorServiceTest {
         communityApiRestClient,
         offenderPredictorsHistoryRepository,
         riskCalculatorService,
-        objectMapper
+        objectMapper,
       )
 
     @Test
@@ -504,8 +510,8 @@ class RiskPredictorServiceTest {
           PredictorSubType.SNSV_1YR_BRIEF to Score(null, BigDecimal("0.009"), true),
           PredictorSubType.SNSV_2YR_BRIEF to Score(null, BigDecimal("0.010"), true),
           PredictorSubType.SNSV_1YR_EXTENDED to Score(null, BigDecimal("0.011"), true),
-          PredictorSubType.SNSV_2YR_EXTENDED to Score(null, BigDecimal("0.012"), true)
-        )
+          PredictorSubType.SNSV_2YR_EXTENDED to Score(null, BigDecimal("0.012"), true),
+        ),
       )
 
       val predictorScores = riskPredictorsService.calculatePredictorScores(
@@ -513,61 +519,61 @@ class RiskPredictorServiceTest {
         offencesAndOffencesDto,
         false,
         PredictorSource.ASSESSMENTS_API,
-        "sourceId"
+        "sourceId",
       )
 
       assertThat(predictorScores.calculatedAt).isEqualTo(LocalDateTime.of(2021, 7, 30, 16, 24, 25))
       assertThat(predictorScores.type).isEqualTo(PredictorType.RSR)
       assertThat(predictorScores.scoreType).isEqualTo(ScoreType.DYNAMIC)
       assertThat(predictorScores.scores[PredictorSubType.RSR]).isEqualTo(
-        Score(level = LOW, score = BigDecimal("1.50"), isValid = true)
+        Score(level = LOW, score = BigDecimal("1.50"), isValid = true),
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC]).isEqualTo(
-        Score(level = MEDIUM, score = BigDecimal("2.50"), isValid = true)
+        Score(level = MEDIUM, score = BigDecimal("2.50"), isValid = true),
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPI]).isEqualTo(
-        Score(level = HIGH, score = BigDecimal("3.50"), isValid = true)
+        Score(level = HIGH, score = BigDecimal("3.50"), isValid = true),
       )
       assertThat(predictorScores.scores[PredictorSubType.SNSV]).isEqualTo(
-        Score(level = null, score = BigDecimal("4.50"), isValid = true)
+        Score(level = null, score = BigDecimal("4.50"), isValid = true),
       )
       assertThat(predictorScores.scores[PredictorSubType.RSR_2YR_BRIEF]).isEqualTo(
-        Score(HIGH, BigDecimal("0.001"), true)
+        Score(HIGH, BigDecimal("0.001"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.RSR_1YR_BRIEF]).isEqualTo(
-        Score(null, BigDecimal("0.002"), true)
+        Score(null, BigDecimal("0.002"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.RSR_1YR_EXTENDED]).isEqualTo(
-        Score(null, BigDecimal("0.003"), true)
+        Score(null, BigDecimal("0.003"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.RSR_2YR_EXTENDED]).isEqualTo(
-        Score(HIGH, BigDecimal("0.004"), true)
+        Score(HIGH, BigDecimal("0.004"), true),
       )
 
       assertThat(predictorScores.scores[PredictorSubType.OSPI_1YR]).isEqualTo(
-        Score(null, BigDecimal("0.005"), true)
+        Score(null, BigDecimal("0.005"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPI_2YR]).isEqualTo(
-        Score(HIGH, BigDecimal("0.006"), true)
+        Score(HIGH, BigDecimal("0.006"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC_1YR]).isEqualTo(
-        Score(null, BigDecimal("0.007"), true)
+        Score(null, BigDecimal("0.007"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.OSPC_2YR]).isEqualTo(
-        Score(HIGH, BigDecimal("0.008"), true)
+        Score(HIGH, BigDecimal("0.008"), true),
       )
 
       assertThat(predictorScores.scores[PredictorSubType.SNSV_1YR_BRIEF]).isEqualTo(
-        Score(null, BigDecimal("0.009"), true)
+        Score(null, BigDecimal("0.009"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.SNSV_2YR_BRIEF]).isEqualTo(
-        Score(null, BigDecimal("0.010"), true)
+        Score(null, BigDecimal("0.010"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.SNSV_1YR_EXTENDED]).isEqualTo(
-        Score(null, BigDecimal("0.011"), true)
+        Score(null, BigDecimal("0.011"), true),
       )
       assertThat(predictorScores.scores[PredictorSubType.SNSV_2YR_EXTENDED]).isEqualTo(
-        Score(null, BigDecimal("0.012"), true)
+        Score(null, BigDecimal("0.012"), true),
       )
     }
 
@@ -603,8 +609,8 @@ class RiskPredictorServiceTest {
           PredictorSubType.SNSV_1YR_BRIEF to Score(null, BigDecimal("0.009"), true),
           PredictorSubType.SNSV_2YR_BRIEF to Score(null, BigDecimal("0.010"), true),
           PredictorSubType.SNSV_1YR_EXTENDED to Score(null, BigDecimal("0.011"), true),
-          PredictorSubType.SNSV_2YR_EXTENDED to Score(null, BigDecimal("0.012"), true)
-        )
+          PredictorSubType.SNSV_2YR_EXTENDED to Score(null, BigDecimal("0.012"), true),
+        ),
       )
 
       val source = PredictorSource.ASSESSMENTS_API
@@ -613,7 +619,7 @@ class RiskPredictorServiceTest {
 
       every {
         offenderPredictorsHistoryRepository.save(
-          capture(offenderPredictorsHistoryEntitySlot)
+          capture(offenderPredictorsHistoryEntitySlot),
         )
       }.returns(mockk())
 
@@ -623,7 +629,7 @@ class RiskPredictorServiceTest {
         true,
         source,
         sourceId,
-        algorithmVersion
+        algorithmVersion,
       )
 
       with(offenderPredictorsHistoryEntitySlot.captured) {
@@ -713,7 +719,7 @@ class RiskPredictorServiceTest {
           offencesAndOffencesDto.copy(crn = null),
           true,
           PredictorSource.ASSESSMENTS_API,
-          "sourceId"
+          "sourceId",
         )
       }
     }

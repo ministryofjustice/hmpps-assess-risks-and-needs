@@ -51,38 +51,38 @@ data class OffenderAndOffencesDto(
 
   @Schema(
     description = "Date of most recent sanction involving a sexual or sexually motivated offence",
-    example = "2020-01-01"
+    example = "2020-01-01",
   )
   @JsonFormat(pattern = "yyyy-MM-dd")
   val mostRecentSexualOffenceDate: LocalDate?,
 
   @Schema(
     description = "Number of previous or current sanctions involving contact adult sexual or sexually motivated offences",
-    example = "5"
+    example = "5",
   )
   val totalSexualOffencesInvolvingAnAdult: Int?,
 
   @Schema(
     description = "Number of previous or current sanctions involving contact child sexual or sexually motivated offences",
-    example = "5"
+    example = "5",
   )
   val totalSexualOffencesInvolvingAChild: Int?,
 
   @Schema(
     description = "Number of previous or current sanctions involving indecent child image sexual or sexually motivated offences",
-    example = "5"
+    example = "5",
   )
   val totalSexualOffencesInvolvingChildImages: Int?,
 
   @Schema(
     description = "Number of previous or current sanctions involving other non-contact sexual or sexually motivated offences",
-    example = "5"
+    example = "5",
   )
   val totalNonContactSexualOffences: Int?,
 
   @Schema(
     description = "Date of commencement of community sentence or earliest possible release from custody",
-    example = "2025-01-01"
+    example = "2025-01-01",
   )
   @JsonFormat(pattern = "yyyy-MM-dd")
   val earliestReleaseDate: LocalDate,
@@ -91,26 +91,26 @@ data class OffenderAndOffencesDto(
   val hasCompletedInterview: Boolean,
 
   @Schema(description = "Offences for dynamic scoring")
-  val dynamicScoringOffences: DynamicScoringOffencesDto? = null
+  val dynamicScoringOffences: DynamicScoringOffencesDto? = null,
 )
 
 data class DynamicScoringOffencesDto(
 
   @Schema(
     description = "Is the individual living in suitable accommodation?",
-    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING",
   )
   val hasSuitableAccommodation: ProblemsLevel?,
 
   @Schema(
     description = "Is the person unemployed or will be unemployed upon release?",
-    example = "NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING"
+    example = "NO, NOT_AVAILABLE_FOR_WORK, YES, MISSING",
   )
   val employment: EmploymentType?,
 
   @Schema(
     description = "What is the person's current relationship with their partner?",
-    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING",
   )
   val currentRelationshipWithPartner: ProblemsLevel?,
 
@@ -122,31 +122,31 @@ data class DynamicScoringOffencesDto(
 
   @Schema(
     description = "Is the person's current use of alcohol a problem?",
-    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING",
   )
   val alcoholUseIssues: ProblemsLevel?,
 
   @Schema(
     description = "Is there evidence of binge drinking or excessive use of alcohol in the last 6 months?",
-    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING",
   )
   val bingeDrinkingIssues: ProblemsLevel?,
 
   @Schema(
     description = "Is impulsivity a problem for the individual?",
-    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING",
   )
   val impulsivityIssues: ProblemsLevel?,
 
   @Schema(
     description = "Is temper control a problem for the individual?",
-    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING",
   )
   val temperControlIssues: ProblemsLevel?,
 
   @Schema(
     description = "Does the individual have pro-criminal attitudes?",
-    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING"
+    example = "NO_PROBLEMS, SOME_PROBLEMS, SIGNIFICANT_PROBLEMS, MISSING",
   )
   val proCriminalAttitudes: ProblemsLevel?,
 
@@ -154,7 +154,7 @@ data class DynamicScoringOffencesDto(
   val previousOffences: PreviousOffencesDto?,
 
   @Schema(description = "Current Offences")
-  val currentOffences: CurrentOffencesDto?
+  val currentOffences: CurrentOffencesDto?,
 )
 
 data class CurrentOffencesDto(
@@ -162,7 +162,7 @@ data class CurrentOffencesDto(
   val firearmPossession: Boolean?,
 
   @Schema(description = "Any other offence involving possession and/or use of weapons", example = "true")
-  val offencesWithWeapon: Boolean?
+  val offencesWithWeapon: Boolean?,
 )
 
 data class PreviousOffencesDto(
@@ -191,7 +191,7 @@ data class PreviousOffencesDto(
   val robbery: Boolean?,
 
   @Schema(description = "Any other offence involving possession and/or use of weapons", example = "true")
-  val offencesWithWeapon: Boolean?
+  val offencesWithWeapon: Boolean?,
 )
 
 class CurrentOffenceDto(
@@ -199,7 +199,7 @@ class CurrentOffenceDto(
   val offenceCode: String,
 
   @field:NotBlank(message = "offenceSubcode is a mandatory field and cannot be null or empty")
-  val offenceSubcode: String
+  val offenceSubcode: String,
 )
 
 enum class EmploymentType(val score: Int? = null) {

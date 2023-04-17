@@ -23,13 +23,13 @@ import java.util.UUID
 @SqlGroup(
   Sql(
     scripts = ["classpath:supplementaryrisk/before-test.sql"],
-    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
+    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
   ),
   Sql(
     scripts = ["classpath:supplementaryrisk/after-test.sql"],
     config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
-    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-  )
+    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+  ),
 )
 class SupplementaryRiskControllerTest : IntegrationTestBase() {
 
@@ -63,8 +63,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied"
-            )
+              developerMessage = "Access is denied",
+            ),
           )
         }
     }
@@ -80,8 +80,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 404,
-              developerMessage = "Error retrieving Supplementary Risk for supplementaryRiskUuid: 2e020e78-a80a-407f-bc78-e5f284e237e5"
-            )
+              developerMessage = "Error retrieving Supplementary Risk for supplementaryRiskUuid: 2e020e78-a80a-407f-bc78-e5f284e237e5",
+            ),
           )
         }
     }
@@ -104,8 +104,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 0),
               null,
-              "risk for children"
-            )
+              "risk for children",
+            ),
           )
         }
     }
@@ -128,8 +128,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 0),
               null,
-              "risk for children"
-            )
+              "risk for children",
+            ),
           )
         }
     }
@@ -158,8 +158,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied"
-            )
+              developerMessage = "Access is denied",
+            ),
           )
         }
     }
@@ -182,7 +182,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 7),
               null,
-              "risk to self"
+              "risk to self",
             ),
             SupplementaryRiskDto(
               UUID.fromString("6e020e78-a81c-407f-bc78-e5f284e237e5"),
@@ -199,10 +199,10 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
                 concernsSelfHarm = "Self harm concerns",
                 concernsSuicide = "Suicide concerns",
                 concernsHostel = "Hostel concerns",
-                concernsVulnerability = "Vulnerability concerns"
+                concernsVulnerability = "Vulnerability concerns",
               ),
-              "risk to self"
-            )
+              "risk to self",
+            ),
           )
         }
     }
@@ -239,8 +239,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied"
-            )
+              developerMessage = "Access is denied",
+            ),
           )
         }
     }
@@ -268,10 +268,10 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
                 concernsSelfHarm = "Self harm concerns",
                 concernsSuicide = "Suicide concerns",
                 concernsHostel = "Hostel concerns",
-                concernsVulnerability = "Vulnerability concerns"
+                concernsVulnerability = "Vulnerability concerns",
               ),
-              "risk to self"
-            )
+              "risk to self",
+            ),
           )
         }
     }
@@ -299,10 +299,10 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
                 concernsSelfHarm = "Self harm concerns",
                 concernsSuicide = "Suicide concerns",
                 concernsHostel = "Hostel concerns",
-                concernsVulnerability = "Vulnerability concerns"
+                concernsVulnerability = "Vulnerability concerns",
               ),
-              "risk to self"
-            )
+              "risk to self",
+            ),
           )
         }
     }
@@ -319,7 +319,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
       createdByUserType = "delius",
       createdDate = LocalDateTime.of(2019, 11, 14, 9, 7),
       redactedRisk = null,
-      riskSummaryComments = "risk to others"
+      riskSummaryComments = "risk to others",
     )
 
     @Test
@@ -344,8 +344,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied"
-            )
+              developerMessage = "Access is denied",
+            ),
           )
         }
     }
@@ -369,8 +369,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               "delius",
               LocalDateTime.of(2019, 11, 14, 9, 7),
               null,
-              "risk to others"
-            )
+              "risk to others",
+            ),
           )
         }
     }
@@ -388,21 +388,20 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied"
-            )
+              developerMessage = "Access is denied",
+            ),
           )
         }
     }
 
     @Test
     fun `409 returned when record for source already exists`() {
-
       val requestBody = CreateSupplementaryRiskDto(
         source = Source.INTERVENTION_REFERRAL,
         sourceId = "3e020e78-a81c-407f-bc78-e5f284e237e5",
         crn = "X123457",
         riskSummaryComments = "risk to others",
-        createdByUserType = "delius"
+        createdByUserType = "delius",
       )
 
       webTestClient.post().uri("/risks/supplementary")
@@ -424,7 +423,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
               createdDate = LocalDateTime.of(2019, 11, 14, 9, 5),
               riskSummaryComments = "risk to self",
               redactedRisk = null,
-            )
+            ),
           )
         }
     }
@@ -439,8 +438,8 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           concernsSelfHarm = "Self harm concerns",
           concernsSuicide = "Suicide concerns",
           concernsHostel = "Hostel concerns",
-          concernsVulnerability = "Vulnerability concerns"
-        )
+          concernsVulnerability = "Vulnerability concerns",
+        ),
       )
       webTestClient.post().uri("/risks/supplementary")
         .header("Content-Type", "application/json")
@@ -465,10 +464,10 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
                 concernsSelfHarm = "Self harm concerns",
                 concernsSuicide = "Suicide concerns",
                 concernsHostel = "Hostel concerns",
-                concernsVulnerability = "Vulnerability concerns"
+                concernsVulnerability = "Vulnerability concerns",
               ),
-              "risk to others"
-            )
+              "risk to others",
+            ),
           )
         }
     }

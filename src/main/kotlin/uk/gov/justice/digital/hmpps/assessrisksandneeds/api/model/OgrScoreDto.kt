@@ -5,5 +5,5 @@ import java.math.BigDecimal
 class OgrScoreDto(
   val oneYear: BigDecimal? = null,
   val twoYears: BigDecimal? = null,
-  val scoreLevel: ScoreLevel? = null
+  val scoreLevel: ScoreLevel? = null,
 )

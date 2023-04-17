@@ -45,7 +45,6 @@ class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
 
   @Test
   fun `store ONNX scores in predictor history`() {
-
     val crn = "X234567"
     val requestBody = createOffenderAndOffencesDto(crn, CurrentOffenceDto("138", "00"))
 
@@ -79,7 +78,6 @@ class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
 
   @Test
   fun `should return bad request status code for invalid offence code`() {
-
     val crn = "X234567"
     val requestBody = createOffenderAndOffencesDto(crn, CurrentOffenceDto("138X", "00"))
 
@@ -95,7 +93,6 @@ class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
   @ParameterizedTest
   @MethodSource("currentOffenceDtos")
   fun `should return bad request status code for empty offence codes`(currentOffence: CurrentOffenceDto, expectedErrorMessage: String) {
-
     val crn = "X234567"
     val requestBody = createOffenderAndOffencesDto(crn, currentOffence)
 
@@ -151,12 +148,12 @@ class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
         kidnapping = true,
         firearmPossession = true,
         robbery = true,
-        offencesWithWeapon = true
+        offencesWithWeapon = true,
       ),
       currentOffences = CurrentOffencesDto(
         firearmPossession = true,
-        offencesWithWeapon = true
-      )
-    )
+        offencesWithWeapon = true,
+      ),
+    ),
   )
 }
