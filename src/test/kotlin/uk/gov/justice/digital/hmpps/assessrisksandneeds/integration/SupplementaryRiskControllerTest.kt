@@ -63,7 +63,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied",
+              developerMessage = "Access Denied",
             ),
           )
         }
@@ -158,7 +158,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied",
+              developerMessage = "Access Denied",
             ),
           )
         }
@@ -239,7 +239,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied",
+              developerMessage = "Access Denied",
             ),
           )
         }
@@ -344,7 +344,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied",
+              developerMessage = "Access Denied",
             ),
           )
         }
@@ -388,7 +388,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
           assertThat(it.responseBody).isEqualTo(
             ErrorResponse(
               status = 403,
-              developerMessage = "Access is denied",
+              developerMessage = "Access Denied",
             ),
           )
         }
