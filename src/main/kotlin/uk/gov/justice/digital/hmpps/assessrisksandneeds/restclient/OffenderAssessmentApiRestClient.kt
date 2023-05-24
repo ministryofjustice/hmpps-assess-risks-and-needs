@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
@@ -58,7 +57,7 @@ class OffenderAssessmentApiRestClient {
         ),
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error(
           "4xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: " +
             "${it.statusCode().value()}",
@@ -70,7 +69,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error(
           "5xx Error retrieving Rosh sections for last year completed Assessment for crn $crn code: " +
             "${it.statusCode().value()}",
@@ -97,7 +96,7 @@ class OffenderAssessmentApiRestClient {
         path,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving needs for last year completed Assessment for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
@@ -106,7 +105,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error("5xx Error retrieving needs for last year completed Assessment for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve needs for last year completed Assessment for crn $crn",
@@ -134,7 +133,7 @@ class OffenderAssessmentApiRestClient {
         body,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error(
           "4xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: " +
             "${it.statusCode().value()}",
@@ -146,7 +145,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error(
           "5xx Error calculating $predictorType scoring for offender with crn ${offenderAndOffences.crn} code: " +
             "${it.statusCode().value()}",
@@ -173,7 +172,7 @@ class OffenderAssessmentApiRestClient {
         path,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error(
           "4xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}",
         )
@@ -184,7 +183,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error(
           "5xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}",
         )
@@ -209,7 +208,7 @@ class OffenderAssessmentApiRestClient {
         path,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
@@ -218,7 +217,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error("5xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve risk predictor scores for completed Assessments for crn $crn",
@@ -241,7 +240,7 @@ class OffenderAssessmentApiRestClient {
         path,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
@@ -250,7 +249,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error("5xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve assessment timeline for crn: $crn",
@@ -273,7 +272,7 @@ class OffenderAssessmentApiRestClient {
         path,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving risk predictor scores for last year completed Assessments for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
@@ -282,7 +281,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error("5xx Error retrieving risk predictor scores for last year completed Assessments for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve risk predictor scores for last year completed Assessments for crn $crn",
@@ -306,7 +305,7 @@ class OffenderAssessmentApiRestClient {
         path,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving assessment offence for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
@@ -315,7 +314,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error("5xx Error retrieving assessment offence for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve assessment offence for crn $crn",
@@ -404,7 +403,7 @@ class OffenderAssessmentApiRestClient {
         path,
       )
       .retrieve()
-      .onStatus(HttpStatus::is4xxClientError) {
+      .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving risk management plan for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
@@ -413,7 +412,7 @@ class OffenderAssessmentApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .onStatus(HttpStatus::is5xxServerError) {
+      .onStatus({ it.is5xxServerError }) {
         log.error("5xx Error retrieving risk management plan for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve risk management plan for crn $crn",

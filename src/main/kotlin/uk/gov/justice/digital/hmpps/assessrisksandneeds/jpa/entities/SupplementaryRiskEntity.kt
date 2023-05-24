@@ -1,25 +1,18 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType
-import com.vladmihalcea.hibernate.type.json.JsonStringType
+import com.vladmihalcea.hibernate.type.json.JsonType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
-import org.hibernate.annotations.TypeDefs
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.Table
 
 @Entity
 @Table(name = "supplementary_risk")
-@TypeDefs(
-  TypeDef(name = "json", typeClass = JsonStringType::class),
-  TypeDef(name = "jsonb", typeClass = JsonBinaryType::class),
-)
 class SupplementaryRiskEntity(
   @Id
   @Column(name = "SUPPLEMENTARY_RISK_ID")
@@ -47,7 +40,7 @@ class SupplementaryRiskEntity(
   @Column(name = "CREATED_BY")
   val createdBy: String,
 
-  @Type(type = "json")
+  @Type(JsonType::class)
   @Column(columnDefinition = "jsonb", name = "RISK_ANSWERS")
   val riskAnswers: Map<String, Any> = mutableMapOf(),
 

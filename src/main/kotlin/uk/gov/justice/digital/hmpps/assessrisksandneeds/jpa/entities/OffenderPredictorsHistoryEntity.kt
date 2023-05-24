@@ -1,10 +1,17 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType
-import com.vladmihalcea.hibernate.type.json.JsonStringType
+import com.vladmihalcea.hibernate.type.json.JsonType
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
-import org.hibernate.annotations.TypeDefs
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
@@ -14,23 +21,9 @@ import java.io.Serializable
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.persistence.CascadeType
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.OneToMany
-import javax.persistence.Table
 
 @Entity
 @Table(name = "offender_predictors_history")
-@TypeDefs(
-  TypeDef(name = "json", typeClass = JsonStringType::class),
-  TypeDef(name = "jsonb", typeClass = JsonBinaryType::class),
-)
 data class OffenderPredictorsHistoryEntity(
 
   @Id
@@ -61,7 +54,7 @@ data class OffenderPredictorsHistoryEntity(
   @Column(name = "SOURCE_ID")
   val predictorTriggerSourceId: String,
 
-  @Type(type = "json")
+  @Type(JsonType::class)
   @Column(columnDefinition = "jsonb", name = "SOURCE_ANSWERS")
   var sourceAnswers: Map<String, Any> = mutableMapOf(),
 

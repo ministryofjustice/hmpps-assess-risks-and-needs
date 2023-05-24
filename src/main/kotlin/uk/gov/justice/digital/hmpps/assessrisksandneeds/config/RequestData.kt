@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.config
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -9,8 +11,6 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class RequestData(excludeUris: String?) : HandlerInterceptor {
 

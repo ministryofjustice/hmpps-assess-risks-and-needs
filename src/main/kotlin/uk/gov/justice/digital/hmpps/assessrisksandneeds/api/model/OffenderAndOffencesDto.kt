@@ -2,10 +2,10 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 
 data class OffenderAndOffencesDto(
   @Schema(description = "Offender CRN", example = "DX12340A")
