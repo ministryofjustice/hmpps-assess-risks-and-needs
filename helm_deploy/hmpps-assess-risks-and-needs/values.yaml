@@ -60,6 +60,7 @@ generic-service:
     cloudplatform-live1-2: "3.8.51.207/32"
     cloudplatform-live1-3: "35.177.252.54/32"
     global-protect: "35.176.93.186/32"
+    hmpps-daresbury-park: "194.168.183.128/28"
     # from https://my.pingdom.com/probes/ipv4
     pingdom-1: "5.172.196.188"
     pingdom-2: "13.232.220.164"
