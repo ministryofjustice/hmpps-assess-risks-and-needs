@@ -1,7 +1,7 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.2.4"
-  kotlin("plugin.spring") version "1.9.0"
-  kotlin("plugin.jpa") version "1.9.0"
+  kotlin("plugin.spring") version "1.9.10"
+  kotlin("plugin.jpa") version "1.9.10"
 }
 
 configurations {
@@ -21,16 +21,16 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.apache.commons:commons-lang3")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
   implementation("com.zaxxer:HikariCP:5.0.1")
   implementation("org.postgresql:postgresql:42.6.0")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   implementation("com.beust:klaxon:5.6")
   implementation("com.microsoft.onnxruntime:onnxruntime:1.15.1")
   implementation("net.logstash.logback:logstash-logback-encoder:7.4")
-  runtimeOnly("com.h2database:h2:2.2.220")
+  runtimeOnly("com.h2database:h2:2.2.222")
   runtimeOnly("org.flywaydb:flyway-core")
-  testRuntimeOnly("com.h2database:h2:2.2.220")
+  testRuntimeOnly("com.h2database:h2:2.2.222")
   testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
@@ -39,7 +39,7 @@ dependencies {
     exclude(module = "mockito-core")
   }
   testImplementation("com.ninja-squad:springmockk:4.0.2")
-  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
+  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.1")
 }
 repositories {
   mavenCentral()
