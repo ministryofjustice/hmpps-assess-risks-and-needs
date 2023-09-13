@@ -29,6 +29,9 @@ class WebClientConfig {
   @Value("\${community-api.base-url}")
   private lateinit var communityApiBaseUrl: String
 
+  @Value("\${oasys-api.base-url}")
+  private lateinit var oasysApiBaseUrl: String
+
   @Value("\${feature.flags.auth-enabled:true}")
   private val authenticationEnabled = true
 
@@ -68,6 +71,15 @@ class WebClientConfig {
     return AuthenticatingRestClient(
       webClientFactory(assessmentApiBaseUrl, authorizedClientManager, bufferByteSize),
       "assessment-api-client",
+      authenticationEnabled,
+    )
+  }
+
+  @Bean
+  fun oasysApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
+    return AuthenticatingRestClient(
+      webClientFactory(oasysApiBaseUrl, authorizedClientManager, bufferByteSize),
+      "oasys-api-client",
       authenticationEnabled,
     )
   }

@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
@@ -15,6 +16,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 @Service
 class AssessmentOffenceService(
   private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient,
+  private val oasysApiRestClient: OasysApiRestClient,
   private val communityClient: CommunityApiRestClient,
 ) {
 
@@ -29,7 +31,7 @@ class AssessmentOffenceService(
 
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
-    val assessmentOffenceDto = offenderAssessmentApiRestClient.getAssessmentOffence(
+    val assessmentOffenceDto = oasysApiRestClient.getAssessmentOffence(
       crn = crn,
       limitedAccessOffender = limitedAccess,
     ) ?: throw EntityNotFoundException("Assessment offence not found for CRN: $crn")
@@ -39,7 +41,7 @@ class AssessmentOffenceService(
 
   fun getAssessmentTimeline(crn: String): String {
     log.info("Entered getAssessmentTimeline($crn)")
-    return offenderAssessmentApiRestClient.getAssessmentTimeline(crn) ?: throw EntityNotFoundException("Assessment timeline not found for CRN: $crn")
+    return oasysApiRestClient.getAssessmentTimeline(crn) ?: throw EntityNotFoundException("Assessment timeline not found for CRN: $crn")
   }
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {

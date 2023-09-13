@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPre
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
@@ -36,10 +37,11 @@ class RiskPredictorServiceRsrTest {
 
   private val assessmentApiClient: OffenderAssessmentApiRestClient = mockk()
   private val communityApiRestClient: CommunityApiRestClient = mockk()
+  private val oasysApiRestClient: OasysApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()
   private val riskCalculatorService = OASysCalculatorServiceImpl(assessmentApiClient)
-  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, communityApiRestClient, offenderPredictorsHistoryRepository, riskCalculatorService, objectMapper)
+  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, oasysApiRestClient, communityApiRestClient, offenderPredictorsHistoryRepository, riskCalculatorService, objectMapper)
 
   val crn = "TEST_CRN"
 

@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPre
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
@@ -26,6 +27,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Pred
 @Service
 class RiskPredictorService(
   private val assessmentClient: OffenderAssessmentApiRestClient,
+  private val oasysClient: OasysApiRestClient,
   private val communityClient: CommunityApiRestClient,
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository,
   private val riskCalculatorService: RiskCalculatorService,
@@ -165,7 +167,7 @@ class RiskPredictorService(
 
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
-    val oasysRiskPredictorsDto = assessmentClient.getRiskPredictorsForCompletedAssessments(crn)
+    val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(crn)
     return RiskScoresDto.from(oasysRiskPredictorsDto)
   }
 }

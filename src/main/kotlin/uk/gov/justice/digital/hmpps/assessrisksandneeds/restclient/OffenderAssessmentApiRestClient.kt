@@ -17,11 +17,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffenc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffence
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.CurrentOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.DynamicScoringOffences
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRPredictorsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OffenderAndOffencesBodyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.PreviousOffences
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
@@ -198,70 +195,6 @@ class OffenderAssessmentApiRestClient {
       .block().also { log.info("Retrieved Predictor scores for crn $crn") }
   }
 
-  fun getRiskPredictorsForCompletedAssessments(
-    crn: String,
-  ): OasysRiskPredictorsDto? {
-    log.info("Entered getRiskPredictorsForCompletedAssessments($crn)")
-    val path = "/assessments/all-risk-predictors/$crn/ALLOW"
-    return webClient
-      .get(
-        path,
-      )
-      .retrieve()
-      .onStatus({ it.is4xxClientError }) {
-        log.error("4xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
-        handle4xxError(
-          it,
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .onStatus({ it.is5xxServerError }) {
-        log.error("5xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
-        handle5xxError(
-          "Failed to retrieve risk predictor scores for completed Assessments for crn $crn",
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .bodyToMono(OasysRiskPredictorsDto::class.java)
-      .block().also { log.info("Retrieved risk predictor scores for completed Assessments for crn $crn") }
-  }
-
-  fun getAssessmentTimeline(
-    crn: String,
-  ): String? {
-    log.info("Entered getAssessmentTimeline($crn)")
-    val path = "/assessments/timeline/$crn/ALLOW"
-    return webClient
-      .get(
-        path,
-      )
-      .retrieve()
-      .onStatus({ it.is4xxClientError }) {
-        log.error("4xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
-        handle4xxError(
-          it,
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .onStatus({ it.is5xxServerError }) {
-        log.error("5xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
-        handle5xxError(
-          "Failed to retrieve assessment timeline for crn: $crn",
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .bodyToMono(String::class.java)
-      .block().also { log.info("Retrieved assessment timeline for crn $crn") }
-  }
-
   fun getRiskScoresForCompletedLastYearAssessments(
     crn: String,
   ): List<OasysPredictorsDto>? {
@@ -292,39 +225,6 @@ class OffenderAssessmentApiRestClient {
       }
       .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
       .block().also { log.info("Retrieved risk predictor scores for last year completed Assessments for crn $crn") }
-  }
-
-  fun getAssessmentOffence(
-    crn: String,
-    limitedAccessOffender: String,
-  ): OasysAssessmentOffenceDto? {
-    log.info("Retrieving assessment offence for crn $crn")
-    val path = "/assessments/offence/$crn/$limitedAccessOffender"
-    return webClient
-      .get(
-        path,
-      )
-      .retrieve()
-      .onStatus({ it.is4xxClientError }) {
-        log.error("4xx Error retrieving assessment offence for crn $crn code: ${it.statusCode().value()}")
-        handle4xxError(
-          it,
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .onStatus({ it.is5xxServerError }) {
-        log.error("5xx Error retrieving assessment offence for crn $crn code: ${it.statusCode().value()}")
-        handle5xxError(
-          "Failed to retrieve assessment offence for crn $crn",
-          HttpMethod.POST,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .bodyToMono(OasysAssessmentOffenceDto::class.java)
-      .block().also { log.info("Retrieved assessment offence for crn $crn") }
   }
 
   private fun OffenderAndOffencesDto.toOffenderAndOffencesBodyDto(algorithmVersion: String?): OffenderAndOffencesBodyDto {
@@ -393,35 +293,5 @@ class OffenderAssessmentApiRestClient {
       this.robbery,
       this.offencesWithWeapon,
     )
-  }
-
-  fun getRiskManagementPlan(crn: String, limitedAccessOffender: String): OasysRiskManagementPlanDetailsDto? {
-    log.info("Retrieving risk management plan for crn: $crn")
-    val path = "/assessments/risk-management-plans/$crn/$limitedAccessOffender"
-    return webClient
-      .get(
-        path,
-      )
-      .retrieve()
-      .onStatus({ it.is4xxClientError }) {
-        log.error("4xx Error retrieving risk management plan for crn $crn code: ${it.statusCode().value()}")
-        handle4xxError(
-          it,
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .onStatus({ it.is5xxServerError }) {
-        log.error("5xx Error retrieving risk management plan for crn $crn code: ${it.statusCode().value()}")
-        handle5xxError(
-          "Failed to retrieve risk management plan for crn $crn",
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .bodyToMono(OasysRiskManagementPlanDetailsDto::class.java)
-      .block().also { log.info("Retrieved risk management plan for crn $crn") }
   }
 }
