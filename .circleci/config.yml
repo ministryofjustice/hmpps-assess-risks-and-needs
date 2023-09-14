@@ -48,6 +48,7 @@ workflows:
             branches:
               only:
                 - main
+                - PI-1438_test_deploy
       - hmpps/deploy_env:
           name: deploy_dev
           env: "dev"
@@ -58,35 +59,11 @@ workflows:
             branches:
               only:
                 - main
+                - PI-1438_test_deploy
           requires:
-            - validate
+#            - validate
             - build_docker
-            - helm_lint
-      - request-preprod-approval:
-          type: approval
-          requires:
-            - deploy_dev
-      - hmpps/deploy_env:
-          name: deploy_preprod
-          env: "preprod"
-          context:
-            - hmpps-common-vars
-            - hmpps-assess-risks-and-needs-preprod-live
-          requires:
-            - request-preprod-approval
-      - request-prod-approval:
-          type: approval
-          requires:
-            - deploy_preprod
-      - hmpps/deploy_env:
-          name: deploy_prod
-          env: "prod"
-          slack_notification: true
-          context:
-            - hmpps-common-vars
-            - hmpps-assess-risks-and-needs-prod-live
-          requires:
-            - request-prod-approval
+#            - helm_lint
 
   security:
     triggers:
