@@ -33,6 +33,9 @@ assessment-api:
 community-api:
   base-url: http://localhost:9096
 
+oasys-api:
+  base-url: http://localhost:9097/eor/oasys
+
 oauth:
   endpoint:
     url: http://localhost:9090/auth

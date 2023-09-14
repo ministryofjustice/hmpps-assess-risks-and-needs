@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.CommunityApiMockServer
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.OasysApiMockServer
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.OffenderAssessmentApiMockServer
 import java.time.Duration
 
@@ -29,6 +30,7 @@ abstract class IntegrationTestBase {
   companion object {
     internal val offenderAssessmentApiMockServer = OffenderAssessmentApiMockServer()
     internal val communityApiMockServer = CommunityApiMockServer()
+    internal val oasysApiMockServer = OasysApiMockServer()
 
     @BeforeAll
     @JvmStatic
@@ -39,13 +41,15 @@ abstract class IntegrationTestBase {
       offenderAssessmentApiMockServer.stubGetRSRPredictorScoring()
       offenderAssessmentApiMockServer.stubGetOffenderPredictors()
       offenderAssessmentApiMockServer.stubGetOffenderPredictorsNoRsr()
-      offenderAssessmentApiMockServer.stubGetRiskPredictorScores()
-      offenderAssessmentApiMockServer.stubGetAssessmentOffenceByCrn()
-      offenderAssessmentApiMockServer.stubGetRiskManagementPlansByCrn()
-      offenderAssessmentApiMockServer.stubGetAssessmentTimelineByCrn()
 
       communityApiMockServer.start()
       communityApiMockServer.stubGetUserAccess()
+
+      oasysApiMockServer.start()
+      oasysApiMockServer.stubGetAssessmentOffenceByCrn()
+      oasysApiMockServer.stubGetAssessmentTimelineByCrn()
+      oasysApiMockServer.stubGetRiskManagementPlansByCrn()
+      oasysApiMockServer.stubGetRiskPredictorScores()
     }
 
     @AfterAll
@@ -53,6 +57,7 @@ abstract class IntegrationTestBase {
     fun stopMocks() {
       offenderAssessmentApiMockServer.stop()
       communityApiMockServer.stop()
+      oasysApiMockServer.stop()
     }
   }
   init {
