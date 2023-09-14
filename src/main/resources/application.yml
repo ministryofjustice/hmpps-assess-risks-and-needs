@@ -42,7 +42,7 @@ spring:
           oauth-service:
             token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
           oasys-ords-oauth-service:
-            token-uri: ${oays.ords.oauth.endpoint.url:http://localhost:7979}/eor/oasys/oauth/token
+            token-uri: ${oasys-api.base-url:http://localhost:7979/eor/oasys}/oauth/token
       resourceserver:
         jwt:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
