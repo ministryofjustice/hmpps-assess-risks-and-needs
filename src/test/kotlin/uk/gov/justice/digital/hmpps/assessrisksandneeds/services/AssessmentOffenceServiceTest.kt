@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
@@ -28,9 +28,9 @@ import java.time.LocalDateTime
 @ExtendWith(MockKExtension::class)
 class AssessmentOffenceServiceTest {
 
-  private val assessmentClient: OffenderAssessmentApiRestClient = mockk()
+  private val oasysClient: OasysApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
-  private val assessmentOffenceService = AssessmentOffenceService(assessmentClient, communityClient)
+  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient)
 
   @BeforeEach
   fun setup() {
@@ -85,13 +85,13 @@ class AssessmentOffenceServiceTest {
         ),
       ),
     )
-    every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
+    every { oasysClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
 
     // When
     val result = assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
-    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
+    verify(exactly = 1) { oasysClient.getAssessmentOffence(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(
         AssessmentOffenceDto(
@@ -179,13 +179,13 @@ class AssessmentOffenceServiceTest {
         ),
       ),
     )
-    every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
+    every { oasysClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
 
     // When
     val result = assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
-    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
+    verify(exactly = 1) { oasysClient.getAssessmentOffence(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(
         AssessmentOffenceDto(
@@ -255,13 +255,13 @@ class AssessmentOffenceServiceTest {
         ),
       ),
     )
-    every { assessmentClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
+    every { oasysClient.getAssessmentOffence(any(), any()) }.returns(assessmentOffenceDto)
 
     // When
     val result = assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
-    verify(exactly = 1) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
+    verify(exactly = 1) { oasysClient.getAssessmentOffence(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(
         AssessmentOffenceDto(
@@ -292,7 +292,7 @@ class AssessmentOffenceServiceTest {
     // Given
     val crn = "DOES_NOT_EXIST"
     every {
-      assessmentClient.getAssessmentOffence(
+      oasysClient.getAssessmentOffence(
         any(),
         any(),
       )
@@ -314,6 +314,6 @@ class AssessmentOffenceServiceTest {
     assertThrows<ExternalApiEntityNotFoundException> { assessmentOffenceService.getAssessmentOffence(crn) }
 
     // Then
-    verify(exactly = 0) { assessmentClient.getAssessmentOffence(crn, "ALLOW") }
+    verify(exactly = 0) { oasysClient.getAssessmentOffence(crn, "ALLOW") }
   }
 }

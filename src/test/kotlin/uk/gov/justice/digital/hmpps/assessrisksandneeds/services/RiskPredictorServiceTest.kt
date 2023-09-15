@@ -42,6 +42,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPre
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
@@ -67,6 +68,7 @@ import java.util.UUID
 class RiskPredictorServiceTest {
 
   private val assessmentApiClient: OffenderAssessmentApiRestClient = mockk()
+  private val oasysApiClient: OasysApiRestClient = mockk()
   private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()
@@ -135,6 +137,7 @@ class RiskPredictorServiceTest {
     private val riskPredictorsService =
       RiskPredictorService(
         assessmentApiClient,
+        oasysApiClient,
         communityApiRestClient,
         offenderPredictorsHistoryRepository,
         riskCalculatorService,
@@ -208,7 +211,7 @@ class RiskPredictorServiceTest {
       )
 
       every {
-        assessmentApiClient.getRiskPredictorsForCompletedAssessments(crn)
+        oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
       }.returns(oasysRiskPredictorsDto)
 
       // When
@@ -254,7 +257,7 @@ class RiskPredictorServiceTest {
       // Given
       val crn = "X12345"
       every {
-        assessmentApiClient.getRiskPredictorsForCompletedAssessments(crn)
+        oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
       }.returns(null)
 
       // When
@@ -473,6 +476,7 @@ class RiskPredictorServiceTest {
     private val riskPredictorsService =
       RiskPredictorService(
         assessmentApiClient,
+        oasysApiClient,
         communityApiRestClient,
         offenderPredictorsHistoryRepository,
         riskCalculatorService,

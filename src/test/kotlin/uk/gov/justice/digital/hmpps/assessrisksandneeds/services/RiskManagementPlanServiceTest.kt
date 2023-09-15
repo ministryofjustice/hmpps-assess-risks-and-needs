@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagement
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
@@ -28,9 +28,9 @@ import java.time.LocalDateTime
 @ExtendWith(MockKExtension::class)
 class RiskManagementPlanServiceTest {
 
-  private val assessmentClient: OffenderAssessmentApiRestClient = mockk()
+  private val oasysApiRestClient: OasysApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
-  private val riskManagementPlanService = RiskManagementPlanService(assessmentClient, communityClient)
+  private val riskManagementPlanService = RiskManagementPlanService(oasysApiRestClient, communityClient)
 
   @BeforeEach
   fun setup() {
@@ -89,11 +89,11 @@ class RiskManagementPlanServiceTest {
         ),
       ),
     )
-    every { assessmentClient.getRiskManagementPlan(any(), any()) }.returns(oasysRiskManagementPlans)
+    every { oasysApiRestClient.getRiskManagementPlan(any(), any()) }.returns(oasysRiskManagementPlans)
 
     val result = riskManagementPlanService.getRiskManagementPlans(crn)
 
-    verify(exactly = 1) { assessmentClient.getRiskManagementPlan(crn, "ALLOW") }
+    verify(exactly = 1) { oasysApiRestClient.getRiskManagementPlan(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(
         RiskManagementPlansDto(
@@ -193,11 +193,11 @@ class RiskManagementPlanServiceTest {
         ),
       ),
     )
-    every { assessmentClient.getRiskManagementPlan(any(), any()) }.returns(oasysRiskManagementPlans)
+    every { oasysApiRestClient.getRiskManagementPlan(any(), any()) }.returns(oasysRiskManagementPlans)
 
     val result = riskManagementPlanService.getRiskManagementPlans(crn)
 
-    verify(exactly = 1) { assessmentClient.getRiskManagementPlan(crn, "ALLOW") }
+    verify(exactly = 1) { oasysApiRestClient.getRiskManagementPlan(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(
         RiskManagementPlansDto(
@@ -252,7 +252,7 @@ class RiskManagementPlanServiceTest {
     // Given
     val crn = "DOES_NOT_EXIST"
     every {
-      assessmentClient.getRiskManagementPlan(
+      oasysApiRestClient.getRiskManagementPlan(
         any(),
         any(),
       )
@@ -269,7 +269,7 @@ class RiskManagementPlanServiceTest {
     // Given
     val crn = "NO_RISK_MANAGEMENT_PLAN"
     every {
-      assessmentClient.getRiskManagementPlan(
+      oasysApiRestClient.getRiskManagementPlan(
         any(),
         any(),
       )
@@ -291,6 +291,6 @@ class RiskManagementPlanServiceTest {
     assertThrows<ExternalApiEntityNotFoundException> { riskManagementPlanService.getRiskManagementPlans(crn) }
 
     // Then
-    verify(exactly = 0) { assessmentClient.getRiskManagementPlan(crn, "ALLOW") }
+    verify(exactly = 0) { oasysApiRestClient.getRiskManagementPlan(crn, "ALLOW") }
   }
 }

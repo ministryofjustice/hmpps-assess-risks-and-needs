@@ -31,9 +31,18 @@ spring:
             client-authentication-method: client_secret_basic
             authorization-grant-type: client_credentials
             provider: oauth-service
+          oasys-api-client:
+            client-name: oasys-api-client
+            client-id: ${oasys.api.client.id:sentence-plan-api-client}
+            client-secret: ${oasys.api.client.secret:clientsecret}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: client_credentials
+            provider: oasys-ords-oauth-service
         provider:
           oauth-service:
             token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
+          oasys-ords-oauth-service:
+            token-uri: ${oasys-api.base-url:http://localhost:7979/eor/oasys}/oauth/token
       resourceserver:
         jwt:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
@@ -120,6 +129,8 @@ assessment-api:
 community-api:
   base-url: http://localhost:9096
 
+oasys-api:
+  base-url: http://localhost:9097/eor/oasys
 
 onnx-predictors:
   onnx-path: classpath:/onnx/rsr_v0.0.0_const_brief.onnx
