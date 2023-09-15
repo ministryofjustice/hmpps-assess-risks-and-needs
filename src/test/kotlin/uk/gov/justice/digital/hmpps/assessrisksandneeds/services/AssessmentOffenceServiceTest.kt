@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResp
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
@@ -29,10 +28,9 @@ import java.time.LocalDateTime
 @ExtendWith(MockKExtension::class)
 class AssessmentOffenceServiceTest {
 
-  private val assessmentClient: OffenderAssessmentApiRestClient = mockk()
   private val oasysClient: OasysApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
-  private val assessmentOffenceService = AssessmentOffenceService(assessmentClient, oasysClient, communityClient)
+  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient)
 
   @BeforeEach
   fun setup() {
