@@ -39,7 +39,7 @@ dependencies {
     exclude(module = "mockito-core")
   }
   testImplementation("com.ninja-squad:springmockk:4.0.2")
-  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.1")
+  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:3.0.1")
 }
 repositories {
   mavenCentral()
