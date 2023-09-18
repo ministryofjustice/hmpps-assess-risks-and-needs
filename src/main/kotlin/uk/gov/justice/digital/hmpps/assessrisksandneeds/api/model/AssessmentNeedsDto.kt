@@ -52,7 +52,7 @@ data class AssessmentNeedDto(
   val riskOfReoffending: Boolean? = null,
   @Schema(description = "Whether the section has been flagged as a low scoring need", example = "true")
   val flaggedAsNeed: Boolean? = null,
-  @Schema(description = "The calculated severity of the need", example = "true")
+  @Schema(description = "The calculated severity of the need", example = "SEVERE")
   val severity: NeedSeverity? = null,
   @Schema(description = "Whether the section questions indicate that this section is a need", example = "true")
   val identifiedAsNeed: Boolean? = null,
