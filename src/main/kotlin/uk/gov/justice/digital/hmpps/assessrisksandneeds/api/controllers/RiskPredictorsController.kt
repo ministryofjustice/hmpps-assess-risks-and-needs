@@ -86,7 +86,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
       ApiResponse(responseCode = "200", description = "OK"),
     ],
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_RESETTLEMENT_PASSPORT_RO', 'ROLE_RISK_INTEGRATIONS_RO')")
   fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> {
     log.info("Entered getAllRiskScores for crn: $crn")
     return riskPredictorService.getAllRiskScores(crn)
