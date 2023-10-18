@@ -6,6 +6,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.aspectj.weaver.tools.cache.SimpleCacheFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CurrentOffencesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DynamicScoringOffencesDto
@@ -36,7 +38,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.LOW
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.MEDIUM
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType.STATIC
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
@@ -52,7 +53,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRSRP
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.OASysCalculatorServiceImpl
@@ -126,7 +127,15 @@ class RiskPredictorServiceTest {
   fun setup() {
     MDC.put(RequestData.USER_NAME_HEADER, "User name")
     every { objectMapper.writeValueAsString(any()) } returns sourceAnswersJson
-    every { communityApiRestClient.verifyUserAccess(any(), any()) } returns UserAccessResponse(null, null, false, false)
+    every { communityApiRestClient.verifyUserAccess(any(), any()) } answers {
+      CaseAccess(
+        it.invocation.args[0] as String,
+        userExcluded = false,
+        userRestricted = false,
+        null,
+        null,
+      )
+    }
   }
 
   @Nested
@@ -458,10 +467,18 @@ class RiskPredictorServiceTest {
     fun `should NOT call risk predictor service when user is forbidden to access CRN`() {
       // Given
       val crn = "X12345"
-      every { communityApiRestClient.verifyUserAccess(crn, any()) }.throws(ExternalApiEntityNotFoundException(msg = "User cannot access $crn", HttpMethod.GET, "url", ExternalService.COMMUNITY_API))
+      every { communityApiRestClient.verifyUserAccess(crn, any()) }.throws(
+        ExternalApiForbiddenException(
+          "User does not have permission to access offender with CRN $crn.",
+          HttpMethod.GET,
+          SimpleCacheFactory.path,
+          ExternalService.COMMUNITY_API,
+          listOfNotNull("Excluded", "Restricted"),
+        ),
+      )
 
       // When
-      assertThrows<ExternalApiEntityNotFoundException> { riskPredictorsService.getAllRiskScores(crn) }
+      assertThrows<ExternalApiForbiddenException> { riskPredictorsService.getAllRiskScores(crn) }
 
       // Then
       verify(exactly = 0) { assessmentApiClient.getRiskScoresForCompletedLastYearAssessments(crn) }

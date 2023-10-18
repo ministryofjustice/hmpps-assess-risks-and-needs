@@ -6,3 +6,13 @@ data class UserAccessResponse(
   val userExcluded: Boolean,
   val userRestricted: Boolean,
 )
+
+data class CaseAccess(
+  val crn: String,
+  val userExcluded: Boolean,
+  val userRestricted: Boolean,
+  val exclusionMessage: String?,
+  val restrictionMessage: String?,
+)
+
+data class UserAccess(val access: List<CaseAccess>)

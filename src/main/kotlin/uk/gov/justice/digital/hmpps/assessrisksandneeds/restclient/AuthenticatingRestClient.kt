@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.util.UriBuilder
 
 class AuthenticatingRestClient(
   private val webClient: WebClient,
@@ -34,10 +35,10 @@ class AuthenticatingRestClient(
     return authed.bodyValue(body)
   }
 
-  fun put(path: String, body: Any): WebClient.RequestHeadersSpec<*> {
+  fun post(body: Any, uri: (uriBuilder: UriBuilder) -> UriBuilder): WebClient.RequestHeadersSpec<*> {
     val request = webClient
-      .put()
-      .uri(path)
+      .post()
+      .uri { uri(it).build() }
       .accept(MediaType.APPLICATION_JSON)
     val authed = if (authEnabled) {
       request.attributes(clientRegistrationId(oauthClient))

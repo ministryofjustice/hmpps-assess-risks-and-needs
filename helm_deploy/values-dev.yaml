@@ -13,7 +13,7 @@ generic-service:
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     ASSESSMENT_API_BASE_URL: https://offender-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
-    COMMUNITY_API_BASE_URL: https://community-api-secure.test.delius.probation.hmpps.dsd.io/
+    COMMUNITY_API_BASE_URL: https://arns-and-delius-dev.hmpps.service.justice.gov.uk
     OASYS_API_BASE_URL: https://t1-int.oasys.service.justice.gov.uk/eor/oasys
     SENTRY_ENVIRONMENT: "dev"
     SPRING_PROFILES_ACTIVE: "logstash,postgres,onnx-rsr"
