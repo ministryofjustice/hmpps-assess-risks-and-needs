@@ -21,7 +21,7 @@ class TimelineDto(
   @JsonProperty("assessmentPk")
   val assessmentPk: Long,
   val assessmentType: String,
-  val initiationDate: LocalDateTime,
+  val initiationDate: LocalDateTime? = null,
   val status: String,
   val completedDate: LocalDateTime? = null,
   val partcompStatus: String? = null,
