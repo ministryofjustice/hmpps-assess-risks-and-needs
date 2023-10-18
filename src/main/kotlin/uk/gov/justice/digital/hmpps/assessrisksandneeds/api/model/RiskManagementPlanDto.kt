@@ -10,7 +10,7 @@ data class RiskManagementPlanDto(
   val assessmentId: Long,
   val dateCompleted: LocalDateTime?,
   val partcompStatus: String? = null,
-  val initiationDate: LocalDateTime,
+  val initiationDate: LocalDateTime? = null,
   val assessmentStatus: String,
   val assessmentType: String,
   val superStatus: String? = null,
