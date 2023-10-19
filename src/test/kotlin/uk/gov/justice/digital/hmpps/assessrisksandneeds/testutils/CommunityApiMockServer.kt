@@ -17,23 +17,12 @@ class CommunityApiMockServer : WireMockServer(9096) {
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(laoSuccess),
-        ),
-    )
-
-    stubFor(
-      WireMock.post(
-        WireMock.urlPathEqualTo("/users/access"),
-      ).withQueryParam("username", equalTo("USER_NOT_FOUND"))
-        .willReturn(
-          WireMock.aResponse()
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withStatus(404),
+            .withBody(laoResponse),
         ),
     )
   }
 
-  private val laoSuccess = """
+  private val laoResponse = """
     {
       "access": [
         {

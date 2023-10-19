@@ -5,7 +5,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
@@ -32,22 +31,6 @@ class CommunityApiRestClient(
         it.queryParam("username", deliusUsername)
       }
       .retrieve()
-      .onStatus(
-        { it == HttpStatus.NOT_FOUND },
-        {
-          it.releaseBody()
-            .then(
-              Mono.fromCallable {
-                ExternalApiEntityNotFoundException(
-                  "No such user for username: $deliusUsername",
-                  HttpMethod.GET,
-                  path,
-                  ExternalService.COMMUNITY_API,
-                )
-              },
-            )
-        },
-      )
       .onStatus({ it.is4xxClientError }) {
         handle4xxError(
           it,
