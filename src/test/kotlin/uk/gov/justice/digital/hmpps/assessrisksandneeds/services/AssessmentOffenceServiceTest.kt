@@ -5,6 +5,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import org.aspectj.weaver.tools.cache.SimpleCacheFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,7 +15,7 @@ import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.UserAccessResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -22,7 +23,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAsse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiEntityNotFoundException
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
@@ -34,7 +35,15 @@ class AssessmentOffenceServiceTest {
 
   @BeforeEach
   fun setup() {
-    every { communityClient.verifyUserAccess(any(), any()) } returns UserAccessResponse(null, null, false, false)
+    every { communityClient.verifyUserAccess(any(), any()) } answers {
+      CaseAccess(
+        it.invocation.args[0] as String,
+        userExcluded = false,
+        userRestricted = false,
+        null,
+        null,
+      )
+    }
     mockkStatic(MDC::class)
     every { MDC.get(any()) } returns "userName"
   }
@@ -233,8 +242,6 @@ class AssessmentOffenceServiceTest {
   fun `should successfully map a offender api response with no complete assessments`() {
     // Given
     val crn = "X12345"
-    val dateCompleted = LocalDateTime.of(2022, 1, 7, 12, 0)
-    val initiationDate = LocalDateTime.of(2022, 1, 3, 12, 0)
     val assessmentOffenceDto = OasysAssessmentOffenceDto(
       crn = crn,
       limitedAccessOffender = false,
@@ -308,10 +315,23 @@ class AssessmentOffenceServiceTest {
   fun `should NOT call get assessment offence when user is forbidden to access CRN`() {
     // Given
     val crn = "X12345"
-    every { communityClient.verifyUserAccess(crn, any()) }.throws(ExternalApiEntityNotFoundException(msg = "User cannot access $crn", HttpMethod.GET, "url", ExternalService.COMMUNITY_API))
+    every {
+      communityClient.verifyUserAccess(
+        crn,
+        any(),
+      )
+    }.throws(
+      ExternalApiForbiddenException(
+        "User does not have permission to access offender with CRN $crn.",
+        HttpMethod.GET,
+        SimpleCacheFactory.path,
+        ExternalService.COMMUNITY_API,
+        listOfNotNull("Excluded", "Restricted"),
+      ),
+    )
 
     // When
-    assertThrows<ExternalApiEntityNotFoundException> { assessmentOffenceService.getAssessmentOffence(crn) }
+    assertThrows<ExternalApiForbiddenException> { assessmentOffenceService.getAssessmentOffence(crn) }
 
     // Then
     verify(exactly = 0) { oasysClient.getAssessmentOffence(crn, "ALLOW") }

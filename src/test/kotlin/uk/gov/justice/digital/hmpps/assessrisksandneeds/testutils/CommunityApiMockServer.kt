@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 
@@ -9,11 +10,10 @@ class CommunityApiMockServer : WireMockServer(9096) {
 
   fun stubGetUserAccess() {
     stubFor(
-      WireMock.get(
-        WireMock.urlPathMatching(
-          "/secure/offenders/crn/(?:X123456|NOT_FOUND|X654321|X999999)/user/assess-risks-needs/userAccess",
-        ),
+      WireMock.post(
+        WireMock.urlPathEqualTo("/users/access"),
       )
+        .withQueryParam("username", equalTo("assess-risks-needs"))
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
@@ -22,60 +22,47 @@ class CommunityApiMockServer : WireMockServer(9096) {
     )
 
     stubFor(
-      WireMock.get(
-        WireMock.urlEqualTo(
-          "/secure/offenders/crn/FORBIDDEN/user/assess-risks-needs/userAccess",
-        ),
-      )
-        .willReturn(
-          WireMock.aResponse()
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withStatus(403)
-            .withBody(laoFailure),
-        ),
-    )
-
-    stubFor(
-      WireMock.get(
-        WireMock.urlEqualTo(
-          "/secure/offenders/crn/USER_ACCESS_NOT_FOUND/user/assess-risks-needs/userAccess",
-        ),
-      )
+      WireMock.post(
+        WireMock.urlPathEqualTo("/users/access"),
+      ).withQueryParam("username", equalTo("USER_NOT_FOUND"))
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(404),
         ),
     )
-
-    stubFor(
-      WireMock.get(
-        WireMock.urlEqualTo(
-          "/secure/offenders/crn/X123456/user/USER_NOT_FOUND/userAccess",
-        ),
-      )
-        .willReturn(
-          WireMock.aResponse()
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withStatus(404)
-            .withBody("Can't resolve user: USER_NOT_FOUND"),
-        ),
-    )
   }
 
-  private val laoSuccess = """{
-      "exclusionMessage": null,
-      "restrictionMessage": null,
-      "userExcluded": false,
-      "userRestricted": false
-    }
-  """.trimIndent()
-
-  private val laoFailure = """{
-      "exclusionMessage": "excluded",
-      "restrictionMessage": "restricted",
-      "userExcluded": true,
-      "userRestricted": true
+  private val laoSuccess = """
+    {
+      "access": [
+        {
+          "userExcluded": false,
+          "userRestricted": false,
+          "crn": "X123456"
+        },
+         {
+          "userExcluded": false,
+          "userRestricted": false,
+          "crn": "X12345"
+        },
+        {
+          "userExcluded": false,
+          "userRestricted": false,
+          "crn": "X234567"
+        },
+        {
+          "userExcluded": false,
+          "userRestricted": false,
+          "crn": "X654321"
+        },
+        {
+          "userExcluded": true,
+          "userRestricted": false,
+          "excludedMessage": "excluded",
+          "crn": "FORBIDDEN"
+        }
+      ]
     }
   """.trimIndent()
 }
