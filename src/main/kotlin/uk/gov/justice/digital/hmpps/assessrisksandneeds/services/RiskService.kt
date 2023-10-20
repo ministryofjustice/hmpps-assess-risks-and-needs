@@ -16,13 +16,18 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.QuestionA
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
 
 @Service
-class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient) {
+class RiskService(
+  private val assessmentClient: OffenderAssessmentApiRestClient,
+  private val auditService: AuditService,
+) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
   fun getRoshRisksByCrn(crn: String): AllRoshRiskDto {
     log.info("Get Rosh Risk for crn $crn")
+    auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS, mapOf("crn" to crn))
+
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
     return AllRoshRiskDto(
@@ -34,6 +39,8 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
   }
   fun getFulltextRoshRisksByCrn(crn: String): AllRoshRiskDto {
     log.info("Get Full Text Rosh Risk for crn $crn")
+    auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_FULLTEXT, mapOf("crn" to crn))
+
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
     return AllRoshRiskDto(
@@ -61,6 +68,8 @@ class RiskService(private val assessmentClient: OffenderAssessmentApiRestClient)
 
   fun getRoshRiskSummaryByCrn(crn: String): RiskRoshSummaryDto {
     log.info("Get Rosh Risk summary for crn $crn")
+    auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_SUMMARY, mapOf("crn" to crn))
+
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
     return sectionsAnswers.toRiskRoshSummaryDto()

@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -27,6 +30,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Score
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -45,6 +49,14 @@ import java.time.LocalDateTime
   ),
 )
 class RiskPredictorsControllerTest : IntegrationTestBase() {
+
+  @MockkBean
+  private lateinit var auditService: AuditService
+
+  @BeforeEach
+  fun setup() {
+    every { auditService.sendEvent(any(), any()) } returns Unit
+  }
 
   @Test
   fun `calculate rsr predictors returns rsr scoring`() {

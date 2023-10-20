@@ -31,7 +31,8 @@ class AssessmentOffenceServiceTest {
 
   private val oasysClient: OasysApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
-  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient)
+  private val auditService: AuditService = mockk()
+  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService)
 
   @BeforeEach
   fun setup() {
@@ -46,6 +47,7 @@ class AssessmentOffenceServiceTest {
     }
     mockkStatic(MDC::class)
     every { MDC.get(any()) } returns "userName"
+    every { auditService.sendEvent(any(), any()) } returns Unit
   }
 
   @Test
@@ -100,6 +102,7 @@ class AssessmentOffenceServiceTest {
     val result = assessmentOffenceService.getAssessmentOffence(crn)
 
     // Then
+    verify(exactly = 1) { auditService.sendEvent(EventType.ACCESSED_OFFENCE_DETAILS, mapOf("crn" to crn)) }
     verify(exactly = 1) { oasysClient.getAssessmentOffence(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(

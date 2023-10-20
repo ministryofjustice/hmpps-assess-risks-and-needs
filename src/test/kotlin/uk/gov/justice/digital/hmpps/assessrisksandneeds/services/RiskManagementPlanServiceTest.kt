@@ -31,7 +31,8 @@ class RiskManagementPlanServiceTest {
 
   private val oasysApiRestClient: OasysApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
-  private val riskManagementPlanService = RiskManagementPlanService(oasysApiRestClient, communityClient)
+  private val auditService: AuditService = mockk()
+  private val riskManagementPlanService = RiskManagementPlanService(oasysApiRestClient, communityClient, auditService)
 
   @BeforeEach
   fun setup() {
@@ -46,6 +47,7 @@ class RiskManagementPlanServiceTest {
     }
     mockkStatic(MDC::class)
     every { MDC.get(any()) } returns "userName"
+    every { auditService.sendEvent(any(), any()) } returns Unit
   }
 
   @Test
@@ -102,6 +104,7 @@ class RiskManagementPlanServiceTest {
 
     val result = riskManagementPlanService.getRiskManagementPlans(crn)
 
+    verify(exactly = 1) { auditService.sendEvent(EventType.ACCESSED_RISK_MANAGEMENT_PLAN, mapOf("crn" to crn)) }
     verify(exactly = 1) { oasysApiRestClient.getRiskManagementPlan(crn, "ALLOW") }
     assertThat(result)
       .isEqualTo(

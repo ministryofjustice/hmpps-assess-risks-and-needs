@@ -29,7 +29,7 @@ class AuditService(
   fun sendEvent(what: EventType, details: Any) {
     val event = AuditableEvent(
       who = RequestData.getUserName(),
-      what = what,
+      what = what.name,
       service = serviceName,
       details = details,
     )
@@ -50,10 +50,18 @@ class AuditService(
 
 data class AuditableEvent(
   val who: String,
-  val what: EventType,
+  val what: String,
   val `when`: Instant = Instant.now(),
   val service: String,
   val details: Any,
 )
 
-enum class EventType
+enum class EventType {
+  ACCESSED_ROSH_RISKS,
+  ACCESSED_ROSH_RISKS_SUMMARY,
+  ACCESSED_ROSH_RISKS_FULLTEXT,
+  ACCESSED_RISK_MANAGEMENT_PLAN,
+  ACCESSED_RISK_PREDICTORS,
+  ACCESSED_RISK_PREDICTOR_HISTORY,
+  ACCESSED_OFFENCE_DETAILS,
+}

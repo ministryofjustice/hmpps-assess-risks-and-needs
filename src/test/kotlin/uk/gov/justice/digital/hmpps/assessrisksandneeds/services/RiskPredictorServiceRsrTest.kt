@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -40,10 +41,16 @@ class RiskPredictorServiceRsrTest {
   private val oasysApiRestClient: OasysApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val objectMapper: ObjectMapper = mockk()
+  private val auditService: AuditService = mockk()
   private val riskCalculatorService = OASysCalculatorServiceImpl(assessmentApiClient)
-  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, oasysApiRestClient, communityApiRestClient, offenderPredictorsHistoryRepository, riskCalculatorService, objectMapper)
+  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, oasysApiRestClient, communityApiRestClient, offenderPredictorsHistoryRepository, riskCalculatorService, objectMapper, auditService)
 
   val crn = "TEST_CRN"
+
+  @BeforeEach
+  fun setup() {
+    every { auditService.sendEvent(any(), any()) } returns Unit
+  }
 
   @Test
   fun `get all RSR scores history from OASys and ARN`() {

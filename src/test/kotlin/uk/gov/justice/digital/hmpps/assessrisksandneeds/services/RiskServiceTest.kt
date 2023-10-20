@@ -3,7 +3,9 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -18,7 +20,13 @@ import java.time.LocalDateTime
 class RiskServiceTest {
 
   private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient = mockk()
-  private val riskService = RiskService(offenderAssessmentApiRestClient)
+  private val auditService: AuditService = mockk()
+  private val riskService = RiskService(offenderAssessmentApiRestClient, auditService)
+
+  @BeforeEach
+  fun setup() {
+    every { auditService.sendEvent(any(), any()) } returns Unit
+  }
 
   @Test
   fun `risk Summary contains highest overall Risk Level Custody Very High`() {
@@ -43,6 +51,7 @@ class RiskServiceTest {
     )
 
     val riskSummary = riskService.getRoshRiskSummaryByCrn(crn)
+    verify(exactly = 1) { auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_SUMMARY, mapOf("crn" to crn)) }
     assertThat(riskSummary.overallRiskLevel).isEqualTo(RiskLevel.VERY_HIGH)
   }
 
@@ -87,5 +96,43 @@ class RiskServiceTest {
     )
     val riskSummary = riskService.getRoshRiskSummaryByCrn(crn)
     assertThat(riskSummary.overallRiskLevel).isNull()
+  }
+
+  @Test
+  fun `sends an audit event when getting fulltext RoSH risk`() {
+    val crn = "CRN123"
+    val date = LocalDateTime.now()
+
+    every {
+      offenderAssessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
+    } returns SectionAnswersDto(
+      assessmentId = 1,
+      sections = mapOf(
+        "ROSHSUM" to emptyList(),
+      ),
+      assessedOn = date,
+    )
+
+    riskService.getFulltextRoshRisksByCrn(crn)
+    verify(exactly = 1) { auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_FULLTEXT, mapOf("crn" to crn)) }
+  }
+
+  @Test
+  fun `sends an audit event when getting RoSH risk summary`() {
+    val crn = "CRN123"
+    val date = LocalDateTime.now()
+
+    every {
+      offenderAssessmentApiRestClient.getRoshSectionsForCompletedLastYearAssessment(crn)
+    } returns SectionAnswersDto(
+      assessmentId = 1,
+      sections = mapOf(
+        "ROSHSUM" to emptyList(),
+      ),
+      assessedOn = date,
+    )
+
+    riskService.getRoshRiskSummaryByCrn(crn)
+    verify(exactly = 1) { auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_SUMMARY, mapOf("crn" to crn)) }
   }
 }
