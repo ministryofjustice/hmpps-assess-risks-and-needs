@@ -4,6 +4,8 @@ generic-service:
 
   replicaCount: 4
 
+  serviceAccountName: hmpps-assess-risks-and-needs-service-account
+
   image:
     repository: quay.io/hmpps/hmpps-assess-risks-and-needs
     tag: app_version    # override at deployment time
@@ -24,6 +26,7 @@ generic-service:
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY);IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     ONNX_PREDICTORS_ONNX_PATH: "file:/app/secrets/rsr.onnx"
+    HMPPS_SQS_USE_WEB_TOKEN: "true"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
