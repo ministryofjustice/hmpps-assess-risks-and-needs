@@ -31,7 +31,7 @@ class AuditService(
       who = RequestData.getUserName(),
       what = what.name,
       service = serviceName,
-      details = details,
+      details = details.toJson(),
     )
 
     log.info("Sending audit event ${event.what} for ${event.who}")
@@ -53,7 +53,7 @@ data class AuditableEvent(
   val what: String,
   val `when`: Instant = Instant.now(),
   val service: String,
-  val details: Any,
+  val details: String,
 )
 
 enum class EventType {
