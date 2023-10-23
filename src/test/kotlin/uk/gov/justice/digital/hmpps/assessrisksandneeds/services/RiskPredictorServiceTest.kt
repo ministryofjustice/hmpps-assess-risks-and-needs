@@ -72,6 +72,7 @@ class RiskPredictorServiceTest {
   private val oasysApiClient: OasysApiRestClient = mockk()
   private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
+  private val auditService: AuditService = mockk()
   private val objectMapper: ObjectMapper = mockk()
 
   private val offencesAndOffencesDto = OffenderAndOffencesDto(
@@ -136,6 +137,7 @@ class RiskPredictorServiceTest {
         null,
       )
     }
+    every { auditService.sendEvent(any(), any()) } returns Unit
   }
 
   @Nested
@@ -151,6 +153,7 @@ class RiskPredictorServiceTest {
         offenderPredictorsHistoryRepository,
         riskCalculatorService,
         objectMapper,
+        auditService,
       )
 
     @Test
@@ -498,6 +501,7 @@ class RiskPredictorServiceTest {
         offenderPredictorsHistoryRepository,
         riskCalculatorService,
         objectMapper,
+        auditService,
       )
 
     @Test

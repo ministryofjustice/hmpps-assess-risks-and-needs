@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -10,13 +13,22 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeed
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Assessment Tests")
 class AssessmentControllerTest : IntegrationTestBase() {
 
+  @MockkBean
+  private lateinit var auditService: AuditService
+
   private val crn = "X123456"
+
+  @BeforeEach
+  fun setup() {
+    every { auditService.sendEvent(any(), any()) } returns Unit
+  }
 
   @Test
   fun `get criminogenic needs by crn`() {

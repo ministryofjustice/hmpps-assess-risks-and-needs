@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -22,6 +25,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PreviousOffenc
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ProblemsLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
@@ -32,6 +36,14 @@ import java.util.stream.Stream
 // Use mock ONNX file const_rsr_extended.onnx
 @TestPropertySource(properties = ["onnx-predictors.onnx-path=classpath:/onnx/rsr_v0.0.0_const_extended.onnx"])
 class OnnxRiskPredictorsControllerTest : IntegrationTestBase() {
+
+  @MockkBean
+  private lateinit var auditService: AuditService
+
+  @BeforeEach
+  fun setup() {
+    every { auditService.sendEvent(any(), any()) } returns Unit
+  }
 
   companion object {
     @JvmStatic

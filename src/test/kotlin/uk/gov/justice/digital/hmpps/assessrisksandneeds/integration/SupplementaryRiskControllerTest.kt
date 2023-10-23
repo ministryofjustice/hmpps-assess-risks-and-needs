@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,6 +18,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RedactedOasysRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -33,12 +37,20 @@ import java.util.UUID
 )
 class SupplementaryRiskControllerTest : IntegrationTestBase() {
 
+  @MockkBean
+  private lateinit var auditService: AuditService
+
   private val supplementaryRiskUuid = "2e020e78-a81c-407f-bc78-e5f284e237e5"
   private val invalidSupplementaryRiskUuid = "2e020e78-a80a-407f-bc78-e5f284e237e5"
 
   private val crn = "X123456"
   private val sourceType = Source.INTERVENTION_REFERRAL
   private val sourceId = "7e020e78-a81c-407f-bc78-e5f284e237e9"
+
+  @BeforeEach
+  fun setup() {
+    every { auditService.sendEvent(any(), any()) } returns Unit
+  }
 
   @Nested
   @DisplayName("Get by Supplementary Risk ID Security")

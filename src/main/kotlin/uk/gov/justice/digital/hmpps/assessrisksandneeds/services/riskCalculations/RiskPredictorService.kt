@@ -21,6 +21,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.Offend
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.EventType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 
@@ -32,6 +34,7 @@ class RiskPredictorService(
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository,
   private val riskCalculatorService: RiskCalculatorService,
   @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper,
+  private val auditService: AuditService,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -143,6 +146,8 @@ class RiskPredictorService(
 
   fun getAllRsrHistory(crn: String): List<RsrPredictorDto> {
     log.info("Retrieving RSR scores from each service")
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTOR_HISTORY, mapOf("crn" to crn))
+
     val oasysRsrPredictors = getRsrScoresFromOasys(crn)
     val arnRsrPredictors = getRsrScoresFromArn(crn)
     return oasysRsrPredictors.plus(arnRsrPredictors).sortedByDescending { it.completedDate }
@@ -164,6 +169,7 @@ class RiskPredictorService(
 
   fun getAllRiskScores(crn: String): List<RiskScoresDto> {
     log.debug("Entered getAllRiskScores for crn: $crn")
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf("crn" to crn))
 
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 

@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 class AssessmentOffenceService(
   private val oasysApiRestClient: OasysApiRestClient,
   private val communityClient: CommunityApiRestClient,
+  private val auditService: AuditService,
 ) {
 
   private val limitedAccess = "ALLOW"
@@ -26,6 +27,7 @@ class AssessmentOffenceService(
 
   fun getAssessmentOffence(crn: String): AssessmentOffenceDto {
     log.info("Get assessment offence for CRN: $crn")
+    auditService.sendEvent(EventType.ACCESSED_OFFENCE_DETAILS, mapOf("crn" to crn))
 
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
