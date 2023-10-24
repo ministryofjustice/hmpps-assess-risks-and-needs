@@ -25,7 +25,6 @@ class RiskManagementPlanService(
   fun getRiskManagementPlans(crn: String): RiskManagementPlansDto {
     log.info("Get assessment offence for CRN: $crn")
     auditService.sendEvent(EventType.ACCESSED_RISK_MANAGEMENT_PLAN, mapOf("crn" to crn))
-
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     val riskManagementPlanOrdsDto = oasysApiRestClient.getRiskManagementPlan(

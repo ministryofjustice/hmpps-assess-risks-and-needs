@@ -29,6 +29,7 @@ class RiskPredictorService(
   fun getAllRsrHistory(crn: String): List<RsrPredictorDto> {
     log.info("Retrieving RSR scores from each service")
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTOR_HISTORY, mapOf("crn" to crn))
+    communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     val oasysRsrPredictors = getRsrScoresFromOasys(crn)
     val arnRsrPredictors = getRsrScoresFromArn(crn)
@@ -52,7 +53,6 @@ class RiskPredictorService(
   fun getAllRiskScores(crn: String): List<RiskScoresDto> {
     log.debug("Entered getAllRiskScores for crn: $crn")
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf("crn" to crn))
-
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(crn)

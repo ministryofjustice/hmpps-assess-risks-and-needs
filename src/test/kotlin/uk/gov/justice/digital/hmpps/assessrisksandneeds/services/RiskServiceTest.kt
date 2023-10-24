@@ -9,7 +9,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.MDC
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.QuestionAnswerDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
@@ -21,15 +25,28 @@ class RiskServiceTest {
 
   private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient = mockk()
   private val auditService: AuditService = mockk()
-  private val riskService = RiskService(offenderAssessmentApiRestClient, auditService)
+  private val communityClient: CommunityApiRestClient = mockk()
+  private val riskService = RiskService(offenderAssessmentApiRestClient, communityClient, auditService)
 
   @BeforeEach
   fun setup() {
+    MDC.put(RequestData.USER_NAME_HEADER, "User name")
     every { auditService.sendEvent(any(), any()) } returns Unit
+    every { communityClient.verifyUserAccess(any(), any()) } answers {
+      CaseAccess(
+        it.invocation.args[0] as String,
+        userExcluded = false,
+        userRestricted = false,
+        null,
+        null,
+      )
+    }
   }
 
   @Test
   fun `risk Summary contains highest overall Risk Level Custody Very High`() {
+    MDC.put(RequestData.USER_NAME_HEADER, "User name")
+
     val crn = "CRN123"
     val date = LocalDateTime.now()
 
@@ -94,6 +111,7 @@ class RiskServiceTest {
       ),
       assessedOn = date,
     )
+
     val riskSummary = riskService.getRoshRiskSummaryByCrn(crn)
     assertThat(riskSummary.overallRiskLevel).isNull()
   }
