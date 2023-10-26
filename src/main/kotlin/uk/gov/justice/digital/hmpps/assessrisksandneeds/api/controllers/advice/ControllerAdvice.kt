@@ -21,7 +21,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Exte
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiInvalidRequestException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiUnknownException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.IncorrectInputParametersException
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.PredictorCalculationError
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.UserNameNotFoundException
 
 @ControllerAdvice
@@ -35,13 +34,6 @@ class ControllerAdvice {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   fun handle(e: EntityNotFoundException): ResponseEntity<ErrorResponse?> {
     log.info("EntityNotFoundException: ", e)
-    return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
-  }
-
-  @ExceptionHandler(PredictorCalculationError::class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  fun handle(e: PredictorCalculationError): ResponseEntity<ErrorResponse?> {
-    log.info("PredictorCalculationError: ", e)
     return ResponseEntity(ErrorResponse(status = 404, developerMessage = e.message), HttpStatus.NOT_FOUND)
   }
 

@@ -8,10 +8,8 @@ class UserNameNotFoundException(msg: String?) : RuntimeException(msg)
 class EntityNotFoundException(msg: String?) : RuntimeException(msg)
 class DuplicateSourceRecordFound(msg: String?, val supplementaryRiskDto: SupplementaryRiskDto? = null) :
   RuntimeException(msg)
-class PredictorCalculationError(msg: String?) : RuntimeException(msg)
+
 class IncorrectInputParametersException(msg: String?) : RuntimeException(msg)
-class ONNXResponseFailure(msg: String?) : RuntimeException(msg)
-class ONNXConsumerFailure(msg: String?) : RuntimeException(msg)
 
 // External Services Exceptions
 class ExternalApiEntityNotFoundException(

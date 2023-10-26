@@ -90,84 +90,6 @@ class RiskControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get risk to self by crn for external provider`() {
-    webTestClient.get().uri("/risks/crn/$crn/self")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
-      .exchange()
-      .expectStatus().isOk
-      .expectBody<RoshRiskToSelfDto>()
-      .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskToSelfDto(
-            suicide = RiskDto(
-              risk = ResponseDto.NO,
-              previous = ResponseDto.YES,
-              current = ResponseDto.YES,
-              currentConcernsText = "Suicide and/or Self-harm current concerns",
-            ),
-            selfHarm = RiskDto(
-              risk = ResponseDto.DK,
-            ),
-            custody = RiskDto(
-              risk = ResponseDto.YES,
-              previous = ResponseDto.YES,
-              previousConcernsText = "Coping in custody / hostel setting previous concerns",
-              current = ResponseDto.NA,
-            ),
-            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.DK, current = ResponseDto.NO),
-            vulnerability = RiskDto(
-              risk = ResponseDto.YES,
-              previous = ResponseDto.YES,
-              previousConcernsText = "Vulnerability previous concerns free text",
-              current = ResponseDto.YES,
-              currentConcernsText = "Vulnerability current concerns free text",
-            ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-          ),
-        )
-      }
-  }
-
-  @Test
-  fun `get risk to self by crn for probation practitioner`() {
-    webTestClient.get().uri("/risks/crn/$crn/self")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
-      .exchange()
-      .expectStatus().isOk
-      .expectBody<RoshRiskToSelfDto>()
-      .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskToSelfDto(
-            suicide = RiskDto(
-              risk = ResponseDto.NO,
-              previous = ResponseDto.YES,
-              current = ResponseDto.YES,
-              currentConcernsText = "Suicide and/or Self-harm current concerns",
-            ),
-            selfHarm = RiskDto(
-              risk = ResponseDto.DK,
-            ),
-            custody = RiskDto(
-              risk = ResponseDto.YES,
-              previous = ResponseDto.YES,
-              previousConcernsText = "Coping in custody / hostel setting previous concerns",
-              current = ResponseDto.NA,
-            ),
-            hostelSetting = RiskDto(risk = ResponseDto.YES, previous = ResponseDto.DK, current = ResponseDto.NO),
-            vulnerability = RiskDto(
-              risk = ResponseDto.YES,
-              previous = ResponseDto.YES,
-              previousConcernsText = "Vulnerability previous concerns free text",
-              current = ResponseDto.YES,
-              currentConcernsText = "Vulnerability current concerns free text",
-            ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-          ),
-        )
-      }
-  }
-
-  @Test
   fun `get risk for unknown crn returns not found`() {
     webTestClient.get().uri("/risks/crn/RANDOMCRN")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
@@ -179,46 +101,6 @@ class RiskControllerTest : IntegrationTestBase() {
           ErrorResponse(
             status = 404,
             developerMessage = "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN",
-          ),
-        )
-      }
-  }
-
-  @Test
-  fun `get other risks by crn for external provider`() {
-    webTestClient.get().uri("/risks/crn/$crn/other")
-      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
-      .exchange()
-      .expectStatus().isOk
-      .expectBody<OtherRoshRisksDto>()
-      .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          OtherRoshRisksDto(
-            null,
-            null,
-            null,
-            null,
-            null,
-          ),
-        )
-      }
-  }
-
-  @Test
-  fun `get other risk by crn for probation practitioner`() {
-    webTestClient.get().uri("/risks/crn/$crn/other")
-      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
-      .exchange()
-      .expectStatus().isOk
-      .expectBody<OtherRoshRisksDto>()
-      .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          OtherRoshRisksDto(
-            escapeOrAbscond = ResponseDto.YES,
-            controlIssuesDisruptiveBehaviour = ResponseDto.YES,
-            breachOfTrust = ResponseDto.DK,
-            riskToOtherPrisoners = ResponseDto.YES,
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
           ),
         )
       }

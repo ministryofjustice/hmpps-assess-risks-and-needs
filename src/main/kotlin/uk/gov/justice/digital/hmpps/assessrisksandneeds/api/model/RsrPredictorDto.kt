@@ -82,5 +82,5 @@ enum class AssessmentStatus {
 }
 
 enum class RsrScoreSource {
-  ASSESSMENTS_API, OASYS, DELIUS;
+  ASSESSMENTS_API, OASYS;
 }

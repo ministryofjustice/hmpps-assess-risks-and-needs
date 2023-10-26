@@ -7,7 +7,6 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders
 
 class OffenderAssessmentApiMockServer : WireMockServer(9004) {
   private val crn = "X123456"
-  private val badCrn = "X999999"
   private val missingRoshCrn = "X234567"
 
   fun stubGetRoshRisksByCrn() {

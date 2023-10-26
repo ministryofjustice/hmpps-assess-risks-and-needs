@@ -51,21 +51,6 @@ class RiskService(
     )
   }
 
-  fun getOtherRoshRisk(crn: String): OtherRoshRisksDto {
-    log.info("Get Other Rosh Risk for crn $crn")
-    val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
-    log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
-    return sectionsAnswers.toOtherRoshRisksDto()
-  }
-
-  fun getRoshRisksToSelfByCrn(crn: String): RoshRiskToSelfDto {
-    log.info("Get Rosh Risk to Self for crn $crn")
-    val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
-    log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
-
-    return sectionsAnswers.toRoshRiskToSelfDto()
-  }
-
   fun getRoshRiskSummaryByCrn(crn: String): RiskRoshSummaryDto {
     log.info("Get Rosh Risk summary for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_SUMMARY, mapOf("crn" to crn))

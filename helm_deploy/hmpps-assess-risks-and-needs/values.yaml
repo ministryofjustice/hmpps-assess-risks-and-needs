@@ -57,11 +57,6 @@ generic-service:
     hmpps-sqs-audit-queue:
       HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: "sqs_queue_name"
 
-  namespace_secrets_to_file:
-    onnx-file:
-      /app/secrets:
-        - rsr.onnx
-
   allowlist:
     office: "217.33.148.210/32"
     health-kick: "35.177.252.195/32"
