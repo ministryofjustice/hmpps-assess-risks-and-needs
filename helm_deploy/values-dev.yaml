@@ -16,7 +16,7 @@ generic-service:
     COMMUNITY_API_BASE_URL: https://arns-and-delius-dev.hmpps.service.justice.gov.uk
     OASYS_API_BASE_URL: https://t1-int.oasys.service.justice.gov.uk/eor/oasys
     SENTRY_ENVIRONMENT: "dev"
-    SPRING_PROFILES_ACTIVE: "logstash,postgres,onnx-rsr"
+    SPRING_PROFILES_ACTIVE: "logstash,postgres"
 
   allowlist:
     office: "217.33.148.210/32"
