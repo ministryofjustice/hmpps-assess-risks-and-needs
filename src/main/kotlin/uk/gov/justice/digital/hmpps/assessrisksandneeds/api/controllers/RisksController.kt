@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskManagementPlanService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
@@ -42,47 +40,6 @@ class RisksController(
     crn: String,
   ): RiskRoshSummaryDto {
     return riskService.getRoshRiskSummaryByCrn(crn)
-  }
-
-  @RequestMapping(path = ["/risks/crn/{crn}/self"], method = [RequestMethod.GET])
-  @Operation(
-    description = "Gets ROSH to individual for crn. Only returns freeform text where answer to " +
-      "corresponding risk question is Yes. Returns only assessments completed within the last year",
-  )
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK"),
-    ],
-  )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
-  fun getRiskToSelfByCrn(
-    @Parameter(description = "CRN", required = true, example = "D1974X")
-    @JsonView(View.SingleRisksView::class)
-    @PathVariable
-    crn: String,
-  ): RoshRiskToSelfDto {
-    return riskService.getRoshRisksToSelfByCrn(crn)
-  }
-
-  @RequestMapping(path = ["/risks/crn/{crn}/other"], method = [RequestMethod.GET])
-  @Operation(description = "Gets 'other' ROSH risks for crn. Returns only assessments completed within the last year")
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK"),
-    ],
-  )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
-  fun getOtherRisksByCrn(
-    @Parameter(description = "CRN", required = true, example = "D1974X")
-    @JsonView(View.SingleRisksView::class)
-    @PathVariable
-    crn: String,
-  ): OtherRoshRisksDto {
-    return riskService.getOtherRoshRisk(crn)
   }
 
   @RequestMapping(path = ["/risks/crn/{crn}"], method = [RequestMethod.GET])

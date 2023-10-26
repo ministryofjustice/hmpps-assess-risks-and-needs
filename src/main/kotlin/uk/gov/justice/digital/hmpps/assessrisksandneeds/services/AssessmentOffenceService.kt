@@ -39,11 +39,6 @@ class AssessmentOffenceService(
     return mapTimelineToAssessments(assessmentOffenceDto)
   }
 
-  fun getAssessmentTimeline(crn: String): String {
-    log.info("Entered getAssessmentTimeline($crn)")
-    return oasysApiRestClient.getAssessmentTimeline(crn) ?: throw EntityNotFoundException("Assessment timeline not found for CRN: $crn")
-  }
-
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {
     val assessmentIds = oasysAssessmentOffenceDto.assessments.map { it.assessmentPk }
     val filteredTimeLine = oasysAssessmentOffenceDto.timeline.filter { it.assessmentPk !in assessmentIds }

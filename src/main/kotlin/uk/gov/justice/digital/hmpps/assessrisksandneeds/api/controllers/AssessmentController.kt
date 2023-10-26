@@ -58,22 +58,4 @@ class AssessmentController(
   ): AssessmentOffenceDto {
     return assessmentOffenceService.getAssessmentOffence(crn)
   }
-
-  @RequestMapping(path = ["/assessments/timeline/crn/{crn}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets assessment timeline for a crn")
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK"),
-    ],
-  )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
-  fun getAssessmentTimelineByCrn(
-    @Parameter(description = "CRN", required = true, example = "D1974X")
-    @PathVariable
-    crn: String,
-  ): String {
-    return assessmentOffenceService.getAssessmentTimeline(crn)
-  }
 }

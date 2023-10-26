@@ -13,12 +13,9 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import java.io.Serializable
-import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -74,16 +71,4 @@ data class OffenderPredictorsHistoryEntity(
   @OneToMany(mappedBy = "offenderPredictors", cascade = [CascadeType.ALL])
   val predictors: MutableList<PredictorEntity> = mutableListOf(),
 
-) : Serializable {
-
-  fun newPredictor(predictorSubType: PredictorSubType, score: BigDecimal?, level: ScoreLevel?): PredictorEntity {
-    val predictorEntity = PredictorEntity(
-      offenderPredictors = this,
-      predictorSubType = predictorSubType,
-      predictorScore = score,
-      predictorLevel = level,
-    )
-    predictors.add(predictorEntity)
-    return predictorEntity
-  }
-}
+) : Serializable

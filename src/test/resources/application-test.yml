@@ -39,6 +39,3 @@ oasys-api:
 oauth:
   endpoint:
     url: http://localhost:9090/auth
-
-onnx-predictors:
-  onnx-path: classpath:/onnx/rsr_v0.0.0.onnx

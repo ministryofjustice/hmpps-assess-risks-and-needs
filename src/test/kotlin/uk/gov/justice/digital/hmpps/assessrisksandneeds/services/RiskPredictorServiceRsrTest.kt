@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -27,7 +26,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPred
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RsrDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.OASysCalculatorServiceImpl
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.RiskPredictorService
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -40,10 +38,8 @@ class RiskPredictorServiceRsrTest {
   private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val oasysApiRestClient: OasysApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
-  private val objectMapper: ObjectMapper = mockk()
   private val auditService: AuditService = mockk()
-  private val riskCalculatorService = OASysCalculatorServiceImpl(assessmentApiClient)
-  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, oasysApiRestClient, communityApiRestClient, offenderPredictorsHistoryRepository, riskCalculatorService, objectMapper, auditService)
+  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, oasysApiRestClient, communityApiRestClient, offenderPredictorsHistoryRepository, auditService)
 
   val crn = "TEST_CRN"
 
