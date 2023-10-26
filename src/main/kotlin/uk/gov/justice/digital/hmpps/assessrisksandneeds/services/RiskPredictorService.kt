@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,8 +11,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.Offend
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.EventType
 
 @Service
 class RiskPredictorService(
