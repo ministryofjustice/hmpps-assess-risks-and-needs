@@ -11,6 +11,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskWidgetDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.QuestionAnswerDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
@@ -18,6 +20,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAn
 @Service
 class RiskService(
   private val assessmentClient: OffenderAssessmentApiRestClient,
+  private val communityClient: CommunityApiRestClient,
   private val auditService: AuditService,
 ) {
   companion object {
@@ -27,6 +30,7 @@ class RiskService(
   fun getRoshRisksByCrn(crn: String): AllRoshRiskDto {
     log.info("Get Rosh Risk for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS, mapOf("crn" to crn))
+    communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
@@ -40,6 +44,7 @@ class RiskService(
   fun getFulltextRoshRisksByCrn(crn: String): AllRoshRiskDto {
     log.info("Get Full Text Rosh Risk for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_FULLTEXT, mapOf("crn" to crn))
+    communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")
@@ -54,6 +59,7 @@ class RiskService(
   fun getRoshRiskSummaryByCrn(crn: String): RiskRoshSummaryDto {
     log.info("Get Rosh Risk summary for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_SUMMARY, mapOf("crn" to crn))
+    communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     val sectionsAnswers = assessmentClient.getRoshSectionsForCompletedLastYearAssessment(crn)
     log.info("Section answers for crn $crn number of sections : ${sectionsAnswers?.sections?.size}")

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.RiskPredictorService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
 @RestController
 class RiskPredictorsController(private val riskPredictorService: RiskPredictorService) {

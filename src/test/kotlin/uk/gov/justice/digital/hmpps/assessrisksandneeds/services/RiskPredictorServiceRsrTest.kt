@@ -8,7 +8,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
@@ -16,6 +18,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDt
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
@@ -26,7 +29,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPred
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RsrDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.RiskPredictorService
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -45,7 +47,18 @@ class RiskPredictorServiceRsrTest {
 
   @BeforeEach
   fun setup() {
+    MDC.put(RequestData.USER_NAME_HEADER, "User name")
+
     every { auditService.sendEvent(any(), any()) } returns Unit
+    every { communityApiRestClient.verifyUserAccess(any(), any()) } answers {
+      CaseAccess(
+        it.invocation.args[0] as String,
+        userExcluded = false,
+        userRestricted = false,
+        null,
+        null,
+      )
+    }
   }
 
   @Test

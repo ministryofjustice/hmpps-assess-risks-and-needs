@@ -35,7 +35,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRisk
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.riskCalculations.RiskPredictorService
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
