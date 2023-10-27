@@ -9,4 +9,3 @@ data class AssessmentSummary(
   val assessmentType: String,
   val status: String,
 )
-
