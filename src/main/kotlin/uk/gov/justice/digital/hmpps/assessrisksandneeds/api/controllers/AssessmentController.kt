@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffenceService
 
@@ -58,4 +59,19 @@ class AssessmentController(
   ): AssessmentOffenceDto {
     return assessmentOffenceService.getAssessmentOffence(crn)
   }
+
+  @RequestMapping(path = ["/assessments/timeline/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets assessment timeline for an identifier")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  fun getAssessmentTimelineByCrn(
+    @PathVariable identifierType: String,
+    @PathVariable identifierValue: String,
+  ) = assessmentOffenceService.getAssessmentTimeline(PersonIdentifier.from(identifierType, identifierValue))
 }
