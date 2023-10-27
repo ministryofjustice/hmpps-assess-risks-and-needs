@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class Timeline(val timeline: List<AssessmentSummary>)
 
 data class AssessmentSummary(
-  val completedDate: LocalDateTime,
+  val completedDate: LocalDateTime?,
   val assessmentType: String,
   val status: String,
 )
