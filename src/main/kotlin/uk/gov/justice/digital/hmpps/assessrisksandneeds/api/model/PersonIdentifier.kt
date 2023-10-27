@@ -8,8 +8,8 @@ data class PersonIdentifier(
     CRN("crn"), NOMS("nomisId");
 
     companion object {
-      fun of(type: String) = entries.firstOrNull { it.value == type.lowercase() }
-        ?: throw IllegalArgumentException("Unsupported Identifier Type Provided")
+      fun of(type: String) = entries.firstOrNull { it.value.equals(type, true) }
+        ?: throw IllegalArgumentException("Unsupported Identifier Type Provided: $type")
     }
   }
 
