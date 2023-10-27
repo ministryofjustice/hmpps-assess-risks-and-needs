@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.bodyToMono
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
@@ -53,7 +55,7 @@ class OasysApiRestClient {
 
   fun getAssessmentTimeline(
     crn: String,
-  ): String? {
+  ): Timeline? {
     val path = "/ass/timeline/$crn/ALLOW"
     return webClient
       .get(
@@ -78,7 +80,7 @@ class OasysApiRestClient {
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .bodyToMono(String::class.java)
+      .bodyToMono<Timeline>()
       .block().also { log.info("Retrieved assessment timeline for crn $crn") }
   }
 

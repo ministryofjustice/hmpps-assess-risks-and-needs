@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -39,7 +40,7 @@ class AssessmentOffenceService(
     return mapTimelineToAssessments(assessmentOffenceDto)
   }
 
-  fun getAssessmentTimeline(identifier: PersonIdentifier): String {
+  fun getAssessmentTimeline(identifier: PersonIdentifier): Timeline {
     log.info("Getting assessment timeline for $identifier")
     return oasysApiRestClient.getAssessmentTimeline(identifier.value)
       ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
