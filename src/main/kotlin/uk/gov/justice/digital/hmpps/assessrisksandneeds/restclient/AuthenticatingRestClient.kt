@@ -22,6 +22,18 @@ class AuthenticatingRestClient(
     }
   }
 
+  fun get(uri: (uriBuilder: UriBuilder) -> UriBuilder): WebClient.RequestHeadersSpec<*> {
+    val request = webClient
+      .get()
+      .uri { uri(it).build() }
+      .accept(MediaType.APPLICATION_JSON)
+    return if (authEnabled) {
+      request.attributes(clientRegistrationId(oauthClient))
+    } else {
+      request
+    }
+  }
+
   fun post(path: String, body: Any): WebClient.RequestHeadersSpec<*> {
     val request = webClient
       .post()

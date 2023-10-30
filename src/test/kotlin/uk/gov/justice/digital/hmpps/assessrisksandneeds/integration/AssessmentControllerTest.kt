@@ -6,12 +6,17 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import java.time.LocalDateTime
@@ -218,6 +223,23 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(response.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
   }
 
+  @ParameterizedTest
+  @MethodSource("timelineIdentifiers")
+  fun `successfully returns the timeline based on crn or noms id`(
+    identifierType: String,
+    identifierValue: String,
+    timeline: Timeline,
+  ) {
+    val response = webTestClient.get().uri("/assessments/timeline/$identifierType/$identifierValue")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<Timeline>()
+      .returnResult().responseBody
+
+    assertThat(response).isEqualTo(timeline)
+  }
+
   private fun unscoredNeeds() = listOf(
     AssessmentNeedDto(
       section = "THINKING_AND_BEHAVIOUR",
@@ -320,4 +342,53 @@ class AssessmentControllerTest : IntegrationTestBase() {
       needScore = 2,
     ),
   )
+
+  companion object {
+
+    val timeline = Timeline(
+      listOf(
+        AssessmentSummary(
+          LocalDateTime.parse("2022-04-27T12:46:39"),
+          "LAYER1",
+          "COMPLETE",
+        ),
+        AssessmentSummary(
+          LocalDateTime.parse("2022-06-09T15:13:18"),
+          "LAYER3",
+          "LOCKED_INCOMPLETE",
+        ),
+        AssessmentSummary(
+          LocalDateTime.parse("2022-06-09T15:16:21"),
+          "LAYER3",
+          "COMPLETE",
+        ),
+        AssessmentSummary(
+          LocalDateTime.parse("2022-06-10T18:23:20"),
+          "LAYER3",
+          "COMPLETE",
+        ),
+        AssessmentSummary(
+          LocalDateTime.parse("2022-07-21T15:43:12"),
+          "LAYER3",
+          "COMPLETE",
+        ),
+        AssessmentSummary(
+          LocalDateTime.parse("2022-07-27T12:09:41"),
+          "LAYER3",
+          "COMPLETE",
+        ),
+        AssessmentSummary(
+          null,
+          "LAYER3",
+          "OPEN",
+        ),
+      ),
+    )
+
+    @JvmStatic
+    fun timelineIdentifiers() = listOf(
+      Arguments.of("crn", "X123456", timeline),
+      Arguments.of("nomisId", "A1234YZ", timeline),
+    )
+  }
 }
