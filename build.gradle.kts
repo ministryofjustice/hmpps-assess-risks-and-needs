@@ -1,7 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.2.4"
-  kotlin("plugin.spring") version "1.9.10"
-  kotlin("plugin.jpa") version "1.9.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.8.0"
+  kotlin("plugin.spring") version "1.9.20"
+  kotlin("plugin.jpa") version "1.9.20"
 }
 
 configurations {
@@ -23,17 +23,17 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:2.1.1")
   implementation("org.apache.commons:commons-lang3")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-  implementation("com.zaxxer:HikariCP:5.0.1")
+  implementation("com.zaxxer:HikariCP:5.1.0")
   implementation("org.postgresql:postgresql:42.6.0")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   implementation("com.beust:klaxon:5.6")
   implementation("net.logstash.logback:logstash-logback-encoder:7.4")
-  runtimeOnly("com.h2database:h2:2.2.222")
+  runtimeOnly("com.h2database:h2:2.2.224")
   runtimeOnly("org.flywaydb:flyway-core")
-  testRuntimeOnly("com.h2database:h2:2.2.222")
+  testRuntimeOnly("com.h2database:h2:2.2.224")
   testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(module = "mockito-core")
