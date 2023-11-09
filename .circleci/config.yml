@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@6
+  hmpps: ministryofjustice/hmpps@7
 
 parameters:
   alerts-slack-channel:
@@ -22,7 +22,8 @@ jobs:
       - run:
           environment:
             ENABLE_ONNX_INTEGRATION_TESTS: "false"
-          command: ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
+          command: ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit"
+            -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
       - save_cache:
           paths:
             - ~/.gradle
@@ -125,5 +126,3 @@ workflows:
           context:
             - veracode-credentials
             - hmpps-common-vars
-
-
