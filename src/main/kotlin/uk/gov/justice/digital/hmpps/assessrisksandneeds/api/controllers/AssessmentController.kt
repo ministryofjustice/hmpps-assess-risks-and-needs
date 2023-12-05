@@ -43,7 +43,10 @@ class AssessmentController(
   @Operation(description = "Gets offence details from latest complete assessment for crn")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(
+        responseCode = "403",
+        description = "User does not have permission to access offender with provided CRN",
+      ),
       ApiResponse(responseCode = "404", description = "Offender does not exist for CRN"),
       ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
@@ -69,7 +72,7 @@ class AssessmentController(
       ApiResponse(responseCode = "200", description = "OK"),
     ],
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_OFFENDER_RISK_RO')")
   fun getAssessmentTimelineByCrn(
     @PathVariable identifierType: String,
     @PathVariable identifierValue: String,
