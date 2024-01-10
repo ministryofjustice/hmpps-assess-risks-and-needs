@@ -39,15 +39,13 @@ abstract class IntegrationTestBase {
       offenderAssessmentApiMockServer.stubGetRoshRisksByCrn()
       offenderAssessmentApiMockServer.stubGetLatestNeedsByCrn()
       offenderAssessmentApiMockServer.stubGetRSRPredictorScoring()
-      offenderAssessmentApiMockServer.stubGetTimelineByCrn()
-      offenderAssessmentApiMockServer.stubGetTimelineByNoms()
 
       communityApiMockServer.start()
       communityApiMockServer.stubGetUserAccess()
 
       oasysApiMockServer.start()
       oasysApiMockServer.stubGetAssessmentOffenceByCrn()
-      oasysApiMockServer.stubGetAssessmentTimelineByCrn()
+      oasysApiMockServer.stubGetAssessmentTimeline()
       oasysApiMockServer.stubGetRiskManagementPlansByCrn()
       oasysApiMockServer.stubGetRiskPredictorScores()
     }

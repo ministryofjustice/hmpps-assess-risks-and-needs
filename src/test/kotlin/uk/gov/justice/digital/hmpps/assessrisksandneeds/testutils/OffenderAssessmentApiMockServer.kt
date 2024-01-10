@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 
@@ -217,36 +216,6 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
             .withBody(emptyNeedsJson)
             .withStatus(404)
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
-        ),
-    )
-  }
-
-  fun stubGetTimelineByCrn() {
-    stubFor(
-      WireMock.get(
-        WireMock.urlPathEqualTo(
-          "/assessments/timeline/X123456/ALLOW",
-        ),
-      ).withQueryParam("identityType", equalTo("crn"))
-        .willReturn(
-          WireMock.aResponse()
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(timeLineJson),
-        ),
-    )
-  }
-
-  fun stubGetTimelineByNoms() {
-    stubFor(
-      WireMock.get(
-        WireMock.urlPathEqualTo(
-          "/assessments/timeline/A1234YZ/ALLOW",
-        ),
-      ).withQueryParam("identityType", equalTo("nomisId"))
-        .willReturn(
-          WireMock.aResponse()
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(timeLineJson),
         ),
     )
   }
@@ -961,47 +930,5 @@ class OffenderAssessmentApiMockServer : WireMockServer(9004) {
     },
     "assessedOn": "2021-06-21T15:55:04"
 }
-    """.trimIndent()
-
-  val timeLineJson =
-    """
-    {
-        "timeline": [
-            {
-                "completedDate": "2022-04-27T12:46:39",
-                "assessmentType": "LAYER1",
-                "status": "COMPLETE"
-            },
-            {
-                "completedDate": "2022-06-09T15:13:18",
-                "assessmentType": "LAYER3",
-                "status": "LOCKED_INCOMPLETE"
-            },
-            {
-                "completedDate": "2022-06-09T15:16:21",
-                "assessmentType": "LAYER3",
-                "status": "COMPLETE"
-            },
-            {
-                "completedDate": "2022-06-10T18:23:20",
-                "assessmentType": "LAYER3",
-                "status": "COMPLETE"
-            },
-            {
-                "completedDate": "2022-07-21T15:43:12",
-                "assessmentType": "LAYER3",
-                "status": "COMPLETE"
-            },
-            {
-                "completedDate": "2022-07-27T12:09:41",
-                "assessmentType": "LAYER3",
-                "status": "COMPLETE"
-            },
-            {
-                "assessmentType": "LAYER3",
-                "status": "OPEN"
-            }
-        ]
-    }
     """.trimIndent()
 }

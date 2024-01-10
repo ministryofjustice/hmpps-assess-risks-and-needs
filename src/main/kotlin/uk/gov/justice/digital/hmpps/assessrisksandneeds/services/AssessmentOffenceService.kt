@@ -44,7 +44,7 @@ class AssessmentOffenceService(
 
   fun getAssessmentTimeline(identifier: PersonIdentifier): Timeline {
     log.info("Getting assessment timeline for $identifier")
-    return offenderAssessmentApiRestClient.getAssessmentTimeline(identifier)
+    return oasysApiRestClient.getAssessmentTimeline(identifier)
       ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
   }
 

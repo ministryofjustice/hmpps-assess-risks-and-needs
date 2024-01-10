@@ -52,11 +52,25 @@ class OasysApiMockServer : WireMockServer(9097) {
     )
   }
 
-  fun stubGetAssessmentTimelineByCrn() {
+  fun stubGetAssessmentTimeline() {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/eor/oasys/ass/timeline/X123456/ALLOW",
+          "/eor/oasys/ass/allasslist/prob/X123456/ALLOW",
+        ),
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withStatus(200)
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText()),
+        ),
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/eor/oasys/ass/allasslist/pris/A1234YZ/ALLOW",
         ),
       )
         .willReturn(
