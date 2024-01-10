@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders
 class OasysApiMockServer : WireMockServer(9097) {
   private val crn = "X123456"
   private val badCrn = "X999999"
+  private val missingRsrCrn = "X234567"
 
   fun stubGetAssessmentOffenceByCrn() {
     stubFor(
@@ -144,10 +145,36 @@ class OasysApiMockServer : WireMockServer(9097) {
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
         ),
     )
+
+    stubFor(
+      WireMock.get(WireMock.urlEqualTo("/eor/oasys/ass/allrisk/$missingRsrCrn/ALLOW"))
+        .willReturn(
+          WireMock.aResponse()
+            .withBody(noRsrPredictorsJson)
+            .withStatus(200)
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+        ),
+    )
   }
 
   companion object {
     val crnNotFoundJson =
       """{ "status": 404 , "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN" }""".trimIndent()
   }
+
+  private val noRsrPredictorsJson = """
+  {  
+    "assessments": [
+      {
+          "dateCompleted": "2021-06-21T15:55:04",
+          "assessmentStatus": "COMPLETE",
+          "OGRS": {},
+          "OVP": {},
+          "OGP": {},
+          "RSR": {},
+          "OSP": {}
+      }
+    ]
+  } 
+  """.trimIndent()
 }

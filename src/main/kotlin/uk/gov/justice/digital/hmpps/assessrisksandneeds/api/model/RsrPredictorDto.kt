@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -23,26 +23,26 @@ data class RsrPredictorDto(
 
   companion object {
 
-    fun from(oasysPredictorsDtos: List<OasysPredictorsDto>): List<RsrPredictorDto> {
+    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorDto> {
       return oasysPredictorsDtos.map { from(it) }
     }
 
-    fun from(oasysPredictorsDto: OasysPredictorsDto): RsrPredictorDto {
+    fun from(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorDto {
       with(oasysPredictorsDto) {
         return RsrPredictorDto(
-          rsrPercentageScore = rsr?.rsrPercentageScore,
-          rsrScoreLevel = ScoreLevel.findByType(rsr?.rsrRiskRecon?.description!!),
-          ospcPercentageScore = osp?.ospContactPercentageScore,
-          ospcScoreLevel = osp?.ospContactRiskRecon?.description?.let { ScoreLevel.findByType(it) },
-          ospiPercentageScore = osp?.ospIndecentPercentageScore,
-          ospiScoreLevel = osp?.ospIndecentRiskRecon?.description?.let { ScoreLevel.findByType(it) },
+          rsrPercentageScore = rsrScoreDto.rsrPercentageScore,
+          rsrScoreLevel = ScoreLevel.findByType(rsrScoreDto.scoreLevel),
+          ospcPercentageScore = ospScoreDto.ospContactPercentageScore,
+          ospcScoreLevel = ospScoreDto.ospContactScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospiPercentageScore = ospScoreDto.ospImagePercentageScore,
+          ospiScoreLevel = ospScoreDto.ospImageScoreLevel?.let { ScoreLevel.findByType(it) },
           calculatedDate = null,
-          completedDate = completedDate,
+          completedDate = dateCompleted,
           signedDate = null,
-          staticOrDynamic = ScoreType.valueOf(rsr.rsrStaticOrDynamic?.uppercase()!!),
+          staticOrDynamic = rsrScoreDto.rsrStaticOrDynamic,
           source = RsrScoreSource.OASYS,
-          status = AssessmentStatus.valueOf(assessmentStatus!!),
-          algorithmVersion = rsr.rsrAlgorithmVersion.toString(),
+          status = assessmentStatus,
+          algorithmVersion = rsrScoreDto.rsrAlgorithmVersion,
         )
       }
     }

@@ -5,7 +5,7 @@ enum class ScoreLevel(val type: String) {
 
   companion object {
     fun findByType(type: String?): ScoreLevel? {
-      return values().firstOrNull { value -> value.type == type }
+      return entries.firstOrNull { value -> value.type == type }
     }
   }
 }
