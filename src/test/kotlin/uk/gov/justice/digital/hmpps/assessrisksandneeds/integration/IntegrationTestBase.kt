@@ -39,8 +39,6 @@ abstract class IntegrationTestBase {
       offenderAssessmentApiMockServer.stubGetRoshRisksByCrn()
       offenderAssessmentApiMockServer.stubGetLatestNeedsByCrn()
       offenderAssessmentApiMockServer.stubGetRSRPredictorScoring()
-      offenderAssessmentApiMockServer.stubGetOffenderPredictors()
-      offenderAssessmentApiMockServer.stubGetOffenderPredictorsNoRsr()
       offenderAssessmentApiMockServer.stubGetTimelineByCrn()
       offenderAssessmentApiMockServer.stubGetTimelineByNoms()
 

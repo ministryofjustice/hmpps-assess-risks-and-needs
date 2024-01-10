@@ -21,4 +21,11 @@ data class RiskPredictorAssessmentDto(
   val rsrScoreDto: OasysRsrDto,
   @JsonProperty("OSP")
   val ospScoreDto: OasysOspDto,
-)
+) {
+  fun hasRsrScores(): Boolean {
+    return rsrScoreDto.rsrPercentageScore != null &&
+      rsrScoreDto.rsrStaticOrDynamic != null &&
+      rsrScoreDto.rsrAlgorithmVersion != null &&
+      rsrScoreDto.scoreLevel != null
+  }
+}

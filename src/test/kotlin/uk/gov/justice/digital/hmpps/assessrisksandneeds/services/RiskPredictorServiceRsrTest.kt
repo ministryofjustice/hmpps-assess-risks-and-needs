@@ -25,10 +25,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.Offend
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OspDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RefElementDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RsrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -41,7 +44,13 @@ class RiskPredictorServiceRsrTest {
   private val oasysApiRestClient: OasysApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val auditService: AuditService = mockk()
-  private val riskPredictorsService = RiskPredictorService(assessmentApiClient, oasysApiRestClient, communityApiRestClient, offenderPredictorsHistoryRepository, auditService)
+  private val riskPredictorsService = RiskPredictorService(
+    assessmentApiClient,
+    oasysApiRestClient,
+    communityApiRestClient,
+    offenderPredictorsHistoryRepository,
+    auditService,
+  )
 
   val crn = "TEST_CRN"
 
@@ -63,9 +72,8 @@ class RiskPredictorServiceRsrTest {
 
   @Test
   fun `get all RSR scores history from OASys and ARN`() {
-    every { assessmentApiClient.getPredictorScoresForOffender(crn) } returns listOf(
-      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1)),
-    )
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
+      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
     every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns listOf(
       getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1)),
     )
@@ -97,10 +105,8 @@ class RiskPredictorServiceRsrTest {
 
   @Test
   fun `get all RSR scores are sorted by completed date`() {
-    every { assessmentApiClient.getPredictorScoresForOffender(crn) } returns listOf(
-      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1)),
-      getOasysPredictor(LocalDateTime.of(2021, 4, 1, 1, 1, 1)),
-    )
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
+      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), LocalDateTime.of(2021, 4, 1, 1, 1, 1))
     every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns listOf(
       getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1)),
     )
@@ -115,9 +121,7 @@ class RiskPredictorServiceRsrTest {
 
   @Test
   fun `get all RSR scores does not include non-rsr predictor scores`() {
-    every { assessmentApiClient.getPredictorScoresForOffender(crn) } returns listOf(
-      getOasysPredictorNoRsr(),
-    )
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns getOasysPredictorNoRsr()
     every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns emptyList()
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
@@ -125,39 +129,45 @@ class RiskPredictorServiceRsrTest {
     assertThat(rsrHistory).isEmpty()
   }
 
-  private fun getOasysPredictorNoRsr(): OasysPredictorsDto {
-    return OasysPredictorsDto(
-      completedDate = LocalDateTime.now(),
-      assessmentStatus = "Complete",
+  private fun getOasysPredictorNoRsr(): OasysRiskPredictorsDto {
+    return OasysRiskPredictorsDto(
+      listOf(
+        RiskPredictorAssessmentDto(
+          dateCompleted = LocalDateTime.now(),
+          assessmentStatus = AssessmentStatus.COMPLETE,
+          ovpScoreDto = OasysOvpDto(),
+          ospScoreDto = OasysOspDto(),
+          ogpScoreDto = OasysOgpDto(),
+          ogrScoreDto = OasysOgrDto(),
+          rsrScoreDto = OasysRsrDto(),
+        ),
+      ),
     )
   }
 
-  private fun getOasysPredictor(completedDate: LocalDateTime): OasysPredictorsDto {
-    return OasysPredictorsDto(
-      completedDate = completedDate,
-      assessmentCompleted = true,
-      assessmentStatus = "COMPLETE",
-      rsr = RsrDto(
-        rsrPercentageScore = BigDecimal(10),
-        rsrStaticOrDynamic = "Dynamic",
-        rsrAlgorithmVersion = 10L,
-        rsrRiskRecon = RefElementDto(
-          code = "LOW",
-          description = "Low",
-        ),
-      ),
-      osp = OspDto(
-        ospIndecentPercentageScore = BigDecimal(10),
-        ospIndecentRiskRecon = RefElementDto(
-          code = "LOW",
-          description = "Low",
-        ),
-        ospContactPercentageScore = BigDecimal(10),
-        ospContactRiskRecon = RefElementDto(
-          code = "LOW",
-          description = "Low",
-        ),
-      ),
+  private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto {
+    return OasysRiskPredictorsDto(
+      completedDate.map {
+        RiskPredictorAssessmentDto(
+          dateCompleted = it,
+          assessmentStatus = AssessmentStatus.COMPLETE,
+          rsrScoreDto = OasysRsrDto(
+            rsrPercentageScore = BigDecimal(10),
+            rsrStaticOrDynamic = ScoreType.DYNAMIC,
+            rsrAlgorithmVersion = "10",
+            scoreLevel = ScoreLevel.LOW.type,
+          ),
+          ospScoreDto = OasysOspDto(
+            ospImagePercentageScore = BigDecimal(10),
+            ospImageScoreLevel = ScoreLevel.LOW.type,
+            ospContactPercentageScore = BigDecimal(10),
+            ospContactScoreLevel = ScoreLevel.LOW.type,
+          ),
+          ogpScoreDto = OasysOgpDto(),
+          ovpScoreDto = OasysOvpDto(),
+          ogrScoreDto = OasysOgrDto(),
+        )
+      },
     )
   }
 
