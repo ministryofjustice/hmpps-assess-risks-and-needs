@@ -4,17 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.verify
-import org.aspectj.weaver.tools.cache.SimpleCacheFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
-import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource.OASYS
@@ -24,7 +20,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
@@ -34,7 +29,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpD
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -181,27 +175,6 @@ class RiskPredictorServiceTest {
 
       // Should
       assertThat(allRiskScores.isEmpty())
-    }
-
-    @Test
-    fun `should NOT call risk predictor service when user is forbidden to access CRN`() {
-      // Given
-      val crn = "X12345"
-      every { communityApiRestClient.verifyUserAccess(crn, any()) }.throws(
-        ExternalApiForbiddenException(
-          "User does not have permission to access offender with CRN $crn.",
-          HttpMethod.GET,
-          SimpleCacheFactory.path,
-          ExternalService.COMMUNITY_API,
-          listOfNotNull("Excluded", "Restricted"),
-        ),
-      )
-
-      // When
-      assertThrows<ExternalApiForbiddenException> { riskPredictorsService.getAllRiskScores(crn) }
-
-      // Then
-      verify(exactly = 0) { assessmentApiClient.getRiskScoresForCompletedLastYearAssessments(crn) }
     }
   }
 

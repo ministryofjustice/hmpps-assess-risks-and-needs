@@ -1,18 +1,12 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
 
-import org.aspectj.weaver.tools.cache.SimpleCacheFactory.path
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionAnswersDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.SectionCodesDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
@@ -104,104 +98,5 @@ class OffenderAssessmentApiRestClient {
       }
       .bodyToMono(OffenderNeedsDto::class.java)
       .block().also { log.info("Retrieved needs for last year completed Assessment for crn $crn") }
-  }
-
-  fun getPredictorScoresForOffender(
-    crn: String,
-  ): List<OasysPredictorsDto>? {
-    log.info("Retrieving Predictor scores for crn $crn")
-    val path = "/offenders/crn/$crn/predictors"
-    return webClient
-      .get(
-        path,
-      )
-      .retrieve()
-      .onStatus({ it.is4xxClientError }) {
-        log.error(
-          "4xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}",
-        )
-        handle4xxError(
-          it,
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .onStatus({ it.is5xxServerError }) {
-        log.error(
-          "5xx Error retrieving Predictor scores for crn $crn code: ${it.statusCode().value()}",
-        )
-        handle5xxError(
-          "Failed to retrieve Predictor scores for crn $crn",
-          HttpMethod.POST,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
-      .block().also { log.info("Retrieved Predictor scores for crn $crn") }
-  }
-
-  fun getRiskScoresForCompletedLastYearAssessments(
-    crn: String,
-  ): List<OasysPredictorsDto>? {
-    log.info("Retrieving risk predictor scores for last year completed Assessments for crn $crn")
-    val path = "/offenders/crn/$crn/predictors/all?period=YEAR&periodUnits=1"
-    return webClient
-      .get(
-        path,
-      )
-      .retrieve()
-      .onStatus({ it.is4xxClientError }) {
-        log.error("4xx Error retrieving risk predictor scores for last year completed Assessments for crn $crn code: ${it.statusCode().value()}")
-        handle4xxError(
-          it,
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .onStatus({ it.is5xxServerError }) {
-        log.error("5xx Error retrieving risk predictor scores for last year completed Assessments for crn $crn code: ${it.statusCode().value()}")
-        handle5xxError(
-          "Failed to retrieve risk predictor scores for last year completed Assessments for crn $crn",
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .bodyToMono(object : ParameterizedTypeReference<List<OasysPredictorsDto>>() {})
-      .block().also { log.info("Retrieved risk predictor scores for last year completed Assessments for crn $crn") }
-  }
-
-  fun getAssessmentTimeline(
-    identifier: PersonIdentifier,
-  ): Timeline? {
-    return webClient
-      .get {
-        it.path("/assessments/timeline/${identifier.value}/ALLOW")
-          .queryParam("identityType", identifier.type.value)
-      }
-      .retrieve()
-      .onStatus({ it.is4xxClientError }) {
-        log.error("4xx Error retrieving assessment timeline for $identifier code: ${it.statusCode().value()}")
-        handle4xxError(
-          it,
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .onStatus({ it.is5xxServerError }) {
-        log.error("5xx Error retrieving assessment timeline for $identifier code: ${it.statusCode().value()}")
-        handle5xxError(
-          "Failed to retrieve assessment timeline for $identifier",
-          HttpMethod.GET,
-          path,
-          ExternalService.ASSESSMENTS_API,
-        )
-      }
-      .bodyToMono<Timeline>()
-      .block().also { log.info("Retrieved assessment timeline for $identifier") }
   }
 }

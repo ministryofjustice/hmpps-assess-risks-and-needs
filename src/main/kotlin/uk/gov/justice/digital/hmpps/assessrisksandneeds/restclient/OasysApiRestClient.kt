@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.bodyToMono
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
@@ -54,16 +55,16 @@ class OasysApiRestClient {
   }
 
   fun getAssessmentTimeline(
-    crn: String,
+    identifier: PersonIdentifier,
   ): Timeline? {
-    val path = "/ass/timeline/$crn/ALLOW"
+    val path = "/ass/allasslist/${identifier.type.ordsUrlParam}/${identifier.value}/ALLOW"
     return webClient
       .get(
         path,
       )
       .retrieve()
       .onStatus({ it.is4xxClientError }) {
-        log.error("4xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
+        log.error("4xx Error retrieving assessment timeline for ${identifier.type.value} ${identifier.value} code: ${it.statusCode().value()}")
         handle4xxError(
           it,
           HttpMethod.GET,
@@ -72,16 +73,16 @@ class OasysApiRestClient {
         )
       }
       .onStatus({ it.is5xxServerError }) {
-        log.error("5xx Error retrieving assessment timeline for crn $crn code: ${it.statusCode().value()}")
+        log.error("5xx Error retrieving assessment timeline for ${identifier.type.value} ${identifier.value} code: ${it.statusCode().value()}")
         handle5xxError(
-          "Failed to retrieve assessment timeline for crn: $crn",
+          "Failed to retrieve assessment timeline for ${identifier.type.value} ${identifier.value}",
           HttpMethod.GET,
           path,
           ExternalService.ASSESSMENTS_API,
         )
       }
       .bodyToMono<Timeline>()
-      .block().also { log.info("Retrieved assessment timeline for crn $crn") }
+      .block().also { log.info("Retrieved assessment timeline for ${identifier.type.value} ${identifier.value}") }
   }
 
   fun getAssessmentOffence(
