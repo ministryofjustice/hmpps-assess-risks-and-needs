@@ -57,7 +57,6 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(rsrHistory).hasSize(5)
-    println("actual => $rsrHistory")
     with(rsrHistory[0]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)

@@ -198,8 +198,6 @@ class OasysApiRestClient {
           .zipWith(getRoshScreening(assessment.assessmentId))
           .zipWith(getRoshSummary(assessment.assessmentId))
           .map {
-            println(it.t1.t1)
-            println(it.t2)
             AllRoshRiskDto(
               riskToSelf = it.t1.t1.asRiskToSelf(),
               otherRisks = it.t1.t1.asOtherRisks(),
@@ -228,7 +226,6 @@ class OasysApiRestClient {
     return webClient
       .get(path)
       .exchangeToMono {
-        println("Request ${it.request().uri} ${it.statusCode()}")
         if (it.statusCode() == HttpStatus.OK) {
           it.bodyToMono<RoshContainer<RoshFull>>().map { c -> c.assessments.firstOrNull() ?: RoshFull() }
         } else {
