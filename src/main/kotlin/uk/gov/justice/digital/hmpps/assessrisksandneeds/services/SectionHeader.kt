@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
-enum class SectionHeader(val value: String) {
-  ROSH_SCREENING("ROSH"),
-  ROSH_FULL_ANALYSIS("ROSHFULL"),
-  ROSH_SUMMARY("ROSHSUM"),
+enum class SectionHeader(val value: String, val ordsUrlParam: String) {
+  ROSH_SCREENING("ROSH", "rosh"),
+  ROSH_FULL_ANALYSIS("ROSHFULL", "roshfull"),
+  ROSH_SUMMARY("ROSHSUM", "roshsumm"),
 }

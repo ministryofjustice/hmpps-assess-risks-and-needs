@@ -48,7 +48,7 @@ data class RiskRoshSummaryDto(
       "}",
   )
   @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val riskInCommunity: Map<RiskLevel?, List<String>> = hashMapOf(),
+  val riskInCommunity: Map<RiskLevel?, List<String>> = mapOf(),
 
   @Schema(
     description = "Assess the risk of serious harm the offender poses on the basis that they could be released imminently back into the community." +
@@ -61,19 +61,21 @@ data class RiskRoshSummaryDto(
       "}",
   )
   @JsonView(View.Hmpps::class, View.RiskView::class)
-  val riskInCustody: Map<RiskLevel?, List<String>> = hashMapOf(),
+  val riskInCustody: Map<RiskLevel?, List<String>> = mapOf(),
 
   @Schema(description = "The date and time that the assessment was completed")
   @JsonView(View.Hmpps::class, View.SingleRisksView::class)
-  val assessedOn: LocalDateTime?,
-
+  val assessedOn: LocalDateTime? = null,
+) {
   @Schema(
     description = "Overall Risk Level",
     example = "HIGH",
   )
   @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val overallRiskLevel: RiskLevel? = null,
-)
+  val overallRiskLevel: RiskLevel? = (riskInCommunity.keys + riskInCustody.keys)
+    .sortedBy { it?.ordinal }
+    .firstOrNull()
+}
 
 enum class RiskLevel(
 
@@ -86,7 +88,7 @@ enum class RiskLevel(
       return if (enumValue == null) {
         null
       } else {
-        values().firstOrNull { it.value == enumValue }
+        entries.firstOrNull { it.value == enumValue }
           ?: throw IllegalArgumentException("Unknown Risk Level $enumValue")
       }
     }

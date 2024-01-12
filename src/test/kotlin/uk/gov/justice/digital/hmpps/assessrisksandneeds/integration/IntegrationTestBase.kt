@@ -36,7 +36,6 @@ abstract class IntegrationTestBase {
     @JvmStatic
     fun startMocks() {
       offenderAssessmentApiMockServer.start()
-      offenderAssessmentApiMockServer.stubGetRoshRisksByCrn()
       offenderAssessmentApiMockServer.stubGetLatestNeedsByCrn()
       offenderAssessmentApiMockServer.stubGetRSRPredictorScoring()
 
@@ -48,6 +47,7 @@ abstract class IntegrationTestBase {
       oasysApiMockServer.stubGetAssessmentTimeline()
       oasysApiMockServer.stubGetRiskManagementPlansByCrn()
       oasysApiMockServer.stubGetRiskPredictorScores()
+      oasysApiMockServer.stubGetRoshRisksByCrn()
     }
 
     @AfterAll

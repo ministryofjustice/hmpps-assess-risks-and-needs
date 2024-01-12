@@ -46,11 +46,6 @@ class CommunityApiMockServer : WireMockServer(9096) {
           "crn": "X654321"
         },        
         {
-          "userExcluded": false,
-          "userRestricted": false,
-          "crn": "RANDOMCRN"
-        },
-        {
           "userExcluded": true,
           "userRestricted": false,
           "excludedMessage": "excluded",

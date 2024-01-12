@@ -348,36 +348,43 @@ class AssessmentControllerTest : IntegrationTestBase() {
     val timeline = Timeline(
       listOf(
         AssessmentSummary(
-          LocalDateTime.parse("2022-04-27T12:46:39"),
+          9630348,
+          LocalDateTime.parse("2023-12-19T16:57:25"),
           "LAYER1",
           "COMPLETE",
         ),
         AssessmentSummary(
+          9632348,
           LocalDateTime.parse("2022-06-09T15:13:18"),
           "LAYER3",
           "LOCKED_INCOMPLETE",
         ),
         AssessmentSummary(
+          9634348,
           LocalDateTime.parse("2022-06-09T15:16:21"),
           "LAYER3",
           "COMPLETE",
         ),
         AssessmentSummary(
+          9635350,
           LocalDateTime.parse("2022-06-10T18:23:20"),
           "LAYER3",
           "COMPLETE",
         ),
         AssessmentSummary(
+          9635351,
           LocalDateTime.parse("2022-07-21T15:43:12"),
           "LAYER3",
           "COMPLETE",
         ),
         AssessmentSummary(
+          9639348,
           LocalDateTime.parse("2022-07-27T12:09:41"),
           "LAYER3",
           "COMPLETE",
         ),
         AssessmentSummary(
+          9641348,
           null,
           "LAYER3",
           "OPEN",

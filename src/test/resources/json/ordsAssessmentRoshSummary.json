@@ -1,0 +1,47 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9630348
+  },
+  "probNumber": "X123456",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "assessmentPk": 9630348,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2023-12-19T16:57:25",
+      "assessorSignedDate": "2023-12-19T16:55:32",
+      "initiationDate": "2023-12-19T13:41:04",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": false,
+      "latestWIPDate": null,
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": null,
+      "laterPartCompUnsignedAssessmentExists": false,
+      "latestPartCompUnsignedDate": null,
+      "laterPartCompSignedAssessmentExists": false,
+      "latestPartCompSignedDate": null,
+      "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2023-12-19T16:57:25",
+      "whoAtRisk": "whoisAtRisk",
+      "riskPrisonersCustody": "High",
+      "riskStaffCustody": "Very High",
+      "riskStaffCommunity": "High",
+      "riskKnownAdultCustody": "Low",
+      "riskKnownAdultCommunity": "Low",
+      "riskPublicCustody": "Low",
+      "riskPublicCommunity": "Medium",
+      "riskChildrenCustody": "Low",
+      "riskChildrenCommunity": "Low",
+      "factorsLikelyToReduceRisk": "riskMitigationFactors",
+      "factorsLikelyToIncreaseRisk": "riskIncreaseFactors",
+      "riskGreatest": "riskImminence",
+      "natureOfRisk": "natureOfRisk",
+      "assessor": {
+        "name": "LevelTwo CentralSupport"
+      }
+    }
+  ]
+}

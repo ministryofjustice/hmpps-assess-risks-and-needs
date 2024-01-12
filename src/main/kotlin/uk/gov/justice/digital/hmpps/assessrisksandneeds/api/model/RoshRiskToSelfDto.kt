@@ -8,25 +8,25 @@ data class RoshRiskToSelfDto(
 
   @Schema(description = "Risk of suicide?")
   @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val suicide: RiskDto?,
+  val suicide: RiskDto? = null,
 
   @Schema(description = "Risk of self harm?")
   @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val selfHarm: RiskDto?,
+  val selfHarm: RiskDto? = null,
 
   @Schema(description = "Coping in custody")
   @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val custody: RiskDto?,
+  val custody: RiskDto? = null,
 
   @Schema(description = "Coping in hostel setting")
   @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val hostelSetting: RiskDto?,
+  val hostelSetting: RiskDto? = null,
 
   @Schema(description = "Vulnerability")
   @JsonView(View.CrsProvider::class, View.RiskView::class)
-  val vulnerability: RiskDto?,
+  val vulnerability: RiskDto? = null,
 
   @Schema(description = "The date and time that the assessment was completed")
   @JsonView(View.CrsProvider::class, View.SingleRisksView::class)
-  val assessedOn: LocalDateTime?,
+  val assessedOn: LocalDateTime? = null,
 )
