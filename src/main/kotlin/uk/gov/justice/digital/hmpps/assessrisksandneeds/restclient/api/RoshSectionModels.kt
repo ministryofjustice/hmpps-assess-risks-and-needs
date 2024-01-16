@@ -11,7 +11,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelf
 import java.time.LocalDateTime
 import java.util.Comparator.comparing
 
-data class RoshScreening(val dateCompleted: LocalDateTime? = null)
+data class RoshScreening(
+  val dateCompleted: LocalDateTime? = null,
+  val suicideRisk: String? = null,
+  val selfHarmRisk: String? = null,
+  val custodyHostelRisk: String? = null,
+  val vulnerabilityRisk: String? = null,
+)
 
 data class RoshFull(
   val dateCompleted: LocalDateTime? = null,
@@ -37,12 +43,12 @@ data class RoshFull(
   val currentConcernsBreachOfTrust: String? = null,
   val tickRiskOfSeriousHarm: String? = null,
 ) {
-  fun asRiskToSelf() = RoshRiskToSelfDto(
-    riskOfSuicide(),
-    riskOfSelfHarm(),
-    riskInCustody(),
-    riskInHostel(),
-    vulnerability(),
+  fun asRiskToSelf(roshScreening: RoshScreening) = RoshRiskToSelfDto(
+    riskOfSuicide(roshScreening.suicideRisk),
+    riskOfSelfHarm(roshScreening.selfHarmRisk),
+    riskInCustody(roshScreening.custodyHostelRisk),
+    riskInHostel(roshScreening.custodyHostelRisk),
+    vulnerability(roshScreening.vulnerabilityRisk),
     dateCompleted,
   )
 
@@ -54,14 +60,16 @@ data class RoshFull(
     dateCompleted,
   )
 
-  private fun riskOfSuicide() = risk(
+  private fun riskOfSuicide(screening: String?) = risk(
+    screening,
     currentConcernsRiskOfSuicide,
     pastSuicideConcerns,
     currentConcernsSelfHarmSuicide,
     previousConcernsSelfHarmSuicide,
   )
 
-  private fun riskOfSelfHarm() = risk(
+  private fun riskOfSelfHarm(screening: String?) = risk(
+    screening,
     currentConcernsRiskOfSelfHarm,
     pastSelfHarmConcerns,
     currentConcernsSelfHarmSuicide,
@@ -73,32 +81,41 @@ data class RoshFull(
     else -> null
   }
 
-  private fun riskInCustody() = risk(
+  private fun riskInCustody(screening: String?) = risk(
+    screening,
     currentConcernsCustody,
     previousConcernsCustodyCoping,
     currentCustodyHostelCoping,
     previousCustodyHostelCoping,
   )
 
-  private fun riskInHostel() = risk(
+  private fun riskInHostel(screening: String?) = risk(
+    screening,
     currentConcernsHostel,
     previousConcernsHostelCoping,
     currentCustodyHostelCoping,
     previousCustodyHostelCoping,
   )
 
-  private fun vulnerability() = risk(
+  private fun vulnerability(screening: String?) = risk(
+    screening,
     currentConcernsVulnerability,
     previousConcernsVulnerability,
     currentVulnerability,
     previousVulnerability,
   )
 
-  private fun risk(current: String?, previous: String?, currentText: String?, previousText: String?): RiskDto {
+  private fun risk(
+    screening: String?,
+    current: String?,
+    previous: String?,
+    currentText: String?,
+    previousText: String?,
+  ): RiskDto {
     val cur = ResponseDto.fromString(current)
     val prev = ResponseDto.fromString(previous)
     return RiskDto(
-      risk = if (cur == ResponseDto.YES || prev == ResponseDto.YES) ResponseDto.YES else ResponseDto.DK,
+      risk = ResponseDto.fromString(screening),
       current = cur,
       previous = prev,
       currentConcernsText = cur.conditionalText(currentText),

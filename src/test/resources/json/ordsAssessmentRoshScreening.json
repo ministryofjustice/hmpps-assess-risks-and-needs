@@ -1,0 +1,24 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9630348
+  },
+  "probNumber": "X123456",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "assessmentPk": 9630348,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2023-12-19T16:57:25",
+      "assessorSignedDate": "2023-12-19T16:55:32",
+      "initiationDate": "2023-05-26T13:51:41",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "suicideRisk": "Yes",
+      "selfHarmRisk": "Don't know",
+      "custodyHostelRisk": "Yes",
+      "vulnerabilityRisk": "Yes"
+    }
+  ]
+}

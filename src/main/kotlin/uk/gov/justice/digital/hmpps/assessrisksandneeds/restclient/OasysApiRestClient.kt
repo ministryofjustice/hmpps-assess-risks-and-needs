@@ -199,7 +199,7 @@ class OasysApiRestClient {
           .zipWith(getRoshSummary(assessment.assessmentId))
           .map {
             AllRoshRiskDto(
-              riskToSelf = it.t1.t1.asRiskToSelf(),
+              riskToSelf = it.t1.t1.asRiskToSelf(it.t1.t2),
               otherRisks = it.t1.t1.asOtherRisks(),
               summary = it.t2.asRiskRoshSummary(),
               assessedOn = assessment.completedDate,

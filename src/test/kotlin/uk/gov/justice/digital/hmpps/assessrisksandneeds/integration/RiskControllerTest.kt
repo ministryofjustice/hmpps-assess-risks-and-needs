@@ -131,7 +131,7 @@ class RiskControllerTest : IntegrationTestBase() {
                 current = ResponseDto.NA,
               ),
               hostelSetting = RiskDto(
-                risk = ResponseDto.DK,
+                risk = ResponseDto.YES,
                 previous = ResponseDto.DK,
                 current = ResponseDto.NO,
               ),
@@ -202,7 +202,7 @@ class RiskControllerTest : IntegrationTestBase() {
                 current = ResponseDto.NA,
               ),
               hostelSetting = RiskDto(
-                risk = ResponseDto.DK,
+                risk = ResponseDto.YES,
                 previous = ResponseDto.DK,
                 current = ResponseDto.NO,
               ),
@@ -255,7 +255,7 @@ class RiskControllerTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody<AllRoshRiskDto>()
       .consumeWith {
-        assertThat(it.responseBody.summary).isEqualTo(
+        assertThat(it.responseBody?.summary).isEqualTo(
           RiskRoshSummaryDto(
             "whoisAtRisk",
             "natureOfRisk",
@@ -358,6 +358,6 @@ class RiskControllerTest : IntegrationTestBase() {
       .expectBody<ApiErrorResponse>()
       .returnResult().responseBody
 
-    assertThat(response.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+    assertThat(response?.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
   }
 }

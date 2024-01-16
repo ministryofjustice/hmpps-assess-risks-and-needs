@@ -19,7 +19,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
@@ -33,8 +32,7 @@ class AssessmentOffenceServiceTest {
   private val oasysClient: OasysApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
   private val auditService: AuditService = mockk()
-  private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient = mockk()
-  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService, offenderAssessmentApiRestClient)
+  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService)
 
   @BeforeEach
   fun setup() {

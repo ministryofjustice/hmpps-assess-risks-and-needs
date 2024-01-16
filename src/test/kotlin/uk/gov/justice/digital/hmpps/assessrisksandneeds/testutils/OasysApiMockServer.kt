@@ -202,6 +202,18 @@ class OasysApiMockServer : WireMockServer(9097) {
     stubFor(
       WireMock.get(
         WireMock.urlPathMatching(
+          "/eor/oasys/ass/sectionrosh/ALLOW/9630348",
+        ),
+      ).willReturn(
+        WireMock.aResponse()
+          .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshScreening.json")?.readText()),
+      ),
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlPathMatching(
           "/eor/oasys/ass/sectionroshsumm/ALLOW/9630348",
         ),
       ).willReturn(
