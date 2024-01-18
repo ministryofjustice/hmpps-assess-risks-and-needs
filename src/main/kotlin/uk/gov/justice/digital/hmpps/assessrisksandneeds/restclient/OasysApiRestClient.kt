@@ -32,8 +32,9 @@ class OasysApiRestClient(
   fun getScoredSections(
     identifier: PersonIdentifier,
     needsSection: List<NeedsSection>,
-  ): Map<NeedsSection, ScoredSection> =
-    getLatestAssessment(identifier)?.let {
+  ): TierAnswers {
+    val assessment = getLatestAssessment(identifier)
+    val needs = assessment?.let {
       Flux.fromIterable(needsSection).flatMap { section ->
         val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
         webClient
@@ -41,6 +42,21 @@ class OasysApiRestClient(
           .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
       }.collectList().block()?.toMap()
     } ?: mapOf()
+
+    return needs.let {
+      TierAnswers(
+        assessment,
+        it.section(NeedsSection.ACCOMMODATION),
+        it.section(NeedsSection.EDUCATION_TRAINING_EMPLOYMENT),
+        it.section(NeedsSection.RELATIONSHIPS),
+        it.section(NeedsSection.LIFESTYLE),
+        it.section(NeedsSection.DRUG_MISUSE),
+        it.section(NeedsSection.ALCOHOL_MISUSE),
+        it.section(NeedsSection.THINKING_AND_BEHAVIOUR),
+        it.section(NeedsSection.ATTITUDE),
+      )
+    }
+  }
 
   fun getRiskPredictorsForCompletedAssessments(
     crn: String,
@@ -165,3 +181,18 @@ class OasysApiRestClient(
       .block().also { log.info("Retrieved risk management plan for crn $crn") }
   }
 }
+
+inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? =
+  this[section] as T?
+
+data class TierAnswers(
+  val assessment: AssessmentSummary?,
+  val accommodation: ScoredSection.Accommodation?,
+  val educationTrainingEmployment: ScoredSection.EducationTrainingEmployment?,
+  val relationships: ScoredSection.Relationships?,
+  val lifestyleAndAssociates: ScoredSection.LifestyleAndAssociates?,
+  val drugMisuse: ScoredSection.DrugMisuse?,
+  val alcoholMisuse: ScoredSection.AlcoholMisuse?,
+  val thinkingAndBehaviour: ScoredSection.ThinkingAndBehaviour?,
+  val attitudes: ScoredSection.Attitudes?,
+)

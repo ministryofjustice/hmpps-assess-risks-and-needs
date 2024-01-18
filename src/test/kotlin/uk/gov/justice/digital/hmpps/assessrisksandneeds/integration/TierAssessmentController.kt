@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.test.web.reactive.server.expectBody
 
 @AutoConfigureWebTestClient
-@DisplayName("Risk widget Tests")
+@DisplayName("Tier calculation information tests")
 class TierAssessmentController : IntegrationTestBase() {
   @Test
   fun `successfully returns the answers required for a tier calculation`() {
@@ -22,6 +22,10 @@ class TierAssessmentController : IntegrationTestBase() {
         .expectBody<JsonNode>()
         .returnResult().responseBody,
     )
+
+    val assessmentSummary = checkNotNull(response["assessment"])
+    assertThat(assessmentSummary["assessmentId"].asInt(), equalTo(9630348))
+    assertThat(assessmentSummary["completedDate"].asText(), equalTo("2023-12-19T16:57:25"))
 
     val accommodation = checkNotNull(response["accommodation"])
     assertThat(accommodation.severity, equalTo("NO_NEED"))
