@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 
 class OasysApiMockServer : WireMockServer(9097) {
   private val crn = "X123456"
@@ -33,7 +34,9 @@ class OasysApiMockServer : WireMockServer(9097) {
         .willReturn(
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-            .withBody(this::class.java.getResource("/json/ordsAssessmentOffenceNoCompleteAssessments.json")?.readText()),
+            .withBody(
+              this::class.java.getResource("/json/ordsAssessmentOffenceNoCompleteAssessments.json")?.readText(),
+            ),
         ),
     )
 
@@ -96,6 +99,23 @@ class OasysApiMockServer : WireMockServer(9097) {
     )
   }
 
+  fun stubGetTierSections() {
+    NeedsSection.entries.forEach {
+      stubFor(
+        WireMock.get(
+          WireMock.urlEqualTo(
+            "/eor/oasys/ass/section${it.sectionNumber}/ALLOW/9630348",
+          ),
+        ).willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withStatus(200)
+            .withBody(this::class.java.getResource("/json/ordsTierSection${it.sectionNumber}.json")?.readText()),
+        ),
+      )
+    }
+  }
+
   fun stubGetRiskManagementPlansByCrn() {
     stubFor(
       WireMock.get(
@@ -137,6 +157,7 @@ class OasysApiMockServer : WireMockServer(9097) {
         ),
     )
   }
+
   fun stubGetRiskPredictorScores() {
     stubFor(
       WireMock.get(

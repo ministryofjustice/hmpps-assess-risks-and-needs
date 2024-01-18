@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +28,9 @@ abstract class IntegrationTestBase {
   @Autowired
   internal lateinit var jwtHelper: JwtAuthHelper
 
+  @Autowired
+  internal lateinit var objectMapper: ObjectMapper
+
   companion object {
     internal val offenderAssessmentApiMockServer = OffenderAssessmentApiMockServer()
     internal val communityApiMockServer = CommunityApiMockServer()
@@ -48,6 +52,7 @@ abstract class IntegrationTestBase {
       oasysApiMockServer.stubGetAssessmentTimeline()
       oasysApiMockServer.stubGetRiskManagementPlansByCrn()
       oasysApiMockServer.stubGetRiskPredictorScores()
+      oasysApiMockServer.stubGetTierSections()
     }
 
     @AfterAll

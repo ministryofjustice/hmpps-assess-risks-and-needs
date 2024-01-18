@@ -1,0 +1,13 @@
+{
+  "assessments": [
+    {
+      "noFixedAbodeOrTransient": "No",
+      "accLinkedToReoffending": "No",
+      "accLinkedToHarm": "No",
+      "accIssuesDetails": "Some detail about the issues",
+      "locationOfAccommodation": "0-No problems",
+      "permanenceOfAccommodation": "0-No problems",
+      "suitabilityOfAccommodation": "0-No problems"
+    }
+  ]
+}

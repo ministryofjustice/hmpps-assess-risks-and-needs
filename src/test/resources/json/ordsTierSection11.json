@@ -1,0 +1,21 @@
+{
+  "assessments": [
+    {
+      "interpersonalSkills": "1-Some problems",
+      "achieveGoals": null,
+      "concreteAbstractThinking": null,
+      "thinkLinkedToReoffending": "Yes",
+      "thinkLinkedToHarm": "Yes",
+      "thinkIssuesDetails": "Details",
+      "understandsViewsOfOthers": "1-Some problems",
+      "awarenessOfConsequences": "2-Significant problems",
+      "problemSolvingSkills": "2-Significant problems",
+      "recogniseProblems": "2-Significant problems",
+      "temperControl": "1-Some problems",
+      "aggressiveControllingBehavour": "2-Significant problems",
+      "impulsivity": "2-Significant problems",
+      "offenceRelatedSexualInterests": "1-Some problems",
+      "sexualPreOccupation": "1-Some problems"
+    }
+  ]
+}
