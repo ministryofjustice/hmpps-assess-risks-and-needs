@@ -175,41 +175,25 @@ class OasysApiRestClient(
       .block().also { log.info("Retrieved risk management plan for crn $crn") }
   }
 
-  fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? {
-    val latestCompleted =
-      getAssessmentTimeline(identifier)?.timeline
-        ?.filter { it.completedDate != null }
-        ?.sortedByDescending { it.completedDate }?.firstOrNull()
-    return latestCompleted?.takeIf {
-      it.completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
-    }?.let { assessment ->
+  fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? =
+    getLatestAssessment(identifier)?.takeIf { it.validForRiskValues() }?.let { assessment ->
       getRoshSummary(assessment.assessmentId).map { it.asRiskRoshSummary() }.block()
     }
-  }
 
-  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier): AllRoshRiskDto? {
-    val latestCompleted =
-      getAssessmentTimeline(identifier)?.timeline
-        ?.filter { it.completedDate != null }
-        ?.sortedByDescending { it.completedDate }?.firstOrNull()
-    return latestCompleted
-      ?.takeIf {
-        it.completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
-      }
-      ?.let { assessment ->
-        getRoshFull(assessment.assessmentId)
-          .zipWith(getRoshScreening(assessment.assessmentId))
-          .zipWith(getRoshSummary(assessment.assessmentId))
-          .map {
-            AllRoshRiskDto(
-              riskToSelf = it.t1.t1.asRiskToSelf(it.t1.t2),
-              otherRisks = it.t1.t1.asOtherRisks(),
-              summary = it.t2.asRiskRoshSummary(),
-              assessedOn = assessment.completedDate,
-            )
-          }.block()
-      }
-  }
+  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier): AllRoshRiskDto? =
+    getLatestAssessment(identifier)?.takeIf { it.validForRiskValues() }?.let { assessment ->
+      getRoshFull(assessment.assessmentId)
+        .zipWith(getRoshScreening(assessment.assessmentId))
+        .zipWith(getRoshSummary(assessment.assessmentId))
+        .map {
+          AllRoshRiskDto(
+            riskToSelf = it.t1.t1.asRiskToSelf(it.t1.t2),
+            otherRisks = it.t1.t1.asOtherRisks(),
+            summary = it.t2.asRiskRoshSummary(),
+            assessedOn = assessment.completedDate,
+          )
+        }.block()
+    }
 
   private fun getRoshSummary(assessmentId: Long): Mono<RoshSummary> {
     val path = "/ass/section${SectionHeader.ROSH_SUMMARY.ordsUrlParam}/ALLOW/$assessmentId"
@@ -249,4 +233,7 @@ class OasysApiRestClient(
         }
       }
   }
+
+  private fun AssessmentSummary.validForRiskValues(): Boolean =
+    completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
 }
