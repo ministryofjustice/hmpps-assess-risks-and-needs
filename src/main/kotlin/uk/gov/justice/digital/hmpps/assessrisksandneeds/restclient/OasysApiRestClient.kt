@@ -62,11 +62,7 @@ class OasysApiRestClient(
       )
       .retrieve()
       .onStatus({ it.is4xxClientError }) {
-        log.error(
-          "4xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${
-          it.statusCode().value()
-          }",
-        )
+        log.error("4xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
         handle4xxError(
           it,
           HttpMethod.GET,
@@ -75,11 +71,7 @@ class OasysApiRestClient(
         )
       }
       .onStatus({ it.is5xxServerError }) {
-        log.error(
-          "5xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${
-          it.statusCode().value()
-          }",
-        )
+        log.error("5xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve risk predictor scores for completed Assessments for crn $crn",
           HttpMethod.GET,
@@ -101,11 +93,7 @@ class OasysApiRestClient(
       )
       .retrieve()
       .onStatus({ it.is4xxClientError }) {
-        log.error(
-          "4xx Error retrieving assessment timeline for ${identifier.type.value} ${identifier.value} code: ${
-          it.statusCode().value()
-          }",
-        )
+        log.error("4xx Error retrieving assessment timeline for ${identifier.type.value} ${identifier.value} code: ${it.statusCode().value()}")
         handle4xxError(
           it,
           HttpMethod.GET,
@@ -114,11 +102,7 @@ class OasysApiRestClient(
         )
       }
       .onStatus({ it.is5xxServerError }) {
-        log.error(
-          "5xx Error retrieving assessment timeline for ${identifier.type.value} ${identifier.value} code: ${
-          it.statusCode().value()
-          }",
-        )
+        log.error("5xx Error retrieving assessment timeline for ${identifier.type.value} ${identifier.value} code: ${it.statusCode().value()}")
         handle5xxError(
           "Failed to retrieve assessment timeline for ${identifier.type.value} ${identifier.value}",
           HttpMethod.GET,
