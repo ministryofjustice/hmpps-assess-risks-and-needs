@@ -12,6 +12,8 @@ spring:
     date-format: "yyyy-MM-dd HH:mm:ss"
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization:
+      fail-on-ignored-properties: false
 
   security:
     oauth2:

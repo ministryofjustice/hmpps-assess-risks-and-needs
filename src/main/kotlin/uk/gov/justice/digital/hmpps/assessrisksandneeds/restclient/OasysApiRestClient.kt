@@ -2,26 +2,45 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Flux
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 
 @Component
-class OasysApiRestClient {
-  @Autowired
-  @Qualifier("oasysApiWebClient")
-  internal lateinit var webClient: AuthenticatingRestClient
-
+class OasysApiRestClient(
+  @Qualifier("oasysApiWebClient") private val webClient: AuthenticatingRestClient,
+) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
+
+  fun getLatestAssessment(identifier: PersonIdentifier): AssessmentSummary? =
+    getAssessmentTimeline(identifier)?.timeline
+      ?.filter { it.completedDate != null }
+      ?.sortedByDescending { it.completedDate }?.firstOrNull()
+
+  fun getScoredSections(
+    identifier: PersonIdentifier,
+    needsSection: List<NeedsSection>,
+  ): Map<NeedsSection, ScoredSection> =
+    getLatestAssessment(identifier)?.let {
+        Flux.fromIterable(needsSection).flatMap { section ->
+          val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
+          webClient
+            .get(path)
+            .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
+        }.collectList().block()?.toMap()
+    } ?: mapOf()
 
   fun getRiskPredictorsForCompletedAssessments(
     crn: String,

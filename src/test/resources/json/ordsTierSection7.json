@@ -1,0 +1,14 @@
+{
+  "assessments": [
+    {
+      "communityIntegration": "1-Some problems",
+      "lifestyleLinkedToReoffending": "Yes",
+      "lifestyleLinkedToHarm": "Yes",
+      "lifestyleIssuesDetails": "Details about the issues",
+      "recklessness": "2-Significant problems",
+      "manipulativePredatory": "2-Significant problems",
+      "easilyInfluenced": "0-No problems",
+      "regActivitiesEncourageOffending": "1-Some problems"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "assessments": [
+    {
+      "proCriminalAttitudes": "0-No problems",
+      "attLinkedToReoffending": "No",
+      "attLinkedToHarm": "No",
+      "attIssuesDetails": "Details",
+      "hostileOrientation": "0-No problems",
+      "motivationToAddressBehaviour": "0-Very motivated",
+      "understandsMotivationForOffending": "0-No problems",
+      "attitudesTowardsCommunitySociety": "0-No problems",
+      "attitudesTowardsSupervision": "0-No problems",
+      "attitudesTowardsStaff": "0-No problems"
+    }
+  ]
+}

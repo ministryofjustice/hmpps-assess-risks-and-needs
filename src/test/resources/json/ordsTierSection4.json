@@ -1,0 +1,21 @@
+{
+  "assessments": [
+    {
+      "attitudeToEducationTraining": "0-No problems",
+      "basicSkillsScore": null,
+      "problemAreas": null,
+      "initSkillsCheckerScore": null,
+      "eTELinkedToReoffending": "No",
+      "eTELinkedToHarm": "No",
+      "eTEIssuesDetails": "Details about the issues",
+      "qualifications": "0 - Any qualifications",
+      "learningDifficulties": "0-No problems",
+      "problemsReadWriteNum": "0-No problems",
+      "schoolAttendance": "0-No problems",
+      "attitudeToEmployment": "2-Significant problems",
+      "workRelatedSkills": "0-No problems",
+      "employmentHistory": "1-Some problems",
+      "unemployed": "0 - No"
+    }
+  ]
+}
