@@ -1,0 +1,15 @@
+{
+  "assessments": [
+    {
+      "currentUse": "1-Some problems",
+      "alcoholLinkedToReoffending": "Yes",
+      "alcoholLinkedToHarm": "No",
+      "alcoholIssuesDetails": "Details about the problems",
+      "alcoholTackleMotivation": "1-Some problems",
+      "alcoholViolentBehaviour": "No",
+      "frequencyAndLevel": "1-Some problems",
+      "bingeDrinking": "1-Some problems",
+      "alcoholProblemDecription": "More details"
+    }
+  ]
+}

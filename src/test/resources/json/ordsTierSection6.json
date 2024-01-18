@@ -1,0 +1,27 @@
+{
+  "assessments": [
+    {
+      "relCloseFamily": "0-No problems",
+      "parentalRespProblem": null,
+      "openSexualOffendingQuestions": null,
+      "perpAgainstFamily": null,
+      "victimOfFamily": null,
+      "perpAgainstPartner": null,
+      "victimOfPartner": null,
+      "relLinkedToReoffending": "No",
+      "relLinkedToHarm": "No",
+      "relIssuesDetails": "Details about the issues",
+      "relParentalResponsibilities": "No",
+      "relCurrRelationshipStatus": "Not in a relationship",
+      "prevOrCurrentDomesticAbuse": "No",
+      "prevCloseRelationships": "2-Significant problems",
+      "relationshipWithPartner": "0-No problems",
+      "experienceOfChildhood": "1-Some problems",
+      "emotionalCongruence": "0-No problems",
+      "SARA": {
+        "imminentRiskOfViolenceTowardsPartner": null,
+        "imminentRiskOfViolenceTowardsOthers": null
+      }
+    }
+  ]
+}
