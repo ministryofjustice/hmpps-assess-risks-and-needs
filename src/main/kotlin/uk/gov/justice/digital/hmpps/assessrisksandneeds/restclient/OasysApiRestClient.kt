@@ -34,12 +34,12 @@ class OasysApiRestClient(
     needsSection: List<NeedsSection>,
   ): Map<NeedsSection, ScoredSection> =
     getLatestAssessment(identifier)?.let {
-        Flux.fromIterable(needsSection).flatMap { section ->
-          val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
-          webClient
-            .get(path)
-            .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
-        }.collectList().block()?.toMap()
+      Flux.fromIterable(needsSection).flatMap { section ->
+        val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
+        webClient
+          .get(path)
+          .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
+      }.collectList().block()?.toMap()
     } ?: mapOf()
 
   fun getRiskPredictorsForCompletedAssessments(
