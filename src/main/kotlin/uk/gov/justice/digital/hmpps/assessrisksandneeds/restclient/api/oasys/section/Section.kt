@@ -32,7 +32,7 @@ sealed interface ScoredSection {
 
   val severity: NeedSeverity
     get() {
-      val score = (severityAnswers + linkedToHarm + linkedToReOffending).sumOf { it.score }
+      val score = severityAnswers.sumOf { it.score }
       return when {
         score >= severeThreshold -> NeedSeverity.SEVERE
         score >= standardThreshold -> NeedSeverity.STANDARD
