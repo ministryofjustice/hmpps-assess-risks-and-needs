@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRisk
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
+import java.time.LocalDate
 
 @Component
 class OasysApiRestClient(
@@ -26,14 +27,16 @@ class OasysApiRestClient(
 
   fun getLatestAssessment(identifier: PersonIdentifier): AssessmentSummary? =
     getAssessmentTimeline(identifier)?.timeline
-      ?.filter { it.completedDate != null }
+      ?.filter { it.status == "COMPLETE" && it.completedDate != null }
       ?.sortedByDescending { it.completedDate }?.firstOrNull()
 
   fun getScoredSections(
     identifier: PersonIdentifier,
     needsSection: List<NeedsSection>,
   ): TierAnswers {
-    val assessment = getLatestAssessment(identifier)
+    val assessment = getLatestAssessment(identifier)?.takeIf {
+      it.completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
+    }
     val needs = assessment?.let {
       Flux.fromIterable(needsSection).flatMap { section ->
         val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
