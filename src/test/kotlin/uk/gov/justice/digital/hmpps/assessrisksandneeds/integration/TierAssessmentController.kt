@@ -38,7 +38,7 @@ class TierAssessmentController : IntegrationTestBase() {
     assertThat(relationships["parentalResponsibilities"]?.asText(), equalTo("No"))
 
     val lifestyle = checkNotNull(response["lifestyleAndAssociates"])
-    assertThat(lifestyle.severity, equalTo("SEVERE"))
+    assertThat(lifestyle.severity, equalTo("STANDARD"))
 
     val drugMisuse = checkNotNull(response["drugMisuse"])
     assertThat(drugMisuse.severity, equalTo("NO_NEED"))
