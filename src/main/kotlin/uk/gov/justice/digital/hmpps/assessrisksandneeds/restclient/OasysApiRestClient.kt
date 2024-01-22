@@ -27,8 +27,11 @@ class OasysApiRestClient(
 
   fun getLatestAssessment(identifier: PersonIdentifier): AssessmentSummary? =
     getAssessmentTimeline(identifier)?.timeline
-      ?.filter { it.status == "COMPLETE" && it.completedDate != null }
-      ?.sortedByDescending { it.completedDate }?.firstOrNull()
+      ?.filter {
+        it.assessmentType == "LAYER3" &&
+          (it.status == "COMPLETE" || it.status == "LOCKED_INCOMPLETE") &&
+          it.completedDate != null
+      }?.sortedByDescending { it.completedDate }?.firstOrNull()
 
   fun getScoredSections(
     identifier: PersonIdentifier,
