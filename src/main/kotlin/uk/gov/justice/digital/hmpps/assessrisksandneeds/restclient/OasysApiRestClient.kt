@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRisk
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Component
 class OasysApiRestClient(
