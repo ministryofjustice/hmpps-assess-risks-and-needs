@@ -23,8 +23,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshScree
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
-import java.time.LocalDate
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ACCOMMODATION
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ALCOHOL_MISUSE
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ATTITUDE
@@ -33,6 +31,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ED
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.LIFESTYLE
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.RELATIONSHIPS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.THINKING_AND_BEHAVIOUR
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
+import java.time.LocalDate
 
 @Component
 class OasysApiRestClient(
