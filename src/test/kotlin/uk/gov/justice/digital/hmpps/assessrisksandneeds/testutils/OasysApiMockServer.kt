@@ -254,18 +254,6 @@ class OasysApiMockServer : WireMockServer(9097) {
           .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummaryForNull.json")?.readText()),
       ),
     )
-
-    stubFor(
-      WireMock.get(
-        WireMock.urlPathMatching(
-          "/eor/oasys/ass/sectionroshsumm/ALLOW/45115261",
-        ),
-      ).willReturn(
-        WireMock.aResponse()
-          .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummaryForNull.json")?.readText()),
-      ),
-    )
   }
 
   companion object {

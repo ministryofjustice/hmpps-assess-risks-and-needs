@@ -10,7 +10,9 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
@@ -42,21 +44,19 @@ class OasysApiRestClient(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getLatestAssessment(identifier: PersonIdentifier): AssessmentSummary? =
+  fun getLatestAssessment(
+    identifier: PersonIdentifier,
+    predicate: (AssessmentSummary) -> Boolean,
+  ): AssessmentSummary? =
     getAssessmentTimeline(identifier)?.timeline
-      ?.filter {
-        it.assessmentType == "LAYER3" &&
-          (it.status == "COMPLETE" || it.status == "LOCKED_INCOMPLETE") &&
-          it.completedDate != null
-      }?.sortedByDescending { it.completedDate }?.firstOrNull()
+      ?.filter(predicate)
+      ?.sortedByDescending { it.completedDate }?.firstOrNull()
 
   fun getScoredSections(
     identifier: PersonIdentifier,
     needsSection: List<NeedsSection>,
   ): TierAnswers? {
-    val assessment = getLatestAssessment(identifier)?.takeIf {
-      it.completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
-    }
+    val assessment = getLatestAssessment(identifier, tierPredicate())
     val needs = assessment?.let {
       Flux.fromIterable(needsSection).flatMap { section ->
         val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
@@ -205,12 +205,12 @@ class OasysApiRestClient(
   }
 
   fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? =
-    getLatestAssessment(identifier)?.takeIf { it.validForRiskValues() }?.let { assessment ->
+    getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
       getRoshSummary(assessment.assessmentId).map { it.asRiskRoshSummary() }.block()
     }
 
   fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier): AllRoshRiskDto? =
-    getLatestAssessment(identifier)?.takeIf { it.validForRiskValues() }?.let { assessment ->
+    getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
       getRoshFull(assessment.assessmentId)
         .zipWith(getRoshScreening(assessment.assessmentId))
         .zipWith(getRoshSummary(assessment.assessmentId))
@@ -262,13 +262,25 @@ class OasysApiRestClient(
         }
       }
   }
-
-  private fun AssessmentSummary.validForRiskValues(): Boolean =
-    completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
 }
 
 inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? =
   this[section] as T?
+
+private fun tierPredicate(): (AssessmentSummary) -> Boolean = {
+  it.assessmentType == AssessmentType.LAYER3.name &&
+    it.status in listOf(AssessmentStatus.COMPLETE.name, AssessmentStatus.LOCKED_INCOMPLETE.name) &&
+    it.isWithin55Weeks()
+}
+
+private fun riskPredicate(): (AssessmentSummary) -> Boolean = {
+  it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
+    it.status in listOf(AssessmentStatus.COMPLETE.name) &&
+    it.isWithin55Weeks()
+}
+
+private fun AssessmentSummary.isWithin55Weeks() =
+  completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
 
 data class TierAnswers(
   val assessment: AssessmentSummary,
