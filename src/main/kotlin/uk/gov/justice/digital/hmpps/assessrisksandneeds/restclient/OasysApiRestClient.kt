@@ -200,7 +200,7 @@ inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(
   this[section] as T?
 
 data class TierAnswers(
-  val assessment: AssessmentSummary?,
+  val assessment: AssessmentSummary,
   val accommodation: ScoredSection.Accommodation?,
   val educationTrainingEmployment: ScoredSection.EducationTrainingEmployment?,
   val relationships: ScoredSection.Relationships?,
