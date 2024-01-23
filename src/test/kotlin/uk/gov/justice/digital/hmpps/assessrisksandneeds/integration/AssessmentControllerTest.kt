@@ -350,7 +350,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
         AssessmentSummary(
           9630348,
           LocalDateTime.parse("2023-12-19T16:57:25"),
-          "LAYER1",
+          "LAYER3",
           "COMPLETE",
         ),
         AssessmentSummary(

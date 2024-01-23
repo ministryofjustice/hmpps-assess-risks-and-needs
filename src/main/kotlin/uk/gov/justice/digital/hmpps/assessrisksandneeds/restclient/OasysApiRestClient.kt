@@ -25,6 +25,14 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.sec
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 import java.time.LocalDate
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ACCOMMODATION
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ALCOHOL_MISUSE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ATTITUDE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.DRUG_MISUSE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.EDUCATION_TRAINING_EMPLOYMENT
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.LIFESTYLE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.RELATIONSHIPS
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.THINKING_AND_BEHAVIOUR
 
 @Component
 class OasysApiRestClient(
@@ -36,14 +44,20 @@ class OasysApiRestClient(
 
   fun getLatestAssessment(identifier: PersonIdentifier): AssessmentSummary? =
     getAssessmentTimeline(identifier)?.timeline
-      ?.filter { it.completedDate != null }
-      ?.sortedByDescending { it.completedDate }?.firstOrNull()
+      ?.filter {
+        it.assessmentType == "LAYER3" &&
+          (it.status == "COMPLETE" || it.status == "LOCKED_INCOMPLETE") &&
+          it.completedDate != null
+      }?.sortedByDescending { it.completedDate }?.firstOrNull()
 
   fun getScoredSections(
     identifier: PersonIdentifier,
     needsSection: List<NeedsSection>,
-  ): Map<NeedsSection, ScoredSection> =
-    getLatestAssessment(identifier)?.let {
+  ): TierAnswers? {
+    val assessment = getLatestAssessment(identifier)?.takeIf {
+      it.completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
+    }
+    val needs = assessment?.let {
       Flux.fromIterable(needsSection).flatMap { section ->
         val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
         webClient
@@ -51,6 +65,21 @@ class OasysApiRestClient(
           .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
       }.collectList().block()?.toMap()
     } ?: mapOf()
+
+    return assessment?.let {
+      TierAnswers(
+        it,
+        needs.section(ACCOMMODATION),
+        needs.section(EDUCATION_TRAINING_EMPLOYMENT),
+        needs.section(RELATIONSHIPS),
+        needs.section(LIFESTYLE),
+        needs.section(DRUG_MISUSE),
+        needs.section(ALCOHOL_MISUSE),
+        needs.section(THINKING_AND_BEHAVIOUR),
+        needs.section(ATTITUDE),
+      )
+    }
+  }
 
   fun getRiskPredictorsForCompletedAssessments(
     crn: String,
@@ -237,3 +266,18 @@ class OasysApiRestClient(
   private fun AssessmentSummary.validForRiskValues(): Boolean =
     completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
 }
+
+inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? =
+  this[section] as T?
+
+data class TierAnswers(
+  val assessment: AssessmentSummary,
+  val accommodation: ScoredSection.Accommodation?,
+  val educationTrainingEmployment: ScoredSection.EducationTrainingEmployment?,
+  val relationships: ScoredSection.Relationships?,
+  val lifestyleAndAssociates: ScoredSection.LifestyleAndAssociates?,
+  val drugMisuse: ScoredSection.DrugMisuse?,
+  val alcoholMisuse: ScoredSection.AlcoholMisuse?,
+  val thinkingAndBehaviour: ScoredSection.ThinkingAndBehaviour?,
+  val attitudes: ScoredSection.Attitudes?,
+)
