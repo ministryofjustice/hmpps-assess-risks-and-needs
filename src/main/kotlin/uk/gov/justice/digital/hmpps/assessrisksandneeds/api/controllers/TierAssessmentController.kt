@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,5 +20,13 @@ class TierAssessmentController(private val ordsApiClient: OasysApiRestClient) {
   @PreAuthorize("hasRole('ROLE_MANAGEMENT_TIER_UPDATE')")
   fun getTierAssessmentAnswers(
     @PathVariable crn: String,
-  ): TierAnswers = ordsApiClient.getScoredSections(PersonIdentifier(PersonIdentifier.Type.CRN, crn), NeedsSection.entries)
+  ): ResponseEntity<TierAnswers> {
+    val answers =
+      ordsApiClient.getScoredSections(PersonIdentifier(PersonIdentifier.Type.CRN, crn), NeedsSection.entries)
+    return if (answers == null) {
+      ResponseEntity.notFound().build()
+    } else {
+      ResponseEntity.ok(answers)
+    }
+  }
 }

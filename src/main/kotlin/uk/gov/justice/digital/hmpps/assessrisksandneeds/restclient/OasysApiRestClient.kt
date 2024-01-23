@@ -15,6 +15,14 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRisk
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ACCOMMODATION
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ALCOHOL_MISUSE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ATTITUDE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.DRUG_MISUSE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.EDUCATION_TRAINING_EMPLOYMENT
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.LIFESTYLE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.RELATIONSHIPS
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.THINKING_AND_BEHAVIOUR
 import java.time.LocalDate
 
 @Component
@@ -36,7 +44,7 @@ class OasysApiRestClient(
   fun getScoredSections(
     identifier: PersonIdentifier,
     needsSection: List<NeedsSection>,
-  ): TierAnswers {
+  ): TierAnswers? {
     val assessment = getLatestAssessment(identifier)?.takeIf {
       it.completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
     }
@@ -49,17 +57,17 @@ class OasysApiRestClient(
       }.collectList().block()?.toMap()
     } ?: mapOf()
 
-    return needs.let {
+    return assessment?.let {
       TierAnswers(
-        assessment,
-        it.section(NeedsSection.ACCOMMODATION),
-        it.section(NeedsSection.EDUCATION_TRAINING_EMPLOYMENT),
-        it.section(NeedsSection.RELATIONSHIPS),
-        it.section(NeedsSection.LIFESTYLE),
-        it.section(NeedsSection.DRUG_MISUSE),
-        it.section(NeedsSection.ALCOHOL_MISUSE),
-        it.section(NeedsSection.THINKING_AND_BEHAVIOUR),
-        it.section(NeedsSection.ATTITUDE),
+        it,
+        needs.section(ACCOMMODATION),
+        needs.section(EDUCATION_TRAINING_EMPLOYMENT),
+        needs.section(RELATIONSHIPS),
+        needs.section(LIFESTYLE),
+        needs.section(DRUG_MISUSE),
+        needs.section(ALCOHOL_MISUSE),
+        needs.section(THINKING_AND_BEHAVIOUR),
+        needs.section(ATTITUDE),
       )
     }
   }
@@ -192,7 +200,7 @@ inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(
   this[section] as T?
 
 data class TierAnswers(
-  val assessment: AssessmentSummary?,
+  val assessment: AssessmentSummary,
   val accommodation: ScoredSection.Accommodation?,
   val educationTrainingEmployment: ScoredSection.EducationTrainingEmployment?,
   val relationships: ScoredSection.Relationships?,
