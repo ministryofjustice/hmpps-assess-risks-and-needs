@@ -60,14 +60,16 @@ sealed interface ScoredSection {
   }
 
   data class EducationTrainingEmployment(
-    private val eTeLinkedToReoffending: String?,
+    @JsonAlias("eTELinkedToReoffending")
+    private val eTeLinkedToReOffending: String?,
+    @JsonAlias("eTELinkedToHarm")
     private val eTeLinkedToHarm: String?,
     private val unemployed: String?,
     private val employmentHistory: String?,
     private val workRelatedSkills: String?,
     private val attitudeToEmployment: String?,
   ) : ScoredSection {
-    override val linkedToReOffending = YesNo.of(eTeLinkedToReoffending)
+    override val linkedToReOffending = YesNo.of(eTeLinkedToReOffending)
     override val linkedToHarm = YesNo.of(eTeLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
       unemployed,
