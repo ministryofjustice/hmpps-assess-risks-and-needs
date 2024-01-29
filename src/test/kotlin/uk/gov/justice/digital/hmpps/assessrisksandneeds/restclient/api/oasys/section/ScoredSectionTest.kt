@@ -117,7 +117,7 @@ class ScoredSectionTest {
       Arguments.of(ete, NeedSeverity.NO_NEED),
       Arguments.of(
         ete.copy(
-          eTeLinkedToReoffending = "Yes",
+          eTeLinkedToReOffending = "Yes",
           workRelatedSkills = "2-Significant problems",
           attitudeToEmployment = "1-Some problems",
         ),
