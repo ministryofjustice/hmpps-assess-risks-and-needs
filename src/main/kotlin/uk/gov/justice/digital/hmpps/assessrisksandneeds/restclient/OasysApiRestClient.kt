@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Flux
+import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
@@ -23,6 +24,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ED
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.LIFESTYLE_AND_ASSOCIATES
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.RELATIONSHIPS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.THINKING_AND_BEHAVIOUR
+import java.time.Duration
 import java.time.LocalDate
 
 @Component
@@ -46,6 +48,7 @@ class OasysApiRestClient(
       webClient
         .get(path)
         .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
+        .retryWhen(Retry.backoff(3, Duration.ofMillis(200)))
     }.collectList().block()?.toMap() ?: mapOf()
 
     return SectionSummary(
