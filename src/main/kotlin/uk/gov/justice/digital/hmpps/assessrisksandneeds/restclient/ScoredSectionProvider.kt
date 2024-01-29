@@ -26,9 +26,9 @@ object ScoredSectionProvider {
         }
       }
 
-      NeedsSection.EDUCATION_TRAINING_EMPLOYMENT -> {
+      NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY -> {
         {
-          it.bodyToMono<ScoredSectionResponse<ScoredSection.EducationTrainingEmployment>>().section(needsSection)
+          it.bodyToMono<ScoredSectionResponse<ScoredSection.EducationTrainingEmployability>>().section(needsSection)
         }
       }
 
@@ -38,7 +38,7 @@ object ScoredSectionProvider {
         }
       }
 
-      NeedsSection.LIFESTYLE -> {
+      NeedsSection.LIFESTYLE_AND_ASSOCIATES -> {
         {
           it.bodyToMono<ScoredSectionResponse<ScoredSection.LifestyleAndAssociates>>().section(needsSection)
         }

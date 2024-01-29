@@ -25,7 +25,7 @@ class ScoredSectionTest {
       "0-No problems",
     )
 
-    val ete = ScoredSection.EducationTrainingEmployment(
+    val ete = ScoredSection.EducationTrainingEmployability(
       "No",
       "No",
       "0-No",
@@ -117,7 +117,7 @@ class ScoredSectionTest {
       Arguments.of(ete, NeedSeverity.NO_NEED),
       Arguments.of(
         ete.copy(
-          eTeLinkedToReOffending = "Yes",
+          eTeLinkedToReoffending = "Yes",
           workRelatedSkills = "2-Significant problems",
           attitudeToEmployment = "1-Some problems",
         ),

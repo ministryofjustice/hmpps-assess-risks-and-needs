@@ -30,7 +30,7 @@ class TierAssessmentController : IntegrationTestBase() {
     val accommodation = checkNotNull(response["accommodation"])
     assertThat(accommodation.severity, equalTo("NO_NEED"))
 
-    val ete = checkNotNull(response["educationTrainingEmployment"])
+    val ete = checkNotNull(response["educationTrainingEmployability"])
     assertThat(ete.severity, equalTo("STANDARD"))
 
     val relationships = checkNotNull(response["relationships"])

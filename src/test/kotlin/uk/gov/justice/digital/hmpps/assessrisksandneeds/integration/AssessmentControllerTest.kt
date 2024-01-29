@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
@@ -44,10 +45,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .expectBody<AssessmentNeedsDto>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2021, 6, 21, 15, 55, 4))
+    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2023, 12, 19, 16, 57, 25))
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
-    assertThat(needsDto?.unansweredNeeds).containsExactlyInAnyOrderElementsOf(unscoredNeeds())
   }
 
   @Test
@@ -240,106 +240,63 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(response).isEqualTo(timeline)
   }
 
-  private fun unscoredNeeds() = listOf(
-    AssessmentNeedDto(
-      section = "THINKING_AND_BEHAVIOUR",
-      name = "Thinking and behaviour",
-    ),
-    AssessmentNeedDto(
-      section = "ATTITUDES",
-      name = "Attitudes",
-    ),
-  )
-
   private fun scoredNotNeeds() = listOf(
     AssessmentNeedDto(
-      section = "EMOTIONAL_WELL_BEING",
-      name = "Emotional Well-Being",
-      overThreshold = false,
+      section = NeedsSection.ACCOMMODATION.name,
+      name = NeedsSection.ACCOMMODATION.description,
       riskOfHarm = false,
       riskOfReoffending = false,
-      flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false,
     ),
     AssessmentNeedDto(
-      section = "FINANCIAL_MANAGEMENT_AND_INCOME",
-      name = "Financial Management and Income",
-      overThreshold = false,
+      section = NeedsSection.DRUG_MISUSE.name,
+      name = NeedsSection.DRUG_MISUSE.description,
+      severity = NeedSeverity.NO_NEED,
+    ),
+    AssessmentNeedDto(
+      section = NeedsSection.ATTITUDE.name,
+      name = NeedsSection.ATTITUDE.description,
       riskOfHarm = false,
       riskOfReoffending = false,
-      flaggedAsNeed = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false,
     ),
   )
 
   private fun identifiedNeeds() = listOf(
     AssessmentNeedDto(
-      section = "ACCOMMODATION",
-      name = "Accommodation",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+      section = NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
+      name = NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.description,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      severity = NeedSeverity.STANDARD,
     ),
     AssessmentNeedDto(
-      section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
-      name = "4 - Education, Training and Employability",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+      section = NeedsSection.RELATIONSHIPS.name,
+      name = NeedsSection.RELATIONSHIPS.description,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      severity = NeedSeverity.STANDARD,
     ),
     AssessmentNeedDto(
-      section = "RELATIONSHIPS",
-      name = "Relationships",
-      overThreshold = false,
+      section = NeedsSection.LIFESTYLE_AND_ASSOCIATES.name,
+      name = NeedsSection.LIFESTYLE_AND_ASSOCIATES.description,
       riskOfHarm = true,
       riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+      severity = NeedSeverity.STANDARD,
     ),
     AssessmentNeedDto(
-      section = "LIFESTYLE_AND_ASSOCIATES",
-      name = "Lifestyle and Associates",
-      overThreshold = false,
-      riskOfHarm = true,
+      section = NeedsSection.ALCOHOL_MISUSE.name,
+      name = NeedsSection.ALCOHOL_MISUSE.description,
+      riskOfHarm = false,
       riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+      severity = NeedSeverity.STANDARD,
     ),
     AssessmentNeedDto(
-      section = "DRUG_MISUSE",
-      name = "Drug Misuse",
-      overThreshold = false,
+      section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
+      name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
       riskOfHarm = true,
       riskOfReoffending = true,
-      flaggedAsNeed = false,
       severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
-    ),
-    AssessmentNeedDto(
-      section = "ALCOHOL_MISUSE",
-      name = "Alcohol Misuse",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
     ),
   )
 

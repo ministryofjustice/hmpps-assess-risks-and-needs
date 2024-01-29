@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnore
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredAnswer.YesNo
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class ScoredSectionResponse<T : ScoredSection>(
@@ -18,6 +19,8 @@ data class ScoredSectionResponse<T : ScoredSection>(
   getterVisibility = JsonAutoDetect.Visibility.PUBLIC_ONLY,
 )
 sealed interface ScoredSection {
+  @get:JsonIgnore
+  val section: NeedsSection
   val linkedToReOffending: YesNo
   val linkedToHarm: YesNo
 
@@ -30,10 +33,11 @@ sealed interface ScoredSection {
   @get:JsonIgnore
   val severityAnswers: List<ScoredAnswer>
 
-  val severity: NeedSeverity
+  val severity: NeedSeverity?
     get() {
       val score = severityAnswers.sumOf { it.score }
       return when {
+        score == 0 && severityAnswers.all { it == ScoredAnswer.Problem.Missing || it == ScoredAnswer.YesNo.Unknown } -> null
         score >= severeThreshold -> NeedSeverity.SEVERE
         score >= standardThreshold -> NeedSeverity.STANDARD
         else -> NeedSeverity.NO_NEED
@@ -48,6 +52,7 @@ sealed interface ScoredSection {
     private val permanenceOfAccommodation: String?,
     private val locationOfAccommodation: String?,
   ) : ScoredSection {
+    override val section = NeedsSection.ACCOMMODATION
     override val linkedToReOffending = YesNo.of(accLinkedToReoffending)
     override val linkedToHarm = YesNo.of(accLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
@@ -59,9 +64,9 @@ sealed interface ScoredSection {
     override val severeThreshold = 7
   }
 
-  data class EducationTrainingEmployment(
+  data class EducationTrainingEmployability(
     @JsonAlias("eTELinkedToReoffending")
-    private val eTeLinkedToReOffending: String?,
+    private val eTeLinkedToReoffending: String?,
     @JsonAlias("eTELinkedToHarm")
     private val eTeLinkedToHarm: String?,
     private val unemployed: String?,
@@ -69,7 +74,8 @@ sealed interface ScoredSection {
     private val workRelatedSkills: String?,
     private val attitudeToEmployment: String?,
   ) : ScoredSection {
-    override val linkedToReOffending = YesNo.of(eTeLinkedToReOffending)
+    override val section = NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY
+    override val linkedToReOffending = YesNo.of(eTeLinkedToReoffending)
     override val linkedToHarm = YesNo.of(eTeLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
       unemployed,
@@ -89,6 +95,7 @@ sealed interface ScoredSection {
     private val prevCloseRelationships: String?,
     private val relParentalResponsibilities: String?,
   ) : ScoredSection {
+    override val section = NeedsSection.RELATIONSHIPS
     override val linkedToReOffending = YesNo.of(relLinkedToReoffending)
     override val linkedToHarm = YesNo.of(relLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
@@ -109,6 +116,7 @@ sealed interface ScoredSection {
     private val easilyInfluenced: String?,
     private val recklessness: String?,
   ) : ScoredSection {
+    override val section = NeedsSection.LIFESTYLE_AND_ASSOCIATES
     override val linkedToReOffending = YesNo.of(lifestyleLinkedToReoffending)
     override val linkedToHarm = YesNo.of(lifestyleLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
@@ -129,6 +137,7 @@ sealed interface ScoredSection {
     private val motivationToTackleDrugMisuse: String?,
     @JsonAlias("DrugsMajorActivity") private val drugsMajorActivity: String?,
   ) : ScoredSection {
+    override val section = NeedsSection.DRUG_MISUSE
     override val linkedToReOffending = YesNo.of(drugLinkedToReoffending)
     override val linkedToHarm = YesNo.of(drugLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
@@ -149,6 +158,7 @@ sealed interface ScoredSection {
     private val frequencyAndLevel: String?,
     private val alcoholTackleMotivation: String?,
   ) : ScoredSection {
+    override val section = NeedsSection.ALCOHOL_MISUSE
     override val linkedToReOffending = YesNo.of(alcoholLinkedToReoffending)
     override val linkedToHarm = YesNo.of(alcoholLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
@@ -171,6 +181,7 @@ sealed interface ScoredSection {
     @JsonAlias("impulsivity") private val impulsivityStr: String?,
     @JsonAlias("temperControl") private val temperControlStr: String?,
   ) : ScoredSection {
+    override val section = NeedsSection.THINKING_AND_BEHAVIOUR
     override val linkedToReOffending = YesNo.of(thinkLinkedToReoffending)
     override val linkedToHarm = YesNo.of(thinkLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(
@@ -194,6 +205,7 @@ sealed interface ScoredSection {
     private val attitudesTowardsCommunitySociety: String?,
     private val motivationToAddressBehaviour: String?,
   ) : ScoredSection {
+    override val section = NeedsSection.ATTITUDE
     override val linkedToReOffending = YesNo.of(attLinkedToReoffending)
     override val linkedToHarm = YesNo.of(attLinkedToHarm)
     override val severityAnswers: List<ScoredAnswer> = listOf(

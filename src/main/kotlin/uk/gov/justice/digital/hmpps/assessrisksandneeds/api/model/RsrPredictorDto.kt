@@ -77,10 +77,6 @@ data class RsrPredictorDto(
   }
 }
 
-enum class AssessmentStatus {
-  COMPLETE, LOCKED_INCOMPLETE;
-}
-
 enum class RsrScoreSource {
   ASSESSMENTS_API, OASYS;
 }
