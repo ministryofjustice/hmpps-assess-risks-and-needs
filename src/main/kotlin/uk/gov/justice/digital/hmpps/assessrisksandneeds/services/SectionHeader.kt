@@ -6,13 +6,13 @@ enum class SectionHeader(val value: String) {
   ROSH_SUMMARY("ROSHSUM"),
 }
 
-enum class NeedsSection(val sectionNumber: Int) {
-  ACCOMMODATION(3),
-  EDUCATION_TRAINING_EMPLOYMENT(4),
-  RELATIONSHIPS(6),
-  LIFESTYLE(7),
-  DRUG_MISUSE(8),
-  ALCOHOL_MISUSE(9),
-  THINKING_AND_BEHAVIOUR(11),
-  ATTITUDE(12),
+enum class NeedsSection(val sectionNumber: Int, val description: String) {
+  ACCOMMODATION(3, "Accommodation"),
+  EDUCATION_TRAINING_AND_EMPLOYABILITY(4, "Education, Training and Employability"),
+  RELATIONSHIPS(6, "Relationships"),
+  LIFESTYLE_AND_ASSOCIATES(7, "Lifestyle and Associates"),
+  DRUG_MISUSE(8, "Drug Misuse"),
+  ALCOHOL_MISUSE(9, "Alcohol Misuse"),
+  THINKING_AND_BEHAVIOUR(11, "Thinking and Behaviour"),
+  ATTITUDE(12, "Attitudes"),
 }

@@ -10,470 +10,314 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OffenderNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("Assessment Need Service Tests")
 class AssessmentNeedsServiceTest {
-  private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient = mockk()
-  private val assessmentNeedsService = AssessmentNeedsService(offenderAssessmentApiRestClient)
+  private val oasysApiRestClient: OasysApiRestClient = mockk()
+  private val assessmentNeedsService = AssessmentNeedsService(oasysApiRestClient)
 
   @Test
   fun `get assessment needs by crn returns identified needs`() {
-    val crn = "CRN123"
-    val date = LocalDateTime.now()
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
-      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
-    } returns OffenderNeedsDto(
-      needs = allOffenderNeeds(),
-      historicStatus = "CURRENT",
-      assessedOn = date,
-    )
+      oasysApiRestClient.getScoredSectionsForAssessment(assessment, NeedsSection.entries)
+    } answers { allOffenderNeeds(assessment) }
 
-    val needs = assessmentNeedsService.getAssessmentNeeds(crn)
-    assertThat(needs.assessedOn).isEqualTo(date)
-    assertThat(needs.identifiedNeeds).hasSize(10)
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+    assertThat(needs.assessedOn).isEqualTo(assessment.completedDate)
+    assertThat(needs.identifiedNeeds).hasSize(8)
     assertThat(needs.notIdentifiedNeeds).hasSize(0)
     assertThat(needs.unansweredNeeds).hasSize(0)
   }
 
   @Test
   fun `get assessment needs by crn includes unanswered needs`() {
-    val crn = "CRN123"
-    val date = LocalDateTime.now()
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = AssessmentSummary(289457671, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
-      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
-    } returns OffenderNeedsDto(
-      needs = offenderNeedsWithUnanswered(),
-      historicStatus = "CURRENT",
-      assessedOn = date,
-    )
+      oasysApiRestClient.getScoredSectionsForAssessment(assessment, NeedsSection.entries)
+    } answers { offenderNeedsWithUnanswered(assessment) }
 
-    val needs = assessmentNeedsService.getAssessmentNeeds(crn)
-    assertThat(needs.assessedOn).isEqualTo(date)
-    assertThat(needs.identifiedNeeds).hasSize(8)
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+    assertThat(needs.assessedOn).isEqualTo(assessment.completedDate)
+    assertThat(needs.identifiedNeeds).hasSize(6)
     assertThat(needs.notIdentifiedNeeds).hasSize(0)
     assertThat(needs.unansweredNeeds).isEqualTo(unansweredNeeds())
   }
 
   @Test
   fun `get assessment needs by crn includes not identified needs`() {
-    val crn = "CRN123"
-    val date = LocalDateTime.now()
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
-      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
-    } returns
-      OffenderNeedsDto(
-        needs = offenderNeedsWithNotIdentified(),
-        historicStatus = "CURRENT",
-        assessedOn = date,
-      )
+      oasysApiRestClient.getScoredSectionsForAssessment(assessment, NeedsSection.entries)
+    } answers { offenderNeedsWithNotIdentified(assessment) }
 
-    val needs = assessmentNeedsService.getAssessmentNeeds(crn)
-    assertThat(needs.assessedOn).isEqualTo(date)
-    assertThat(needs.identifiedNeeds).hasSize(8)
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+    assertThat(needs.assessedOn).isEqualTo(assessment.completedDate)
+    assertThat(needs.identifiedNeeds).hasSize(6)
     assertThat(needs.notIdentifiedNeeds).isEqualTo(notIdentifiedNeeds())
     assertThat(needs.unansweredNeeds).hasSize(0)
   }
 
   @Test
   fun `get assessment needs by crn throws Exception when empty needs found`() {
-    val crn = "CRN123"
-    val date = LocalDateTime.now()
-
-    every {
-      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
-    } returns OffenderNeedsDto(
-      emptyList(),
-      date,
-      "CURRENT",
-    )
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "N123456")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { null }
 
     val exception = assertThrows<EntityNotFoundException> {
-      assessmentNeedsService.getAssessmentNeeds(crn)
+      assessmentNeedsService.getAssessmentNeeds(identifier.value)
     }
     assertEquals(
-      "No needs found for CRN: $crn",
-      exception.message,
-    )
-  }
-
-  @Test
-  fun `get assessment needs by crn throws Exception when needs are not current`() {
-    val crn = "CRN123"
-    val date = LocalDateTime.now()
-
-    every {
-      offenderAssessmentApiRestClient.getNeedsForCompletedLastYearAssessment(crn)
-    } returns OffenderNeedsDto(
-      allOffenderNeeds(),
-      date,
-      "HISTORIC",
-    )
-
-    val exception = assertThrows<EntityNotFoundException> {
-      assessmentNeedsService.getAssessmentNeeds(crn)
-    }
-    assertEquals(
-      "Current needs for CRN: $crn could not be found",
+      "No needs found for CRN: ${identifier.value}",
       exception.message,
     )
   }
 
   private fun unansweredNeeds() = listOf(
     AssessmentNeedDto(
-      section = "THINKING_AND_BEHAVIOUR",
-      name = "Thinking and behaviour",
+      section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
+      name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
     ),
     AssessmentNeedDto(
-      section = "ATTITUDES",
-      name = "Attitudes",
+      section = NeedsSection.ATTITUDE.name,
+      name = NeedsSection.ATTITUDE.description,
     ),
   )
 
   private fun notIdentifiedNeeds() = listOf(
     AssessmentNeedDto(
-      section = "THINKING_AND_BEHAVIOUR",
-      name = "Thinking and behaviour",
-      overThreshold = false,
-      riskOfHarm = false,
+      section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
+      name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
       riskOfReoffending = false,
-      flaggedAsNeed = false,
+      riskOfHarm = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false,
     ),
     AssessmentNeedDto(
-      section = "ATTITUDES",
-      name = "Attitudes",
-      overThreshold = false,
-      riskOfHarm = false,
+      section = NeedsSection.ATTITUDE.name,
+      name = NeedsSection.ATTITUDE.description,
       riskOfReoffending = false,
-      flaggedAsNeed = false,
+      riskOfHarm = false,
       severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false,
     ),
   )
 
-  private fun allOffenderNeeds() = listOf(
-    OffenderNeedDto(
-      section = "EMOTIONAL_WELL_BEING",
-      name = "Emotional Well-Being",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+  private fun allOffenderNeeds(assessmentSummary: AssessmentSummary) = SectionSummary(
+    assessmentSummary,
+    ScoredSection.Accommodation(
+      accLinkedToHarm = "Yes",
+      accLinkedToReoffending = "Yes",
+      noFixedAbodeOrTransient = "NO",
+      suitabilityOfAccommodation = "1-Some problems",
+      locationOfAccommodation = "2-Significant problems",
+      permanenceOfAccommodation = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "FINANCIAL_MANAGEMENT_AND_INCOME",
-      name = "Financial Management and Income",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.EducationTrainingEmployability(
+      eTeLinkedToHarm = "Yes",
+      eTeLinkedToReoffending = "Yes",
+      unemployed = "0-No",
+      workRelatedSkills = "0-No problems",
+      employmentHistory = "2-Significant problems",
+      attitudeToEmployment = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "ACCOMMODATION",
-      name = "Accommodation",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.Relationships(
+      relLinkedToHarm = "No",
+      relLinkedToReoffending = "Yes",
+      relParentalResponsibilities = "No",
+      experienceOfChildhood = "2-Significant problems",
+      relCloseFamily = "1-Some problems",
+      prevCloseRelationships = "2-Significant problems",
     ),
-    OffenderNeedDto(
-      section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
-      name = "4 - Education, Training and Employability",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.LifestyleAndAssociates(
+      lifestyleLinkedToHarm = "Yes",
+      lifestyleLinkedToReoffending = "Yes",
+      regActivitiesEncourageOffending = "0-No problems",
+      recklessness = "1-Some problems",
+      easilyInfluenced = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "RELATIONSHIPS",
-      name = "Relationships",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.DrugMisuse(
+      drugLinkedToHarm = "Yes",
+      drugLinkedToReoffending = "Yes",
+      levelOfUseOfMainDrug = "1-Some problems",
+      everInjectedDrugs = "Never",
+      currentDrugNoted = "1-Some problems",
+      motivationToTackleDrugMisuse = "0-No problems",
+      drugsMajorActivity = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "LIFESTYLE_AND_ASSOCIATES",
-      name = "Lifestyle and Associates",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.AlcoholMisuse(
+      alcoholLinkedToHarm = "Yes",
+      alcoholLinkedToReoffending = "No",
+      bingeDrinking = "1-Some problems",
+      currentUse = "1-Some problems",
+      frequencyAndLevel = "1-Some problems",
+      alcoholTackleMotivation = "2-Significant problemsø",
     ),
-    OffenderNeedDto(
-      section = "DRUG_MISUSE",
-      name = "Drug Misuse",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.ThinkingAndBehaviour(
+      thinkLinkedToHarm = "No",
+      thinkLinkedToReoffending = "Yes",
+      recogniseProblems = "1-Some problems",
+      awarenessOfConsequences = "1-Some problems",
+      understandsViewsOfOthers = "2-Significant problems",
+      temperControlStr = "2-Significant problems",
+      impulsivityStr = "2-Significant problems",
+      problemSolvingSkills = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "ALCOHOL_MISUSE",
-      name = "Alcohol Misuse",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
-    ),
-    OffenderNeedDto(
-      section = "THINKING_AND_BEHAVIOUR",
-      name = "Thinking and behaviour",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
-    ),
-    OffenderNeedDto(
-      section = "ATTITUDES",
-      name = "Attitudes",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.Attitudes(
+      attLinkedToHarm = "No",
+      attLinkedToReoffending = "Yes",
+      proCriminalAttitudes = "1-Some problems",
+      attitudesTowardsSupervision = "2-Significant problems",
+      motivationToAddressBehaviour = "2-Significant problems",
+      attitudesTowardsCommunitySociety = "2-Significant problems",
     ),
   )
 
-  private fun offenderNeedsWithNotIdentified() = listOf(
-    OffenderNeedDto(
-      section = "EMOTIONAL_WELL_BEING",
-      name = "Emotional Well-Being",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+  private fun offenderNeedsWithNotIdentified(assessmentSummary: AssessmentSummary) = SectionSummary(
+    assessmentSummary,
+    ScoredSection.Accommodation(
+      accLinkedToHarm = "Yes",
+      accLinkedToReoffending = "Yes",
+      noFixedAbodeOrTransient = "NO",
+      suitabilityOfAccommodation = "1-Some problems",
+      locationOfAccommodation = "2-Significant problems",
+      permanenceOfAccommodation = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "FINANCIAL_MANAGEMENT_AND_INCOME",
-      name = "Financial Management and Income",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.EducationTrainingEmployability(
+      eTeLinkedToHarm = "Yes",
+      eTeLinkedToReoffending = "Yes",
+      unemployed = "0-No",
+      workRelatedSkills = "0-No problems",
+      employmentHistory = "2-Significant problems",
+      attitudeToEmployment = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "ACCOMMODATION",
-      name = "Accommodation",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.Relationships(
+      relLinkedToHarm = "No",
+      relLinkedToReoffending = "Yes",
+      relParentalResponsibilities = "No",
+      experienceOfChildhood = "2-Significant problems",
+      relCloseFamily = "1-Some problems",
+      prevCloseRelationships = "2-Significant problems",
     ),
-    OffenderNeedDto(
-      section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
-      name = "4 - Education, Training and Employability",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.LifestyleAndAssociates(
+      lifestyleLinkedToHarm = "Yes",
+      lifestyleLinkedToReoffending = "Yes",
+      regActivitiesEncourageOffending = "0-No problems",
+      recklessness = "1-Some problems",
+      easilyInfluenced = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "RELATIONSHIPS",
-      name = "Relationships",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.DrugMisuse(
+      drugLinkedToHarm = "Yes",
+      drugLinkedToReoffending = "Yes",
+      levelOfUseOfMainDrug = "1-Some problems",
+      everInjectedDrugs = "Never",
+      currentDrugNoted = "1-Some problems",
+      motivationToTackleDrugMisuse = "0-No problems",
+      drugsMajorActivity = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "LIFESTYLE_AND_ASSOCIATES",
-      name = "Lifestyle and Associates",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.AlcoholMisuse(
+      alcoholLinkedToHarm = "Yes",
+      alcoholLinkedToReoffending = "No",
+      bingeDrinking = "1-Some problems",
+      currentUse = "1-Some problems",
+      frequencyAndLevel = "1-Some problems",
+      alcoholTackleMotivation = "2-Significant problemsø",
     ),
-    OffenderNeedDto(
-      section = "DRUG_MISUSE",
-      name = "Drug Misuse",
-      overThreshold = true,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.ThinkingAndBehaviour(
+      thinkLinkedToHarm = "No",
+      thinkLinkedToReoffending = "No",
+      recogniseProblems = "0-No problems",
+      awarenessOfConsequences = "0-No problems",
+      understandsViewsOfOthers = "0-No problems",
+      temperControlStr = "0-No problems",
+      impulsivityStr = "0-No problems",
+      problemSolvingSkills = "0-No problems",
     ),
-    OffenderNeedDto(
-      section = "ALCOHOL_MISUSE",
-      name = "Alcohol Misuse",
-      overThreshold = true,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
-    ),
-    OffenderNeedDto(
-      section = "THINKING_AND_BEHAVIOUR",
-      name = "Thinking and behaviour",
-      overThreshold = false,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false,
-    ),
-    OffenderNeedDto(
-      section = "ATTITUDES",
-      name = "Attitudes",
-      overThreshold = false,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.NO_NEED,
-      identifiedAsNeed = false,
+    ScoredSection.Attitudes(
+      attLinkedToHarm = "No",
+      attLinkedToReoffending = "No",
+      proCriminalAttitudes = "0-No problems",
+      attitudesTowardsSupervision = "0-No problems",
+      motivationToAddressBehaviour = "0-No problems",
+      attitudesTowardsCommunitySociety = "0-No problems",
     ),
   )
 
-  private fun offenderNeedsWithUnanswered() = listOf(
-    OffenderNeedDto(
-      section = "EMOTIONAL_WELL_BEING",
-      name = "Emotional Well-Being",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+  private fun offenderNeedsWithUnanswered(assessmentSummary: AssessmentSummary) = SectionSummary(
+    assessmentSummary,
+    ScoredSection.Accommodation(
+      accLinkedToHarm = "Yes",
+      accLinkedToReoffending = "Yes",
+      noFixedAbodeOrTransient = "NO",
+      suitabilityOfAccommodation = "1-Some problems",
+      locationOfAccommodation = "2-Significant problems",
+      permanenceOfAccommodation = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "FINANCIAL_MANAGEMENT_AND_INCOME",
-      name = "Financial Management and Income",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.EducationTrainingEmployability(
+      eTeLinkedToHarm = "Yes",
+      eTeLinkedToReoffending = "Yes",
+      unemployed = "0-No",
+      workRelatedSkills = "0-No problems",
+      employmentHistory = "2-Significant problems",
+      attitudeToEmployment = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "ACCOMMODATION",
-      name = "Accommodation",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.Relationships(
+      relLinkedToHarm = "No",
+      relLinkedToReoffending = "Yes",
+      relParentalResponsibilities = "No",
+      experienceOfChildhood = "2-Significant problems",
+      relCloseFamily = "1-Some problems",
+      prevCloseRelationships = "2-Significant problems",
     ),
-    OffenderNeedDto(
-      section = "EDUCATION_TRAINING_AND_EMPLOYABILITY",
-      name = "4 - Education, Training and Employability",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.LifestyleAndAssociates(
+      lifestyleLinkedToHarm = "Yes",
+      lifestyleLinkedToReoffending = "Yes",
+      regActivitiesEncourageOffending = "0-No problems",
+      recklessness = "1-Some problems",
+      easilyInfluenced = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "RELATIONSHIPS",
-      name = "Relationships",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.DrugMisuse(
+      drugLinkedToHarm = "Yes",
+      drugLinkedToReoffending = "Yes",
+      levelOfUseOfMainDrug = "1-Some problems",
+      everInjectedDrugs = "Never",
+      currentDrugNoted = "1-Some problems",
+      motivationToTackleDrugMisuse = "0-No problems",
+      drugsMajorActivity = "1-Some problems",
     ),
-    OffenderNeedDto(
-      section = "LIFESTYLE_AND_ASSOCIATES",
-      name = "Lifestyle and Associates",
-      overThreshold = false,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.AlcoholMisuse(
+      alcoholLinkedToHarm = "Yes",
+      alcoholLinkedToReoffending = "No",
+      bingeDrinking = "1-Some problems",
+      currentUse = "1-Some problems",
+      frequencyAndLevel = "1-Some problems",
+      alcoholTackleMotivation = "2-Significant problemsø",
     ),
-    OffenderNeedDto(
-      section = "DRUG_MISUSE",
-      name = "Drug Misuse",
-      overThreshold = true,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
+    ScoredSection.ThinkingAndBehaviour(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
     ),
-    OffenderNeedDto(
-      section = "ALCOHOL_MISUSE",
-      name = "Alcohol Misuse",
-      overThreshold = true,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      flaggedAsNeed = false,
-      severity = NeedSeverity.SEVERE,
-      identifiedAsNeed = true,
-      needScore = 2,
-    ),
+    ScoredSection.Attitudes(null, null, null, null, null, null),
   )
 }

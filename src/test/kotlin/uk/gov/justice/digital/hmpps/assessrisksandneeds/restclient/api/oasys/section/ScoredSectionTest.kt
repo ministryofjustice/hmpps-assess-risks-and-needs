@@ -25,7 +25,7 @@ class ScoredSectionTest {
       "0-No problems",
     )
 
-    val ete = ScoredSection.EducationTrainingEmployment(
+    val ete = ScoredSection.EducationTrainingEmployability(
       "No",
       "No",
       "0-No",
