@@ -12,11 +12,10 @@ import java.time.LocalDateTime
 import java.util.Comparator.comparing
 
 data class RoshScreening(
-  val dateCompleted: LocalDateTime? = null,
-  val suicideRisk: String? = null,
-  val selfHarmRisk: String? = null,
-  val custodyHostelRisk: String? = null,
-  val vulnerabilityRisk: String? = null,
+  val concernsRiskOfSuicide: String? = null,
+  val concernsRiskOfSelfHarm: String? = null,
+  val concernsCopingInCustody: String? = null,
+  val concernsVulnerability: String? = null,
 )
 
 data class RoshFull(
@@ -44,11 +43,11 @@ data class RoshFull(
   val tickRiskOfSeriousHarm: String? = null,
 ) {
   fun asRiskToSelf(roshScreening: RoshScreening) = RoshRiskToSelfDto(
-    riskOfSuicide(roshScreening.suicideRisk),
-    riskOfSelfHarm(roshScreening.selfHarmRisk),
-    riskInCustody(roshScreening.custodyHostelRisk),
-    riskInHostel(roshScreening.custodyHostelRisk),
-    vulnerability(roshScreening.vulnerabilityRisk),
+    riskOfSuicide(roshScreening.concernsRiskOfSuicide),
+    riskOfSelfHarm(roshScreening.concernsRiskOfSelfHarm),
+    riskInCustody(roshScreening.concernsCopingInCustody),
+    riskInHostel(roshScreening.concernsCopingInCustody),
+    vulnerability(roshScreening.concernsCopingInCustody),
     dateCompleted,
   )
 

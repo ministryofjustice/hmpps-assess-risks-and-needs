@@ -222,7 +222,7 @@ class OasysApiMockServer : WireMockServer(9097) {
     stubFor(
       WireMock.get(
         WireMock.urlPathMatching(
-          "/eor/oasys/ass/sectionrosh/ALLOW/9630348",
+          "/eor/oasys/ass/sectionriskindiv/ALLOW/9630348",
         ),
       ).willReturn(
         WireMock.aResponse()
