@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
-import com.fasterxml.jackson.annotation.JsonAlias
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
@@ -32,7 +31,6 @@ data class RoshFull(
   val previousConcernsHostelCoping: String? = null,
   val currentCustodyHostelCoping: String? = null,
   val previousCustodyHostelCoping: String? = null,
-  @JsonAlias("currentConcernsVulnerablity") // Typo in ords endpoint
   val currentConcernsVulnerability: String? = null,
   val previousConcernsVulnerability: String? = null,
   val currentVulnerability: String? = null,
