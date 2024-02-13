@@ -21,6 +21,7 @@ generic-service:
     dxw-vpn: 54.76.254.148/32
     groups:
       - internal
+      - unilink_staff
 
 generic-prometheus-alerts:
   enabled: false

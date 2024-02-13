@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
@@ -29,11 +30,12 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.AC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ALCOHOL_MISUSE
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ATTITUDE
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.DRUG_MISUSE
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.EDUCATION_TRAINING_EMPLOYMENT
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.LIFESTYLE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.LIFESTYLE_AND_ASSOCIATES
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.RELATIONSHIPS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.THINKING_AND_BEHAVIOUR
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
+import java.time.Duration
 import java.time.LocalDate
 
 @Component
@@ -44,41 +46,33 @@ class OasysApiRestClient(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getLatestAssessment(
-    identifier: PersonIdentifier,
-    predicate: (AssessmentSummary) -> Boolean,
-  ): AssessmentSummary? =
-    getAssessmentTimeline(identifier)?.timeline
-      ?.filter(predicate)
-      ?.sortedByDescending { it.completedDate }?.firstOrNull()
+  fun getLatestAssessment(identifier: PersonIdentifier, predicate: (AssessmentSummary) -> Boolean): AssessmentSummary? =
+    getAssessmentTimeline(identifier)?.timeline?.filter(predicate)?.sortedByDescending { it.completedDate }
+      ?.firstOrNull()
 
-  fun getScoredSections(
-    identifier: PersonIdentifier,
+  fun getScoredSectionsForAssessment(
+    assessment: AssessmentSummary,
     needsSection: List<NeedsSection>,
-  ): TierAnswers? {
-    val assessment = getLatestAssessment(identifier, tierPredicate())
-    val needs = assessment?.let {
-      Flux.fromIterable(needsSection).flatMap { section ->
-        val path = "/ass/section${section.sectionNumber}/ALLOW/${it.assessmentId}"
-        webClient
-          .get(path)
-          .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
-      }.collectList().block()?.toMap()
-    } ?: mapOf()
+  ): SectionSummary? {
+    val needs = Flux.fromIterable(needsSection).flatMap { section ->
+      val path = "/ass/section${section.sectionNumber}/ALLOW/${assessment.assessmentId}"
+      webClient
+        .get(path)
+        .exchangeToMono { ScoredSectionProvider.mapSection(section)(it) }
+        .retryWhen(Retry.backoff(3, Duration.ofMillis(200)))
+    }.collectList().block()?.toMap() ?: mapOf()
 
-    return assessment?.let {
-      TierAnswers(
-        it,
-        needs.section(ACCOMMODATION),
-        needs.section(EDUCATION_TRAINING_EMPLOYMENT),
-        needs.section(RELATIONSHIPS),
-        needs.section(LIFESTYLE),
-        needs.section(DRUG_MISUSE),
-        needs.section(ALCOHOL_MISUSE),
-        needs.section(THINKING_AND_BEHAVIOUR),
-        needs.section(ATTITUDE),
-      )
-    }
+    return SectionSummary(
+      assessment,
+      needs.section(ACCOMMODATION),
+      needs.section(EDUCATION_TRAINING_AND_EMPLOYABILITY),
+      needs.section(RELATIONSHIPS),
+      needs.section(LIFESTYLE_AND_ASSOCIATES),
+      needs.section(DRUG_MISUSE),
+      needs.section(ALCOHOL_MISUSE),
+      needs.section(THINKING_AND_BEHAVIOUR),
+      needs.section(ATTITUDE),
+    )
   }
 
   fun getRiskPredictorsForCompletedAssessments(
@@ -86,9 +80,7 @@ class OasysApiRestClient(
   ): OasysRiskPredictorsDto? {
     val path = "/ass/allrisk/$crn/ALLOW"
     return webClient
-      .get(
-        path,
-      )
+      .get(path)
       .retrieve()
       .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving risk predictor scores for completed Assessments for crn $crn code: ${it.statusCode().value()}")
@@ -117,9 +109,7 @@ class OasysApiRestClient(
   ): Timeline? {
     val path = "/ass/allasslist/${identifier.type.ordsUrlParam}/${identifier.value}/ALLOW"
     return webClient
-      .get(
-        path,
-      )
+      .get(path)
       .retrieve()
       .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving assessment timeline for ${identifier.type.value} ${identifier.value} code: ${it.statusCode().value()}")
@@ -149,9 +139,7 @@ class OasysApiRestClient(
   ): OasysAssessmentOffenceDto? {
     val path = "/ass/offence/$crn/$limitedAccessOffender"
     return webClient
-      .get(
-        path,
-      )
+      .get(path)
       .retrieve()
       .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving assessment offence for crn $crn code: ${it.statusCode().value()}")
@@ -178,9 +166,7 @@ class OasysApiRestClient(
   fun getRiskManagementPlan(crn: String, limitedAccessOffender: String): OasysRiskManagementPlanDetailsDto? {
     val path = "/ass/rmp/$crn/$limitedAccessOffender"
     return webClient
-      .get(
-        path,
-      )
+      .get(path)
       .retrieve()
       .onStatus({ it.is4xxClientError }) {
         log.error("4xx Error retrieving risk management plan for crn $crn code: ${it.statusCode().value()}")
@@ -267,11 +253,8 @@ class OasysApiRestClient(
 inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? =
   this[section] as T?
 
-private fun tierPredicate(): (AssessmentSummary) -> Boolean = {
-  it.assessmentType == AssessmentType.LAYER3.name &&
-    it.status in listOf(AssessmentStatus.COMPLETE.name, AssessmentStatus.LOCKED_INCOMPLETE.name) &&
-    it.isWithin55Weeks()
-}
+fun AssessmentSummary.isWithin55Weeks() =
+  completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
 
 private fun riskPredicate(): (AssessmentSummary) -> Boolean = {
   it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
@@ -279,13 +262,10 @@ private fun riskPredicate(): (AssessmentSummary) -> Boolean = {
     it.isWithin55Weeks()
 }
 
-private fun AssessmentSummary.isWithin55Weeks() =
-  completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
-
-data class TierAnswers(
+data class SectionSummary(
   val assessment: AssessmentSummary,
   val accommodation: ScoredSection.Accommodation?,
-  val educationTrainingEmployment: ScoredSection.EducationTrainingEmployment?,
+  val educationTrainingEmployability: ScoredSection.EducationTrainingEmployability?,
   val relationships: ScoredSection.Relationships?,
   val lifestyleAndAssociates: ScoredSection.LifestyleAndAssociates?,
   val drugMisuse: ScoredSection.DrugMisuse?,

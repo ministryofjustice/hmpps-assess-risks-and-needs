@@ -101,14 +101,14 @@ class OasysApiMockServer : WireMockServer(9097) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/eor/oasys/ass/timeline/crn/NOT_FOUND/ALLOW",
+          "/eor/oasys/ass/allasslist/prob/NOT_FOUND/ALLOW",
         ),
       )
         .willReturn(
           WireMock.aResponse()
-            .withBody("{}")
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(404)
-            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText()),
         ),
     )
   }

@@ -16,24 +16,24 @@ data class AssessmentNeedsDto(
   companion object {
     fun from(
       needs: Collection<AssessmentNeedDto>,
-      offenderNeedsDto: OffenderNeedsDto,
+      assessedOn: LocalDateTime,
     ): AssessmentNeedsDto {
       val unansweredNeeds = mutableListOf<AssessmentNeedDto>()
       val identifiedNeeds = mutableListOf<AssessmentNeedDto>()
       val notIdentifiedNeeds = mutableListOf<AssessmentNeedDto>()
 
       for (needDto in needs) {
-        when (needDto.identifiedAsNeed) {
+        when (needDto.severity) {
           null -> unansweredNeeds.add(needDto)
-          true -> identifiedNeeds.add(needDto)
-          false -> notIdentifiedNeeds.add(needDto)
+          NeedSeverity.STANDARD, NeedSeverity.SEVERE -> identifiedNeeds.add(needDto)
+          NeedSeverity.NO_NEED -> notIdentifiedNeeds.add(needDto)
         }
       }
       return AssessmentNeedsDto(
         identifiedNeeds = identifiedNeeds,
         notIdentifiedNeeds = notIdentifiedNeeds,
         unansweredNeeds = unansweredNeeds,
-        assessedOn = offenderNeedsDto.assessedOn,
+        assessedOn = assessedOn,
       )
     }
   }
@@ -44,47 +44,13 @@ data class AssessmentNeedDto(
   val section: String? = null,
   @Schema(description = "The name of the section need", example = "Drug misuse")
   val name: String? = null,
-  @Schema(description = "Represents whether the weighted score of the section is over the threshold", example = "true")
-  val overThreshold: Boolean? = null,
   @Schema(description = "Whether the section answers indicate a risk of harm", example = "false")
   val riskOfHarm: Boolean? = null,
   @Schema(description = "Whether the section answers indicate a risk of reoffending", example = "false")
   val riskOfReoffending: Boolean? = null,
-  @Schema(description = "Whether the section has been flagged as a low scoring need", example = "true")
-  val flaggedAsNeed: Boolean? = null,
   @Schema(description = "The calculated severity of the need", example = "SEVERE")
   val severity: NeedSeverity? = null,
-  @Schema(description = "Whether the section questions indicate that this section is a need", example = "true")
-  val identifiedAsNeed: Boolean? = null,
-  @Schema(description = "The weighted score for the section", example = "4")
-  val needScore: Long? = null,
-) {
-  companion object {
-
-    fun from(section: String, offenderNeedDto: OffenderNeedDto): AssessmentNeedDto {
-      with(offenderNeedDto) {
-        return AssessmentNeedDto(
-          section = section,
-          name = name,
-          overThreshold = overThreshold,
-          riskOfHarm = riskOfHarm,
-          riskOfReoffending = riskOfReoffending,
-          flaggedAsNeed = flaggedAsNeed,
-          severity = severity,
-          identifiedAsNeed = identifiedAsNeed,
-          needScore = needScore,
-        )
-      }
-    }
-
-    fun from(section: String, sectionMap: Map<String, String>): AssessmentNeedDto {
-      return AssessmentNeedDto(
-        section = section,
-        name = sectionMap[section],
-      )
-    }
-  }
-}
+)
 
 enum class NeedSeverity {
   NO_NEED,
