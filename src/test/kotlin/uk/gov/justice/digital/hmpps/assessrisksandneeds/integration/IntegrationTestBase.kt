@@ -13,7 +13,6 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.CommunityApiMockServer
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.OasysApiMockServer
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.testutils.OffenderAssessmentApiMockServer
 import java.time.Duration
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -28,17 +27,12 @@ abstract class IntegrationTestBase {
   internal lateinit var jwtHelper: JwtAuthHelper
 
   companion object {
-    internal val offenderAssessmentApiMockServer = OffenderAssessmentApiMockServer()
     internal val communityApiMockServer = CommunityApiMockServer()
     internal val oasysApiMockServer = OasysApiMockServer()
 
     @BeforeAll
     @JvmStatic
     fun startMocks() {
-      offenderAssessmentApiMockServer.start()
-      offenderAssessmentApiMockServer.stubGetLatestNeedsByCrn()
-      offenderAssessmentApiMockServer.stubGetRSRPredictorScoring()
-
       communityApiMockServer.start()
       communityApiMockServer.stubGetUserAccess()
 
@@ -54,7 +48,6 @@ abstract class IntegrationTestBase {
     @AfterAll
     @JvmStatic
     fun stopMocks() {
-      offenderAssessmentApiMockServer.stop()
       communityApiMockServer.stop()
       oasysApiMockServer.stop()
     }

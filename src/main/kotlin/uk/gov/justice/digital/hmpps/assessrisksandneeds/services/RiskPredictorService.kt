@@ -10,11 +10,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 
 @Service
 class RiskPredictorService(
-  private val assessmentClient: OffenderAssessmentApiRestClient,
   private val oasysClient: OasysApiRestClient,
   private val communityClient: CommunityApiRestClient,
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository,
