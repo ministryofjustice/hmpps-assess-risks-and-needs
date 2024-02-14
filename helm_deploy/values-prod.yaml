@@ -12,7 +12,6 @@ generic-service:
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
-    ASSESSMENT_API_BASE_URL: https://offender-prod.aks-live-1.studio-hosting.service.justice.gov.uk
     COMMUNITY_API_BASE_URL: https://arns-and-delius.hmpps.service.justice.gov.uk
     OASYS_API_BASE_URL: https://bridge-oasys.az.justice.gov.uk/eor/oasys
     SENTRY_ENVIRONMENT: "prod"

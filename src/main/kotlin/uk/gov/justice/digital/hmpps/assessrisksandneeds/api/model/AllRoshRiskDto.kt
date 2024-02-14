@@ -15,4 +15,13 @@ data class AllRoshRiskDto(
 
   @JsonView(View.AllRisksView::class)
   val assessedOn: LocalDateTime?,
-)
+) {
+  companion object {
+    val empty = AllRoshRiskDto(
+      RoshRiskToSelfDto(),
+      OtherRoshRisksDto(),
+      RiskRoshSummaryDto(),
+      assessedOn = null,
+    )
+  }
+}

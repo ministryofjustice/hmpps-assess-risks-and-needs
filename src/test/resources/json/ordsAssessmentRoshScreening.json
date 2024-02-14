@@ -1,0 +1,17 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9630348
+  },
+  "probNumber": "X123456",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "concernsRiskOfSuicide": "Yes",
+      "concernsRiskOfSelfHarm": "Don't know",
+      "concernsCopingInCustody": "Yes",
+      "concernsVulnerability": "Yes"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ enum class ResponseDto(val value: String) {
 
   companion object {
     fun fromString(enumValue: String?): ResponseDto? {
-      return values().firstOrNull { it.value == enumValue?.uppercase() }
+      return entries.firstOrNull { it.value == enumValue?.uppercase() }
     }
   }
 }

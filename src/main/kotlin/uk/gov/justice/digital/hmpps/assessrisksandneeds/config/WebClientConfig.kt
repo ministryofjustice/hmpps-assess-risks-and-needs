@@ -23,9 +23,6 @@ import java.util.concurrent.TimeUnit
 @Configuration
 class WebClientConfig {
 
-  @Value("\${assessment-api.base-url}")
-  private lateinit var assessmentApiBaseUrl: String
-
   @Value("\${community-api.base-url}")
   private lateinit var communityApiBaseUrl: String
 
@@ -64,15 +61,6 @@ class WebClientConfig {
     authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
 
     return authorizedClientManager
-  }
-
-  @Bean
-  fun offenderAssessmentApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
-    return AuthenticatingRestClient(
-      webClientFactory(assessmentApiBaseUrl, authorizedClientManager, bufferByteSize),
-      "assessment-api-client",
-      authenticationEnabled,
-    )
   }
 
   @Bean

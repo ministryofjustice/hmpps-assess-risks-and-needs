@@ -19,13 +19,6 @@ spring:
     oauth2:
       client:
         registration:
-          assessment-api-client:
-            client-name: assessment-api-client
-            client-id: ${api.client.id:sentence-plan-api-client}
-            client-secret: ${api.client.secret:clientsecret}
-            client-authentication-method: client_secret_basic
-            authorization-grant-type: client_credentials
-            provider: oauth-service
           community-api-client:
             client-name: community-api-client
             client-id: ${community.api.client.id:sentence-plan-api-client}
@@ -124,9 +117,6 @@ logging:
   uris:
     exclude:
       regex: /health|/info|/ping|/swagger.*|/webjars/.*|/v2/api-docs
-
-assessment-api:
-  base-url: http://localhost:9004
 
 community-api:
   base-url: http://localhost:9096

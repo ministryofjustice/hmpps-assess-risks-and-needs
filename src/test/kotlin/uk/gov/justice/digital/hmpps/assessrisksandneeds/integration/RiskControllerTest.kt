@@ -51,7 +51,6 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.HIGH to listOf("Staff"),
             ),
             assessedOn = null,
-            overallRiskLevel = RiskLevel.VERY_HIGH,
           ),
         )
       }
@@ -82,8 +81,7 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.HIGH to listOf("Prisoners"),
               RiskLevel.VERY_HIGH to listOf("Staff"),
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
-            RiskLevel.VERY_HIGH,
+            assessedOn = LocalDateTime.of(2023, 12, 19, 16, 57, 25),
           ),
         )
       }
@@ -100,7 +98,7 @@ class RiskControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           ErrorResponse(
             status = 404,
-            developerMessage = "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN",
+            developerMessage = "No such offender for CRN: RANDOMCRN",
           ),
         )
       }
@@ -118,7 +116,7 @@ class RiskControllerTest : IntegrationTestBase() {
           AllRoshRiskDto(
             RoshRiskToSelfDto(
               suicide = RiskDto(
-                risk = ResponseDto.NO,
+                risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 current = ResponseDto.YES,
                 currentConcernsText = "Suicide and/or Self-harm current concerns",
@@ -170,9 +168,8 @@ class RiskControllerTest : IntegrationTestBase() {
                 RiskLevel.VERY_HIGH to listOf("Staff"),
               ),
               assessedOn = null,
-              overallRiskLevel = RiskLevel.VERY_HIGH,
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+            assessedOn = LocalDateTime.of(2023, 12, 19, 16, 57, 25),
           ),
         )
       }
@@ -190,28 +187,24 @@ class RiskControllerTest : IntegrationTestBase() {
           AllRoshRiskDto(
             RoshRiskToSelfDto(
               suicide = RiskDto(
-                risk = ResponseDto.NO,
+                risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 current = ResponseDto.YES,
                 currentConcernsText = "Suicide and/or Self-harm current concerns",
               ),
               selfHarm = RiskDto(
                 risk = ResponseDto.DK,
-                currentConcernsText = "Suicide and/or Self-harm current concerns",
               ),
               custody = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.YES,
                 previousConcernsText = "Coping in custody / hostel setting previous concerns",
                 current = ResponseDto.NA,
-                currentConcernsText = "Coping in custody / hostel setting current concerns",
               ),
               hostelSetting = RiskDto(
                 risk = ResponseDto.YES,
                 previous = ResponseDto.DK,
-                previousConcernsText = "Coping in custody / hostel setting previous concerns",
                 current = ResponseDto.NO,
-                currentConcernsText = "Coping in custody / hostel setting current concerns",
               ),
               vulnerability = RiskDto(
                 risk = ResponseDto.YES,
@@ -246,9 +239,8 @@ class RiskControllerTest : IntegrationTestBase() {
                 RiskLevel.VERY_HIGH to listOf("Staff"),
               ),
               assessedOn = null,
-              overallRiskLevel = RiskLevel.VERY_HIGH,
             ),
-            assessedOn = LocalDateTime.of(2021, 6, 21, 15, 55, 4),
+            assessedOn = LocalDateTime.of(2023, 12, 19, 16, 57, 25),
           ),
         )
       }
@@ -263,7 +255,7 @@ class RiskControllerTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody<AllRoshRiskDto>()
       .consumeWith {
-        assertThat(it.responseBody.summary).isEqualTo(
+        assertThat(it.responseBody?.summary).isEqualTo(
           RiskRoshSummaryDto(
             "whoisAtRisk",
             "natureOfRisk",
@@ -271,14 +263,13 @@ class RiskControllerTest : IntegrationTestBase() {
             "riskIncreaseFactors",
             "riskMitigationFactors",
             mapOf(
-              RiskLevel.LOW to listOf("Known Adult"),
               RiskLevel.MEDIUM to listOf("Public"),
+              RiskLevel.LOW to listOf("Known Adult"),
             ),
             mapOf(
               RiskLevel.LOW to listOf("Public", "Known Adult"),
             ),
             assessedOn = null,
-            RiskLevel.MEDIUM,
           ),
         )
       }
@@ -367,6 +358,6 @@ class RiskControllerTest : IntegrationTestBase() {
       .expectBody<ApiErrorResponse>()
       .returnResult().responseBody
 
-    assertThat(response.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+    assertThat(response?.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
   }
 }

@@ -7,21 +7,21 @@ import java.time.LocalDateTime
 data class OtherRoshRisksDto(
   @Schema(description = "Escape / abscond")
   @JsonView(View.Hmpps::class, View.RiskView::class)
-  val escapeOrAbscond: ResponseDto?,
+  val escapeOrAbscond: ResponseDto? = null,
 
   @Schema(description = "Control issues / disruptive behaviour")
   @JsonView(View.Hmpps::class, View.RiskView::class)
-  val controlIssuesDisruptiveBehaviour: ResponseDto?,
+  val controlIssuesDisruptiveBehaviour: ResponseDto? = null,
 
   @Schema(description = "Concerns in respect of breach of trust")
   @JsonView(View.Hmpps::class, View.RiskView::class)
-  val breachOfTrust: ResponseDto?,
+  val breachOfTrust: ResponseDto? = null,
 
   @Schema(description = "Risks to other prisoners")
   @JsonView(View.Hmpps::class, View.RiskView::class)
-  val riskToOtherPrisoners: ResponseDto?,
+  val riskToOtherPrisoners: ResponseDto? = null,
 
   @Schema(description = "The date and time that the assessment was completed")
   @JsonView(View.Hmpps::class, View.SingleRisksView::class)
-  val assessedOn: LocalDateTime?,
+  val assessedOn: LocalDateTime? = null,
 )
