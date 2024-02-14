@@ -87,6 +87,20 @@ class OasysApiMockServer : WireMockServer(9097) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
+          "/eor/oasys/ass/allasslist/prob/$missingRsrCrn/ALLOW",
+        ),
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withStatus(200)
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimelineNullRoshScores.json")?.readText()),
+        ),
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
           "/eor/oasys/ass/allasslist/prob/NOT_FOUND/ALLOW",
         ),
       )
@@ -189,6 +203,56 @@ class OasysApiMockServer : WireMockServer(9097) {
             .withStatus(200)
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json"))),
         ),
+    )
+  }
+
+  fun stubGetRoshRisksByCrn() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlPathMatching(
+          "/eor/oasys/ass/sectionroshfull/ALLOW/9630348",
+        ),
+      ).willReturn(
+        WireMock.aResponse()
+          .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshFull.json")?.readText()),
+      ),
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlPathMatching(
+          "/eor/oasys/ass/sectionriskindiv/ALLOW/9630348",
+        ),
+      ).willReturn(
+        WireMock.aResponse()
+          .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshScreening.json")?.readText()),
+      ),
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlPathMatching(
+          "/eor/oasys/ass/sectionroshsumm/ALLOW/9630348",
+        ),
+      ).willReturn(
+        WireMock.aResponse()
+          .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummary.json")?.readText()),
+      ),
+    )
+
+    stubFor(
+      WireMock.get(
+        WireMock.urlPathMatching(
+          "/eor/oasys/ass/sectionroshsumm/ALLOW/45115261",
+        ),
+      ).willReturn(
+        WireMock.aResponse()
+          .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummaryForNull.json")?.readText()),
+      ),
     )
   }
 

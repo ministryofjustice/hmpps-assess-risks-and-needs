@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
@@ -20,7 +19,6 @@ class AssessmentOffenceService(
   private val oasysApiRestClient: OasysApiRestClient,
   private val communityClient: CommunityApiRestClient,
   private val auditService: AuditService,
-  private val offenderAssessmentApiRestClient: OffenderAssessmentApiRestClient,
 ) {
 
   private val limitedAccess = "ALLOW"

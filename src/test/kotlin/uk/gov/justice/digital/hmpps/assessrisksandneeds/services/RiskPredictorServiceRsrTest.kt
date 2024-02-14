@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEn
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OffenderAssessmentApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
@@ -39,13 +38,11 @@ import java.time.LocalDateTime
 @DisplayName("Risk Predictors Service RSR Tests")
 class RiskPredictorServiceRsrTest {
 
-  private val assessmentApiClient: OffenderAssessmentApiRestClient = mockk()
   private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val oasysApiRestClient: OasysApiRestClient = mockk()
   private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val auditService: AuditService = mockk()
   private val riskPredictorsService = RiskPredictorService(
-    assessmentApiClient,
     oasysApiRestClient,
     communityApiRestClient,
     offenderPredictorsHistoryRepository,

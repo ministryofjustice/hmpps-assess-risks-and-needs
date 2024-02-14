@@ -4,16 +4,26 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshContainer
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshFull
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshScreening
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ACCOMMODATION
@@ -24,6 +34,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ED
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.LIFESTYLE_AND_ASSOCIATES
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.RELATIONSHIPS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.THINKING_AND_BEHAVIOUR
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 import java.time.Duration
 import java.time.LocalDate
 
@@ -178,6 +189,65 @@ class OasysApiRestClient(
       .bodyToMono(OasysRiskManagementPlanDetailsDto::class.java)
       .block().also { log.info("Retrieved risk management plan for crn $crn") }
   }
+
+  fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? =
+    getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
+      getRoshSummary(assessment.assessmentId).map { it.asRiskRoshSummary() }.block()
+    }
+
+  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier): AllRoshRiskDto? =
+    getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
+      getRoshFull(assessment.assessmentId)
+        .zipWith(getRoshScreening(assessment.assessmentId))
+        .zipWith(getRoshSummary(assessment.assessmentId))
+        .map {
+          AllRoshRiskDto(
+            riskToSelf = it.t1.t1.asRiskToSelf(it.t1.t2),
+            otherRisks = it.t1.t1.asOtherRisks(),
+            summary = it.t2.asRiskRoshSummary(),
+            assessedOn = assessment.completedDate,
+          )
+        }.block()
+    }
+
+  private fun getRoshSummary(assessmentId: Long): Mono<RoshSummary> {
+    val path = "/ass/section${SectionHeader.ROSH_SUMMARY.ordsUrlParam}/ALLOW/$assessmentId"
+    return webClient
+      .get(path)
+      .exchangeToMono {
+        if (it.statusCode() == HttpStatus.OK) {
+          it.bodyToMono<RoshContainer<RoshSummary>>().map { c -> c.assessments.firstOrNull() ?: RoshSummary() }
+        } else {
+          Mono.just(RoshSummary())
+        }
+      }
+  }
+
+  private fun getRoshFull(assessmentId: Long): Mono<RoshFull> {
+    val path = "/ass/section${SectionHeader.ROSH_FULL_ANALYSIS.ordsUrlParam}/ALLOW/$assessmentId"
+    return webClient
+      .get(path)
+      .exchangeToMono {
+        if (it.statusCode() == HttpStatus.OK) {
+          it.bodyToMono<RoshContainer<RoshFull>>().map { c -> c.assessments.firstOrNull() ?: RoshFull() }
+        } else {
+          Mono.just(RoshFull())
+        }
+      }
+  }
+
+  private fun getRoshScreening(assessmentId: Long): Mono<RoshScreening> {
+    val path = "/ass/section${SectionHeader.ROSH_SCREENING.ordsUrlParam}/ALLOW/$assessmentId"
+    return webClient
+      .get(path)
+      .exchangeToMono {
+        if (it.statusCode() == HttpStatus.OK) {
+          it.bodyToMono<RoshContainer<RoshScreening>>().map { c -> c.assessments.firstOrNull() ?: RoshScreening() }
+        } else {
+          Mono.just(RoshScreening())
+        }
+      }
+  }
 }
 
 inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? =
@@ -185,6 +255,12 @@ inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(
 
 fun AssessmentSummary.isWithin55Weeks() =
   completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
+
+private fun riskPredicate(): (AssessmentSummary) -> Boolean = {
+  it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
+    it.status in listOf(AssessmentStatus.COMPLETE.name) &&
+    it.isWithin55Weeks()
+}
 
 data class SectionSummary(
   val assessment: AssessmentSummary,
