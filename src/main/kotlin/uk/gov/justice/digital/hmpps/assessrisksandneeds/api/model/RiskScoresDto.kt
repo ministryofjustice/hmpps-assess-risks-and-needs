@@ -49,10 +49,10 @@ class RiskScoresDto(
             scoreLevel = ScoreLevel.findByType(it.rsrScoreDto.scoreLevel),
           ),
           sexualPredictorScore = OspScoreDto(
-            ospIndecentPercentageScore = it.ospScoreDto.ospImagePercentageScore,
-            ospContactPercentageScore = it.ospScoreDto.ospContactPercentageScore,
-            ospIndecentScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospImageScoreLevel),
-            ospContactScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospContactScoreLevel),
+            ospIndecentPercentageScore = it.ospScoreDto.imagePercentageScore(),
+            ospContactPercentageScore = it.ospScoreDto.contactPercentageScore(),
+            ospIndecentScoreLevel = ScoreLevel.findByType(it.ospScoreDto.imageScoreLevel()),
+            ospContactScoreLevel = ScoreLevel.findByType(it.ospScoreDto.contactScoreLevel()),
           ),
         )
       }.orEmpty()
