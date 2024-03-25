@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -12,6 +11,10 @@ data class RsrPredictorDto(
   val ospcScoreLevel: ScoreLevel? = null,
   val ospiPercentageScore: BigDecimal? = null,
   val ospiScoreLevel: ScoreLevel? = null,
+  val ospiiPercentageScore: BigDecimal? = null,
+  val ospdcPercentageScore: BigDecimal? = null,
+  val ospiiScoreLevel: ScoreLevel? = null,
+  val ospdcScoreLevel: ScoreLevel? = null,
   val calculatedDate: LocalDateTime? = null,
   val completedDate: LocalDateTime? = null,
   val signedDate: LocalDateTime? = null,
@@ -36,6 +39,10 @@ data class RsrPredictorDto(
           ospcScoreLevel = ospScoreDto.ospContactScoreLevel?.let { ScoreLevel.findByType(it) },
           ospiPercentageScore = ospScoreDto.ospImagePercentageScore,
           ospiScoreLevel = ospScoreDto.ospImageScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospiiPercentageScore = ospScoreDto.ospIndirectImagesChildrenPercentageScore,
+          ospdcPercentageScore = ospScoreDto.ospDirectContactPercentageScore,
+          ospiiScoreLevel = ospScoreDto.ospIndirectImagesChildrenScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospdcScoreLevel = ospScoreDto.ospDirectContactScoreLevel?.let { ScoreLevel.findByType(it) },
           calculatedDate = null,
           completedDate = dateCompleted,
           signedDate = null,
@@ -46,37 +53,9 @@ data class RsrPredictorDto(
         )
       }
     }
-
-    @JvmName("fromArn")
-    fun from(arnPredictorDtos: List<OffenderPredictorsHistoryEntity>): List<RsrPredictorDto> {
-      return arnPredictorDtos.map { from(it) }
-    }
-
-    fun from(arnPredictor: OffenderPredictorsHistoryEntity): RsrPredictorDto {
-      with(arnPredictor) {
-        val rsr = predictors.firstOrNull { it.predictorSubType == PredictorSubType.RSR }
-        val ospi = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPI }
-        val ospc = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPC }
-        return RsrPredictorDto(
-          rsrPercentageScore = rsr?.predictorScore,
-          rsrScoreLevel = rsr?.predictorLevel,
-          ospcPercentageScore = ospc?.predictorScore,
-          ospcScoreLevel = ospc?.predictorLevel,
-          ospiPercentageScore = ospi?.predictorScore,
-          ospiScoreLevel = ospi?.predictorLevel,
-          calculatedDate = calculatedAt,
-          completedDate = assessmentCompletedDate,
-          signedDate = null,
-          staticOrDynamic = scoreType,
-          source = RsrScoreSource.ASSESSMENTS_API,
-          status = AssessmentStatus.COMPLETE,
-          algorithmVersion = algorithmVersion,
-        )
-      }
-    }
   }
 }
 
 enum class RsrScoreSource {
-  ASSESSMENTS_API, OASYS;
+  OASYS,
 }

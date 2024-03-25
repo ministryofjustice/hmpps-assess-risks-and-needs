@@ -11,17 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSource
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorSubType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PredictorType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.PredictorEntity
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
@@ -40,12 +34,10 @@ class RiskPredictorServiceRsrTest {
 
   private val communityApiRestClient: CommunityApiRestClient = mockk()
   private val oasysApiRestClient: OasysApiRestClient = mockk()
-  private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val auditService: AuditService = mockk()
   private val riskPredictorsService = RiskPredictorService(
     oasysApiRestClient,
     communityApiRestClient,
-    offenderPredictorsHistoryRepository,
     auditService,
   )
 
@@ -71,24 +63,11 @@ class RiskPredictorServiceRsrTest {
   fun `get all RSR scores history from OASys and ARN`() {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
-    every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns listOf(
-      getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1)),
-    )
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
 
-    assertThat(rsrHistory).hasSize(2)
+    assertThat(rsrHistory).hasSize(1)
     with(rsrHistory[0]) {
-      assertThat(rsrPercentageScore).isEqualTo(BigDecimal(20.6))
-      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
-      assertThat(calculatedDate).isEqualTo(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
-      assertThat(staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
-      assertThat(source).isEqualTo(RsrScoreSource.ASSESSMENTS_API)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-      assertThat(algorithmVersion).isEqualTo("12")
-    }
-    with(rsrHistory[1]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal(10))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
       assertThat(calculatedDate).isNull()
@@ -104,22 +83,17 @@ class RiskPredictorServiceRsrTest {
   fun `get all RSR scores are sorted by completed date`() {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), LocalDateTime.of(2021, 4, 1, 1, 1, 1))
-    every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns listOf(
-      getOffenderPredictorsEntity(LocalDateTime.of(2021, 1, 1, 1, 1, 1)),
-    )
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
 
-    assertThat(rsrHistory).hasSize(3)
+    assertThat(rsrHistory).hasSize(2)
     assertThat(rsrHistory[0].completedDate).isEqualTo(LocalDateTime.of(2021, 4, 1, 1, 1, 1))
-    assertThat(rsrHistory[1].completedDate).isEqualTo(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
-    assertThat(rsrHistory[2].completedDate).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+    assertThat(rsrHistory[1].completedDate).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
   }
 
   @Test
   fun `get all RSR scores does not include non-rsr predictor scores`() {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns getOasysPredictorNoRsr()
-    every { offenderPredictorsHistoryRepository.findAllByCrn(crn) } returns emptyList()
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
 
@@ -165,27 +139,6 @@ class RiskPredictorServiceRsrTest {
           ogrScoreDto = OasysOgrDto(),
         )
       },
-    )
-  }
-
-  private fun getOffenderPredictorsEntity(completedDate: LocalDateTime): OffenderPredictorsHistoryEntity {
-    return OffenderPredictorsHistoryEntity(
-      predictorType = PredictorType.RSR,
-      algorithmVersion = "12",
-      calculatedAt = LocalDateTime.of(2021, 1, 1, 1, 1, 1),
-      crn = crn,
-      predictorTriggerSource = PredictorSource.OASYS,
-      predictorTriggerSourceId = "Source ID",
-      createdBy = "Created By",
-      assessmentCompletedDate = completedDate,
-      scoreType = ScoreType.DYNAMIC,
-      predictors = mutableListOf(
-        PredictorEntity(
-          predictorSubType = PredictorSubType.RSR,
-          predictorScore = BigDecimal(20.6),
-          predictorLevel = ScoreLevel.MEDIUM,
-        ),
-      ),
     )
   }
 }

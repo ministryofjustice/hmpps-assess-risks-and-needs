@@ -8,9 +8,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
-import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.context.jdbc.SqlConfig
-import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
@@ -23,17 +20,6 @@ import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Risk Predictors Tests")
-@SqlGroup(
-  Sql(
-    scripts = ["classpath:rsrPredictorHistory/before-test.sql"],
-    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
-  ),
-  Sql(
-    scripts = ["classpath:rsrPredictorHistory/after-test.sql"],
-    config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
-    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-  ),
-)
 class RiskPredictorsControllerTest : IntegrationTestBase() {
 
   @MockkBean
@@ -56,7 +42,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .expectBody<List<RsrPredictorDto>>()
       .returnResult().responseBody
 
-    assertThat(rsrHistory).hasSize(5)
+    assertThat(rsrHistory).hasSize(3)
     with(rsrHistory[0]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
@@ -72,15 +58,6 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
       assertThat(staticOrDynamic).isEqualTo(ScoreType.STATIC)
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-    }
-    with(rsrHistory[3]) {
-      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(40.44))
-      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.HIGH)
-      assertThat(calculatedDate).isEqualTo(LocalDateTime.of(2021, 10, 5, 9, 6))
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2021, 9, 14, 9, 7))
-      assertThat(staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
-      assertThat(source).isEqualTo(RsrScoreSource.ASSESSMENTS_API)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
     }
   }

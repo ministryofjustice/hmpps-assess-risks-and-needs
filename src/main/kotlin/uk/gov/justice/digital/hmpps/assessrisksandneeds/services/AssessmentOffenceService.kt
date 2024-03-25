@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
@@ -42,8 +43,14 @@ class AssessmentOffenceService(
 
   fun getAssessmentTimeline(identifier: PersonIdentifier): Timeline {
     log.info("Getting assessment timeline for $identifier")
-    return oasysApiRestClient.getAssessmentTimeline(identifier)
-      ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
+    return oasysApiRestClient.getAssessmentTimeline(identifier)?.let { t ->
+      // copy and filter out STANDALONE type (OASYS internal implementation for RSR) as not a real type
+      Timeline(
+        t.timeline.filter {
+          it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name)
+        },
+      )
+    } ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
   }
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {

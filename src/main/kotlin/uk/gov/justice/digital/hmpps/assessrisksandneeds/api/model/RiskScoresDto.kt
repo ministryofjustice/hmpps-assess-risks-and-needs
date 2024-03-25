@@ -53,6 +53,11 @@ class RiskScoresDto(
             ospContactPercentageScore = it.ospScoreDto.ospContactPercentageScore,
             ospIndecentScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospImageScoreLevel),
             ospContactScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospContactScoreLevel),
+
+            ospIndirectImagePercentageScore = it.ospScoreDto.ospIndirectImagesChildrenPercentageScore,
+            ospDirectContactPercentageScore = it.ospScoreDto.ospDirectContactPercentageScore,
+            ospIndirectImageScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospIndirectImagesChildrenScoreLevel),
+            ospDirectContactScoreLevel = ScoreLevel.findByType(it.ospScoreDto.ospDirectContactScoreLevel),
           ),
         )
       }.orEmpty()
