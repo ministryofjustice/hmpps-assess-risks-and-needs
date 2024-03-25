@@ -12,6 +12,10 @@ data class RsrPredictorDto(
   val ospcScoreLevel: ScoreLevel? = null,
   val ospiPercentageScore: BigDecimal? = null,
   val ospiScoreLevel: ScoreLevel? = null,
+  val ospiiPercentageScore: BigDecimal? = null,
+  val ospdcPercentageScore: BigDecimal? = null,
+  val ospiiScoreLevel: ScoreLevel? = null,
+  val ospdcScoreLevel: ScoreLevel? = null,
   val calculatedDate: LocalDateTime? = null,
   val completedDate: LocalDateTime? = null,
   val signedDate: LocalDateTime? = null,
@@ -36,6 +40,10 @@ data class RsrPredictorDto(
           ospcScoreLevel = ospScoreDto.ospContactScoreLevel?.let { ScoreLevel.findByType(it) },
           ospiPercentageScore = ospScoreDto.ospImagePercentageScore,
           ospiScoreLevel = ospScoreDto.ospImageScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospiiPercentageScore = ospScoreDto.ospIndirectImagesChildrenPercentageScore,
+          ospdcPercentageScore = ospScoreDto.ospDirectContactPercentageScore,
+          ospiiScoreLevel = ospScoreDto.ospIndirectImagesChildrenScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospdcScoreLevel = ospScoreDto.ospDirectContactScoreLevel?.let { ScoreLevel.findByType(it) },
           calculatedDate = null,
           completedDate = dateCompleted,
           signedDate = null,
@@ -57,6 +65,8 @@ data class RsrPredictorDto(
         val rsr = predictors.firstOrNull { it.predictorSubType == PredictorSubType.RSR }
         val ospi = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPI }
         val ospc = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPC }
+        val ospii = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPII }
+        val ospdc = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPDC }
         return RsrPredictorDto(
           rsrPercentageScore = rsr?.predictorScore,
           rsrScoreLevel = rsr?.predictorLevel,
@@ -64,6 +74,10 @@ data class RsrPredictorDto(
           ospcScoreLevel = ospc?.predictorLevel,
           ospiPercentageScore = ospi?.predictorScore,
           ospiScoreLevel = ospi?.predictorLevel,
+          ospiiPercentageScore = ospii?.predictorScore,
+          ospiiScoreLevel = ospii?.predictorLevel,
+          ospdcPercentageScore = ospdc?.predictorScore,
+          ospdcScoreLevel = ospdc?.predictorLevel,
           calculatedDate = calculatedAt,
           completedDate = assessmentCompletedDate,
           signedDate = null,

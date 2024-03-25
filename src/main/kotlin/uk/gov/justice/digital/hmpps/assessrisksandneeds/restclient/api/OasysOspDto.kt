@@ -13,11 +13,4 @@ data class OasysOspDto(
   val ospDirectContactPercentageScore: BigDecimal? = null,
   val ospIndirectImagesChildrenScoreLevel: String? = null,
   val ospDirectContactScoreLevel: String? = null,
-) {
-  fun imagePercentageScore() = ospIndirectImagesChildrenPercentageScore ?: ospImagePercentageScore
-  fun contactPercentageScore() = ospDirectContactPercentageScore ?: ospContactPercentageScore
-
-  fun imageScoreLevel() = ospIndirectImagesChildrenScoreLevel ?: ospImageScoreLevel
-
-  fun contactScoreLevel() = ospDirectContactScoreLevel ?: ospContactScoreLevel
-}
+)

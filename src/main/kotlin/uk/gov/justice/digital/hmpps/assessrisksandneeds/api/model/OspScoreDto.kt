@@ -7,4 +7,9 @@ class OspScoreDto(
   val ospContactPercentageScore: BigDecimal? = null,
   val ospIndecentScoreLevel: ScoreLevel? = null,
   val ospContactScoreLevel: ScoreLevel? = null,
+
+  val ospIndirectImagePercentageScore: BigDecimal? = null,
+  val ospDirectContactPercentageScore: BigDecimal? = null,
+  val ospIndirectImageScoreLevel: ScoreLevel? = null,
+  val ospDirectContactScoreLevel: ScoreLevel? = null,
 )
