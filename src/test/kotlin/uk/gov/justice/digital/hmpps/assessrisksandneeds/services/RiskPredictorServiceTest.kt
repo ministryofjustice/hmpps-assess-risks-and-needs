@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.LOW
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.MEDIUM
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.respositories.OffenderPredictorsHistoryRepository
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
@@ -37,7 +36,6 @@ class RiskPredictorServiceTest {
 
   private val oasysApiClient: OasysApiRestClient = mockk()
   private val communityApiRestClient: CommunityApiRestClient = mockk()
-  private val offenderPredictorsHistoryRepository: OffenderPredictorsHistoryRepository = mockk()
   private val auditService: AuditService = mockk()
   private val objectMapper: ObjectMapper = mockk()
 
@@ -65,7 +63,6 @@ class RiskPredictorServiceTest {
       RiskPredictorService(
         oasysApiClient,
         communityApiRestClient,
-        offenderPredictorsHistoryRepository,
         auditService,
       )
 

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities.OffenderPredictorsHistoryEntity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -54,43 +53,9 @@ data class RsrPredictorDto(
         )
       }
     }
-
-    @JvmName("fromArn")
-    fun from(arnPredictorDtos: List<OffenderPredictorsHistoryEntity>): List<RsrPredictorDto> {
-      return arnPredictorDtos.map { from(it) }
-    }
-
-    fun from(arnPredictor: OffenderPredictorsHistoryEntity): RsrPredictorDto {
-      with(arnPredictor) {
-        val rsr = predictors.firstOrNull { it.predictorSubType == PredictorSubType.RSR }
-        val ospi = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPI }
-        val ospc = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPC }
-        val ospii = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPII }
-        val ospdc = predictors.firstOrNull { it.predictorSubType == PredictorSubType.OSPDC }
-        return RsrPredictorDto(
-          rsrPercentageScore = rsr?.predictorScore,
-          rsrScoreLevel = rsr?.predictorLevel,
-          ospcPercentageScore = ospc?.predictorScore,
-          ospcScoreLevel = ospc?.predictorLevel,
-          ospiPercentageScore = ospi?.predictorScore,
-          ospiScoreLevel = ospi?.predictorLevel,
-          ospiiPercentageScore = ospii?.predictorScore,
-          ospiiScoreLevel = ospii?.predictorLevel,
-          ospdcPercentageScore = ospdc?.predictorScore,
-          ospdcScoreLevel = ospdc?.predictorLevel,
-          calculatedDate = calculatedAt,
-          completedDate = assessmentCompletedDate,
-          signedDate = null,
-          staticOrDynamic = scoreType,
-          source = RsrScoreSource.ASSESSMENTS_API,
-          status = AssessmentStatus.COMPLETE,
-          algorithmVersion = algorithmVersion,
-        )
-      }
-    }
   }
 }
 
 enum class RsrScoreSource {
-  ASSESSMENTS_API, OASYS;
+  OASYS,
 }
