@@ -30,7 +30,7 @@ class AssessmentController(
       ApiResponse(responseCode = "200", description = "OK"),
     ],
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_INTEGRATIONS_RO')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_INTEGRATIONS_RO', 'ROLE_OFFENDER_RISK_RO')")
   fun getCriminogenicNeedsByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
