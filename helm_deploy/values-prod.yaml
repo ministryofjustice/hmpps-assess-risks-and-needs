@@ -13,7 +13,7 @@ generic-service:
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
     COMMUNITY_API_BASE_URL: https://arns-and-delius.hmpps.service.justice.gov.uk
-    OASYS_API_BASE_URL: https://bridge-oasys.az.justice.gov.uk/eor/oasys
+    OASYS_API_BASE_URL: https://int.oasys.service.justice.gov.uk/eor/oasys
     SENTRY_ENVIRONMENT: "prod"
     SPRING_PROFILES_ACTIVE: "logstash,postgres,oasys-rsr"
 generic-prometheus-alerts:
