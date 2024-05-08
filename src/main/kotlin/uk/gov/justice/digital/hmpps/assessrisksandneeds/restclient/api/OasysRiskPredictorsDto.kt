@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import java.time.LocalDateTime
 
 data class OasysRiskPredictorsDto(

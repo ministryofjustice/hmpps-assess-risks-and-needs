@@ -105,6 +105,7 @@ class RiskPredictorServiceRsrTest {
       listOf(
         RiskPredictorAssessmentDto(
           dateCompleted = LocalDateTime.now(),
+          assessmentType = "LAYER3",
           assessmentStatus = AssessmentStatus.COMPLETE,
           ovpScoreDto = OasysOvpDto(),
           ospScoreDto = OasysOspDto(),
@@ -121,6 +122,7 @@ class RiskPredictorServiceRsrTest {
       completedDate.map {
         RiskPredictorAssessmentDto(
           dateCompleted = it,
+          assessmentType = "LAYER3",
           assessmentStatus = AssessmentStatus.COMPLETE,
           rsrScoreDto = OasysRsrDto(
             rsrPercentageScore = BigDecimal(10),
