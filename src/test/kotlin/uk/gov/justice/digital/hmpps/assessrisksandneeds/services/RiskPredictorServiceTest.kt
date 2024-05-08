@@ -76,6 +76,7 @@ class RiskPredictorServiceTest {
         listOf(
           RiskPredictorAssessmentDto(
             dateCompleted = now,
+            assessmentType = "LAYER3",
             assessmentStatus = AssessmentStatus.COMPLETE,
             ogpScoreDto = OasysOgpDto(
               ogpStWesc = BigDecimal.valueOf(3),

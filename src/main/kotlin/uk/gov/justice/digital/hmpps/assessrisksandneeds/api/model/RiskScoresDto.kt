@@ -16,7 +16,7 @@ class RiskScoresDto(
   companion object {
 
     fun from(oasysRiskPredictorsDto: OasysRiskPredictorsDto?): List<RiskScoresDto> {
-      return oasysRiskPredictorsDto?.assessments?.map {
+      return oasysRiskPredictorsDto?.assessments?.filter { it.assessmentType in listOf("LAYER3", "LAYER1") }?.map {
         RiskScoresDto(
           completedDate = it.dateCompleted,
           assessmentStatus = it.assessmentStatus.name,

@@ -10,6 +10,7 @@ data class OasysRiskPredictorsDto(
 
 data class RiskPredictorAssessmentDto(
   val dateCompleted: LocalDateTime,
+  val assessmentType: String,
   val assessmentStatus: AssessmentStatus,
   @JsonProperty("OGP")
   val ogpScoreDto: OasysOgpDto,

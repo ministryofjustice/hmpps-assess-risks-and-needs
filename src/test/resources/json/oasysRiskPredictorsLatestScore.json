@@ -7,6 +7,7 @@
     "completedDate": "2022-05-27T00:00:00",
     "voidedDateTime": null,
     "assessmentCompleted": true,
+    "assessmentType": "LAYER3",
     "assessmentStatus": "COMPLETE",
     "otherRisk": null,
     "ogr3": {

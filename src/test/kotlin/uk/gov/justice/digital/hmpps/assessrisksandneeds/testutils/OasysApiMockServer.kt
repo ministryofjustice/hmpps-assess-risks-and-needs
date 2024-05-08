@@ -266,6 +266,7 @@ class OasysApiMockServer : WireMockServer(9097) {
     "assessments": [
       {
           "dateCompleted": "2021-06-21T15:55:04",
+          "assessmentType": "LAYER3",
           "assessmentStatus": "COMPLETE",
           "OGRS": {},
           "OVP": {},
