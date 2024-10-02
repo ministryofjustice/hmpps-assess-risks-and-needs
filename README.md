@@ -7,7 +7,7 @@ A Spring Boot app to get Risk and Need for offenders across HMPPS.
 [Swagger API documentation is available](https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk/swagger-ui.html)
 
 ## Dependencies
-* Java JDK 16
+* Java JDK 17
 * An editor/IDE
 * Gradle
 * Docker
@@ -69,7 +69,7 @@ kubectl --namespace=hmpps-assess-risks-and-needs-prod \
 ```
 
 ## Code style & formatting
-./gradlew ktlintApplyToIdea addKtlintFormatGitPreCommitHook
+`./gradlew ktlintApplyToIdea addKtlintFormatGitPreCommitHook`
 will apply ktlint styles to intellij and also add a pre-commit hook to format all changed kotlin files.
 
 ### Health
