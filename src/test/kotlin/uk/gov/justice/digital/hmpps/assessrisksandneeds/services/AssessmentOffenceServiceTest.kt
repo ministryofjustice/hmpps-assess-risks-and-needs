@@ -41,6 +41,7 @@ class AssessmentOffenceServiceTest {
   private val communityClient: CommunityApiRestClient = mockk()
   private val auditService: AuditService = mockk()
   private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService)
+  private val crn = "T123456"
 
   @BeforeEach
   fun setup() {
@@ -351,7 +352,6 @@ class AssessmentOffenceServiceTest {
   @ParameterizedTest
   @CsvSource("empty, false", "N, false", "Y, true")
   fun `returns person cell location if in prison`(sanIndicator: String, result: Boolean) {
-    val crn = "T123456"
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
     val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
     val indicators = when(sanIndicator) {
@@ -366,7 +366,33 @@ class AssessmentOffenceServiceTest {
     val response = assessmentOffenceService.getSanIndicator(crn)
 
     assertThat(response).isEqualTo(SanIndicatorResponse(crn, result))
+
+    verify(exactly = 1) { oasysClient.getLatestAssessment(identifier, any()) }
+    verify(exactly = 1) { oasysClient.getAssessmentSummaryIndicators(assessment, crn) }
   }
 
 
+  @Test
+  fun `no assessment found for CRN`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
+
+    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers {null}
+
+    val response = assertThrows<EntityNotFoundException> { assessmentOffenceService.getSanIndicator(crn) }
+
+    assertThat(response.message).isEqualTo("No assessment found for CRN: $crn")
+  }
+
+  @Test
+  fun `no assessment summary found for CRN`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
+    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+
+    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysClient.getAssessmentSummaryIndicators(eq(assessment), crn) } answers { null }
+
+    val response = assertThrows<EntityNotFoundException> { assessmentOffenceService.getSanIndicator(crn) }
+
+    assertThat(response.message).isEqualTo("No assessment summary found for CRN: $crn")
+  }
 }
