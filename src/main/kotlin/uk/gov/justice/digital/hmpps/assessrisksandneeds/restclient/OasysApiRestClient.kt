@@ -195,7 +195,7 @@ class OasysApiRestClient(
     assessment: AssessmentSummary,
     crn: String,
   ): AssessmentSummaryIndicators? {
-    val path = "/ass/asssumm/${crn}/ALLOW/${assessment.assessmentId}/COMPLETE"
+    val path = "/ass/asssumm/$crn/ALLOW/${assessment.assessmentId}/COMPLETE"
     return webClient
       .get(path)
       .retrieve()

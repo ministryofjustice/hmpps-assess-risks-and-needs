@@ -91,6 +91,6 @@ class AssessmentController(
   fun getSanIndicatorByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
-    crn: String
+    crn: String,
   ) = assessmentOffenceService.getSanIndicator(crn)
 }

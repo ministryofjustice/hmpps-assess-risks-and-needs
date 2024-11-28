@@ -117,7 +117,7 @@ class OasysApiMockServer : WireMockServer(9097) {
     stubFor(
       WireMock.get(
         WireMock.urlEqualTo(
-          "/eor/oasys/ass/asssumm/${crn}/ALLOW/9630348/COMPLETE",
+          "/eor/oasys/ass/asssumm/$crn/ALLOW/9630348/COMPLETE",
         ),
       )
         .willReturn(

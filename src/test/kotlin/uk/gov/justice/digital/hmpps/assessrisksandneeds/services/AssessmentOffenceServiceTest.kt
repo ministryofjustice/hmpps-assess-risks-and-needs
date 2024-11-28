@@ -354,7 +354,7 @@ class AssessmentOffenceServiceTest {
   @ParameterizedTest
   @CsvSource("empty, false", "N, false", "Y, true")
   fun `returns person cell location if in prison`(sanIndicator: String, result: Boolean) {
-    val indicators = when(sanIndicator) {
+    val indicators = when (sanIndicator) {
       "empty" -> Indicators(null)
       else -> Indicators(sanIndicator)
     }
@@ -370,7 +370,6 @@ class AssessmentOffenceServiceTest {
     verify(exactly = 1) { oasysClient.getLatestAssessment(identifier, any()) }
     verify(exactly = 1) { oasysClient.getAssessmentSummaryIndicators(assessment, crn) }
   }
-
 
   @Test
   fun `no assessment found for CRN`() {

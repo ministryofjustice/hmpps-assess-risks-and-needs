@@ -16,8 +16,8 @@ data class AssessmentSummary(
 data class AssessmentSummaryIndicators(
   val assessments: List<AssessmentSummaryIndicator>,
 )
-data class AssessmentSummaryIndicator (
-  val indicators: Indicators
+data class AssessmentSummaryIndicator(
+  val indicators: Indicators,
 ) {
   fun getSanIndicator(): Boolean {
     return indicators.sanIndicator == "Y"
@@ -25,5 +25,5 @@ data class AssessmentSummaryIndicator (
 }
 
 data class Indicators(
-  val sanIndicator: String?
+  val sanIndicator: String?,
 )
