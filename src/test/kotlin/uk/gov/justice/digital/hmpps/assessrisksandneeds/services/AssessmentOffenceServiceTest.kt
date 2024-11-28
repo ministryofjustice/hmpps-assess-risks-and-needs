@@ -42,6 +42,8 @@ class AssessmentOffenceServiceTest {
   private val auditService: AuditService = mockk()
   private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService)
   private val crn = "T123456"
+  private val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
+  private val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
   @BeforeEach
   fun setup() {
@@ -352,8 +354,6 @@ class AssessmentOffenceServiceTest {
   @ParameterizedTest
   @CsvSource("empty, false", "N, false", "Y, true")
   fun `returns person cell location if in prison`(sanIndicator: String, result: Boolean) {
-    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
-    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
     val indicators = when(sanIndicator) {
       "empty" -> Indicators(null)
       else -> Indicators(sanIndicator)
@@ -361,7 +361,7 @@ class AssessmentOffenceServiceTest {
     val assessmentIndicators = AssessmentSummaryIndicators(listOf(AssessmentSummaryIndicator(indicators)))
 
     every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
-    every { oasysClient.getAssessmentSummaryIndicators(eq(assessment), crn) } answers {assessmentIndicators}
+    every { oasysClient.getAssessmentSummaryIndicators(eq(assessment), crn) } answers { assessmentIndicators }
 
     val response = assessmentOffenceService.getSanIndicator(crn)
 
@@ -374,9 +374,7 @@ class AssessmentOffenceServiceTest {
 
   @Test
   fun `no assessment found for CRN`() {
-    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
-
-    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers {null}
+    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { null }
 
     val response = assertThrows<EntityNotFoundException> { assessmentOffenceService.getSanIndicator(crn) }
 
@@ -385,9 +383,6 @@ class AssessmentOffenceServiceTest {
 
   @Test
   fun `no assessment summary found for CRN`() {
-    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
-    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
-
     every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every { oasysClient.getAssessmentSummaryIndicators(eq(assessment), crn) } answers { null }
 
