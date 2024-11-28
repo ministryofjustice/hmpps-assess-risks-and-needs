@@ -113,6 +113,21 @@ class OasysApiMockServer : WireMockServer(9097) {
     )
   }
 
+  fun stubGetSummaryIndicators() {
+    stubFor(
+      WireMock.get(
+        WireMock.urlEqualTo(
+          "/eor/oasys/ass/asssumm/${crn}/ALLOW/9630348/COMPLETE",
+        ),
+      )
+        .willReturn(
+          WireMock.aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withStatus(200)
+            .withBody(this::class.java.getResource("/json/assessmentSummaryIndicators.json")?.readText()),
+        ),
+    )
+  }
   fun stubGetTierSections() {
     NeedsSection.entries.forEach {
       stubFor(

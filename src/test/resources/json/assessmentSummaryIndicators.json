@@ -1,0 +1,104 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "crn": "X123456",
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9630348,
+    "expectedStatus": "COMPLETE"
+  },
+  "crn": "X123456",
+  "crn-deprecated": "** DEPRECATION WARNING ** migrate to probNumber / prisNumber",
+  "probNumber": "X123456",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "assessmentPk": 9630348,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2024-11-28T08:13:26",
+      "assessorSignedDate": "2024-11-28T08:13:26",
+      "initiationDate": "2024-11-28T08:09:19",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": false,
+      "latestWIPDate": null,
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": null,
+      "laterPartCompUnsignedAssessmentExists": false,
+      "latestPartCompUnsignedDate": null,
+      "laterPartCompSignedAssessmentExists": false,
+      "latestPartCompSignedDate": null,
+      "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2024-11-28T08:13:26",
+      "currentConcernsEscape": "Yes",
+      "currentConcernsRiskOfSelfHarm": null,
+      "reviewSpDate": "",
+      "currentConcernsVulnerability": null,
+      "currentConcernsCustody": null,
+      "initialSpDate": "",
+      "currentConcernsHostel": null,
+      "currentConcernsRiskOfSuicide": null,
+      "reviewNum": null,
+      "riskPrisonersCustody": "Medium",
+      "riskStaffCustody": "Medium",
+      "riskStaffCommunity": "Medium",
+      "riskKnownAdultCustody": "Medium",
+      "riskKnownAdultCommunity": "Medium",
+      "riskPublicCustody": "Medium",
+      "riskPublicCommunity": "Medium",
+      "riskChildrenCustody": "Medium",
+      "riskChildrenCommunity": "Medium",
+      "currentConcernsBreachOfTrust": "Yes",
+      "currentConcernsDisruptive": "Yes",
+      "weightedScores": {
+        "accommodationWeightedScore": 0,
+        "eteWeightedScore": 0,
+        "relationshipsWeightedScore": null,
+        "lifestyleWeightedScore": null,
+        "drugWeightedScore": 0,
+        "alcoholWeightedScore": null,
+        "thinkingWeightedScore": 7,
+        "attitudesWeightedScore": 0
+      },
+      "offender": {
+        "riskToOthers": "M",
+        "offenderPk": 8117904
+      },
+      "furtherInformation": {
+        "totWeightedScore": null,
+        "pOAssessment": "260",
+        "pOAssessmentDesc": "Start custody",
+        "assessorName": "Test - AutoTestUser4",
+        "ogrs1Year": 58,
+        "ogrs2Year": 74,
+        "reviewTerm": "N",
+        "cmsEventNumber": 1,
+        "courtCode": "BELMMC",
+        "courtType": "MC",
+        "courtName": "Belmarsh MC"
+      },
+      "indicators": {
+        "sanIndicator": null
+      },
+      "ogpOvp": {
+        "ogpNC": "Y",
+        "ovpNC": "Y",
+        "ogp1Year": null,
+        "ogp2Year": null,
+        "ovp1Year": null,
+        "ovp2Year": null,
+        "ogrs3RiskRecon": "M",
+        "ogpRisk": null,
+        "ovpRisk": null
+      },
+      "basicSentencePlan": null,
+      "offences": [
+        {
+          "offenceCode": "019",
+          "offenceSubcode": "08",
+          "additionalOffence": "N"
+        }
+      ],
+      "sentencePlan": null
+    }
+  ]
+}

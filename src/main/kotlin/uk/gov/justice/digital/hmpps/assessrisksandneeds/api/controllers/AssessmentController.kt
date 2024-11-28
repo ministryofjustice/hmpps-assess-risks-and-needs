@@ -77,4 +77,20 @@ class AssessmentController(
     @PathVariable identifierType: String,
     @PathVariable identifierValue: String,
   ) = assessmentOffenceService.getAssessmentTimeline(PersonIdentifier.from(identifierType, identifierValue))
+
+  @RequestMapping(path = ["/san-indicator/crn/{crn}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets san-indicator by CRN")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_OFFENDER_RISK_RO')")
+  fun getSanIndicatorByCrn(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @PathVariable
+    crn: String
+  ) = assessmentOffenceService.getSanIndicator(crn)
 }
