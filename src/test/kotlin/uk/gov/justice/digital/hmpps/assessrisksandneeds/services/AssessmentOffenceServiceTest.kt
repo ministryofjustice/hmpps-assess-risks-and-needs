@@ -11,11 +11,19 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicator
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Indicators
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -339,4 +347,26 @@ class AssessmentOffenceServiceTest {
     // Then
     verify(exactly = 0) { oasysClient.getAssessmentOffence(crn, "ALLOW") }
   }
+
+  @ParameterizedTest
+  @CsvSource("empty, false", "N, false", "Y, true")
+  fun `returns person cell location if in prison`(sanIndicator: String, result: Boolean) {
+    val crn = "T123456"
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
+    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val indicators = when(sanIndicator) {
+      "empty" -> Indicators(null)
+      else -> Indicators(sanIndicator)
+    }
+    val assessmentIndicators = AssessmentSummaryIndicators(listOf(AssessmentSummaryIndicator(indicators)))
+
+    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysClient.getAssessmentSummaryIndicators(eq(assessment), crn) } answers {assessmentIndicators}
+
+    val response = assessmentOffenceService.getSanIndicator(crn)
+
+    assertThat(response).isEqualTo(SanIndicatorResponse(crn, result))
+  }
+
+
 }
