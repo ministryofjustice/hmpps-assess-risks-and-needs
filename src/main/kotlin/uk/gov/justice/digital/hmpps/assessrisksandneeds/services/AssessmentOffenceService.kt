@@ -61,12 +61,8 @@ class AssessmentOffenceService(
     )?.let {
       oasysApiRestClient.getAssessmentSummaryIndicators(it, crn)?.assessments?.firstOrNull()?.let { indicator ->
         return SanIndicatorResponse(crn, indicator.getSanIndicator())
-      }
-
-      throw EntityNotFoundException("No assessment summary found for CRN: $crn")
-    }
-
-    throw EntityNotFoundException("No assessment found for CRN: $crn")
+      } ?: throw EntityNotFoundException("No assessment summary found for CRN: $crn")
+    } ?: throw EntityNotFoundException("No assessment found for CRN: $crn")
   }
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {
