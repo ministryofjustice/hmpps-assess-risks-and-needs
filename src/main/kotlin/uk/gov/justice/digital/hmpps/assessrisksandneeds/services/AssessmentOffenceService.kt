@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
@@ -51,6 +52,17 @@ class AssessmentOffenceService(
         },
       )
     } ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
+  }
+
+  fun getSanIndicator(crn: String): SanIndicatorResponse {
+    oasysApiRestClient.getLatestAssessment(
+      PersonIdentifier(PersonIdentifier.Type.CRN, crn),
+      needsPredicate(),
+    )?.let {
+      oasysApiRestClient.getAssessmentSummaryIndicators(it, crn)?.assessments?.firstOrNull()?.let { indicator ->
+        return SanIndicatorResponse(crn, indicator.getSanIndicator())
+      } ?: throw EntityNotFoundException("No assessment summary found for CRN: $crn")
+    } ?: throw EntityNotFoundException("No assessment found for CRN: $crn")
   }
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {

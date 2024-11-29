@@ -43,6 +43,7 @@ abstract class IntegrationTestBase {
       oasysApiMockServer.stubGetRiskPredictorScores()
       oasysApiMockServer.stubGetTierSections()
       oasysApiMockServer.stubGetRoshRisksByCrn()
+      oasysApiMockServer.stubGetSummaryIndicators()
     }
 
     @AfterAll

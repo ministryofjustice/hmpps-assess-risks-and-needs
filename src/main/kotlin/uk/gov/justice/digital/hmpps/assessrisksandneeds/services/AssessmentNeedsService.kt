@@ -57,11 +57,11 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient)
     else -> null
   }
 
-  private fun needsPredicate(): (AssessmentSummary) -> Boolean = {
-    it.assessmentType == AssessmentType.LAYER3.name && it.status == AssessmentStatus.COMPLETE.name && it.isWithin55Weeks()
-  }
-
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
+}
+
+fun needsPredicate(): (AssessmentSummary) -> Boolean = {
+  it.assessmentType == AssessmentType.LAYER3.name && it.status == AssessmentStatus.COMPLETE.name && it.isWithin55Weeks()
 }

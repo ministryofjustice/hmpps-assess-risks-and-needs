@@ -13,6 +13,7 @@ import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
@@ -188,6 +189,36 @@ class OasysApiRestClient(
       }
       .bodyToMono(OasysRiskManagementPlanDetailsDto::class.java)
       .block().also { log.info("Retrieved risk management plan for crn $crn") }
+  }
+
+  fun getAssessmentSummaryIndicators(
+    assessment: AssessmentSummary,
+    crn: String,
+  ): AssessmentSummaryIndicators? {
+    val path = "/ass/asssumm/$crn/ALLOW/${assessment.assessmentId}/COMPLETE"
+    return webClient
+      .get(path)
+      .retrieve()
+      .onStatus({ it.is4xxClientError }) {
+        log.error("4xx Error retrieving assessment summary indicator for crn $crn code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .onStatus({ it.is5xxServerError }) {
+        log.error("5xx Error retrieving assessment summary indicator for crn $crn code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve assessment summary indicator for crn $crn code: ${it.statusCode().value()}",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .bodyToMono<AssessmentSummaryIndicators>()
+      .block().also { log.info("Retrieved assessment summary indicator for crn $crn") }
   }
 
   fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? =

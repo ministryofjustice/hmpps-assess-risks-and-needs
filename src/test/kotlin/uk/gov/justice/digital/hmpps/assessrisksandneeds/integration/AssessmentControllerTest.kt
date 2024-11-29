@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeed
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
@@ -238,6 +239,18 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(response).isEqualTo(timeline)
+  }
+
+  @Test
+  fun `get san signal`() {
+    val response = webTestClient.get().uri("/san-indicator/crn/$crn")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<SanIndicatorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response).isEqualTo(SanIndicatorResponse(crn, false))
   }
 
   private fun scoredNotNeeds() = listOf(
