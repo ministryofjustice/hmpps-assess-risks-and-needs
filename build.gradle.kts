@@ -23,7 +23,7 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:2.2.1")
   implementation("org.apache.commons:commons-lang3")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
-  implementation("com.zaxxer:HikariCP:5.1.0")
+  implementation("com.zaxxer:HikariCP:6.2.1")
   implementation("org.postgresql:postgresql:42.7.1")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   implementation("com.beust:klaxon:5.6")
