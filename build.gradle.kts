@@ -27,7 +27,7 @@ dependencies {
   implementation("org.postgresql:postgresql:42.7.1")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   implementation("com.beust:klaxon:5.6")
-  implementation("net.logstash.logback:logstash-logback-encoder:7.4")
+  implementation("net.logstash.logback:logstash-logback-encoder:8.0")
   runtimeOnly("com.h2database:h2:2.2.224")
   runtimeOnly("org.flywaydb:flyway-core")
   testRuntimeOnly("com.h2database:h2:2.2.224")
