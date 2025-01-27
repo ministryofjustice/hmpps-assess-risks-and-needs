@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @DisplayName("Tier calculation information tests")
@@ -25,7 +26,7 @@ class TierAssessmentController : IntegrationTestBase() {
 
     val assessmentSummary = checkNotNull(response["assessment"])
     assertThat(assessmentSummary["assessmentId"].asInt(), equalTo(9630348))
-    assertThat(assessmentSummary["completedDate"].asText(), equalTo("2023-12-19T16:57:25"))
+    assertThat(assessmentSummary["completedDate"].asText(), equalTo("${LocalDateTime.now().year - 1}-12-19T16:57:25"))
 
     val accommodation = checkNotNull(response["accommodation"])
     assertThat(accommodation.severity, equalTo("NO_NEED"))
