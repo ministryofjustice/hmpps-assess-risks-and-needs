@@ -19,18 +19,14 @@ data class RiskManagementPlansDto(
       )
     }
 
-    private fun createRiskManagementPlans(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto): List<RiskManagementPlanDto> {
-      return oasysRiskManagementPlanDetails.riskManagementPlans.map {
-        RiskManagementPlanDto.from(it)
-      }
+    private fun createRiskManagementPlans(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto): List<RiskManagementPlanDto> = oasysRiskManagementPlanDetails.riskManagementPlans.map {
+      RiskManagementPlanDto.from(it)
     }
 
-    private fun createAssessmentSummaries(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto, riskManagementPlanAssessmentIds: List<Long>): List<RiskManagementPlanDto> {
-      return oasysRiskManagementPlanDetails.timeline
-        .filterNot { it.assessmentPk in riskManagementPlanAssessmentIds }
-        .map {
-          RiskManagementPlanDto.from(it)
-        }
-    }
+    private fun createAssessmentSummaries(oasysRiskManagementPlanDetails: OasysRiskManagementPlanDetailsDto, riskManagementPlanAssessmentIds: List<Long>): List<RiskManagementPlanDto> = oasysRiskManagementPlanDetails.timeline
+      .filterNot { it.assessmentPk in riskManagementPlanAssessmentIds }
+      .map {
+        RiskManagementPlanDto.from(it)
+      }
   }
 }

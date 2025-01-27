@@ -30,7 +30,6 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @Parameter(description = "CRN", required = true)
     @PathVariable
     crn: String,
-
   ): List<RsrPredictorDto> {
     log.info("Retrieving RSR score history for crn: $crn")
     return riskPredictorService.getAllRsrHistory(crn)

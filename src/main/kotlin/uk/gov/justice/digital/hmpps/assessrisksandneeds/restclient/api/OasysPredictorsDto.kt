@@ -7,7 +7,7 @@ class OasysPredictorsDto(
   val oasysSetId: Long? = null,
   val refAssessmentVersionCode: String? = null,
   val refAssessmentVersionNumber: String? = null,
-  val refAssessmentId: Long ? = null,
+  val refAssessmentId: Long? = null,
   val completedDate: LocalDateTime? = null,
   val voidedDateTime: LocalDateTime? = null,
   val assessmentCompleted: Boolean? = null,
@@ -19,12 +19,10 @@ class OasysPredictorsDto(
   val osp: OspDto? = null,
 
 ) {
-  fun hasRsrScores(): Boolean {
-    return rsr?.rsrPercentageScore != null &&
-      rsr.rsrStaticOrDynamic != null &&
-      rsr.rsrAlgorithmVersion != null &&
-      rsr.rsrRiskRecon != null
-  }
+  fun hasRsrScores(): Boolean = rsr?.rsrPercentageScore != null &&
+    rsr.rsrStaticOrDynamic != null &&
+    rsr.rsrAlgorithmVersion != null &&
+    rsr.rsrRiskRecon != null
 }
 
 class Ogrs3Dto(

@@ -100,47 +100,43 @@ class RiskPredictorServiceRsrTest {
     assertThat(rsrHistory).isEmpty()
   }
 
-  private fun getOasysPredictorNoRsr(): OasysRiskPredictorsDto {
-    return OasysRiskPredictorsDto(
-      listOf(
-        RiskPredictorAssessmentDto(
-          dateCompleted = LocalDateTime.now(),
-          assessmentType = "LAYER3",
-          assessmentStatus = AssessmentStatus.COMPLETE,
-          ovpScoreDto = OasysOvpDto(),
-          ospScoreDto = OasysOspDto(),
-          ogpScoreDto = OasysOgpDto(),
-          ogrScoreDto = OasysOgrDto(),
-          rsrScoreDto = OasysRsrDto(),
-        ),
+  private fun getOasysPredictorNoRsr(): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+    listOf(
+      RiskPredictorAssessmentDto(
+        dateCompleted = LocalDateTime.now(),
+        assessmentType = "LAYER3",
+        assessmentStatus = AssessmentStatus.COMPLETE,
+        ovpScoreDto = OasysOvpDto(),
+        ospScoreDto = OasysOspDto(),
+        ogpScoreDto = OasysOgpDto(),
+        ogrScoreDto = OasysOgrDto(),
+        rsrScoreDto = OasysRsrDto(),
       ),
-    )
-  }
+    ),
+  )
 
-  private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto {
-    return OasysRiskPredictorsDto(
-      completedDate.map {
-        RiskPredictorAssessmentDto(
-          dateCompleted = it,
-          assessmentType = "LAYER3",
-          assessmentStatus = AssessmentStatus.COMPLETE,
-          rsrScoreDto = OasysRsrDto(
-            rsrPercentageScore = BigDecimal(10),
-            rsrStaticOrDynamic = ScoreType.DYNAMIC,
-            rsrAlgorithmVersion = "10",
-            scoreLevel = ScoreLevel.LOW.type,
-          ),
-          ospScoreDto = OasysOspDto(
-            ospImagePercentageScore = BigDecimal(10),
-            ospImageScoreLevel = ScoreLevel.LOW.type,
-            ospContactPercentageScore = BigDecimal(10),
-            ospContactScoreLevel = ScoreLevel.LOW.type,
-          ),
-          ogpScoreDto = OasysOgpDto(),
-          ovpScoreDto = OasysOvpDto(),
-          ogrScoreDto = OasysOgrDto(),
-        )
-      },
-    )
-  }
+  private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+    completedDate.map {
+      RiskPredictorAssessmentDto(
+        dateCompleted = it,
+        assessmentType = "LAYER3",
+        assessmentStatus = AssessmentStatus.COMPLETE,
+        rsrScoreDto = OasysRsrDto(
+          rsrPercentageScore = BigDecimal(10),
+          rsrStaticOrDynamic = ScoreType.DYNAMIC,
+          rsrAlgorithmVersion = "10",
+          scoreLevel = ScoreLevel.LOW.type,
+        ),
+        ospScoreDto = OasysOspDto(
+          ospImagePercentageScore = BigDecimal(10),
+          ospImageScoreLevel = ScoreLevel.LOW.type,
+          ospContactPercentageScore = BigDecimal(10),
+          ospContactScoreLevel = ScoreLevel.LOW.type,
+        ),
+        ogpScoreDto = OasysOgpDto(),
+        ovpScoreDto = OasysOvpDto(),
+        ogrScoreDto = OasysOgrDto(),
+      )
+    },
+  )
 }

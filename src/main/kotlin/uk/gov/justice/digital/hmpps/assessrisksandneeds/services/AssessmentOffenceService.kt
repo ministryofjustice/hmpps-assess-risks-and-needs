@@ -79,48 +79,46 @@ class AssessmentOffenceService(
     )
   }
 
-  private fun mapAssessmentDtos(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto) =
-    oasysAssessmentOffenceDto.assessments.map {
-      AssessmentDto(
-        assessmentId = it.assessmentPk,
-        assessmentType = it.assessmentType,
-        assessmentStatus = it.assessmentStatus,
-        dateCompleted = it.dateCompleted,
-        initiationDate = it.initiationDate,
-        assessorSignedDate = it.assessorSignedDate,
-        superStatus = it.superStatus,
-        offence = it.offence,
-        disinhibitors = it.disinhibitors,
-        patternOfOffending = it.patternOfOffending,
-        offenceInvolved = it.offenceInvolved,
-        specificWeapon = it.specificWeapon,
-        victimPerpetratorRelationship = it.victimPerpetratorRelationship,
-        victimOtherInfo = it.victimOtherInfo,
-        evidencedMotivations = it.evidencedMotivations,
-        offenceDetails = it.offenceDetails,
-        victimDetails = it.victimDetails,
-        laterWIPAssessmentExists = it.laterWIPAssessmentExists,
-        latestWIPDate = it.latestWIPDate,
-        laterSignLockAssessmentExists = it.laterSignLockAssessmentExists,
-        latestSignLockDate = it.latestSignLockDate,
-        laterPartCompUnsignedAssessmentExists = it.laterPartCompUnsignedAssessmentExists,
-        latestPartCompUnsignedDate = it.latestPartCompUnsignedDate,
-        laterPartCompSignedAssessmentExists = it.laterPartCompSignedAssessmentExists,
-        latestPartCompSignedDate = it.latestPartCompSignedDate,
-        laterCompleteAssessmentExists = it.laterCompleteAssessmentExists,
-        latestCompleteDate = it.latestCompleteDate,
-      )
-    }
+  private fun mapAssessmentDtos(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto) = oasysAssessmentOffenceDto.assessments.map {
+    AssessmentDto(
+      assessmentId = it.assessmentPk,
+      assessmentType = it.assessmentType,
+      assessmentStatus = it.assessmentStatus,
+      dateCompleted = it.dateCompleted,
+      initiationDate = it.initiationDate,
+      assessorSignedDate = it.assessorSignedDate,
+      superStatus = it.superStatus,
+      offence = it.offence,
+      disinhibitors = it.disinhibitors,
+      patternOfOffending = it.patternOfOffending,
+      offenceInvolved = it.offenceInvolved,
+      specificWeapon = it.specificWeapon,
+      victimPerpetratorRelationship = it.victimPerpetratorRelationship,
+      victimOtherInfo = it.victimOtherInfo,
+      evidencedMotivations = it.evidencedMotivations,
+      offenceDetails = it.offenceDetails,
+      victimDetails = it.victimDetails,
+      laterWIPAssessmentExists = it.laterWIPAssessmentExists,
+      latestWIPDate = it.latestWIPDate,
+      laterSignLockAssessmentExists = it.laterSignLockAssessmentExists,
+      latestSignLockDate = it.latestSignLockDate,
+      laterPartCompUnsignedAssessmentExists = it.laterPartCompUnsignedAssessmentExists,
+      latestPartCompUnsignedDate = it.latestPartCompUnsignedDate,
+      laterPartCompSignedAssessmentExists = it.laterPartCompSignedAssessmentExists,
+      latestPartCompSignedDate = it.latestPartCompSignedDate,
+      laterCompleteAssessmentExists = it.laterCompleteAssessmentExists,
+      latestCompleteDate = it.latestCompleteDate,
+    )
+  }
 
-  private fun mapSummaryAssessmentDtos(filteredTimeLine: List<TimelineDto>) =
-    filteredTimeLine.map {
-      AssessmentDto(
-        assessmentId = it.assessmentPk,
-        assessmentType = it.assessmentType,
-        dateCompleted = it.completedDate,
-        assessmentStatus = it.status,
-        initiationDate = it.initiationDate,
-        partcompStatus = it.partcompStatus,
-      )
-    }
+  private fun mapSummaryAssessmentDtos(filteredTimeLine: List<TimelineDto>) = filteredTimeLine.map {
+    AssessmentDto(
+      assessmentId = it.assessmentPk,
+      assessmentType = it.assessmentType,
+      dateCompleted = it.completedDate,
+      assessmentStatus = it.status,
+      initiationDate = it.initiationDate,
+      partcompStatus = it.partcompStatus,
+    )
+  }
 }

@@ -5,9 +5,7 @@ enum class Source {
   ;
 
   companion object {
-    fun fromString(enumValue: String?): Source {
-      return values().firstOrNull { it.name == enumValue }
-        ?: throw IllegalArgumentException("Unknown Source $enumValue")
-    }
+    fun fromString(enumValue: String?): Source = values().firstOrNull { it.name == enumValue }
+      ?: throw IllegalArgumentException("Unknown Source $enumValue")
   }
 }

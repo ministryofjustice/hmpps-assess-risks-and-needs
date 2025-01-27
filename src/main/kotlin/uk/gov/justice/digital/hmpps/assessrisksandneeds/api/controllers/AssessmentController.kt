@@ -35,9 +35,7 @@ class AssessmentController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AssessmentNeedsDto {
-    return assessmentNeedsService.getAssessmentNeeds(crn)
-  }
+  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn)
 
   @RequestMapping(path = ["/assessments/crn/{crn}/offence"], method = [RequestMethod.GET])
   @Operation(description = "Gets offence details from latest complete assessment for crn")
@@ -59,9 +57,7 @@ class AssessmentController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AssessmentOffenceDto {
-    return assessmentOffenceService.getAssessmentOffence(crn)
-  }
+  ): AssessmentOffenceDto = assessmentOffenceService.getAssessmentOffence(crn)
 
   @RequestMapping(path = ["/assessments/timeline/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
   @Operation(description = "Gets assessment timeline for an identifier")

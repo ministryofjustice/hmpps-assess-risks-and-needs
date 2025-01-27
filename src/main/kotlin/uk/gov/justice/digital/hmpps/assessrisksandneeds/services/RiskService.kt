@@ -93,9 +93,7 @@ class RiskService(
     return calculateOverallRiskLevel(riskInCommunityGroup + riskInCustodyGroup)
   }
 
-  private fun Map<String, RiskLevel?>.asGroups(): Map<RiskLevel?, List<String>> {
-    return this.map { it.key to it.value }.groupBy({ it.second }, { it.first }).filterKeys { it != null }
-  }
+  private fun Map<String, RiskLevel?>.asGroups(): Map<RiskLevel?, List<String>> = this.map { it.key to it.value }.groupBy({ it.second }, { it.first }).filterKeys { it != null }
 
   private fun Map<RiskLevel?, List<String>>.asWidgetRiskMap() = flatMap { entry ->
     entry.value.map { it to entry.key }

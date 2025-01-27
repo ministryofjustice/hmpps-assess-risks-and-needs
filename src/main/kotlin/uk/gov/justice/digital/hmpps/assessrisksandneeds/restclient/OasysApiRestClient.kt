@@ -47,9 +47,8 @@ class OasysApiRestClient(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getLatestAssessment(identifier: PersonIdentifier, predicate: (AssessmentSummary) -> Boolean): AssessmentSummary? =
-    getAssessmentTimeline(identifier)?.timeline?.filter(predicate)?.sortedByDescending { it.completedDate }
-      ?.firstOrNull()
+  fun getLatestAssessment(identifier: PersonIdentifier, predicate: (AssessmentSummary) -> Boolean): AssessmentSummary? = getAssessmentTimeline(identifier)?.timeline?.filter(predicate)?.sortedByDescending { it.completedDate }
+    ?.firstOrNull()
 
   fun getScoredSectionsForAssessment(
     assessment: AssessmentSummary,
@@ -221,25 +220,23 @@ class OasysApiRestClient(
       .block().also { log.info("Retrieved assessment summary indicator for crn $crn") }
   }
 
-  fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? =
-    getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
-      getRoshSummary(assessment.assessmentId).map { it.asRiskRoshSummary() }.block()
-    }
+  fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? = getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
+    getRoshSummary(assessment.assessmentId).map { it.asRiskRoshSummary() }.block()
+  }
 
-  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier): AllRoshRiskDto? =
-    getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
-      getRoshFull(assessment.assessmentId)
-        .zipWith(getRoshScreening(assessment.assessmentId))
-        .zipWith(getRoshSummary(assessment.assessmentId))
-        .map {
-          AllRoshRiskDto(
-            riskToSelf = it.t1.t1.asRiskToSelf(it.t1.t2),
-            otherRisks = it.t1.t1.asOtherRisks(),
-            summary = it.t2.asRiskRoshSummary(),
-            assessedOn = assessment.completedDate,
-          )
-        }.block()
-    }
+  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier): AllRoshRiskDto? = getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
+    getRoshFull(assessment.assessmentId)
+      .zipWith(getRoshScreening(assessment.assessmentId))
+      .zipWith(getRoshSummary(assessment.assessmentId))
+      .map {
+        AllRoshRiskDto(
+          riskToSelf = it.t1.t1.asRiskToSelf(it.t1.t2),
+          otherRisks = it.t1.t1.asOtherRisks(),
+          summary = it.t2.asRiskRoshSummary(),
+          assessedOn = assessment.completedDate,
+        )
+      }.block()
+  }
 
   private fun getRoshSummary(assessmentId: Long): Mono<RoshSummary> {
     val path = "/ass/section${SectionHeader.ROSH_SUMMARY.ordsUrlParam}/ALLOW/$assessmentId"
@@ -281,11 +278,9 @@ class OasysApiRestClient(
   }
 }
 
-inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? =
-  this[section] as T?
+inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? = this[section] as T?
 
-fun AssessmentSummary.isWithin55Weeks() =
-  completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
+fun AssessmentSummary.isWithin55Weeks() = completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
 
 private fun riskPredicate(): (AssessmentSummary) -> Boolean = {
   it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&

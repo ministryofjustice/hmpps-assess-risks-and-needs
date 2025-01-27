@@ -5,7 +5,9 @@ data class PersonIdentifier(
   val value: String,
 ) {
   enum class Type(val value: String, val ordsUrlParam: String) {
-    CRN("crn", "prob"), NOMS("nomisId", "pris");
+    CRN("crn", "prob"),
+    NOMS("nomisId", "pris"),
+    ;
 
     companion object {
       fun of(type: String) = entries.firstOrNull { it.value.equals(type, true) }

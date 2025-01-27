@@ -223,7 +223,10 @@ sealed interface ScoredAnswer {
   val score: Int
 
   enum class YesNo(override val score: Int) : ScoredAnswer {
-    Yes(2), No(0), Unknown(0);
+    Yes(2),
+    No(0),
+    Unknown(0),
+    ;
 
     companion object {
       fun of(value: String?): YesNo = entries.firstOrNull { it.name.equals(value, true) } ?: Unknown
@@ -231,7 +234,11 @@ sealed interface ScoredAnswer {
   }
 
   enum class Problem(override val score: Int) : ScoredAnswer {
-    None(0), Some(1), Significant(2), Missing(0);
+    None(0),
+    Some(1),
+    Significant(2),
+    Missing(0),
+    ;
 
     companion object {
       fun of(value: String?): Problem = when (value?.firstOrNull()) {
@@ -244,7 +251,11 @@ sealed interface ScoredAnswer {
   }
 
   enum class Frequency(override val score: Int) : ScoredAnswer {
-    Never(0), Previous(1), Currently(2), Unknown(0);
+    Never(0),
+    Previous(1),
+    Currently(2),
+    Unknown(0),
+    ;
 
     companion object {
       fun of(value: String?): Frequency = entries.firstOrNull { it.name.equals(value, true) } ?: Unknown

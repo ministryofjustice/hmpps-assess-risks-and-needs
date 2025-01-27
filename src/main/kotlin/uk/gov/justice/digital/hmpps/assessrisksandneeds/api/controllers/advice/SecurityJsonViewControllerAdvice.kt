@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
 import java.util.stream.Collectors
 
 @RestControllerAdvice
-internal class SecurityJsonViewControllerAdvice() : AbstractMappingJacksonResponseBodyAdvice() {
+internal class SecurityJsonViewControllerAdvice : AbstractMappingJacksonResponseBodyAdvice() {
   override fun beforeBodyWriteInternal(
     bodyContainer: MappingJacksonValue,
     contentType: MediaType?,
@@ -29,7 +29,7 @@ internal class SecurityJsonViewControllerAdvice() : AbstractMappingJacksonRespon
         .map { obj: GrantedAuthority -> obj.authority }
         .filter { it.equals(View.Role.ROLE_CRS_PROVIDER.name) || it.equals(View.Role.ROLE_PROBATION.name) }
         .map<Any>(View.Role::valueOf)
-        .map<Any>(View.MAPPING::get)
+        .map<Any>(View.roleMap::get)
         .collect(Collectors.toList())
       if (jsonViews.size == 1) {
         bodyContainer.serializationView = jsonViews[0] as Class<*>?

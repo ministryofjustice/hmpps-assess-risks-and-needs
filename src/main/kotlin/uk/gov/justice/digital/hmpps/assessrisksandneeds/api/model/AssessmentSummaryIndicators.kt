@@ -7,9 +7,7 @@ data class AssessmentSummaryIndicators(
 data class AssessmentSummaryIndicator(
   val indicators: Indicators,
 ) {
-  fun getSanIndicator(): Boolean {
-    return indicators.sanIndicator == "Y"
-  }
+  fun getSanIndicator(): Boolean = indicators.sanIndicator == "Y"
 }
 
 data class Indicators(

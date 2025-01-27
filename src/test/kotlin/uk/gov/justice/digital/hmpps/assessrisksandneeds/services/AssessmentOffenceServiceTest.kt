@@ -320,7 +320,7 @@ class AssessmentOffenceServiceTest {
     }.throws(EntityNotFoundException("Bad crn"))
 
     // When
-    assertThrows<EntityNotFoundException>() {
+    assertThrows<EntityNotFoundException> {
       assessmentOffenceService.getAssessmentOffence(crn)
     }
   }
