@@ -81,7 +81,7 @@ class RiskControllerTest : IntegrationTestBase() {
               RiskLevel.HIGH to listOf("Prisoners"),
               RiskLevel.VERY_HIGH to listOf("Staff"),
             ),
-            assessedOn = LocalDateTime.of(2023, 12, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
           ),
         )
       }
@@ -169,7 +169,7 @@ class RiskControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(2023, 12, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
           ),
         )
       }
@@ -240,7 +240,7 @@ class RiskControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(2023, 12, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
           ),
         )
       }

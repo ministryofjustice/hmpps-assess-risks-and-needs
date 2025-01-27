@@ -66,7 +66,8 @@ class OasysApiMockServer : WireMockServer(9097) {
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(200)
-            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText()),
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText())
+            .withTransformers("response-template"),
         ),
     )
 
@@ -80,7 +81,8 @@ class OasysApiMockServer : WireMockServer(9097) {
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(200)
-            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText()),
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText())
+            .withTransformers("response-template"),
         ),
     )
 
@@ -94,7 +96,8 @@ class OasysApiMockServer : WireMockServer(9097) {
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(200)
-            .withBody(this::class.java.getResource("/json/ordsAssessmentTimelineNullRoshScores.json")?.readText()),
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimelineNullRoshScores.json")?.readText())
+            .withTransformers("response-template"),
         ),
     )
 
@@ -108,7 +111,8 @@ class OasysApiMockServer : WireMockServer(9097) {
           WireMock.aResponse()
             .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
             .withStatus(404)
-            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText()),
+            .withBody(this::class.java.getResource("/json/ordsAssessmentTimeline.json")?.readText())
+            .withTransformers("response-template"),
         ),
     )
   }
@@ -230,7 +234,8 @@ class OasysApiMockServer : WireMockServer(9097) {
       ).willReturn(
         WireMock.aResponse()
           .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshFull.json")?.readText()),
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshFull.json")?.readText())
+          .withTransformers("response-template"),
       ),
     )
 
@@ -254,7 +259,8 @@ class OasysApiMockServer : WireMockServer(9097) {
       ).willReturn(
         WireMock.aResponse()
           .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummary.json")?.readText()),
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummary.json")?.readText())
+          .withTransformers("response-template"),
       ),
     )
 
@@ -266,7 +272,8 @@ class OasysApiMockServer : WireMockServer(9097) {
       ).willReturn(
         WireMock.aResponse()
           .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
-          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummaryForNull.json")?.readText()),
+          .withBody(this::class.java.getResource("/json/ordsAssessmentRoshSummaryForNull.json")?.readText())
+          .withTransformers("response-template"),
       ),
     )
   }

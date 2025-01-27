@@ -12,7 +12,7 @@
       "assessmentType": "LAYER3",
       "initiationDate": "2023-12-17T16:57:25",
       "status": "COMPLETE",
-      "completedDate": "2023-12-19T16:57:25"
+      "completedDate": "{{now offset='-1 years' format='yyyy'}}-12-19T16:57:25"
     },
     {
       "assessmentPk": 9632348,
