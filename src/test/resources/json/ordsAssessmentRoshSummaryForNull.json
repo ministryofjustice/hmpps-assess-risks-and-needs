@@ -24,7 +24,7 @@
       "laterPartCompSignedAssessmentExists": false,
       "latestPartCompSignedDate": null,
       "laterCompleteAssessmentExists": false,
-      "latestCompleteDate": "{{parameters.lastYear}}",
+      "latestCompleteDate": "2023-12-19T16:57:25",
       "whoAtRisk": "whoisAtRisk",
       "riskPrisonersCustody": null,
       "riskStaffCustody": null,
