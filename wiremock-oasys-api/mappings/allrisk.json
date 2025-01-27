@@ -1,0 +1,60 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/allrisk/X123456/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsRiskPredictors.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/allrisk/X999999/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 404,
+        "jsonBody": {
+          "status": 404 ,
+          "developerMessage": "Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn, RANDOMCRN"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/allrisk/X234567/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "jsonBody": {
+          "assessments": [
+            {
+              "dateCompleted": "2021-06-21T15:55:04",
+              "assessmentType": "LAYER3",
+              "assessmentStatus": "COMPLETE",
+              "OGRS": {},
+              "OVP": {},
+              "OGP": {},
+              "RSR": {},
+              "OSP": {}
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "mappings": [
+    {
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/users/access",
+        "bodyPatterns": [
+          {
+            "or": [
+              { "equalToJson": "[\"X123456\"]" },
+              { "equalToJson": "[\"X12345\"]" },
+              { "equalToJson": "[\"X234567\"]" },
+              { "equalToJson": "[\"X654321\"]" },
+              { "equalToJson": "[\"FORBIDDEN\"]" },
+              { "equalToJson": "[\"USER_ACCESS_NOT_FOUND\"]" },
+              { "equalToJson": "[\"RANDOMCRN\"]" }
+            ]
+          }
+        ]
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "verify-access/hardcoded.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "priority": 2,
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/users/access",
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": "$[0]"
+          }
+        ]
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "verify-access/allowed.json",
+        "transformers": ["response-template"]
+      }
+    }
+  ]
+}
+

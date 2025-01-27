@@ -37,21 +37,26 @@ spring:
           oauth-service:
             token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
           oasys-ords-oauth-service:
-            token-uri: ${oasys-api.base-url:http://localhost:7979/eor/oasys}/oauth/token
+            token-uri: ${oasys-api.base-url:http://localhost:9001/eor/oasys}/oauth/token
       resourceserver:
         jwt:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
 
   datasource:
-    url: 'jdbc:h2:mem:testdb;INIT=create domain if not exists jsonb as text;Mode=PostgreSQL'
-  h2:
-    console:
-      enabled: true
+    url: 'jdbc:postgresql://${database.endpoint:localhost:5432}/${database.name:postgres}?currentSchema=${database.schema.name:hmppsassessrisksandneedsapi}&user=${database.username:root}&password=${database.password:dev}&stringtype=unspecified'
+
+  flyway:
+    schemas: hmppsassessrisksandneedsapi
+    locations: classpath:/db/migration
+
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
         show_sql: false
 
   profiles:
@@ -119,7 +124,7 @@ logging:
       regex: /health|/info|/ping|/swagger.*|/webjars/.*|/v2/api-docs
 
 community-api:
-  base-url: http://localhost:9096
+  base-url: http://localhost:9002
 
 oasys-api:
-  base-url: http://localhost:9097/eor/oasys
+  base-url: http://localhost:9001/eor/oasys

@@ -1,0 +1,48 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/user/bernard.beaks",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "userId": 2500099998,
+          "username": "bernard.beaks",
+          "firstName": "Bernard",
+          "surname": "Beaks",
+          "email": "bernard.beaks@digital.justice.gov.uk",
+          "enabled": true,
+          "roles": []
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/user?email=.*",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "userId": 1234567890,
+            "username": "deliususer",
+            "firstName": "Delius",
+            "surname": "User",
+            "email": "delius.user@example.com",
+            "enabled": true,
+            "roles": []
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}

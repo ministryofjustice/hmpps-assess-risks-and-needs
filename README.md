@@ -7,51 +7,42 @@ A Spring Boot app to get Risk and Need for offenders across HMPPS.
 [Swagger API documentation is available](https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk/swagger-ui.html)
 
 ## Dependencies
-* Java JDK 17
+* Java JDK 21
 * An editor/IDE
 * Gradle
 * Docker
 * Postgres
-* OAuth  [(running in a container)](#oauth-security)
-* Offender Assessments Api Service [Offender Assessments API](https://github.com/ministryofjustice/offender-assessments-api-kotlin)
+* HMPPS Auth
 
 
-#### OAuth security
-In order to run the service locally, [HMPPS Auth Service](https://github.com/ministryofjustice/hmpps-auth/) is required. 
-This can be run locally using the [docker-compose.yml](docker-compose.yml) file which will pull down the latest version.  
-From the command line run:
+### Start the application
 
+```bash
+make up
+``` 
+
+Go to http://localhost:8080/health
+
+### Start the application in Dev mode
+
+```bash
+make dev-up
 ```
- docker-compose up 
-```  
 
-### Build service and run tests
+This allows you to run the linter and tests with:
 
-This service is built using Gradle. In order to build the project from the command line and run the tests, use:
-```  
-./gradlew clean build  
-```  
+```bash
+make lint-fix
+```
 
-### Start the application with H2 database
+```bash
+make test
+```
 
-This will be the default database in the dev profile
-``` 
-datasource:
-url: 'jdbc:h2:mem:testdb;INIT=create domain if not exists jsonb as text;Mode=PostgreSQL'
-h2:
-console:
-enabled: true
-``` 
-
-
-### Start the application with Postgres database
-This configuration can be changed to use a Postgres database using the spring boot profile `postgres`.
-
-The service makes use of Postgres JSONB fields so it is advisable to run with postgres when making database changes.
-
-```  
-SPRING_PROFILES_ACTIVE=postgres 
-```  
+For a full list of commands run
+```bash
+make
+```
 
 ### Documentation
 The generated documentation for the api can be viewed at http://localhost:8080/swagger-ui.html
@@ -67,10 +58,6 @@ To manually trigger the production refresh job:
 kubectl --namespace=hmpps-assess-risks-and-needs-prod \
   create job --from=cronjob.batch/db-refresh-job refresh-job
 ```
-
-## Code style & formatting
-`./gradlew ktlintApplyToIdea addKtlintFormatGitPreCommitHook`
-will apply ktlint styles to intellij and also add a pre-commit hook to format all changed kotlin files.
 
 ### Health
 

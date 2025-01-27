@@ -1,0 +1,45 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/offence/X123456/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentOffence.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/offence/X654321/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentOffenceNoCompleteAssessments.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/offence/NOT_FOUND/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 404,
+        "jsonBody": {}
+      }
+    }
+  ]
+}
