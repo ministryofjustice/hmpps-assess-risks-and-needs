@@ -26,9 +26,7 @@ data class RsrPredictorDto(
 
   companion object {
 
-    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorDto> {
-      return oasysPredictorsDtos.map { from(it) }
-    }
+    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { from(it) }
 
     fun from(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorDto {
       with(oasysPredictorsDto) {

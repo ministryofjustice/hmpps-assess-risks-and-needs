@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 enum class ScoreLevel(val type: String) {
-  LOW("Low"), MEDIUM("Medium"), HIGH("High"), VERY_HIGH("Very High"), NOT_APPLICABLE("Not Applicable");
+  LOW("Low"),
+  MEDIUM("Medium"),
+  HIGH("High"),
+  VERY_HIGH("Very High"),
+  NOT_APPLICABLE("Not Applicable"),
+  ;
 
   companion object {
-    fun findByType(type: String?): ScoreLevel? {
-      return entries.firstOrNull { value -> value.type == type }
-    }
+    fun findByType(type: String?): ScoreLevel? = entries.firstOrNull { value -> value.type == type }
   }
 }
 
@@ -15,5 +18,6 @@ enum class PredictorType {
 }
 
 enum class ScoreType(val type: String) {
-  STATIC("STATIC"), DYNAMIC("DYNAMIC");
+  STATIC("STATIC"),
+  DYNAMIC("DYNAMIC"),
 }

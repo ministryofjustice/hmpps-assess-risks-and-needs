@@ -1,0 +1,74 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/section(3|4|6|7|8|9|11|12)/ALLOW/9630348",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsTier/{{request.pathSegments.[3]}}.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/sectionroshfull/ALLOW/9630348",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentRoshFull.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/sectionriskindiv/ALLOW/9630348",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentRoshScreening.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/sectionroshsumm/ALLOW/9630348",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentRoshSummary.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/sectionroshsumm/ALLOW/45115261",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentRoshSummaryForNull.json",
+        "transformers": ["response-template"]
+      }
+    }
+  ]
+}

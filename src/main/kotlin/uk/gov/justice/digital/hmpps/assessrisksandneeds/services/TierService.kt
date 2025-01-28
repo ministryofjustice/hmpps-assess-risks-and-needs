@@ -12,10 +12,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithin55Wee
 @Service
 class TierService(private val ordsApiClient: OasysApiRestClient) {
 
-  fun getSectionsForTier(personIdentifier: PersonIdentifier, sections: List<NeedsSection>): SectionSummary? =
-    ordsApiClient.getLatestAssessment(personIdentifier, tierPredicate())?.let {
-      ordsApiClient.getScoredSectionsForAssessment(it, sections)
-    }
+  fun getSectionsForTier(personIdentifier: PersonIdentifier, sections: List<NeedsSection>): SectionSummary? = ordsApiClient.getLatestAssessment(personIdentifier, tierPredicate())?.let {
+    ordsApiClient.getScoredSectionsForAssessment(it, sections)
+  }
 }
 
 private fun tierPredicate(): (AssessmentSummary) -> Boolean = {

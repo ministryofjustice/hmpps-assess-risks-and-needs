@@ -38,9 +38,7 @@ class RisksController(
     @JsonView(View.SingleRisksView::class)
     @PathVariable
     crn: String,
-  ): RiskRoshSummaryDto {
-    return riskService.getRoshRiskSummaryByCrn(crn)
-  }
+  ): RiskRoshSummaryDto = riskService.getRoshRiskSummaryByCrn(crn)
 
   @RequestMapping(path = ["/risks/crn/{crn}"], method = [RequestMethod.GET])
   @Operation(
@@ -60,9 +58,7 @@ class RisksController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AllRoshRiskDto {
-    return riskService.getRoshRisksByCrn(crn)
-  }
+  ): AllRoshRiskDto = riskService.getRoshRisksByCrn(crn)
 
   @RequestMapping(path = ["/risks/crn/{crn}/fulltext"], method = [RequestMethod.GET])
   @Operation(
@@ -82,9 +78,7 @@ class RisksController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AllRoshRiskDto {
-    return riskService.getFulltextRoshRisksByCrn(crn)
-  }
+  ): AllRoshRiskDto = riskService.getFulltextRoshRisksByCrn(crn)
 
   @RequestMapping(path = ["/risks/crn/{crn}/risk-management-plan"], method = [RequestMethod.GET])
   @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")
@@ -103,7 +97,5 @@ class RisksController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): RiskManagementPlansDto {
-    return riskManagementPlanService.getRiskManagementPlans(crn)
-  }
+  ): RiskManagementPlansDto = riskManagementPlanService.getRiskManagementPlans(crn)
 }

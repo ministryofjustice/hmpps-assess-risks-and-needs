@@ -16,30 +16,28 @@ fun handle4xxError(
   method: HttpMethod,
   url: String,
   client: ExternalService,
-): Mono<out Throwable?>? {
-  return when (clientResponse.statusCode()) {
-    HttpStatus.BAD_REQUEST -> {
-      clientResponse.bodyToMono(ApiErrorResponse::class.java)
-        .map { error -> ExternalApiInvalidRequestException(error.developerMessage, method, url, client) }
-    }
-    HttpStatus.UNAUTHORIZED -> {
-      clientResponse.bodyToMono(ApiErrorResponse::class.java)
-        .map { error -> ExternalApiAuthorisationException(error.developerMessage, method, url, client) }
-    }
-    HttpStatus.FORBIDDEN -> {
-      clientResponse.bodyToMono(ApiErrorResponse::class.java)
-        .map { error -> ExternalApiForbiddenException(error.developerMessage, method, url, client) }
-    }
-    HttpStatus.NOT_FOUND -> {
-      clientResponse.bodyToMono(ApiErrorResponse::class.java)
-        .map { error -> ExternalApiEntityNotFoundException(error.developerMessage, method, url, client) }
-    }
-    HttpStatus.CONFLICT -> {
-      clientResponse.bodyToMono(ApiErrorResponse::class.java)
-        .map { error -> ExternalApiDuplicateOffenderRecordException(error.developerMessage, method, url, client) }
-    }
-    else -> handleError(clientResponse, method, url, client)
+): Mono<out Throwable?>? = when (clientResponse.statusCode()) {
+  HttpStatus.BAD_REQUEST -> {
+    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+      .map { error -> ExternalApiInvalidRequestException(error.developerMessage, method, url, client) }
   }
+  HttpStatus.UNAUTHORIZED -> {
+    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+      .map { error -> ExternalApiAuthorisationException(error.developerMessage, method, url, client) }
+  }
+  HttpStatus.FORBIDDEN -> {
+    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+      .map { error -> ExternalApiForbiddenException(error.developerMessage, method, url, client) }
+  }
+  HttpStatus.NOT_FOUND -> {
+    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+      .map { error -> ExternalApiEntityNotFoundException(error.developerMessage, method, url, client) }
+  }
+  HttpStatus.CONFLICT -> {
+    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+      .map { error -> ExternalApiDuplicateOffenderRecordException(error.developerMessage, method, url, client) }
+  }
+  else -> handleError(clientResponse, method, url, client)
 }
 
 fun handle5xxError(
@@ -47,14 +45,12 @@ fun handle5xxError(
   method: HttpMethod,
   path: String,
   service: ExternalService,
-): Mono<out Throwable?>? {
-  throw ExternalApiUnknownException(
-    message,
-    method,
-    path,
-    service,
-  )
-}
+): Mono<out Throwable?>? = throw ExternalApiUnknownException(
+  message,
+  method,
+  path,
+  service,
+)
 
 fun handleError(
   clientResponse: ClientResponse,

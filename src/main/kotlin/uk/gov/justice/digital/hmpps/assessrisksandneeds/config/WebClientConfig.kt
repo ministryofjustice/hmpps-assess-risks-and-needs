@@ -64,22 +64,18 @@ class WebClientConfig {
   }
 
   @Bean
-  fun oasysApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
-    return AuthenticatingRestClient(
-      webClientFactory(oasysApiBaseUrl, authorizedClientManager, bufferByteSize),
-      "oasys-api-client",
-      authenticationEnabled,
-    )
-  }
+  fun oasysApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient = AuthenticatingRestClient(
+    webClientFactory(oasysApiBaseUrl, authorizedClientManager, bufferByteSize),
+    "oasys-api-client",
+    authenticationEnabled,
+  )
 
   @Bean
-  fun communityApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
-    return AuthenticatingRestClient(
-      webClientFactory(communityApiBaseUrl, authorizedClientManager, bufferByteSize),
-      "community-api-client",
-      authenticationEnabled,
-    )
-  }
+  fun communityApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient = AuthenticatingRestClient(
+    webClientFactory(communityApiBaseUrl, authorizedClientManager, bufferByteSize),
+    "community-api-client",
+    authenticationEnabled,
+  )
 
   private fun webClientFactory(
     baseUrl: String,

@@ -81,16 +81,18 @@ enum class RiskLevel(
 
   val value: String,
 ) {
-  VERY_HIGH("Very High"), HIGH("High"), MEDIUM("Medium"), LOW("Low");
+  VERY_HIGH("Very High"),
+  HIGH("High"),
+  MEDIUM("Medium"),
+  LOW("Low"),
+  ;
 
   companion object {
-    fun fromString(enumValue: String?): RiskLevel? {
-      return if (enumValue == null) {
-        null
-      } else {
-        entries.firstOrNull { it.value == enumValue }
-          ?: throw IllegalArgumentException("Unknown Risk Level $enumValue")
-      }
+    fun fromString(enumValue: String?): RiskLevel? = if (enumValue == null) {
+      null
+    } else {
+      entries.firstOrNull { it.value == enumValue }
+        ?: throw IllegalArgumentException("Unknown Risk Level $enumValue")
     }
   }
 }

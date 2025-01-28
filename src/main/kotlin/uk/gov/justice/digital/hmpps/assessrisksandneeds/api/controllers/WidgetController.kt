@@ -34,7 +34,5 @@ class WidgetController(
     @JsonView(View.SingleRisksView::class)
     @PathVariable
     crn: String,
-  ): RoshRiskWidgetDto {
-    return riskService.getRoshRiskWidgetDataForCrn(crn)
-  }
+  ): RoshRiskWidgetDto = riskService.getRoshRiskWidgetDataForCrn(crn)
 }

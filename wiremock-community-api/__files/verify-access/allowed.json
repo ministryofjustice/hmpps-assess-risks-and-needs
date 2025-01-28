@@ -1,0 +1,11 @@
+{
+  "access": [
+    {
+      "crn": "{{jsonPath request.body '$[0]'}}",
+      "userExcluded": false,
+      "userRestricted": false,
+      "exclusionMessage": null,
+      "restrictionMessage": null
+    }
+  ]
+}

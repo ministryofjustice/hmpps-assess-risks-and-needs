@@ -1,0 +1,24 @@
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  hmpps-auth:
+    ports:
+      - "9090:9090"
+
+  oasys-api:
+    ports:
+      - "9001:8080"
+
+  community-api:
+    ports:
+      - "9002:8080"
+
+  delius:
+    ports:
+      - "9003:8080"
+
+  api:
+    ports:
+      - "8080:8080"

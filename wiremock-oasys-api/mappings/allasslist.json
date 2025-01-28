@@ -1,0 +1,60 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/allasslist/prob/X123456/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentTimeline.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/allasslist/pris/A1234YZ/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentTimeline.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/allasslist/prob/X234567/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentTimelineNullRoshScores.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/allasslist/prob/NOT_FOUND/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 404,
+        "bodyFileName": "ordsAssessmentTimeline.json",
+        "transformers": ["response-template"]
+      }
+    }
+  ]
+}

@@ -1,24 +1,24 @@
-version: "3"
 services:
-  oauth:
+  hmpps-auth:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
-    container_name: hmpps-assess-risk-and-needs-oauth
-    ports:
-      - "9090:9090"
+    depends_on:
+      - delius
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090/auth/health"]
+      test: [ "CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health" ]
+      interval: 5s
+      retries: 60
     environment:
       - SERVER_PORT=9090
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=dev,delius
+      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=DEBUG
+      - DELIUS_ENDPOINT_URL=http://delius:8080
 
   postgres:
     image: postgres
     restart: always
-    container_name: hmpps-assess-risk-and-needs-postgres
-    ports:
-      - 5432:5432
     networks:
       - hmpps
     environment:
@@ -27,13 +27,60 @@ services:
     tmpfs:
       - /var/lib/postgresql
 
-  wiremock:
+  delius:
     image: rodolpheche/wiremock
-    container_name: hmpps-assess-risk-and-needs-wiremock
-    ports:
-      - "9004:8080"
     volumes:
-      - ./wiremock:/home/wiremock
+      - ./wiremock-delius:/home/wiremock
+    networks:
+      - hmpps
+    command:
+      - -verbose
+      - -global-response-templating
+
+  oasys-api:
+    image: rodolpheche/wiremock
+    volumes:
+      - ./wiremock-oasys-api:/home/wiremock
+    networks:
+      - hmpps
+    command:
+      - -verbose
+      - -global-response-templating
+
+  community-api:
+    image: rodolpheche/wiremock
+    volumes:
+      - ./wiremock-community-api:/home/wiremock
+    networks:
+      - hmpps
+    command:
+      - -verbose
+      - -global-response-templating
+
+  api:
+    image: quay.io/hmpps/hmpps-assess-risks-and-needs:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      target: production
+    networks:
+      - hmpps
+    depends_on:
+      - hmpps-auth
+      - postgres
+      - oasys-api
+      - community-api
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://api:8080/health" ]
+      interval: 5s
+      retries: 100
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=dev
+      - OAUTH_ENDPOINT_URL=${OAUTH_ENDPOINT_URL:-http://hmpps-auth:9090/auth}
+      - COMMUNITY_API_BASE_URL=http://community-api:8080
+      - OASYS_API_BASE_URL=http://oasys-api:8080/eor/oasys
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=DEBUG
+      - DATABASE_ENDPOINT=postgres:5432
 
 networks:
   hmpps:

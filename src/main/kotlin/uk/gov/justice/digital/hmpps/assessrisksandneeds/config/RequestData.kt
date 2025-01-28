@@ -67,8 +67,6 @@ class RequestData(excludeUris: String?) : HandlerInterceptor {
     const val USER_NAME_HEADER = "userName"
     val isLoggingAllowed: Boolean = "true" != MDC.get(SKIP_LOGGING)
 
-    fun getUserName(): String {
-      return MDC.get(USER_NAME_HEADER) ?: throw UserNameNotFoundException("User name is needed in the authentication context in order to audit.")
-    }
+    fun getUserName(): String = MDC.get(USER_NAME_HEADER) ?: throw UserNameNotFoundException("User name is needed in the authentication context in order to audit.")
   }
 }

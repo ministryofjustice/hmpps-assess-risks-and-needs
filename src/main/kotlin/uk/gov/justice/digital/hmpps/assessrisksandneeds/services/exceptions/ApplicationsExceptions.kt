@@ -6,8 +6,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalServi
 
 class UserNameNotFoundException(msg: String?) : RuntimeException(msg)
 class EntityNotFoundException(msg: String?) : RuntimeException(msg)
-class DuplicateSourceRecordFound(msg: String?, val supplementaryRiskDto: SupplementaryRiskDto? = null) :
-  RuntimeException(msg)
+class DuplicateSourceRecordFound(msg: String?, val supplementaryRiskDto: SupplementaryRiskDto? = null) : RuntimeException(msg)
 
 class IncorrectInputParametersException(msg: String?) : RuntimeException(msg)
 

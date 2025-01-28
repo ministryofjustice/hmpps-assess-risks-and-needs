@@ -33,9 +33,7 @@ class SupplementaryRisksController(
     @Parameter(description = "Supplementary ID", required = true, example = "78beac68-884c-4784-9bea-fd8088f52a47")
     @PathVariable
     supplementaryRiskId: UUID,
-  ): SupplementaryRiskDto {
-    return supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskId)
-  }
+  ): SupplementaryRiskDto = supplementaryRiskService.getRiskBySupplementaryRiskUuid(supplementaryRiskId)
 
   @RequestMapping(path = ["/risks/supplementary"], method = [RequestMethod.POST])
   @Operation(description = "Create new supplementary risk for a given source")
@@ -50,7 +48,5 @@ class SupplementaryRisksController(
     @Parameter(description = "Supplementary Risk", required = true)
     @RequestBody
     supplementaryRisk: CreateSupplementaryRiskDto,
-  ): SupplementaryRiskDto {
-    return supplementaryRiskService.createNewSupplementaryRisk(supplementaryRisk)
-  }
+  ): SupplementaryRiskDto = supplementaryRiskService.createNewSupplementaryRisk(supplementaryRisk)
 }

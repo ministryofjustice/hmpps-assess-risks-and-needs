@@ -170,10 +170,9 @@ data class RoshSummary(
     dateCompleted,
   )
 
-  private fun List<Pair<String, RiskLevel?>>.asRiskLevelMap() =
-    filter { it.second != null }
-      .groupBy({ it.second }, { it.first })
-      .toSortedMap(comparing(RiskLevel::ordinal).reversed())
+  private fun List<Pair<String, RiskLevel?>>.asRiskLevelMap() = filter { it.second != null }
+    .groupBy({ it.second }, { it.first })
+    .toSortedMap(comparing(RiskLevel::ordinal).reversed())
 
   companion object {
     val CHILDREN = "Children"

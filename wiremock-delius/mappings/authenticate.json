@@ -1,0 +1,18 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/authenticate",
+        "method": "POST",
+        "bodyPatterns": [
+          {
+            "equalToJson": "{\"username\":\"BERNARD.BEAKS\",\"password\":\"secret\"}"
+          }
+        ]
+      },
+      "response": {
+        "status": 200
+      }
+    }
+  ]
+}

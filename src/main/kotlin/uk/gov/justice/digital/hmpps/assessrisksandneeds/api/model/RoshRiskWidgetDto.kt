@@ -43,20 +43,16 @@ data class RoshRiskWidgetDto(
   val riskInCustody: Map<String, String?> = hashMapOf(),
 ) {
   companion object {
-    fun riskLevelToString(riskLevel: RiskLevel?): String? {
-      return when (riskLevel) {
-        VERY_HIGH -> "VERY_HIGH"
-        HIGH -> "HIGH"
-        MEDIUM -> "MEDIUM"
-        LOW -> "LOW"
-        null -> null
-      }
+    fun riskLevelToString(riskLevel: RiskLevel?): String? = when (riskLevel) {
+      VERY_HIGH -> "VERY_HIGH"
+      HIGH -> "HIGH"
+      MEDIUM -> "MEDIUM"
+      LOW -> "LOW"
+      null -> null
     }
 
-    fun mapRiskLevelsToStrings(risks: Map<String, RiskLevel?>): Map<String, String?> {
-      return risks.map {
-        it.key to riskLevelToString(it.value)
-      }.toMap()
-    }
+    fun mapRiskLevelsToStrings(risks: Map<String, RiskLevel?>): Map<String, String?> = risks.map {
+      it.key to riskLevelToString(it.value)
+    }.toMap()
   }
 }
