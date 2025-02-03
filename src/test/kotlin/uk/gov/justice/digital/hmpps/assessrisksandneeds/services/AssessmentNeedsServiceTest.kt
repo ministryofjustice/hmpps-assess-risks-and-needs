@@ -15,7 +15,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.TierThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.time.LocalDateTime
 
@@ -94,10 +96,16 @@ class AssessmentNeedsServiceTest {
     AssessmentNeedDto(
       section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
       name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
+      score = null,
+      oasysThreshold = OasysThreshold(standard = 4),
+      tierThreshold = TierThreshold(standard = 4, severe = 7),
     ),
     AssessmentNeedDto(
       section = NeedsSection.ATTITUDE.name,
       name = NeedsSection.ATTITUDE.description,
+      score = null,
+      oasysThreshold = OasysThreshold(standard = 2),
+      tierThreshold = TierThreshold(standard = 2, severe = 7),
     ),
   )
 
@@ -108,6 +116,9 @@ class AssessmentNeedsServiceTest {
       riskOfReoffending = false,
       riskOfHarm = false,
       severity = NeedSeverity.NO_NEED,
+      score = 0,
+      oasysThreshold = OasysThreshold(standard = 4),
+      tierThreshold = TierThreshold(standard = 4, severe = 7),
     ),
     AssessmentNeedDto(
       section = NeedsSection.ATTITUDE.name,
@@ -115,6 +126,9 @@ class AssessmentNeedsServiceTest {
       riskOfReoffending = false,
       riskOfHarm = false,
       severity = NeedSeverity.NO_NEED,
+      score = 0,
+      oasysThreshold = OasysThreshold(standard = 2),
+      tierThreshold = TierThreshold(standard = 2, severe = 7),
     ),
   )
 
