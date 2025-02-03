@@ -30,9 +30,11 @@ sealed interface ScoredSection {
 
   val questionAnswers: Map<String, ScoredAnswer>
 
-  fun getScore(): Int? =
-    if (questionAnswers.values.all { it == ScoredAnswer.Problem.Missing || it == ScoredAnswer.YesNo.Unknown }) null
-    else questionAnswers.values.sumOf { it.score }
+  fun getScore(): Int? = if (questionAnswers.values.all { it == ScoredAnswer.Problem.Missing || it == ScoredAnswer.YesNo.Unknown }) {
+    null
+  } else {
+    questionAnswers.values.sumOf { it.score }
+  }
 
   fun getSeverity(): NeedSeverity? = when {
     getScore() == null -> null
@@ -77,7 +79,10 @@ sealed interface ScoredSection {
     override val linkedToReOffending = YesNo.of(eTeLinkedToReoffending)
     override val linkedToHarm = YesNo.of(eTeLinkedToHarm)
     override val questionAnswers: Map<String, ScoredAnswer> = listOf(
-      ::unemployed, ::employmentHistory, ::workRelatedSkills, ::attitudeToEmployment,
+      ::unemployed,
+      ::employmentHistory,
+      ::workRelatedSkills,
+      ::attitudeToEmployment,
     ).associate { it.name to ScoredAnswer.Problem.of(it.get()) }
     override val tierThreshold = TierThreshold(3, 7)
     override val oasysThreshold = OasysThreshold(3)
@@ -95,7 +100,9 @@ sealed interface ScoredSection {
     override val linkedToReOffending = YesNo.of(relLinkedToReoffending)
     override val linkedToHarm = YesNo.of(relLinkedToHarm)
     override val questionAnswers: Map<String, ScoredAnswer> = listOf(
-      ::relCloseFamily, ::experienceOfChildhood, ::prevCloseRelationships,
+      ::relCloseFamily,
+      ::experienceOfChildhood,
+      ::prevCloseRelationships,
     ).associate { it.name to ScoredAnswer.Problem.of(it.get()) }
     override val tierThreshold = TierThreshold(2, 5)
     override val oasysThreshold = OasysThreshold(2)
@@ -114,7 +121,9 @@ sealed interface ScoredSection {
     override val linkedToReOffending = YesNo.of(lifestyleLinkedToReoffending)
     override val linkedToHarm = YesNo.of(lifestyleLinkedToHarm)
     override val questionAnswers: Map<String, ScoredAnswer> = listOf(
-      ::regActivitiesEncourageOffending, ::easilyInfluenced, ::recklessness,
+      ::regActivitiesEncourageOffending,
+      ::easilyInfluenced,
+      ::recklessness,
     ).associate { it.name to ScoredAnswer.Problem.of(it.get()) }
     override val tierThreshold = TierThreshold(2, 5)
     override val oasysThreshold = OasysThreshold(2)
@@ -155,7 +164,10 @@ sealed interface ScoredSection {
     override val linkedToReOffending = YesNo.of(alcoholLinkedToReoffending)
     override val linkedToHarm = YesNo.of(alcoholLinkedToHarm)
     override val questionAnswers: Map<String, ScoredAnswer> = listOf(
-      ::currentUse, ::bingeDrinking, ::frequencyAndLevel, ::alcoholTackleMotivation,
+      ::currentUse,
+      ::bingeDrinking,
+      ::frequencyAndLevel,
+      ::alcoholTackleMotivation,
     ).associate { it.name to ScoredAnswer.Problem.of(it.get()) }
     override val tierThreshold = TierThreshold(4, 7)
     override val oasysThreshold = OasysThreshold(4)
@@ -175,7 +187,10 @@ sealed interface ScoredSection {
     override val linkedToReOffending = YesNo.of(thinkLinkedToReoffending)
     override val linkedToHarm = YesNo.of(thinkLinkedToHarm)
     override val questionAnswers: Map<String, ScoredAnswer> = listOf(
-      ::recogniseProblems, ::problemSolvingSkills, ::awarenessOfConsequences, ::understandsViewsOfOthers,
+      ::recogniseProblems,
+      ::problemSolvingSkills,
+      ::awarenessOfConsequences,
+      ::understandsViewsOfOthers,
     ).associate { it.name to ScoredAnswer.Problem.of(it.get()) }
     override val tierThreshold = TierThreshold(4, 7)
     override val oasysThreshold = OasysThreshold(4)
