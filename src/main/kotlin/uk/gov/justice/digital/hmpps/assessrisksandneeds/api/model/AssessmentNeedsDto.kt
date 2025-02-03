@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import io.swagger.v3.oas.annotations.media.Schema
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.Threshold
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.TierThreshold
 import java.time.LocalDateTime
 
 data class AssessmentNeedsDto(
@@ -50,6 +53,12 @@ data class AssessmentNeedDto(
   val riskOfReoffending: Boolean? = null,
   @Schema(description = "The calculated severity of the need", example = "SEVERE")
   val severity: NeedSeverity? = null,
+  @Schema(description = "The score of the section", example = "3")
+  val score: Int? = null,
+  @Schema(description = "The thresholds for standard and severe needs from OASys", example = "3")
+  val oasysThreshold: OasysThreshold? = null,
+  @Schema(description = "The thresholds for standard and severe needs for used for tier", example = "3")
+  val tierThreshold: TierThreshold? = null
 )
 
 enum class NeedSeverity {

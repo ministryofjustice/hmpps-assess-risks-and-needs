@@ -47,7 +47,10 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient)
       it.section.description,
       it.linkedToHarm.toBoolean(),
       it.linkedToReOffending.toBoolean(),
-      it.severity,
+      it.getSeverity(),
+      it.getScore(),
+      it.oasysThreshold,
+      it.tierThreshold,
     )
   }
 

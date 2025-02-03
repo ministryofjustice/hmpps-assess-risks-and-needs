@@ -12,7 +12,7 @@ class ScoredSectionTest {
   @ParameterizedTest
   @MethodSource("scoredSections")
   fun `correctly calculates the need severity`(scoredSection: ScoredSection, needSeverity: NeedSeverity) {
-    assertThat(scoredSection.severity, equalTo(needSeverity))
+    assertThat(scoredSection.getSeverity(), equalTo(needSeverity))
   }
 
   companion object {

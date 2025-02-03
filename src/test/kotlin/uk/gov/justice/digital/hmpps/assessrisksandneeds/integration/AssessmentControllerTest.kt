@@ -19,6 +19,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.TierThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import java.time.LocalDateTime
@@ -260,11 +262,17 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = false,
       severity = NeedSeverity.NO_NEED,
+      score = 0,
+      oasysThreshold = OasysThreshold(2),
+      tierThreshold = TierThreshold(2, 7),
     ),
     AssessmentNeedDto(
       section = NeedsSection.DRUG_MISUSE.name,
       name = NeedsSection.DRUG_MISUSE.description,
       severity = NeedSeverity.NO_NEED,
+      score = 0,
+      oasysThreshold = OasysThreshold(2),
+      tierThreshold = TierThreshold(2, 8),
     ),
     AssessmentNeedDto(
       section = NeedsSection.ATTITUDE.name,
@@ -272,6 +280,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = false,
       severity = NeedSeverity.NO_NEED,
+      score = 0,
+      oasysThreshold = OasysThreshold(2),
+      tierThreshold = TierThreshold(2, 7),
     ),
   )
 
@@ -282,6 +293,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = false,
       severity = NeedSeverity.STANDARD,
+      score = 3,
+      oasysThreshold = OasysThreshold(3),
+      tierThreshold = TierThreshold(3, 7),
     ),
     AssessmentNeedDto(
       section = NeedsSection.RELATIONSHIPS.name,
@@ -289,6 +303,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = false,
       severity = NeedSeverity.STANDARD,
+      score = 3,
+      oasysThreshold = OasysThreshold(2),
+      tierThreshold = TierThreshold(2, 5),
     ),
     AssessmentNeedDto(
       section = NeedsSection.LIFESTYLE_AND_ASSOCIATES.name,
@@ -296,6 +313,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfHarm = true,
       riskOfReoffending = true,
       severity = NeedSeverity.STANDARD,
+      score = 3,
+      oasysThreshold = OasysThreshold(2),
+      tierThreshold = TierThreshold(2, 5),
     ),
     AssessmentNeedDto(
       section = NeedsSection.ALCOHOL_MISUSE.name,
@@ -303,6 +323,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = true,
       severity = NeedSeverity.STANDARD,
+      score = 4,
+      oasysThreshold = OasysThreshold(4),
+      tierThreshold = TierThreshold(4, 7),
     ),
     AssessmentNeedDto(
       section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
@@ -310,6 +333,9 @@ class AssessmentControllerTest : IntegrationTestBase() {
       riskOfHarm = true,
       riskOfReoffending = true,
       severity = NeedSeverity.SEVERE,
+      score = 7,
+      oasysThreshold = OasysThreshold(4),
+      tierThreshold = TierThreshold(4, 7),
     ),
   )
 
