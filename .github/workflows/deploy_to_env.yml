@@ -16,9 +16,14 @@ on:
         default: ''
         type: string
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   deploy_to_env:
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/deploy_to_env.yml@v1
+    secrets: inherit
     with:
       environment: ${{ inputs.environment }}
       image_tag: ${{ inputs.image_tag }}
