@@ -1,6 +1,6 @@
 services:
   api:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs:local
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs:local
     build:
       target: development
     command: gradle --parallel --build-cache --configuration-cache bootRun
