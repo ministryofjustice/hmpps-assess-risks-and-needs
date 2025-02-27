@@ -1,0 +1,35 @@
+name: PR
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+
+  helm_lint:
+    name: Helm lint
+    strategy:
+      matrix:
+        environments: ['dev', 'preprod', 'prod']
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2
+    secrets: inherit
+    with:
+      environment: ${{ matrix.environments }}
+
+  build_docker:
+    name: Build docker image
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2
+    with:
+      docker_registry: 'ghcr.io'
+      registry_org: 'ministryofjustice'
+      tag_latest: false
+      push: false
+      load: true
+      docker_multiplatform: false
+      upload_image_artifact: true
+      image_artifact_retention_days: 2

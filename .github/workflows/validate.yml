@@ -1,0 +1,31 @@
+name: Validate
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate
+        run: make dev-up lint test-coverage
+
+      - name: Export container logs
+        if: failure()
+        run: make save-logs OUTPUT_LOGS_DIR=${{ runner.temp }}/docker-logs
+
+      - name: Upload test results
+        if: '!cancelled()'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test_results
+          path: |
+            build/test_results
+            build/reports/tests
+            build/reports/kover/html
+            ${{ runner.temp }}/docker-logs

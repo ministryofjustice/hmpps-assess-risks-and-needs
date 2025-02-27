@@ -6,7 +6,7 @@ generic-service:
   serviceAccountName: hmpps-assess-risks-and-needs-service-account
 
   image:
-    repository: quay.io/hmpps/hmpps-assess-risks-and-needs
+    repository: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs
     tag: app_version # override at deployment time
     port: 8080
 

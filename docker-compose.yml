@@ -58,7 +58,7 @@ services:
       - -global-response-templating
 
   api:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs:${IMAGE_TAG:-latest}
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs:${IMAGE_TAG:-latest}
     build:
       context: .
       target: production
