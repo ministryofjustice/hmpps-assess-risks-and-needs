@@ -15,6 +15,7 @@ generic-service:
     OASYS_API_BASE_URL: https://t2.oasys.service.justice.gov.uk/eor/oasys
     SENTRY_ENVIRONMENT: "dev"
     SPRING_PROFILES_ACTIVE: "logstash,postgres"
+    WEB_CLIENT_READ_TIMEOUT_MS: 0
 
   allowlist:
     dxw-vpn: 54.76.254.148/32

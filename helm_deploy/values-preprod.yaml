@@ -16,6 +16,8 @@ generic-service:
     OASYS_API_BASE_URL: https://pp-int.oasys.service.justice.gov.uk/eor/oasys
     SENTRY_ENVIRONMENT: "preprod"
     SPRING_PROFILES_ACTIVE: "logstash,postgres,oasys-rsr"
+    WEB_CLIENT_READ_TIMEOUT_MS: 0
+
 generic-prometheus-alerts:
   enabled: false
 
