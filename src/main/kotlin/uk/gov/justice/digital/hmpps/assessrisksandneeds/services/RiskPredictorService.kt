@@ -42,4 +42,10 @@ class RiskPredictorService(
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(crn)
     return RiskScoresDto.from(oasysRiskPredictorsDto)
   }
+
+  fun getAllRiskScoresWithoutLaoCheck(crn: String): List<RiskScoresDto> {
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf("crn" to crn))
+    val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(crn)
+    return RiskScoresDto.from(oasysRiskPredictorsDto)
+  }
 }
