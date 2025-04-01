@@ -32,6 +32,13 @@ class RiskService(
     ) ?: AllRoshRiskDto.empty
   }
 
+  fun getRoshRisksWithoutLaoCheck(crn: String): AllRoshRiskDto {
+    auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS, mapOf("crn" to crn))
+    return oasysApiRestClient.getRoshDetailForLatestCompletedAssessment(
+      PersonIdentifier(PersonIdentifier.Type.CRN, crn),
+    ) ?: AllRoshRiskDto.empty
+  }
+
   fun getFulltextRoshRisksByCrn(crn: String): AllRoshRiskDto {
     log.info("Get Full Text Rosh Risk for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_FULLTEXT, mapOf("crn" to crn))

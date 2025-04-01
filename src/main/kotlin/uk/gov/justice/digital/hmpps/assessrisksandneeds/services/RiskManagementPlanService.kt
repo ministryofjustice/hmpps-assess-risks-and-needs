@@ -34,4 +34,14 @@ class RiskManagementPlanService(
 
     return RiskManagementPlansDto.from(riskManagementPlanOrdsDto)
   }
+
+  fun getRiskManagementPlanWithoutLaoCheck(crn: String): RiskManagementPlansDto {
+    auditService.sendEvent(EventType.ACCESSED_RISK_MANAGEMENT_PLAN, mapOf("crn" to crn))
+
+    val riskManagementPlanOrdsDto =
+      oasysApiRestClient.getRiskManagementPlan(crn = crn, limitedAccessOffender = limitedAccess)
+        ?: throw EntityNotFoundException("Risk Management Plan not found for CRN: $crn")
+
+    return RiskManagementPlansDto.from(riskManagementPlanOrdsDto)
+  }
 }
