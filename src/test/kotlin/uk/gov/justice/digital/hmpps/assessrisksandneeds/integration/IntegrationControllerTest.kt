@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OvpScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
@@ -50,7 +51,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `should return risk predictors for crn`() {
+  fun `get risk predictors for crn`() {
     webTestClient.get().uri("/risks/predictors/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
@@ -103,7 +104,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `should return rosh by crn`() {
+  fun `get rosh by crn`() {
     webTestClient.get().uri("/risks/rosh/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
@@ -188,11 +189,69 @@ class IntegrationControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get criminogenic needs returns not found`() {
-    webTestClient.get().uri("/needs/NOT_FOUND")
+  fun `get risk management plans by crn`() {
+    val riskManagementPlanDetails = webTestClient.get().uri("/risks/risk-management-plan/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
-      .expectStatus().isNotFound
+      .expectStatus().isOk
+      .expectBody<RiskManagementPlansDto>()
+      .returnResult().responseBody
+
+    assertThat(riskManagementPlanDetails!!.riskManagementPlan).hasSize(5)
+    with(riskManagementPlanDetails.riskManagementPlan[0]) {
+      assertThat(this.assessmentId).isEqualTo(667025L)
+      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 38, 57))
+      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 47, 17))
+      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
+      assertThat(this.assessmentType).isEqualTo("LAYER3")
+      assertThat(this.partcompStatus).isNull()
+      assertThat(this.keyInformationCurrentSituation).isEqualTo(null)
+      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
+      assertThat(this.supervision).isEqualTo(null)
+      assertThat(this.monitoringAndControl).isEqualTo(null)
+      assertThat(this.interventionsAndTreatment).isEqualTo(null)
+      assertThat(this.victimSafetyPlanning).isEqualTo(null)
+      assertThat(this.contingencyPlans).isEqualTo(null)
+    }
+    with(riskManagementPlanDetails.riskManagementPlan[3]) {
+      assertThat(this.assessmentId).isEqualTo(674025L)
+      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 6, 25, 13, 4, 56))
+      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 49, 39))
+      assertThat(this.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
+      assertThat(this.assessmentType).isEqualTo("LAYER3")
+      assertThat(this.partcompStatus).isEqualTo("Unsigned")
+      assertThat(this.keyInformationCurrentSituation).isEqualTo(null)
+      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
+      assertThat(this.supervision).isEqualTo(null)
+      assertThat(this.monitoringAndControl).isEqualTo(null)
+      assertThat(this.interventionsAndTreatment).isEqualTo(null)
+      assertThat(this.victimSafetyPlanning).isEqualTo(null)
+      assertThat(this.contingencyPlans).isEqualTo(null)
+    }
+    with(riskManagementPlanDetails.riskManagementPlan[4]) {
+      assertThat(this.assessmentId).isEqualTo(676026L)
+      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 50, 2))
+      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 5, 10, 56, 37))
+      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
+      assertThat(this.assessmentType).isEqualTo("LAYER3")
+      assertThat(this.keyInformationCurrentSituation).isEqualTo("Key considerations")
+      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo("Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.")
+      assertThat(this.supervision).isEqualTo(null)
+      assertThat(this.monitoringAndControl).isEqualTo("3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.")
+      assertThat(this.interventionsAndTreatment).isEqualTo("5. Additional conditions/requirements to manage the specific risks.")
+      assertThat(this.victimSafetyPlanning).isEqualTo("7. Contingency")
+      assertThat(this.contingencyPlans).isEqualTo(null)
+      assertThat(this.laterWIPAssessmentExists).isEqualTo(false)
+      assertThat(this.latestWIPDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 58))
+      assertThat(this.laterSignLockAssessmentExists).isEqualTo(false)
+      assertThat(this.latestSignLockDate).isNull()
+      assertThat(this.laterPartCompUnsignedAssessmentExists).isEqualTo(false)
+      assertThat(this.latestPartCompUnsignedDate).isEqualTo(LocalDateTime.of(2022, 5, 31, 10, 37, 5))
+      assertThat(this.laterPartCompSignedAssessmentExists).isEqualTo(false)
+      assertThat(this.latestPartCompSignedDate).isNull()
+      assertThat(this.laterCompleteAssessmentExists).isEqualTo(false)
+      assertThat(this.latestCompleteDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
+    }
   }
 
   private fun scoredNotNeeds() = listOf(
