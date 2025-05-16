@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStat
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.withSanIndicator
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithin55Weeks
@@ -13,7 +14,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithin55Wee
 class TierService(private val ordsApiClient: OasysApiRestClient) {
 
   fun getSectionsForTier(personIdentifier: PersonIdentifier, sections: List<NeedsSection>): SectionSummary? = ordsApiClient.getLatestAssessment(personIdentifier, tierPredicate())?.let {
-    ordsApiClient.getScoredSectionsForAssessment(it, sections)
+    val sanIndicator = ordsApiClient.getAssessmentSummaryIndicators(it, personIdentifier.value)
+      .assessments.first().getSanIndicator()
+    ordsApiClient.getScoredSectionsForAssessment(it.withSanIndicator(sanIndicator), sections)
   }
 }
 

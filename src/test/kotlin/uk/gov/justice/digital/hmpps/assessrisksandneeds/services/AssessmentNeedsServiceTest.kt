@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -30,7 +30,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn returns identified needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
@@ -47,7 +47,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn includes unanswered needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = AssessmentSummary(289457671, LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(289457671, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
@@ -64,7 +64,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn includes not identified needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
@@ -132,7 +132,7 @@ class AssessmentNeedsServiceTest {
     ),
   )
 
-  private fun allOffenderNeeds(assessmentSummary: AssessmentSummary) = SectionSummary(
+  private fun allOffenderNeeds(assessmentSummary: BasicAssessmentSummary) = SectionSummary(
     assessmentSummary,
     ScoredSection.Accommodation(
       accLinkedToHarm = "Yes",
@@ -202,7 +202,7 @@ class AssessmentNeedsServiceTest {
     ),
   )
 
-  private fun offenderNeedsWithNotIdentified(assessmentSummary: AssessmentSummary) = SectionSummary(
+  private fun offenderNeedsWithNotIdentified(assessmentSummary: BasicAssessmentSummary) = SectionSummary(
     assessmentSummary,
     ScoredSection.Accommodation(
       accLinkedToHarm = "Yes",
@@ -272,7 +272,7 @@ class AssessmentNeedsServiceTest {
     ),
   )
 
-  private fun offenderNeedsWithUnanswered(assessmentSummary: AssessmentSummary) = SectionSummary(
+  private fun offenderNeedsWithUnanswered(assessmentSummary: BasicAssessmentSummary) = SectionSummary(
     assessmentSummary,
     ScoredSection.Accommodation(
       accLinkedToHarm = "Yes",

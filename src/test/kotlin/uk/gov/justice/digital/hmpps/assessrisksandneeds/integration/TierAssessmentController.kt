@@ -23,11 +23,11 @@ class TierAssessmentController : IntegrationTestBase() {
         .expectBody<JsonNode>()
         .returnResult().responseBody,
     )
-
     val assessmentSummary = checkNotNull(response["assessment"])
     assertThat(assessmentSummary["assessmentId"].asInt(), equalTo(9630348))
     assertThat(assessmentSummary["completedDate"].asText(), equalTo("${LocalDateTime.now().year - 1}-12-19T16:57:25"))
     assertThat(assessmentSummary["status"].asText(), equalTo("COMPLETE"))
+    assertThat(assessmentSummary["sanIndicator"].asBoolean(), equalTo(false))
 
     val accommodation = checkNotNull(response["accommodation"])
     assertThat(accommodation.severity, equalTo("NO_NEED"))

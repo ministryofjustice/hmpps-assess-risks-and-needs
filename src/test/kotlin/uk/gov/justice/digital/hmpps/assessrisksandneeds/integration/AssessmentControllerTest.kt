@@ -14,7 +14,7 @@ import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
@@ -342,43 +342,43 @@ class AssessmentControllerTest : IntegrationTestBase() {
   companion object {
     val timeline = Timeline(
       listOf(
-        AssessmentSummary(
+        BasicAssessmentSummary(
           9630348,
           LocalDateTime.parse("${LocalDateTime.now().year - 1}-12-19T16:57:25"),
           "LAYER3",
           "COMPLETE",
         ),
-        AssessmentSummary(
+        BasicAssessmentSummary(
           9632348,
           LocalDateTime.parse("2022-06-09T15:13:18"),
           "LAYER3",
           "LOCKED_INCOMPLETE",
         ),
-        AssessmentSummary(
+        BasicAssessmentSummary(
           9634348,
           LocalDateTime.parse("2022-06-09T15:16:21"),
           "LAYER3",
           "COMPLETE",
         ),
-        AssessmentSummary(
+        BasicAssessmentSummary(
           9635350,
           LocalDateTime.parse("2022-06-10T18:23:20"),
           "LAYER3",
           "COMPLETE",
         ),
-        AssessmentSummary(
+        BasicAssessmentSummary(
           9635351,
           LocalDateTime.parse("2022-07-21T15:43:12"),
           "LAYER3",
           "COMPLETE",
         ),
-        AssessmentSummary(
+        BasicAssessmentSummary(
           9639348,
           LocalDateTime.parse("2022-07-27T12:09:41"),
           "LAYER3",
           "COMPLETE",
         ),
-        AssessmentSummary(
+        BasicAssessmentSummary(
           9641348,
           null,
           "LAYER3",
