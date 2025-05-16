@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStat
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
@@ -47,7 +48,10 @@ class OasysApiRestClient(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getLatestAssessment(identifier: PersonIdentifier, predicate: (AssessmentSummary) -> Boolean): AssessmentSummary? = getAssessmentTimeline(identifier)?.timeline?.filter(predicate)?.sortedByDescending { it.completedDate }
+  fun getLatestAssessment(
+    identifier: PersonIdentifier,
+    predicate: (AssessmentSummary) -> Boolean,
+  ): BasicAssessmentSummary? = getAssessmentTimeline(identifier)?.timeline?.filter(predicate)?.sortedByDescending { it.completedDate }
     ?.firstOrNull()
 
   fun getScoredSectionsForAssessment(
@@ -193,8 +197,8 @@ class OasysApiRestClient(
   fun getAssessmentSummaryIndicators(
     assessment: AssessmentSummary,
     crn: String,
-  ): AssessmentSummaryIndicators? {
-    val path = "/ass/asssumm/$crn/ALLOW/${assessment.assessmentId}/COMPLETE"
+  ): AssessmentSummaryIndicators {
+    val path = "/ass/asssumm/$crn/ALLOW/${assessment.assessmentId}/${assessment.status}"
     return webClient
       .get(path)
       .retrieve()
@@ -217,7 +221,7 @@ class OasysApiRestClient(
         )
       }
       .bodyToMono<AssessmentSummaryIndicators>()
-      .block().also { log.info("Retrieved assessment summary indicator for crn $crn") }
+      .block().also { log.info("Retrieved assessment summary indicator for crn $crn") }!!
   }
 
   fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? = getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
