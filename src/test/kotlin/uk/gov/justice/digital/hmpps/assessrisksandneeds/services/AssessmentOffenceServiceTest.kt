@@ -17,9 +17,9 @@ import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicator
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicators
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Indicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
@@ -43,7 +43,7 @@ class AssessmentOffenceServiceTest {
   private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService)
   private val crn = "T123456"
   private val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
-  private val assessment = AssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+  private val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
 
   @BeforeEach
   fun setup() {
@@ -381,12 +381,13 @@ class AssessmentOffenceServiceTest {
   }
 
   @Test
-  fun `no assessment summary found for CRN`() {
+  fun `no san indicator value for CRN`() {
     every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
-    every { oasysClient.getAssessmentSummaryIndicators(eq(assessment), crn) } answers { null }
+    every { oasysClient.getAssessmentSummaryIndicators(eq(assessment), crn) } answers {
+      AssessmentSummaryIndicators(listOf(AssessmentSummaryIndicator(Indicators(null))))
+    }
 
-    val response = assertThrows<EntityNotFoundException> { assessmentOffenceService.getSanIndicator(crn) }
-
-    assertThat(response.message).isEqualTo("No assessment summary found for CRN: $crn")
+    val response = assessmentOffenceService.getSanIndicator(crn)
+    assertThat(response.sanIndicator).isFalse
   }
 }
