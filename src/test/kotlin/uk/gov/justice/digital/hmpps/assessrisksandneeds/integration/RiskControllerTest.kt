@@ -57,6 +57,28 @@ class RiskControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get risk summary by crn for external provider within timeframe`() {
+    val timeframe = 65L
+    webTestClient.get().uri("/risks/crn/$crn/summary/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RiskRoshSummaryDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          RiskRoshSummaryDto(
+            riskInCommunity = mapOf(
+              RiskLevel.LOW to listOf("Children", "Known Adult"),
+              RiskLevel.MEDIUM to listOf("Public"),
+              RiskLevel.HIGH to listOf("Staff"),
+            ),
+            assessedOn = null,
+          ),
+        )
+      }
+  }
+
+  @Test
   fun `get risk summary by crn for probation practitioner`() {
     webTestClient.get().uri("/risks/crn/$crn/summary")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
@@ -176,8 +198,152 @@ class RiskControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get all risks by crn for external provider within timeframe`() {
+    val timeframe = 80L
+    webTestClient.get().uri("/risks/crn/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          AllRoshRiskDto(
+            RoshRiskToSelfDto(
+              suicide = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Suicide and/or Self-harm current concerns",
+              ),
+              selfHarm = RiskDto(
+                risk = ResponseDto.DK,
+              ),
+              custody = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Coping in custody / hostel setting previous concerns",
+                current = ResponseDto.NA,
+              ),
+              hostelSetting = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.DK,
+                current = ResponseDto.NO,
+              ),
+              vulnerability = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Vulnerability previous concerns free text",
+                current = ResponseDto.YES,
+                currentConcernsText = "Vulnerability current concerns free text",
+              ),
+              assessedOn = null,
+            ),
+            OtherRoshRisksDto(
+              ResponseDto.YES,
+              ResponseDto.YES,
+              ResponseDto.DK,
+              ResponseDto.YES,
+              assessedOn = null,
+            ),
+            RiskRoshSummaryDto(
+              "whoisAtRisk",
+              "natureOfRisk",
+              "riskImminence",
+              "riskIncreaseFactors",
+              "riskMitigationFactors",
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Known Adult"),
+                RiskLevel.MEDIUM to listOf("Public"),
+                RiskLevel.HIGH to listOf("Staff"),
+              ),
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+                RiskLevel.HIGH to listOf("Prisoners"),
+                RiskLevel.VERY_HIGH to listOf("Staff"),
+              ),
+              assessedOn = null,
+            ),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
+          ),
+        )
+      }
+  }
+
+  @Test
   fun `get all risks with fulltext for risk to self by crn for external provider`() {
     webTestClient.get().uri("/risks/crn/$crn/fulltext")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          AllRoshRiskDto(
+            RoshRiskToSelfDto(
+              suicide = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Suicide and/or Self-harm current concerns",
+              ),
+              selfHarm = RiskDto(
+                risk = ResponseDto.DK,
+              ),
+              custody = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Coping in custody / hostel setting previous concerns",
+                current = ResponseDto.NA,
+              ),
+              hostelSetting = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.DK,
+                current = ResponseDto.NO,
+              ),
+              vulnerability = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Vulnerability previous concerns free text",
+                current = ResponseDto.YES,
+                currentConcernsText = "Vulnerability current concerns free text",
+              ),
+              assessedOn = null,
+            ),
+            OtherRoshRisksDto(
+              ResponseDto.YES,
+              ResponseDto.YES,
+              ResponseDto.DK,
+              ResponseDto.YES,
+              assessedOn = null,
+            ),
+            RiskRoshSummaryDto(
+              "whoisAtRisk",
+              "natureOfRisk",
+              "riskImminence",
+              "riskIncreaseFactors",
+              "riskMitigationFactors",
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Known Adult"),
+                RiskLevel.MEDIUM to listOf("Public"),
+                RiskLevel.HIGH to listOf("Staff"),
+              ),
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+                RiskLevel.HIGH to listOf("Prisoners"),
+                RiskLevel.VERY_HIGH to listOf("Staff"),
+              ),
+              assessedOn = null,
+            ),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
+          ),
+        )
+      }
+  }
+
+  @Test
+  fun `get all risks with fulltext for risk to self by crn for external provider within timeframe`() {
+    val timeframe = 70L
+    webTestClient.get().uri("/risks/crn/$crn/fulltext/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk

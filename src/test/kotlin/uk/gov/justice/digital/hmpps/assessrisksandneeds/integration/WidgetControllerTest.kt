@@ -38,6 +38,50 @@ class WidgetControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get risk summary by crn for external provider within timeframe`() {
+    val timeframe = 60L
+    webTestClient.get().uri("/risks/crn/$crn/widget/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RoshRiskWidgetDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          RoshRiskWidgetDto(
+            overallRisk = "VERY_HIGH",
+            assessedOn = null,
+            riskInCommunity = mapOf(
+              "Children" to "LOW",
+              "Public" to "MEDIUM",
+              "Known Adult" to "LOW",
+              "Staff" to "HIGH",
+            ),
+          ),
+        )
+      }
+  }
+
+  @Test
+  fun `get risk summary by crn for external provider within timeframe - no risk summary`() {
+    val timeframe = 5L
+    webTestClient.get().uri("/risks/crn/$crn/widget/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RoshRiskWidgetDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          RoshRiskWidgetDto(
+            overallRisk = null,
+            assessedOn = null,
+            riskInCommunity = mapOf(),
+            riskInCustody = mapOf(),
+          ),
+        )
+      }
+  }
+
+  @Test
   fun `get risk summary by crn for probation practitioner`() {
     webTestClient.get().uri("/risks/crn/$crn/widget")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))

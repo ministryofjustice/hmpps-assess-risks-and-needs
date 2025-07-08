@@ -40,6 +40,24 @@ class RisksController(
     crn: String,
   ): RiskRoshSummaryDto = riskService.getRoshRiskSummaryByCrn(crn)
 
+  @RequestMapping(path = ["/risks/crn/{crn}/summary/{timeframe}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets rosh summary for crn. Returns only assessments completed within specified timeframe, measured in weeks.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'ROLE_ACCREDITED_PROGRAMS_RO', 'ROLE_OFFENDER_CATEGORISATION_RO')")
+  fun getRiskSummaryByCrnWithinTimeframe(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @Parameter(description = "Timeframe", required = true, example = "70")
+    @JsonView(View.SingleRisksView::class)
+    @PathVariable crn: String,
+    @PathVariable timeframe: Long,
+  ): RiskRoshSummaryDto = riskService.getRoshRiskSummaryByCrn(crn, timeframe)
+
   @RequestMapping(path = ["/risks/crn/{crn}"], method = [RequestMethod.GET])
   @Operation(
     description = "Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes. " +
@@ -60,6 +78,27 @@ class RisksController(
     crn: String,
   ): AllRoshRiskDto = riskService.getRoshRisksByCrn(crn)
 
+  @RequestMapping(path = ["/risks/crn/{crn}/{timeframe}"], method = [RequestMethod.GET])
+  @Operation(
+    description = "Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes. " +
+      "Returns only assessments completed within specified timeframe, measured in weeks",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'ROLE_OFFENDER_RISK_RO', 'ROLE_RISK_RESETTLEMENT_PASSPORT_RO', 'ROLE_RISK_INTEGRATIONS_RO')")
+  @JsonView(View.AllRisksView::class)
+  fun getRoshRisksByCrnWithinTimeframe(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @Parameter(description = "Timeframe", required = true, example = "70")
+    @PathVariable crn: String,
+    @PathVariable timeframe: Long,
+  ): AllRoshRiskDto = riskService.getRoshRisksByCrn(crn, timeframe)
+
   @RequestMapping(path = ["/risks/crn/{crn}/fulltext"], method = [RequestMethod.GET])
   @Operation(
     description = "Gets ROSH risks for crn. Returns freeform concerns text regardless of answer to corresponding risk question. " +
@@ -79,6 +118,27 @@ class RisksController(
     @PathVariable
     crn: String,
   ): AllRoshRiskDto = riskService.getFulltextRoshRisksByCrn(crn)
+
+  @RequestMapping(path = ["/risks/crn/{crn}/fulltext/{timeframe}"], method = [RequestMethod.GET])
+  @Operation(
+    description = "Gets ROSH risks for crn. Returns freeform concerns text regardless of answer to corresponding risk question. " +
+      "Returns only assessments completed within specified timeframe, measured in weeks",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER')")
+  @JsonView(View.AllRisksView::class)
+  fun getFulltextRoshRisksByCrnWithinTimeframe(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @Parameter(description = "Timeframe", required = true, example = "70")
+    @PathVariable crn: String,
+    @PathVariable timeframe: Long,
+  ): AllRoshRiskDto = riskService.getFulltextRoshRisksByCrn(crn, timeframe)
 
   @RequestMapping(path = ["/risks/crn/{crn}/risk-management-plan"], method = [RequestMethod.GET])
   @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")

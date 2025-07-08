@@ -175,6 +175,78 @@ class IntegrationControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get rosh by crn within timeframe`() {
+    val timeframe = 60L
+    webTestClient.get().uri("/risks/rosh/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          AllRoshRiskDto(
+            RoshRiskToSelfDto(
+              suicide = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                current = ResponseDto.YES,
+                currentConcernsText = "Suicide and/or Self-harm current concerns",
+              ),
+              selfHarm = RiskDto(
+                risk = ResponseDto.DK,
+              ),
+              custody = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Coping in custody / hostel setting previous concerns",
+                current = ResponseDto.NA,
+              ),
+              hostelSetting = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.DK,
+                current = ResponseDto.NO,
+              ),
+              vulnerability = RiskDto(
+                risk = ResponseDto.YES,
+                previous = ResponseDto.YES,
+                previousConcernsText = "Vulnerability previous concerns free text",
+                current = ResponseDto.YES,
+                currentConcernsText = "Vulnerability current concerns free text",
+              ),
+              assessedOn = null,
+            ),
+            OtherRoshRisksDto(
+              ResponseDto.YES,
+              ResponseDto.YES,
+              ResponseDto.DK,
+              ResponseDto.YES,
+              assessedOn = null,
+            ),
+            RiskRoshSummaryDto(
+              "whoisAtRisk",
+              "natureOfRisk",
+              "riskImminence",
+              "riskIncreaseFactors",
+              "riskMitigationFactors",
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Known Adult"),
+                RiskLevel.MEDIUM to listOf("Public"),
+                RiskLevel.HIGH to listOf("Staff"),
+              ),
+              mapOf(
+                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
+                RiskLevel.HIGH to listOf("Prisoners"),
+                RiskLevel.VERY_HIGH to listOf("Staff"),
+              ),
+              assessedOn = null,
+            ),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
+          ),
+        )
+      }
+  }
+
+  @Test
   fun `get criminogenic needs by crn`() {
     val needsDto = webTestClient.get().uri("/needs/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
@@ -186,6 +258,30 @@ class IntegrationControllerTest : IntegrationTestBase() {
     assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25))
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+  }
+
+  @Test
+  fun `get criminogenic needs by crn within timeframe`() {
+    val timeframe = 60L
+    val needsDto = webTestClient.get().uri("/needs/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25))
+    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
+    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+  }
+
+  @Test
+  fun `get criminogenic needs by crn within timeframe not found`() {
+    val timeframe = 2L
+    val needsDto = webTestClient.get().uri("/needs/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 
   @Test

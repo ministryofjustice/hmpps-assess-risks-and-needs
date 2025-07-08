@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifi
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.withSanIndicator
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithin55Weeks
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithinTimeframe
 
 @Service
 class TierService(private val ordsApiClient: OasysApiRestClient) {
@@ -23,5 +23,5 @@ class TierService(private val ordsApiClient: OasysApiRestClient) {
 private fun tierPredicate(): (AssessmentSummary) -> Boolean = {
   it.assessmentType == AssessmentType.LAYER3.name &&
     it.status in listOf(AssessmentStatus.COMPLETE.name, AssessmentStatus.LOCKED_INCOMPLETE.name) &&
-    it.isWithin55Weeks()
+    it.isWithinTimeframe(55)
 }

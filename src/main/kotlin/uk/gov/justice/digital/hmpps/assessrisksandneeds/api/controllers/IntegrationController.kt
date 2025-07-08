@@ -65,6 +65,27 @@ class IntegrationController(
     crn: String,
   ): AllRoshRiskDto = riskService.getRoshRisksWithoutLaoCheck(crn)
 
+  @RequestMapping(path = ["/risks/rosh/{crn}/{timeframe}"], method = [RequestMethod.GET])
+  @Operation(
+    description = "Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes. " +
+      "Returns only assessments completed within specified timeframe, measured in weeks",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
+  @JsonView(View.AllRisksView::class)
+  fun getRoshRisksByCrnWithinTimeframe(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @Parameter(description = "Timeframe", required = true, example = "70")
+    @PathVariable crn: String,
+    @PathVariable timeframe: Long,
+  ): AllRoshRiskDto = riskService.getRoshRisksWithoutLaoCheck(crn, timeframe)
+
   @RequestMapping(path = ["/needs/{crn}"], method = [RequestMethod.GET])
   @Operation(description = "Gets criminogenic needs for crn")
   @ApiResponses(
@@ -80,6 +101,23 @@ class IntegrationController(
     @PathVariable
     crn: String,
   ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn)
+
+  @RequestMapping(path = ["/needs/{crn}/{timeframe}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
+  fun getCriminogenicNeedsByCrnWithinTimeframe(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @Parameter(description = "Timeframe", required = true, example = "70")
+    @PathVariable crn: String,
+    @PathVariable timeframe: Long,
+  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, timeframe)
 
   @RequestMapping(path = ["/risks/risk-management-plan/{crn}"], method = [RequestMethod.GET])
   @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")
