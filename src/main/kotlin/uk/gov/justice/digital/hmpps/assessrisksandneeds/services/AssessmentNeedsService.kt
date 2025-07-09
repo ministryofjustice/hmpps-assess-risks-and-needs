@@ -12,15 +12,15 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifi
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredAnswer
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithin55Weeks
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithinTimeframe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
 @Service
 class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient) {
-  fun getAssessmentNeeds(crn: String): AssessmentNeedsDto {
+  fun getAssessmentNeeds(crn: String, timeframe: Long = 55): AssessmentNeedsDto {
     val sectionSummary = oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
-      needsPredicate(),
+      needsPredicate(timeframe),
     )?.let {
       oasysApiRestClient.getScoredSectionsForAssessment(it, NeedsSection.entries)
     }
@@ -65,6 +65,6 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient)
   }
 }
 
-fun needsPredicate(): (AssessmentSummary) -> Boolean = {
-  it.assessmentType == AssessmentType.LAYER3.name && it.status == AssessmentStatus.COMPLETE.name && it.isWithin55Weeks()
+fun needsPredicate(timeframe: Long): (AssessmentSummary) -> Boolean = {
+  it.assessmentType == AssessmentType.LAYER3.name && it.status == AssessmentStatus.COMPLETE.name && it.isWithinTimeframe(timeframe)
 }

@@ -224,11 +224,11 @@ class OasysApiRestClient(
       .block().also { log.info("Retrieved assessment summary indicator for crn $crn") }!!
   }
 
-  fun getRoshSummary(identifier: PersonIdentifier): RiskRoshSummaryDto? = getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
+  fun getRoshSummary(identifier: PersonIdentifier, timeframe: Long): RiskRoshSummaryDto? = getLatestAssessment(identifier, riskPredicate(timeframe))?.let { assessment ->
     getRoshSummary(assessment.assessmentId).map { it.asRiskRoshSummary() }.block()
   }
 
-  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier): AllRoshRiskDto? = getLatestAssessment(identifier, riskPredicate())?.let { assessment ->
+  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier, timeframe: Long): AllRoshRiskDto? = getLatestAssessment(identifier, riskPredicate(timeframe))?.let { assessment ->
     getRoshFull(assessment.assessmentId)
       .zipWith(getRoshScreening(assessment.assessmentId))
       .zipWith(getRoshSummary(assessment.assessmentId))
@@ -284,12 +284,12 @@ class OasysApiRestClient(
 
 inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? = this[section] as T?
 
-fun AssessmentSummary.isWithin55Weeks() = completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(55)) == false
+fun AssessmentSummary.isWithinTimeframe(timeframe: Long) = completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(timeframe)) == false
 
-private fun riskPredicate(): (AssessmentSummary) -> Boolean = {
+private fun riskPredicate(timeframe: Long): (AssessmentSummary) -> Boolean = {
   it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
     it.status in listOf(AssessmentStatus.COMPLETE.name) &&
-    it.isWithin55Weeks()
+    it.isWithinTimeframe(timeframe)
 }
 
 data class SectionSummary(

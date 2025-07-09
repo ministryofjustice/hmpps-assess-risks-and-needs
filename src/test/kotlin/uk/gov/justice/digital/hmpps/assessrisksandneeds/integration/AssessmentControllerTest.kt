@@ -54,8 +54,32 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get criminogenic needs by crn within timeframe`() {
+    val timeframe = 70L
+    val needsDto = webTestClient.get().uri("/needs/crn/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25))
+    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
+    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+  }
+
+  @Test
   fun `get criminogenic needs returns not found`() {
     webTestClient.get().uri("/needs/crn/NOT_FOUND")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get criminogenic needs by crn within timeframe not found`() {
+    val timeframe = 5L
+    val needsDto = webTestClient.get().uri("/needs/crn/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
@@ -253,6 +277,28 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(response).isEqualTo(SanIndicatorResponse(crn, false))
+  }
+
+  @Test
+  fun `get san signal within timeframe`() {
+    val timeframe = 70L
+    val response = webTestClient.get().uri("/san-indicator/crn/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<SanIndicatorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response).isEqualTo(SanIndicatorResponse(crn, false))
+  }
+
+  @Test
+  fun `get san signal within timeframe not found`() {
+    val timeframe = 5L
+    val response = webTestClient.get().uri("/san-indicator/crn/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 
   private fun scoredNotNeeds() = listOf(

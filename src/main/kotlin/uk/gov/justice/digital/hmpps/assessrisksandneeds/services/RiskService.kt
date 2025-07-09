@@ -22,39 +22,42 @@ class RiskService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getRoshRisksByCrn(crn: String): AllRoshRiskDto {
+  fun getRoshRisksByCrn(crn: String, timeframe: Long = 55): AllRoshRiskDto {
     log.info("Get Rosh Risk for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS, mapOf("crn" to crn))
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     return oasysApiRestClient.getRoshDetailForLatestCompletedAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
+      timeframe,
     ) ?: AllRoshRiskDto.empty
   }
 
-  fun getRoshRisksWithoutLaoCheck(crn: String): AllRoshRiskDto {
+  fun getRoshRisksWithoutLaoCheck(crn: String, timeframe: Long = 55): AllRoshRiskDto {
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS, mapOf("crn" to crn))
     return oasysApiRestClient.getRoshDetailForLatestCompletedAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
+      timeframe,
     ) ?: AllRoshRiskDto.empty
   }
 
-  fun getFulltextRoshRisksByCrn(crn: String): AllRoshRiskDto {
+  fun getFulltextRoshRisksByCrn(crn: String, timeframe: Long = 55): AllRoshRiskDto {
     log.info("Get Full Text Rosh Risk for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_FULLTEXT, mapOf("crn" to crn))
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
     return oasysApiRestClient.getRoshDetailForLatestCompletedAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
+      timeframe,
     ) ?: AllRoshRiskDto.empty
   }
 
-  fun getRoshRiskSummaryByCrn(crn: String): RiskRoshSummaryDto {
+  fun getRoshRiskSummaryByCrn(crn: String, timeframe: Long = 55): RiskRoshSummaryDto {
     log.info("Get Rosh Risk summary for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_SUMMARY, mapOf("crn" to crn))
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
 
-    return oasysApiRestClient.getRoshSummary(PersonIdentifier(PersonIdentifier.Type.CRN, crn)) ?: RiskRoshSummaryDto()
+    return oasysApiRestClient.getRoshSummary(PersonIdentifier(PersonIdentifier.Type.CRN, crn), timeframe) ?: RiskRoshSummaryDto()
   }
 
   private fun calculateOverallRiskLevel(riskLevels: Map<RiskLevel?, List<String>>): RiskLevel? {
@@ -66,10 +69,11 @@ class RiskService(
     return null
   }
 
-  fun getRoshRiskWidgetDataForCrn(crn: String): RoshRiskWidgetDto {
+  fun getRoshRiskWidgetDataForCrn(crn: String, timeframe: Long = 55): RoshRiskWidgetDto {
     log.info("Get Rosh Risk widget data for crn $crn")
     return oasysApiRestClient.getRoshDetailForLatestCompletedAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
+      timeframe,
     ).toRoshRiskWidgetDto()
   }
 

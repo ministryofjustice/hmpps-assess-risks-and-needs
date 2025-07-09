@@ -37,6 +37,23 @@ class AssessmentController(
     crn: String,
   ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn)
 
+  @RequestMapping(path = ["/needs/crn/{crn}/{timeframe}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "CRN Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_INTEGRATIONS_RO', 'ROLE_OFFENDER_RISK_RO')")
+  fun getCriminogenicNeedsByCrnWithinTimeframe(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @Parameter(description = "Timeframe", required = true, example = "70")
+    @PathVariable crn: String,
+    @PathVariable timeframe: Long,
+  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, timeframe)
+
   @RequestMapping(path = ["/assessments/crn/{crn}/offence"], method = [RequestMethod.GET])
   @Operation(description = "Gets offence details from latest complete assessment for crn")
   @ApiResponses(
@@ -89,4 +106,21 @@ class AssessmentController(
     @PathVariable
     crn: String,
   ) = assessmentOffenceService.getSanIndicator(crn)
+
+  @RequestMapping(path = ["/san-indicator/crn/{crn}/{timeframe}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets san-indicator by CRN within specified timeframe, measured in weeks")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "404", description = "Not Found"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_OFFENDER_RISK_RO')")
+  fun getSanIndicatorByCrnWithinTimeframe(
+    @Parameter(description = "CRN", required = true, example = "D1974X")
+    @Parameter(description = "Timeframe", required = true, example = "70")
+    @PathVariable crn: String,
+    @PathVariable timeframe: Long,
+  ) = assessmentOffenceService.getSanIndicator(crn, timeframe)
 }

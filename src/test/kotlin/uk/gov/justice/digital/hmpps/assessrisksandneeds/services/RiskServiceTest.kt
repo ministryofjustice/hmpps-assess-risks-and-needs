@@ -46,7 +46,7 @@ class RiskServiceTest {
     val crn = "CRN123"
 
     every {
-      oasysApiClient.getRoshDetailForLatestCompletedAssessment(PersonIdentifier(PersonIdentifier.Type.CRN, crn))
+      oasysApiClient.getRoshDetailForLatestCompletedAssessment(PersonIdentifier(PersonIdentifier.Type.CRN, crn), 55)
     } returns AllRoshRiskDto.empty
 
     riskService.getFulltextRoshRisksByCrn(crn)
@@ -58,7 +58,7 @@ class RiskServiceTest {
     val crn = "CRN123"
 
     every {
-      oasysApiClient.getRoshSummary(PersonIdentifier(PersonIdentifier.Type.CRN, crn))
+      oasysApiClient.getRoshSummary(PersonIdentifier(PersonIdentifier.Type.CRN, crn), 55)
     } returns RiskRoshSummaryDto()
 
     riskService.getRoshRiskSummaryByCrn(crn)
