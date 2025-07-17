@@ -95,7 +95,7 @@ class IntegrationController(
       ApiResponse(responseCode = "200", description = "OK"),
     ],
   )
-  @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
+  @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO', 'ROLE_SENTENCE_PLAN_READ')")
   fun getCriminogenicNeedsByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
