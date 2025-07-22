@@ -43,7 +43,7 @@ class AssessmentOffenceServiceTest {
   private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService)
   private val crn = "T123456"
   private val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
-  private val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+  private val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
 
   @BeforeEach
   fun setup() {

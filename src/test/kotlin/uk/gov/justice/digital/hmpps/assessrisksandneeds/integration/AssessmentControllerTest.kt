@@ -391,11 +391,13 @@ class AssessmentControllerTest : IntegrationTestBase() {
         BasicAssessmentSummary(
           9630348,
           LocalDateTime.parse("${LocalDateTime.now().year - 1}-12-19T16:57:25"),
+          LocalDateTime.parse("${LocalDateTime.now().year - 1}-12-19T16:57:25"),
           "LAYER3",
           "COMPLETE",
         ),
         BasicAssessmentSummary(
           9632348,
+          LocalDateTime.parse("2022-06-09T15:13:18"),
           LocalDateTime.parse("2022-06-09T15:13:18"),
           "LAYER3",
           "LOCKED_INCOMPLETE",
@@ -403,11 +405,13 @@ class AssessmentControllerTest : IntegrationTestBase() {
         BasicAssessmentSummary(
           9634348,
           LocalDateTime.parse("2022-06-09T15:16:21"),
+          LocalDateTime.parse("2022-06-09T15:16:21"),
           "LAYER3",
           "COMPLETE",
         ),
         BasicAssessmentSummary(
           9635350,
+          LocalDateTime.parse("2022-06-10T18:23:20"),
           LocalDateTime.parse("2022-06-10T18:23:20"),
           "LAYER3",
           "COMPLETE",
@@ -415,17 +419,20 @@ class AssessmentControllerTest : IntegrationTestBase() {
         BasicAssessmentSummary(
           9635351,
           LocalDateTime.parse("2022-07-21T15:43:12"),
+          LocalDateTime.parse("2022-07-21T15:43:12"),
           "LAYER3",
           "COMPLETE",
         ),
         BasicAssessmentSummary(
           9639348,
           LocalDateTime.parse("2022-07-27T12:09:41"),
+          LocalDateTime.parse("2022-07-27T12:09:41"),
           "LAYER3",
           "COMPLETE",
         ),
         BasicAssessmentSummary(
           9641348,
+          LocalDateTime.parse("2022-07-27T12:09:41"),
           null,
           "LAYER3",
           "OPEN",

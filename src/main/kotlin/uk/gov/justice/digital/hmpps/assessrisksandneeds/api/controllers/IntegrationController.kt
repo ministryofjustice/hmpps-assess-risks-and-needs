@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 import com.fasterxml.jackson.annotation.JsonView
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.security.access.prepost.PreAuthorize
@@ -100,7 +101,13 @@ class IntegrationController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn)
+    @Parameter(
+      description = "Exclude incomplete assessments",
+      `in` = ParameterIn.QUERY,
+      example = "false",
+    )
+    excludeIncomplete: Boolean = true,
+  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, excludeIncomplete = excludeIncomplete)
 
   @RequestMapping(path = ["/needs/{crn}/{timeframe}"], method = [RequestMethod.GET])
   @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")

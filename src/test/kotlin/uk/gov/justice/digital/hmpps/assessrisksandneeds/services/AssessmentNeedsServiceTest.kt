@@ -30,7 +30,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn returns identified needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
@@ -47,7 +47,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn includes unanswered needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(289457671, LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(289457671, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
@@ -64,7 +64,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn includes not identified needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {

@@ -7,6 +7,7 @@ data class Timeline(val timeline: List<BasicAssessmentSummary>)
 
 interface AssessmentSummary {
   val assessmentId: Long
+  val initiationDate: LocalDateTime
   val completedDate: LocalDateTime?
   val assessmentType: String
   val status: String
@@ -15,6 +16,7 @@ interface AssessmentSummary {
 data class BasicAssessmentSummary(
   @JsonAlias("assessmentPk")
   override val assessmentId: Long,
+  override val initiationDate: LocalDateTime,
   override val completedDate: LocalDateTime?,
   override val assessmentType: String,
   override val status: String,
@@ -23,6 +25,7 @@ data class BasicAssessmentSummary(
 data class AssessmentSummaryWithSanIndicator(
   @JsonAlias("assessmentPk")
   override val assessmentId: Long,
+  override val initiationDate: LocalDateTime,
   override val completedDate: LocalDateTime?,
   override val assessmentType: String,
   override val status: String,
@@ -31,6 +34,7 @@ data class AssessmentSummaryWithSanIndicator(
 
 fun AssessmentSummary.withSanIndicator(sanIndicator: Boolean) = AssessmentSummaryWithSanIndicator(
   assessmentId,
+  initiationDate,
   completedDate,
   assessmentType,
   status,
