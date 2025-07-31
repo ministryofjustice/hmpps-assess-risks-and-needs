@@ -51,7 +51,9 @@ class OasysApiRestClient(
   fun getLatestAssessment(
     identifier: PersonIdentifier,
     predicate: (AssessmentSummary) -> Boolean,
-  ): BasicAssessmentSummary? = getAssessmentTimeline(identifier)?.timeline?.filter(predicate)?.sortedByDescending { it.completedDate }
+  ): BasicAssessmentSummary? = getAssessmentTimeline(identifier)?.timeline
+    ?.filter(predicate)
+    ?.sortedWith(compareByDescending<BasicAssessmentSummary> { it.completedDate ?: it.initiationDate }.thenByDescending { it.initiationDate })
     ?.firstOrNull()
 
   fun getScoredSectionsForAssessment(

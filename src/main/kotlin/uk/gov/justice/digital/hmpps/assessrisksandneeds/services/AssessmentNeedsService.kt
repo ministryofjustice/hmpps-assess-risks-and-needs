@@ -17,10 +17,10 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 
 @Service
 class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient) {
-  fun getAssessmentNeeds(crn: String, timeframe: Long = 55): AssessmentNeedsDto {
+  fun getAssessmentNeeds(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDto {
     val sectionSummary = oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
-      needsPredicate(timeframe),
+      needsPredicate(timeframe, excludeIncomplete),
     )?.let {
       oasysApiRestClient.getScoredSectionsForAssessment(it, NeedsSection.entries)
     }
@@ -65,6 +65,10 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient)
   }
 }
 
-fun needsPredicate(timeframe: Long): (AssessmentSummary) -> Boolean = {
-  it.assessmentType == AssessmentType.LAYER3.name && it.status == AssessmentStatus.COMPLETE.name && it.isWithinTimeframe(timeframe)
+fun needsPredicate(timeframe: Long, excludeIncomplete: Boolean = true): (AssessmentSummary) -> Boolean = {
+  listOf(
+    it.assessmentType == AssessmentType.LAYER3.name,
+    if (excludeIncomplete) it.status == AssessmentStatus.COMPLETE.name else true,
+    it.isWithinTimeframe(timeframe),
+  ).all { ok -> ok }
 }
