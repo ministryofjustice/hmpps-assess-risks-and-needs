@@ -1,0 +1,30 @@
+# Per environment values which override defaults in hmpps-assess-risks-and-needs/values.yaml
+
+generic-service:
+  replicaCount: 2
+
+  ingress:
+    host: assess-risks-and-needs-test.hmpps.service.justice.gov.uk
+    contextColour: green
+    annotations:
+      external-dns.alpha.kubernetes.io/aws-weight: "100"
+
+  env:
+    OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+    COMMUNITY_API_BASE_URL: https://arns-and-delius-dev.hmpps.service.justice.gov.uk
+    OASYS_API_BASE_URL: https://t2-b.oasys.service.justice.gov.uk/eor/oasys
+    SENTRY_ENVIRONMENT: "dev"
+    SPRING_PROFILES_ACTIVE: "logstash,postgres"
+    WEB_CLIENT_READ_TIMEOUT_MS: 0
+
+  allowlist:
+    dxw-vpn: 54.76.254.148/32
+    groups:
+      - internal
+      - unilink_staff
+
+generic-prometheus-alerts:
+  enabled: false
+
+dataExtractor:
+  enabled: true
