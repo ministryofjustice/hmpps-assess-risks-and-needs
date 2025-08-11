@@ -1,4 +1,4 @@
-FROM gradle:8-jdk21-alpine AS builder
+FROM gradle:9-jdk21-alpine AS builder
 
 FROM eclipse-temurin:21-jre-alpine AS runtime
 
