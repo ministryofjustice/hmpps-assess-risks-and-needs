@@ -9,6 +9,7 @@ on:
         required: true
         options:
           - dev
+          - test
         default: 'dev'
       image_tag:
         description: Optional image tag to deploy. If left blank, a new image will be built, pushed and deployed
