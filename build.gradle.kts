@@ -4,9 +4,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.4"
-  kotlin("plugin.spring") version "2.2.0"
-  kotlin("plugin.jpa") version "2.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.6"
+  kotlin("plugin.spring") version "2.2.10"
+  kotlin("plugin.jpa") version "2.2.10"
   id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 
@@ -46,8 +46,8 @@ dependencies {
     exclude(module = "mockito-core")
   }
   testImplementation("com.ninja-squad:springmockk:4.0.2")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.7")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.7")
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
 }
 
