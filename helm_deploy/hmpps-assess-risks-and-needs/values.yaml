@@ -34,9 +34,6 @@ generic-service:
 
   namespace_secrets:
     hmpps-assess-risks-and-needs:
-      APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
-      API_CLIENT_ID: "API_CLIENT_ID"
-      API_CLIENT_SECRET: "API_CLIENT_SECRET"
       COMMUNITY_API_CLIENT_ID: "COMMUNITY_API_CLIENT_ID"
       COMMUNITY_API_CLIENT_SECRET: "COMMUNITY_API_CLIENT_SECRET"
 
@@ -50,8 +47,8 @@ generic-service:
       OASYS_API_CLIENT_ID: "ORDS_CLIENT_ID"
       OASYS_API_CLIENT_SECRET: "ORDS_CLIENT_SECRET"
 
-    sentry:
-      SENTRY_DSN: "sentry_dsn"
+    hmpps-assess-risks-and-needs-application-insights:
+      APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
 
     hmpps-sqs-audit-queue:
       HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: "sqs_queue_name"
