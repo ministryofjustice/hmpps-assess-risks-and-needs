@@ -50,9 +50,6 @@ generic-service:
     hmpps-assess-risks-and-needs-application-insights:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
 
-    sentry:
-      SENTRY_DSN: "sentry_dsn"
-
     hmpps-sqs-audit-queue:
       HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: "sqs_queue_name"
 
