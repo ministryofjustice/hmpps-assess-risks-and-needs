@@ -33,7 +33,7 @@ dependencies {
   implementation("com.zaxxer:HikariCP:7.0.2")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   implementation("com.beust:klaxon:5.6")
-  implementation("org.apache.commons:commons-lang3:3.18.0")
+  implementation("org.apache.commons:commons-lang3:3.19.0")
   implementation("org.postgresql:postgresql:42.7.8")
   implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
