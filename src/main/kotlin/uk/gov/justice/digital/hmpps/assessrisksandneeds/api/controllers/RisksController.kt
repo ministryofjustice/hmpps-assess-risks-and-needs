@@ -32,7 +32,7 @@ class RisksController(
       ApiResponse(responseCode = "200", description = "OK"),
     ],
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'ROLE_ACCREDITED_PROGRAMS_RO', 'ROLE_OFFENDER_CATEGORISATION_RO')")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_CRS_PROVIDER', 'ROLE_ACCREDITED_PROGRAMS_RO', 'ROLE_OFFENDER_CATEGORISATION_RO', 'ROLE_ARNS__RISKS__RO')")
   fun getRiskSummaryByCrn(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @JsonView(View.SingleRisksView::class)
