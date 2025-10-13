@@ -76,3 +76,9 @@ ecr.repo
 !/src/main/resources/onnx/*_const_*.onnx
 !/src/main/resources/onnx/*.json
 /src/test/resources/onnx-test-fixtures/
+
+# Localstack volume
+volume/
+
+# Debug
+wiremock-oasys-api/__files/debug
