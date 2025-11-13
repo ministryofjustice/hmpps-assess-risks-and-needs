@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
@@ -72,6 +73,29 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     log.info("Entered getAllRiskScores for crn: $crn")
     return riskPredictorService.getAllRiskScores(crn)
   }
+
+  @RequestMapping(path = ["/risks/predictors/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
+      ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
+      ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
+      ApiResponse(responseCode = "401", description = "Unauthorised"),
+      ApiResponse(responseCode = "400", description = "Bad request"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_RESETTLEMENT_PASSPORT_RO', 'ROLE_RISK_INTEGRATIONS_RO', 'ROLE_ACCREDITED_PROGRAMS_RO', 'ROLE_ARNS__MANAGE_PEOPLE_ON_PROBATION__RO')")
+  fun getAllRiskScoresVersioned(
+    @Parameter(description = "Identifier type (e.g. crn)", required = true)
+    @PathVariable
+    identifierType: IdentifierType,
+    @Parameter(description = "Identifier Value", required = true)
+    @PathVariable
+    identifierValue: String,
+  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue)
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)

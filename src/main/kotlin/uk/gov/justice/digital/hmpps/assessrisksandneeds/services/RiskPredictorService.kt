@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
@@ -54,6 +56,14 @@ class RiskPredictorService(
 
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(crn)
     return RiskScoresDto.from(oasysRiskPredictorsDto)
+  }
+
+  fun getAllRiskScores(identifierType: IdentifierType, identifierValue: String): List<AllPredictorVersioned<Any>> {
+    log.debug("Entered getAllRiskScoresVersioned for {}: {}", identifierType, identifierValue)
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf(identifierType.value to identifierValue))
+    communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
+    val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)
+    return AllPredictorVersionedLegacyDto.from(oasysRiskPredictorsDto)
   }
 
   fun getAllRiskScoresWithoutLaoCheck(crn: String): List<RiskScoresDto> {

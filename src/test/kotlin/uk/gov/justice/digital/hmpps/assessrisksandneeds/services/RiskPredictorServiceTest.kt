@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource.OASYS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.LOW
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.MEDIUM
@@ -167,6 +169,115 @@ class RiskPredictorServiceTest {
 
       // When
       val allRiskScores = riskPredictorsService.getAllRiskScores(crn)
+
+      // Should
+      assertThat(allRiskScores.isEmpty())
+    }
+
+    @Test
+    fun `should return a list of all risk predictors versioned for valid crn`() {
+      // Given
+      val crn = "X12345"
+      val now = LocalDateTime.now()
+
+      val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+        listOf(
+          RiskPredictorAssessmentDto(
+            dateCompleted = now,
+            assessmentType = "LAYER3",
+            assessmentStatus = AssessmentStatus.COMPLETE,
+            ogpScoreDto = OasysOgpDto(
+              ogpStWesc = BigDecimal.valueOf(3),
+              ogpDyWesc = BigDecimal.valueOf(7),
+              ogpTotWesc = BigDecimal.valueOf(10),
+              ogp1Year = BigDecimal.valueOf(4),
+              ogp2Year = BigDecimal.valueOf(8),
+              ogpRisk = LOW.type,
+            ),
+            ovpScoreDto = OasysOvpDto(
+              ovpStWesc = BigDecimal.valueOf(14),
+              ovpDyWesc = BigDecimal.valueOf(3),
+              ovpTotWesc = BigDecimal.valueOf(17),
+              ovp1Year = BigDecimal.valueOf(4),
+              ovp2Year = BigDecimal.valueOf(7),
+              ovpRisk = LOW.type,
+            ),
+            ogrScoreDto = OasysOgrDto(
+              ogrs31Year = BigDecimal.valueOf(3),
+              ogrs32Year = BigDecimal.valueOf(5),
+              ogrs3RiskRecon = LOW.type,
+            ),
+            rsrScoreDto = OasysRsrDto(
+              rsrPercentageScore = BigDecimal.valueOf(50.1234),
+              rsrStaticOrDynamic = ScoreType.DYNAMIC,
+              rsrAlgorithmVersion = "5",
+              scoreLevel = MEDIUM.type,
+            ),
+            ospScoreDto = OasysOspDto(
+              ospImagePercentageScore = BigDecimal.valueOf(2.81),
+              ospContactPercentageScore = BigDecimal.valueOf(1.07),
+              ospImageScoreLevel = MEDIUM.type,
+              ospContactScoreLevel = MEDIUM.type,
+            ),
+          ),
+        ),
+      )
+
+      every {
+        oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
+      }.returns(oasysRiskPredictorsDto)
+
+      // When
+      val allRiskScores = riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn)
+
+      val result = allRiskScores[0]
+      assertThat(result.completedDate).isEqualTo(now)
+      assertThat(result.version).isEqualTo(1)
+      val outputTyped = result.output as RiskScoresDto
+
+      // Should
+      with(outputTyped) {
+        assertThat(violencePredictorScore?.ovpStaticWeightedScore).isEqualTo(BigDecimal(14))
+        assertThat(violencePredictorScore?.ovpDynamicWeightedScore).isEqualTo(BigDecimal(3))
+        assertThat(violencePredictorScore?.ovpTotalWeightedScore).isEqualTo(BigDecimal(17))
+        assertThat(violencePredictorScore?.oneYear).isEqualTo(BigDecimal(4))
+        assertThat(violencePredictorScore?.twoYears).isEqualTo(BigDecimal(7))
+        assertThat(violencePredictorScore?.ovpRisk).isEqualTo(LOW)
+
+        assertThat(groupReconvictionScore?.oneYear).isEqualTo(BigDecimal(3))
+        assertThat(groupReconvictionScore?.twoYears).isEqualTo(BigDecimal(5))
+        assertThat(groupReconvictionScore?.scoreLevel).isEqualTo(LOW)
+
+        assertThat(riskOfSeriousRecidivismScore?.percentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
+        assertThat(riskOfSeriousRecidivismScore?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+        assertThat(riskOfSeriousRecidivismScore?.source).isEqualTo(OASYS)
+        assertThat(riskOfSeriousRecidivismScore?.algorithmVersion).isEqualTo("5")
+        assertThat(riskOfSeriousRecidivismScore?.scoreLevel).isEqualTo(MEDIUM)
+
+        assertThat(generalPredictorScore?.ogpStaticWeightedScore).isEqualTo(BigDecimal(3))
+        assertThat(generalPredictorScore?.ogpDynamicWeightedScore).isEqualTo(BigDecimal(7))
+        assertThat(generalPredictorScore?.ogpTotalWeightedScore).isEqualTo(BigDecimal(10))
+        assertThat(generalPredictorScore?.ogp1Year).isEqualTo(BigDecimal(4))
+        assertThat(generalPredictorScore?.ogp2Year).isEqualTo(BigDecimal(8))
+        assertThat(generalPredictorScore?.ogpRisk).isEqualTo(LOW)
+
+        assertThat(sexualPredictorScore?.ospIndecentPercentageScore).isEqualTo(BigDecimal.valueOf(2.81))
+        assertThat(sexualPredictorScore?.ospContactPercentageScore).isEqualTo(BigDecimal.valueOf(1.07))
+        assertThat(sexualPredictorScore?.ospIndecentScoreLevel).isEqualTo(MEDIUM)
+        assertThat(sexualPredictorScore?.ospContactScoreLevel).isEqualTo(MEDIUM)
+      }
+    }
+
+    @Test
+    fun `should return an empty list of all risk predictors versioned for invalid crn`() {
+      // Given
+      val crn = "X12345"
+      every {
+        oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
+      }.returns(null)
+
+      // When
+      val allRiskScores = riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn)
 
       // Should
       assertThat(allRiskScores.isEmpty())
