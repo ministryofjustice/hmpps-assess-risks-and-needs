@@ -73,7 +73,6 @@ class RiskPredictorServiceRsrTest {
     assertThat(rsrScores[0].version).isEqualTo(1)
     val legacyRsrScore = rsrScores[0] as RsrPredictorVersionedLegacyDto
     with(legacyRsrScore) {
-      assertThat(calculatedDate).isNull()
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)

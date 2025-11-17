@@ -14,9 +14,7 @@ import java.time.LocalDateTime
   JsonSubTypes.Type(value = RsrPredictorVersionedDto::class, name = "2"),
 )
 sealed interface RsrPredictorVersioned<out T> {
-  val calculatedDate: LocalDateTime?
   val completedDate: LocalDateTime?
-  val signedDate: LocalDateTime?
   val source: RsrScoreSource
   val status: AssessmentStatus
   val version: Int?

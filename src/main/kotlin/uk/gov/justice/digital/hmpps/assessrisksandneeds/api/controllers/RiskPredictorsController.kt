@@ -53,9 +53,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @Parameter(description = "Identifier Value", required = true)
     @PathVariable
     identifierValue: String,
-  ): List<RsrPredictorVersioned<Any>> {
-    return riskPredictorService.getAllRsrScores(identifierType, identifierValue)
-  }
+  ): List<RsrPredictorVersioned<Any>> = riskPredictorService.getAllRsrScores(identifierType, identifierValue)
 
   @RequestMapping(path = ["/risks/crn/{crn}/predictors/all"], method = [RequestMethod.GET])
   @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")

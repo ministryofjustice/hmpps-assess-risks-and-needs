@@ -72,7 +72,6 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
     assertThat(rsrScores[2].version).isEqualTo(1)
     val thirdLegacyRsrScore = rsrScores[2] as RsrPredictorVersionedLegacyDto
     with(thirdLegacyRsrScore) {
-      assertThat(calculatedDate).isNull()
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
