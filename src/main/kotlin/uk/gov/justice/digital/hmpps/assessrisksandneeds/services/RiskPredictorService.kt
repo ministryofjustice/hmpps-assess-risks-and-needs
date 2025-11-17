@@ -3,8 +3,11 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -32,6 +35,16 @@ class RiskPredictorService(
     val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
     log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys")
     return RsrPredictorDto.from(oasysRsrPredictors)
+  }
+
+  fun getAllRsrScores(identifierType: IdentifierType, identifierValue: String): List<RsrPredictorVersioned<Any>> {
+    log.info("Retrieving RSR scores from each service for ${identifierType.value}: $identifierValue")
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTOR_HISTORY, mapOf(identifierType.value to identifierValue))
+    communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
+    val oasysPredictors = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)?.assessments ?: listOf()
+    val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
+    log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys for ${identifierType.value}: $identifierValue")
+    return RsrPredictorVersionedLegacyDto.from(oasysRsrPredictors).sortedByDescending { it.completedDate }
   }
 
   fun getAllRiskScores(crn: String): List<RiskScoresDto> {
