@@ -54,7 +54,6 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @PathVariable
     identifierValue: String,
   ): List<RsrPredictorVersioned<Any>> {
-    log.info("Retrieving RSR scores for $identifierType: $identifierValue")
     return riskPredictorService.getAllRsrScores(identifierType, identifierValue)
   }
 
