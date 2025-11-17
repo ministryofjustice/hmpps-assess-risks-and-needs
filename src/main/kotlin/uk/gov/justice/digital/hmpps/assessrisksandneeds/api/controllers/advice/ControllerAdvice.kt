@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.DuplicateSourceRecordFound
@@ -142,5 +143,12 @@ class ControllerAdvice {
       ),
       HttpStatus.INTERNAL_SERVER_ERROR,
     )
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  fun handle(e: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponse?> {
+    log.error("MethodArgumentTypeMismatchException: ", e)
+    return ResponseEntity(ErrorResponse(status = 400, developerMessage = e.message), HttpStatus.BAD_REQUEST)
   }
 }

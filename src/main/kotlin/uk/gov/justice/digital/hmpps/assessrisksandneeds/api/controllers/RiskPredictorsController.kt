@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
@@ -48,7 +49,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   fun getRsrScoresByIdentifierType(
     @Parameter(description = "Identifier type (e.g. crn)", required = true)
     @PathVariable
-    identifierType: String,
+    identifierType: IdentifierType,
     @Parameter(description = "Identifier Value", required = true)
     @PathVariable
     identifierValue: String,

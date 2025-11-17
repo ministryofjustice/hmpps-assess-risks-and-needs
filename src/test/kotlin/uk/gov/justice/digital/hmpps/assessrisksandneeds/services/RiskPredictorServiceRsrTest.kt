@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
@@ -66,7 +67,7 @@ class RiskPredictorServiceRsrTest {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
 
-    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores("crn", crn)
+    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
 
     assertThat(rsrScores).hasSize(1)
     assertThat(rsrScores[0].version).isEqualTo(1)
@@ -88,7 +89,7 @@ class RiskPredictorServiceRsrTest {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), LocalDateTime.of(2021, 4, 1, 1, 1, 1))
 
-    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores("crn", crn)
+    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
 
     assertThat(rsrScores).hasSize(2)
     assertThat(rsrScores[0].completedDate).isEqualTo(LocalDateTime.of(2021, 4, 1, 1, 1, 1))
@@ -99,7 +100,7 @@ class RiskPredictorServiceRsrTest {
   fun `get all RSR scores does not include non-rsr predictor scores`() {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns getOasysPredictorNoRsr()
 
-    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores("crn", crn)
+    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
 
     assertThat(rsrScores).isEmpty()
   }

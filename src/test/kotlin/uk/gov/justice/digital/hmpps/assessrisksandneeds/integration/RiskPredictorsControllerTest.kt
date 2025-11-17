@@ -33,6 +33,17 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get all rsr scores should convert identifier type regardless of case`() {
+    val identifierType = "cRn"
+    val identifierValue = "X234567"
+
+    webTestClient.get().uri("/risks/predictors/rsr/$identifierType/$identifierValue")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+  }
+
+  @Test
   fun `get all rsr scores for a crn identifier type`() {
     val identifierType = "crn"
     val identifierValue = "X123456"
@@ -73,7 +84,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get all rsr scores for a crn identifier type when no rsr returned from assessment API`() {
-    val identifierType = "crn"
+    val identifierType = "CRN"
     val identifierValue = "X234567"
 
     val rsrScores = webTestClient.get()
@@ -86,6 +97,17 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(rsrScores).isEmpty()
+  }
+
+  @Test
+  fun `get all rsr scores should return bad request for invalid identifier type`() {
+    val identifierType = "INVALID_IDENTIFIER_TYPE"
+    val identifierValue = "X234567"
+
+    webTestClient.get().uri("/risks/predictors/rsr/$identifierType/$identifierValue")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isBadRequest
   }
 
   @Test
