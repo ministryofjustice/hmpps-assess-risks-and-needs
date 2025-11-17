@@ -19,7 +19,7 @@ data class RsrPredictorVersionedDto(
       completedDate = oasysPredictorsDto.dateCompleted,
       source = RsrScoreSource.OASYS,
       status = oasysPredictorsDto.assessmentStatus,
-      version = 1,
+      version = 2,
       output = null, // TODO: Build new RSR associated parent Predictor models list
     )
   }
