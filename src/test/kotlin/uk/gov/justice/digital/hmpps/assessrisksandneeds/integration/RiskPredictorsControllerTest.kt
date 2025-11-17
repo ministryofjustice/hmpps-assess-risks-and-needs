@@ -74,7 +74,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
   @Test
   fun `get all rsr scores for a crn identifier type when no rsr returned from assessment API`() {
     val identifierType = "crn"
-    val identifierValue = "X123456"
+    val identifierValue = "X234567"
 
     val rsrScores = webTestClient.get()
       .uri("/risks/predictors/rsr/$identifierType/$identifierValue")
