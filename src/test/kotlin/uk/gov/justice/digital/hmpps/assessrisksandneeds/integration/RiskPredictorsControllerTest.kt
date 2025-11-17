@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
@@ -28,6 +30,62 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
   @BeforeEach
   fun setup() {
     every { auditService.sendEvent(any(), any()) } returns Unit
+  }
+
+  @Test
+  fun `get all rsr scores for a crn identifier type`() {
+    val identifierType = "crn"
+    val identifierValue = "X123456"
+
+    val rsrScores = webTestClient.get()
+      .uri("/risks/predictors/rsr/$identifierType/$identifierValue")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<List<RsrPredictorVersioned<Any>>>()
+      .returnResult().responseBody
+
+    assertThat(rsrScores).hasSize(3)
+    assertThat(rsrScores[0].version).isEqualTo(1)
+    val firstLegacyRsrScore = rsrScores[0] as RsrPredictorVersionedLegacyDto
+    with(firstLegacyRsrScore) {
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(output?.rsrPercentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
+      assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
+      assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+    }
+
+    assertThat(rsrScores[2].version).isEqualTo(1)
+    val thirdLegacyRsrScore = rsrScores[2] as RsrPredictorVersionedLegacyDto
+    with(thirdLegacyRsrScore) {
+      assertThat(calculatedDate).isNull()
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(output?.rsrPercentageScore).isEqualTo(BigDecimal.valueOf(0.32))
+      assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
+      assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+    }
+  }
+
+  @Test
+  fun `get all rsr scores for a crn identifier type when no rsr returned from assessment API`() {
+    val identifierType = "crn"
+    val identifierValue = "X123456"
+
+    val rsrScores = webTestClient.get()
+      .uri("/risks/predictors/rsr/$identifierType/$identifierValue")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<List<RsrPredictorVersioned<Any>>>()
+      .returnResult().responseBody
+
+    assertThat(rsrScores).isEmpty()
   }
 
   @Test

@@ -46,7 +46,7 @@ class RiskPredictorService(
     val oasysPredictors = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)?.assessments ?: listOf()
     val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
     log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys for $validIdentifierType: $identifierValue")
-    return RsrPredictorVersionedLegacyDto.from(oasysRsrPredictors)
+    return RsrPredictorVersionedLegacyDto.from(oasysRsrPredictors).sortedByDescending { it.completedDate }
   }
 
   fun getAllRiskScores(crn: String): List<RiskScoresDto> {
