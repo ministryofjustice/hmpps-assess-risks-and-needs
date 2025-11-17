@@ -7,11 +7,11 @@ import java.time.LocalDateTime
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,
   include = JsonTypeInfo.As.PROPERTY,
-  property = "version"
+  property = "version",
 )
 @JsonSubTypes(
   JsonSubTypes.Type(value = RsrPredictorVersionedLegacyDto::class, name = "1"),
-  JsonSubTypes.Type(value = RsrPredictorVersionedDto::class, name = "2")
+  JsonSubTypes.Type(value = RsrPredictorVersionedDto::class, name = "2"),
 )
 sealed interface RsrPredictorVersioned<out T> {
   val calculatedDate: LocalDateTime?

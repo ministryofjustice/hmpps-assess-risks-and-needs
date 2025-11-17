@@ -15,19 +15,16 @@ data class RsrPredictorVersionedLegacyDto(
 
   companion object {
 
-    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorVersionedLegacyDto> =
-      oasysPredictorsDtos.map { from(it) }
+    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorVersionedLegacyDto> = oasysPredictorsDtos.map { from(it) }
 
-    fun from(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorVersionedLegacyDto {
-      return RsrPredictorVersionedLegacyDto(
-        calculatedDate = null,
-        completedDate = oasysPredictorsDto.dateCompleted,
-        signedDate = null,
-        source = RsrScoreSource.OASYS,
-        status = oasysPredictorsDto.assessmentStatus,
-        version = 1,
-        output = RsrPredictorDto.fromVersioned(oasysPredictorsDto),
-      )
-    }
+    fun from(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorVersionedLegacyDto = RsrPredictorVersionedLegacyDto(
+      calculatedDate = null,
+      completedDate = oasysPredictorsDto.dateCompleted,
+      signedDate = null,
+      source = RsrScoreSource.OASYS,
+      status = oasysPredictorsDto.assessmentStatus,
+      version = 1,
+      output = RsrPredictorDto.fromVersioned(oasysPredictorsDto),
+    )
   }
 }
