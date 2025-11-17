@@ -10,8 +10,8 @@ data class RsrPredictorVersionedDto(
   override val source: RsrScoreSource,
   override val status: AssessmentStatus,
   override val version: Int? = null,
-  override val output: Any? = null, // TODO: Update Any to new RSR Predictor models list
-) : RsrPredictorVersioned<Any> { // TODO: Update Any to new RSR Predictor models list
+  override val output: Any? = null, // TODO: Update Any to new parent Predictor models list
+) : RsrPredictorVersioned<Any> { // TODO: Update Any to new parent Predictor models list
 
   companion object {
 
@@ -24,7 +24,7 @@ data class RsrPredictorVersionedDto(
       source = RsrScoreSource.OASYS,
       status = oasysPredictorsDto.assessmentStatus,
       version = 1,
-      output = null, // TODO: Build new RSR Predictor models list
+      output = null, // TODO: Build new RSR associated parent Predictor models list
     )
   }
 }

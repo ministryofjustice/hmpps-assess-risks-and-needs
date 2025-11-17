@@ -38,12 +38,12 @@ class RiskPredictorService(
   }
 
   fun getAllRsrScores(identifierType: IdentifierType, identifierValue: String): List<RsrPredictorVersioned<Any>> {
-    log.info("Retrieving RSR scores from each service for $identifierType: $identifierValue")
-    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTOR_HISTORY, mapOf(identifierType to identifierValue))
+    log.info("Retrieving RSR scores from each service for ${identifierType.value}: $identifierValue")
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTOR_HISTORY, mapOf(identifierType.value to identifierValue))
     communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
     val oasysPredictors = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)?.assessments ?: listOf()
     val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
-    log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys for $identifierType: $identifierValue")
+    log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys for ${identifierType.value}: $identifierValue")
     return RsrPredictorVersionedLegacyDto.from(oasysRsrPredictors).sortedByDescending { it.completedDate }
   }
 
