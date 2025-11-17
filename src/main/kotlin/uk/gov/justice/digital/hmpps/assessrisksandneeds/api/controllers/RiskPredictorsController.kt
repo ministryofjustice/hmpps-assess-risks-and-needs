@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
 @RestController
@@ -33,6 +34,27 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   ): List<RsrPredictorDto> {
     log.info("Retrieving RSR score history for crn: $crn")
     return riskPredictorService.getAllRsrHistory(crn)
+  }
+
+  @RequestMapping(path = ["/risks/predictors/rsr/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
+  @Operation(description = "Gets RSR scores for an identifier type (e.g. CRN)")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "Unauthorized"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
+  fun getRsrScoresByIdentifierType(
+    @Parameter(description = "Identifier type (e.g. crn)", required = true)
+    @PathVariable
+    identifierType: String,
+    @Parameter(description = "Identifier Value", required = true)
+    @PathVariable
+    identifierValue: String,
+  ): List<RsrPredictorVersioned<Any>> {
+    log.info("Retrieving RSR scores for $identifierType: $identifierValue")
+    return riskPredictorService.getAllRsrScores(identifierType, identifierValue)
   }
 
   @RequestMapping(path = ["/risks/crn/{crn}/predictors/all"], method = [RequestMethod.GET])
