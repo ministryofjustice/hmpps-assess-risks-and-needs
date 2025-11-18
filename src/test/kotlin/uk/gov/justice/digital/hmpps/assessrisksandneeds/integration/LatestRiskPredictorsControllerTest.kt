@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgpScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgrScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OspScoreDto
@@ -49,7 +52,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
       .expectBody<List<RiskScoresDto>>()
       .consumeWith {
         assertThat(it.responseBody).hasSize(3)
-        assertThat(it.responseBody[0]).usingRecursiveComparison()
+        assertThat(it.responseBody!![0]).usingRecursiveComparison()
           .isEqualTo(
             RiskScoresDto(
               completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
@@ -118,6 +121,108 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
       .expectBody<ApiErrorResponse>()
       .returnResult().responseBody
 
-    assertThat(response.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+    assertThat(response!!.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+  }
+
+  @Test
+  fun `should return versioned risk data for valid crn`() {
+    // Given
+    val identifierType = "crn"
+    val identifierValue = "X123456"
+
+    // When
+    webTestClient.get()
+      .uri("/risks/predictors/all/$identifierType/$identifierValue")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      // Then
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<List<AllPredictorVersioned<Any>>>()
+      .consumeWith {
+        assertThat(it.responseBody).hasSize(3)
+        assertThat(it.responseBody!![0]).usingRecursiveComparison()
+          .isEqualTo(
+            AllPredictorVersionedLegacyDto(
+              completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
+              status = AssessmentStatus.COMPLETE,
+              version = 1,
+              output = RiskScoresDto(
+                groupReconvictionScore = OgrScoreDto(
+                  oneYear = BigDecimal.valueOf(3),
+                  twoYears = BigDecimal.valueOf(5),
+                  scoreLevel = ScoreLevel.LOW,
+                ),
+                violencePredictorScore = OvpScoreDto(
+                  ovpStaticWeightedScore = BigDecimal.valueOf(14),
+                  ovpDynamicWeightedScore = BigDecimal.valueOf(3),
+                  ovpTotalWeightedScore = BigDecimal.valueOf(17),
+                  oneYear = BigDecimal.valueOf(4),
+                  twoYears = BigDecimal.valueOf(7),
+                  ovpRisk = ScoreLevel.LOW,
+                ),
+                generalPredictorScore = OgpScoreDto(
+                  ogpStaticWeightedScore = BigDecimal.valueOf(3),
+                  ogpDynamicWeightedScore = BigDecimal.valueOf(7),
+                  ogpTotalWeightedScore = BigDecimal.valueOf(10),
+                  ogp1Year = BigDecimal.valueOf(4),
+                  ogp2Year = BigDecimal.valueOf(8),
+                  ogpRisk = ScoreLevel.LOW,
+                ),
+                riskOfSeriousRecidivismScore = RsrScoreDto(
+                  percentageScore = BigDecimal.valueOf(50.1234),
+                  staticOrDynamic = ScoreType.DYNAMIC,
+                  source = RsrScoreSource.OASYS,
+                  algorithmVersion = "11",
+                  ScoreLevel.MEDIUM,
+                ),
+                sexualPredictorScore = OspScoreDto(
+                  ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
+                  ospContactPercentageScore = BigDecimal.valueOf(1.07),
+                  ospIndecentScoreLevel = ScoreLevel.MEDIUM,
+                  ospContactScoreLevel = ScoreLevel.MEDIUM,
+                ),
+              ),
+            ),
+          )
+      }
+  }
+
+  @Test
+  fun `should return not found error for invalid crn for versioned risk scores`() {
+    webTestClient.get().uri("/risks/predictors/all/crn/X999999")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `should return 400 bad request for invalid identifier type for versioned risk scores`() {
+    val identifierType = "INVALID_IDENTIFIER_TYPE"
+    val identifierValue = "X234567"
+    webTestClient.get().uri("/risks/predictors/all/$identifierType/$identifierValue")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
+  fun `should return forbidden when user has insufficient privileges to access crn for versioned risk scores`() {
+    webTestClient.get().uri("/risks/predictors/all/crn/FORBIDDEN")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `should return not found when Delius cannot find crn for versioned risk scores`() {
+    val response = webTestClient.get().uri("/risks/predictors/all/crn/USER_ACCESS_NOT_FOUND")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .returnResult().responseBody
+
+    assertThat(response!!.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
   }
 }
