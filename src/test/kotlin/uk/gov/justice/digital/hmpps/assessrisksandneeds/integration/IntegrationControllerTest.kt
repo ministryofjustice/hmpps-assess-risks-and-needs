@@ -58,7 +58,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<RiskScoresDto>>()
       .consumeWith {
-        assertThat(it.responseBody).hasSize(3)
+        assertThat(it.responseBody).hasSize(5)
         assertThat(it.responseBody[0]).usingRecursiveComparison()
           .isEqualTo(
             RiskScoresDto(
@@ -89,7 +89,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
                 percentageScore = BigDecimal.valueOf(50.1234),
                 staticOrDynamic = ScoreType.DYNAMIC,
                 source = RsrScoreSource.OASYS,
-                algorithmVersion = "11",
+                algorithmVersion = "5",
                 ScoreLevel.MEDIUM,
               ),
               sexualPredictorScore = OspScoreDto(

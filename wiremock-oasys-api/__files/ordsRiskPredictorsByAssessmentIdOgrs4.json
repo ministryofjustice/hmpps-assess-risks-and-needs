@@ -53,27 +53,19 @@
         "ospDirectContactScoreLevel": "Medium",
         "ospIndirectImagesChildrenScoreLevel": "Medium"
       },
-      "OGRS4G": {
+      "NEWACTPREDICT": {
         "ogrs4gYr2": 1.23,
         "ogrs4gBand": "Low",
-        "ogrs4gCalculated": "Y"
-      },
-      "OGRS4V": {
+        "ogrs4gCalculated": "Y",
         "ogrs4vYr2": 1.23,
         "ogrs4vBand": "Low",
-        "ogrs4vCalculated": "Y"
-      },
-      "OGP2": {
+        "ogrs4vCalculated": "Y",
         "ogp2Yr2": 4.56,
         "ogp2Band": "Medium",
-        "ogp2Calculated": "N"
-      },
-      "OVP2": {
+        "ogp2Calculated": "N",
         "ovp2Yr2": 4.56,
         "ovp2Band": "Medium",
-        "ovp2Calculated": "N"
-      },
-      "SNSV": {
+        "ovp2Calculated": "N",
         "snsvStaticYr2": 1.23,
         "snsvDynamicYr2": 4.56,
         "snsvStaticYr2Band": "Low",
