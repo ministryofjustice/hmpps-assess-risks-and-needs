@@ -4,15 +4,18 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import kotlin.collections.sortedByDescending
 
 @Service
 class RiskPredictorService(
@@ -46,7 +49,14 @@ class RiskPredictorService(
     val oasysPredictors = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)?.assessments ?: listOf()
     val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
     log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys for ${identifierType.value}: $identifierValue")
-    return RsrPredictorVersionedLegacyDto.from(oasysRsrPredictors).sortedByDescending { it.completedDate }
+    return oasysRsrPredictors.map { assessment ->
+      val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: 0
+      if (version >= 6) {
+        RsrPredictorVersionedDto.from(assessment)
+      } else {
+        RsrPredictorVersionedLegacyDto.from(assessment)
+      }
+    }.sortedByDescending { it.completedDate }
   }
 
   fun getAllRiskScores(crn: String): List<RiskScoresDto> {
@@ -63,7 +73,18 @@ class RiskPredictorService(
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf(identifierType.value to identifierValue))
     communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)
-    return AllPredictorVersionedLegacyDto.from(oasysRiskPredictorsDto)
+    return oasysRiskPredictorsDto
+      ?.assessments
+      ?.filter { it.assessmentType in listOf("LAYER3", "LAYER1") }
+      ?.map { assessment ->
+        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: 0
+        if (version >= 6) {
+          AllPredictorVersionedDto.from(assessment)
+        } else {
+          AllPredictorVersionedLegacyDto.from(assessment)
+        }
+      }
+      .orEmpty()
   }
 
   fun getAllRiskScoresWithoutLaoCheck(crn: String): List<RiskScoresDto> {

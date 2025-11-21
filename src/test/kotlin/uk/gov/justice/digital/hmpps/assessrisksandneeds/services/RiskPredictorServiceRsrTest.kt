@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
@@ -21,12 +22,17 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgp2Dto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4gDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4vDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvp2Dto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysSnsvDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -64,29 +70,89 @@ class RiskPredictorServiceRsrTest {
 
   @Test
   fun `get all RSR scores from OASys and ARN`() {
-    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
-      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+    val oasysRsrRiskPredictorsDto = OasysRiskPredictorsDto(
+      listOf(
+        getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), "5", true),
+        getOasysPredictor(LocalDateTime.of(2021, 2, 1, 1, 1, 1), "6", false),
+        getOasysPredictor(LocalDateTime.of(2021, 4, 1, 1, 1, 1), "6", true),
+      ),
+    )
+
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns oasysRsrRiskPredictorsDto
 
     val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
 
-    assertThat(rsrScores).hasSize(1)
-    assertThat(rsrScores[0].version).isEqualTo(1)
-    val legacyRsrScore = rsrScores[0] as RsrPredictorVersionedLegacyDto
-    with(legacyRsrScore) {
+    assertThat(rsrScores).hasSize(3)
+
+    assertThat(rsrScores[0].version).isEqualTo(2)
+    val versionOneRsrDynamicScore = rsrScores[0] as RsrPredictorVersionedDto
+    with(versionOneRsrDynamicScore) {
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2021, 4, 1, 1, 1, 1))
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+
+      assertThat(output?.seriousViolentReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.seriousViolentReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+      assertThat(output?.seriousViolentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+
+      assertThat(output?.directContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.directContactSexualReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+
+      assertThat(output?.indirectImageContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.indirectImageContactSexualReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+
+      assertThat(output?.combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.combinedSeriousReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.algorithmVersion).isEqualTo("6")
+    }
+
+    assertThat(rsrScores[1].version).isEqualTo(2)
+    val versionOneRsrStaticScore = rsrScores[1] as RsrPredictorVersionedDto
+    with(versionOneRsrStaticScore) {
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2021, 2, 1, 1, 1, 1))
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+
+      assertThat(output?.seriousViolentReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.seriousViolentReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+      assertThat(output?.seriousViolentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+
+      assertThat(output?.directContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.directContactSexualReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+
+      assertThat(output?.indirectImageContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.indirectImageContactSexualReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+
+      assertThat(output?.combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal(10))
+      assertThat(output?.combinedSeriousReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.algorithmVersion).isEqualTo("6")
+    }
+
+    assertThat(rsrScores[2].version).isEqualTo(1)
+    val versionOneRsrScore = rsrScores[2] as RsrPredictorVersionedLegacyDto
+    with(versionOneRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
       assertThat(output?.rsrPercentageScore).isEqualTo(BigDecimal(10))
       assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
       assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
-      assertThat(output?.algorithmVersion).isEqualTo("10")
+      assertThat(output?.algorithmVersion).isEqualTo("5")
     }
   }
 
   @Test
   fun `get all RSR scores are sorted by completed date`() {
-    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
-      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), LocalDateTime.of(2021, 4, 1, 1, 1, 1))
+    val oasysRsrRiskPredictorsDto = OasysRiskPredictorsDto(
+      listOf(
+        getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), "5", true),
+        getOasysPredictor(LocalDateTime.of(2021, 4, 1, 1, 1, 1), "6", true),
+      ),
+    )
+
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns oasysRsrRiskPredictorsDto
 
     val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
 
@@ -106,8 +172,13 @@ class RiskPredictorServiceRsrTest {
 
   @Test
   fun `get all RSR scores history from OASys and ARN`() {
-    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
-      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+    val oasysRsrRiskPredictorsDto = OasysRiskPredictorsDto(
+      listOf(
+        getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), "5", true),
+      ),
+    )
+
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns oasysRsrRiskPredictorsDto
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
 
@@ -120,14 +191,20 @@ class RiskPredictorServiceRsrTest {
       assertThat(staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-      assertThat(algorithmVersion).isEqualTo("10")
+      assertThat(algorithmVersion).isEqualTo("5")
     }
   }
 
   @Test
   fun `get all RSR scores history are sorted by completed date`() {
-    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
-      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), LocalDateTime.of(2021, 4, 1, 1, 1, 1))
+    val oasysRsrRiskPredictorsDto = OasysRiskPredictorsDto(
+      listOf(
+        getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), "5", true),
+        getOasysPredictor(LocalDateTime.of(2021, 4, 1, 1, 1, 1), "6", true),
+      ),
+    )
+
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns oasysRsrRiskPredictorsDto
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
 
@@ -156,32 +233,53 @@ class RiskPredictorServiceRsrTest {
         ogpScoreDto = OasysOgpDto(),
         ogrScoreDto = OasysOgrDto(),
         rsrScoreDto = OasysRsrDto(),
+        ogrs4gScoreDto = OasysOgrs4gDto(),
+        ogrs4vScoreDto = OasysOgrs4vDto(),
+        ogp2ScoreDto = OasysOgp2Dto(),
+        ovp2ScoreDto = OasysOvp2Dto(),
+        snsvScoreDto = OasysSnsvDto(),
       ),
     ),
   )
 
-  private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
-    completedDate.map {
-      RiskPredictorAssessmentDto(
-        dateCompleted = it,
-        assessmentType = "LAYER3",
-        assessmentStatus = AssessmentStatus.COMPLETE,
-        rsrScoreDto = OasysRsrDto(
-          rsrPercentageScore = BigDecimal(10),
-          rsrStaticOrDynamic = ScoreType.DYNAMIC,
-          rsrAlgorithmVersion = "10",
-          scoreLevel = ScoreLevel.LOW.type,
-        ),
-        ospScoreDto = OasysOspDto(
-          ospImagePercentageScore = BigDecimal(10),
-          ospImageScoreLevel = ScoreLevel.LOW.type,
-          ospContactPercentageScore = BigDecimal(10),
-          ospContactScoreLevel = ScoreLevel.LOW.type,
-        ),
-        ogpScoreDto = OasysOgpDto(),
-        ovpScoreDto = OasysOvpDto(),
-        ogrScoreDto = OasysOgrDto(),
-      )
-    },
+  private fun getOasysPredictor(
+    completedDate: LocalDateTime,
+    rsrAlgorithmVersion: String,
+    isDynamic: Boolean,
+  ): RiskPredictorAssessmentDto = RiskPredictorAssessmentDto(
+    dateCompleted = completedDate,
+    assessmentType = "LAYER3",
+    assessmentStatus = AssessmentStatus.COMPLETE,
+    rsrScoreDto = OasysRsrDto(
+      rsrPercentageScore = BigDecimal(10),
+      rsrStaticOrDynamic = if (isDynamic) ScoreType.DYNAMIC else ScoreType.STATIC,
+      rsrAlgorithmVersion = rsrAlgorithmVersion,
+      scoreLevel = ScoreLevel.LOW.type,
+    ),
+    ospScoreDto = OasysOspDto(
+      ospImagePercentageScore = BigDecimal(10),
+      ospImageScoreLevel = ScoreLevel.LOW.type,
+      ospContactPercentageScore = BigDecimal(10),
+      ospContactScoreLevel = ScoreLevel.LOW.type,
+      ospIndirectImagesChildrenPercentageScore = BigDecimal(10),
+      ospDirectContactPercentageScore = BigDecimal(10),
+      ospIndirectImagesChildrenScoreLevel = ScoreLevel.LOW.type,
+      ospDirectContactScoreLevel = ScoreLevel.LOW.type,
+    ),
+    snsvScoreDto = OasysSnsvDto(
+      snsvStaticYr2 = BigDecimal(10),
+      snsvDynamicYr2 = BigDecimal(10),
+      snsvStaticYr2Band = ScoreLevel.LOW.type,
+      snsvDynamicYr2Band = ScoreLevel.LOW.type,
+      snsvStaticCalculated = if (isDynamic) "N" else "Y",
+      snsvDynamicCalculated = if (isDynamic) "Y" else "N",
+    ),
+    ogpScoreDto = OasysOgpDto(),
+    ovpScoreDto = OasysOvpDto(),
+    ogrScoreDto = OasysOgrDto(),
+    ogrs4gScoreDto = OasysOgrs4gDto(),
+    ogrs4vScoreDto = OasysOgrs4vDto(),
+    ogp2ScoreDto = OasysOgp2Dto(),
+    ovp2ScoreDto = OasysOvp2Dto(),
   )
 }
