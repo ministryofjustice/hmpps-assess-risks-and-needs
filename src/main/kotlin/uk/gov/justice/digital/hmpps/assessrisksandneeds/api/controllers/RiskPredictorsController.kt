@@ -97,6 +97,24 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     identifierValue: String,
   ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue)
 
+  @RequestMapping(path = ["/assessments/id/{id}/risk/predictors/all"], method = [RequestMethod.GET])
+  @Operation(description = "Gets risk predictors scores for the requested assessment ID")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "User does not have permission to access assessment with provided ID"),
+      ApiResponse(responseCode = "404", description = "Risk data does not exist for assessment ID"),
+      ApiResponse(responseCode = "401", description = "Unauthorised"),
+      ApiResponse(responseCode = "400", description = "Bad request"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION_API__ACCREDITED_PROGRAMMES__ASSESSMENT')")
+  fun getRiskScoresByAssessmentId(
+    @Parameter(description = "Assessment ID", required = true)
+    @PathVariable
+    id: Long,
+  ): AllPredictorVersioned<Any> = riskPredictorService.getAllRiskScoresByAssessmentId(id)
+
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }

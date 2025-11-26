@@ -156,6 +156,11 @@ class RiskPredictorServiceRsrTest {
         ogpScoreDto = OasysOgpDto(),
         ogrScoreDto = OasysOgrDto(),
         rsrScoreDto = OasysRsrDto(),
+        ogrs4gScoreDto = null,
+        ogrs4vScoreDto = null,
+        ogp2ScoreDto = null,
+        ovp2ScoreDto = null,
+        snsvScoreDto = null,
       ),
     ),
   )
@@ -181,6 +186,11 @@ class RiskPredictorServiceRsrTest {
         ogpScoreDto = OasysOgpDto(),
         ovpScoreDto = OasysOvpDto(),
         ogrScoreDto = OasysOgrDto(),
+        ogrs4gScoreDto = null,
+        ogrs4vScoreDto = null,
+        ogp2ScoreDto = null,
+        ovp2ScoreDto = null,
+        snsvScoreDto = null,
       )
     },
   )
