@@ -16,18 +16,25 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource.OASYS
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.HIGH
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.LOW
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.MEDIUM
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.AllPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgp2Dto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4gDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4vDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvp2Dto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysSnsvDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -113,6 +120,11 @@ class RiskPredictorServiceTest {
               ospImageScoreLevel = MEDIUM.type,
               ospContactScoreLevel = MEDIUM.type,
             ),
+            ogrs4gScoreDto = OasysOgrs4gDto(),
+            ogrs4vScoreDto = OasysOgrs4vDto(),
+            ogp2ScoreDto = OasysOgp2Dto(),
+            ovp2ScoreDto = OasysOvp2Dto(),
+            snsvScoreDto = OasysSnsvDto(),
           ),
         ),
       )
@@ -178,48 +190,12 @@ class RiskPredictorServiceTest {
     fun `should return a list of all risk predictors versioned for valid crn`() {
       // Given
       val crn = "X12345"
-      val now = LocalDateTime.now()
 
       val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
         listOf(
-          RiskPredictorAssessmentDto(
-            dateCompleted = now,
-            assessmentType = "LAYER3",
-            assessmentStatus = AssessmentStatus.COMPLETE,
-            ogpScoreDto = OasysOgpDto(
-              ogpStWesc = BigDecimal.valueOf(3),
-              ogpDyWesc = BigDecimal.valueOf(7),
-              ogpTotWesc = BigDecimal.valueOf(10),
-              ogp1Year = BigDecimal.valueOf(4),
-              ogp2Year = BigDecimal.valueOf(8),
-              ogpRisk = LOW.type,
-            ),
-            ovpScoreDto = OasysOvpDto(
-              ovpStWesc = BigDecimal.valueOf(14),
-              ovpDyWesc = BigDecimal.valueOf(3),
-              ovpTotWesc = BigDecimal.valueOf(17),
-              ovp1Year = BigDecimal.valueOf(4),
-              ovp2Year = BigDecimal.valueOf(7),
-              ovpRisk = LOW.type,
-            ),
-            ogrScoreDto = OasysOgrDto(
-              ogrs31Year = BigDecimal.valueOf(3),
-              ogrs32Year = BigDecimal.valueOf(5),
-              ogrs3RiskRecon = LOW.type,
-            ),
-            rsrScoreDto = OasysRsrDto(
-              rsrPercentageScore = BigDecimal.valueOf(50.1234),
-              rsrStaticOrDynamic = ScoreType.DYNAMIC,
-              rsrAlgorithmVersion = "5",
-              scoreLevel = MEDIUM.type,
-            ),
-            ospScoreDto = OasysOspDto(
-              ospImagePercentageScore = BigDecimal.valueOf(2.81),
-              ospContactPercentageScore = BigDecimal.valueOf(1.07),
-              ospImageScoreLevel = MEDIUM.type,
-              ospContactScoreLevel = MEDIUM.type,
-            ),
-          ),
+          provideOutput(LocalDateTime.of(2025, 1, 1, 12, 0, 0), "5", true),
+          provideOutput(LocalDateTime.of(2025, 1, 2, 12, 0, 0), "6", false),
+          provideOutput(LocalDateTime.of(2025, 1, 3, 12, 0, 0), "6", true),
         ),
       )
 
@@ -230,13 +206,18 @@ class RiskPredictorServiceTest {
       // When
       val allRiskScores = riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn)
 
-      val result = allRiskScores[0]
-      assertThat(result.completedDate).isEqualTo(now)
-      assertThat(result.version).isEqualTo(1)
-      val outputTyped = result.output as RiskScoresDto
+      // Then
+      assertThat(allRiskScores.size).isEqualTo(3)
 
-      // Should
-      with(outputTyped) {
+      // Version one
+      val versionOneResult = allRiskScores[0]
+      assertThat(versionOneResult.completedDate).isEqualTo(
+        LocalDateTime.of(2025, 1, 1, 12, 0, 0),
+      )
+      assertThat(versionOneResult.version).isEqualTo(1)
+      val versionOneOutput = versionOneResult.output as RiskScoresDto
+
+      with(versionOneOutput) {
         assertThat(violencePredictorScore?.ovpStaticWeightedScore).isEqualTo(BigDecimal(14))
         assertThat(violencePredictorScore?.ovpDynamicWeightedScore).isEqualTo(BigDecimal(3))
         assertThat(violencePredictorScore?.ovpTotalWeightedScore).isEqualTo(BigDecimal(17))
@@ -266,6 +247,72 @@ class RiskPredictorServiceTest {
         assertThat(sexualPredictorScore?.ospIndecentScoreLevel).isEqualTo(MEDIUM)
         assertThat(sexualPredictorScore?.ospContactScoreLevel).isEqualTo(MEDIUM)
       }
+
+      // version two static
+      val versionTwoStaticResult = allRiskScores[1]
+      assertThat(versionTwoStaticResult.completedDate).isEqualTo(
+        LocalDateTime.of(2025, 1, 2, 12, 0, 0),
+      )
+      assertThat(versionTwoStaticResult.version).isEqualTo(2)
+      val versionTwoStaticOutput = versionTwoStaticResult.output as AllPredictorDto
+
+      with(versionTwoStaticOutput) {
+        assertThat(allReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.23))
+        assertThat(allReoffendingPredictor?.band).isEqualTo(MEDIUM)
+        assertThat(allReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+
+        assertThat(violentReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.34))
+        assertThat(violentReoffendingPredictor?.band).isEqualTo(MEDIUM)
+        assertThat(violentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+
+        assertThat(seriousViolentReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.45))
+        assertThat(seriousViolentReoffendingPredictor?.band).isEqualTo(MEDIUM)
+        assertThat(seriousViolentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+
+        assertThat(directContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(2.81))
+        assertThat(directContactSexualReoffendingPredictor?.band).isEqualTo(MEDIUM)
+
+        assertThat(indirectImageContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.07))
+        assertThat(indirectImageContactSexualReoffendingPredictor?.band).isEqualTo(MEDIUM)
+
+        assertThat(combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(50.1234))
+        assertThat(combinedSeriousReoffendingPredictor?.band).isEqualTo(MEDIUM)
+        assertThat(combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+        assertThat(combinedSeriousReoffendingPredictor?.algorithmVersion).isEqualTo("6")
+      }
+
+      // version two dynamic
+      val versionTwoDynamicResult = allRiskScores[2]
+      assertThat(versionTwoDynamicResult.completedDate).isEqualTo(
+        LocalDateTime.of(2025, 1, 3, 12, 0, 0),
+      )
+      assertThat(versionTwoDynamicResult.version).isEqualTo(2)
+      val versionTwoDynamicOutput = versionTwoDynamicResult.output as AllPredictorDto
+
+      with(versionTwoDynamicOutput) {
+        assertThat(allReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(10.23))
+        assertThat(allReoffendingPredictor?.band).isEqualTo(HIGH)
+        assertThat(allReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+
+        assertThat(violentReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(10.34))
+        assertThat(violentReoffendingPredictor?.band).isEqualTo(HIGH)
+        assertThat(violentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+
+        assertThat(seriousViolentReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(40.23))
+        assertThat(seriousViolentReoffendingPredictor?.band).isEqualTo(HIGH)
+        assertThat(seriousViolentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+
+        assertThat(directContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(2.81))
+        assertThat(directContactSexualReoffendingPredictor?.band).isEqualTo(MEDIUM)
+
+        assertThat(indirectImageContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.07))
+        assertThat(indirectImageContactSexualReoffendingPredictor?.band).isEqualTo(MEDIUM)
+
+        assertThat(combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(50.1234))
+        assertThat(combinedSeriousReoffendingPredictor?.band).isEqualTo(MEDIUM)
+        assertThat(combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+        assertThat(combinedSeriousReoffendingPredictor?.algorithmVersion).isEqualTo("6")
+      }
     }
 
     @Test
@@ -283,6 +330,77 @@ class RiskPredictorServiceTest {
       assertThat(allRiskScores.isEmpty())
     }
   }
+
+  fun provideOutput(dateCompleted: LocalDateTime, rsrAlgorithmVersion: String, isDynamic: Boolean): RiskPredictorAssessmentDto = RiskPredictorAssessmentDto(
+    dateCompleted = dateCompleted,
+    assessmentType = "LAYER3",
+    assessmentStatus = AssessmentStatus.COMPLETE,
+    ogpScoreDto = OasysOgpDto(
+      ogpStWesc = BigDecimal.valueOf(3),
+      ogpDyWesc = BigDecimal.valueOf(7),
+      ogpTotWesc = BigDecimal.valueOf(10),
+      ogp1Year = BigDecimal.valueOf(4),
+      ogp2Year = BigDecimal.valueOf(8),
+      ogpRisk = LOW.type,
+    ),
+    ovpScoreDto = OasysOvpDto(
+      ovpStWesc = BigDecimal.valueOf(14),
+      ovpDyWesc = BigDecimal.valueOf(3),
+      ovpTotWesc = BigDecimal.valueOf(17),
+      ovp1Year = BigDecimal.valueOf(4),
+      ovp2Year = BigDecimal.valueOf(7),
+      ovpRisk = LOW.type,
+    ),
+    ogrScoreDto = OasysOgrDto(
+      ogrs31Year = BigDecimal.valueOf(3),
+      ogrs32Year = BigDecimal.valueOf(5),
+      ogrs3RiskRecon = LOW.type,
+    ),
+    rsrScoreDto = OasysRsrDto(
+      rsrPercentageScore = BigDecimal.valueOf(50.1234),
+      rsrStaticOrDynamic = if (isDynamic) ScoreType.DYNAMIC else ScoreType.STATIC,
+      rsrAlgorithmVersion = rsrAlgorithmVersion,
+      scoreLevel = MEDIUM.type,
+    ),
+    ospScoreDto = OasysOspDto(
+      ospDirectContactPercentageScore = BigDecimal.valueOf(2.81),
+      ospIndirectImagesChildrenPercentageScore = BigDecimal.valueOf(1.07),
+      ospDirectContactScoreLevel = MEDIUM.type,
+      ospIndirectImagesChildrenScoreLevel = MEDIUM.type,
+      ospImagePercentageScore = BigDecimal.valueOf(2.81),
+      ospContactPercentageScore = BigDecimal.valueOf(1.07),
+      ospImageScoreLevel = MEDIUM.type,
+      ospContactScoreLevel = MEDIUM.type,
+    ),
+    ogrs4gScoreDto = OasysOgrs4gDto(
+      ogrs4gYr2 = BigDecimal.valueOf(1.23),
+      ogrs4gBand = MEDIUM.type,
+      ogrs4gCalculated = if (isDynamic) "N" else "Y",
+    ),
+    ogrs4vScoreDto = OasysOgrs4vDto(
+      ogrs4vYr2 = BigDecimal.valueOf(1.34),
+      ogrs4vBand = MEDIUM.type,
+      ogrs4vCalculated = if (isDynamic) "N" else "Y",
+    ),
+    ogp2ScoreDto = OasysOgp2Dto(
+      ogp2Yr2 = BigDecimal.valueOf(10.23),
+      ogp2Band = HIGH.type,
+      ogp2Calculated = if (isDynamic) "Y" else "N",
+    ),
+    ovp2ScoreDto = OasysOvp2Dto(
+      ovp2Yr2 = BigDecimal.valueOf(10.34),
+      ovp2Band = HIGH.type,
+      ovp2Calculated = if (isDynamic) "Y" else "N",
+    ),
+    snsvScoreDto = OasysSnsvDto(
+      snsvStaticYr2 = BigDecimal.valueOf(1.45),
+      snsvDynamicYr2 = BigDecimal.valueOf(40.23),
+      snsvStaticYr2Band = MEDIUM.type,
+      snsvDynamicYr2Band = HIGH.type,
+      snsvStaticCalculated = if (isDynamic) "N" else "Y",
+      snsvDynamicCalculated = if (isDynamic) "Y" else "N",
+    ),
+  )
 
   companion object {
     val sourceAnswersJson =
