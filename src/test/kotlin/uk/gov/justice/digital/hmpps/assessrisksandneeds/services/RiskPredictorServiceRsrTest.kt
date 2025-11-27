@@ -146,6 +146,7 @@ class RiskPredictorServiceRsrTest {
   }
 
   private fun getOasysPredictorNoRsr(): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+    crn,
     listOf(
       RiskPredictorAssessmentDto(
         dateCompleted = LocalDateTime.now(),
@@ -156,11 +157,17 @@ class RiskPredictorServiceRsrTest {
         ogpScoreDto = OasysOgpDto(),
         ogrScoreDto = OasysOgrDto(),
         rsrScoreDto = OasysRsrDto(),
+        ogrs4gScoreDto = null,
+        ogrs4vScoreDto = null,
+        ogp2ScoreDto = null,
+        ovp2ScoreDto = null,
+        snsvScoreDto = null,
       ),
     ),
   )
 
   private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+    crn,
     completedDate.map {
       RiskPredictorAssessmentDto(
         dateCompleted = it,
@@ -181,6 +188,11 @@ class RiskPredictorServiceRsrTest {
         ogpScoreDto = OasysOgpDto(),
         ovpScoreDto = OasysOvpDto(),
         ogrScoreDto = OasysOgrDto(),
+        ogrs4gScoreDto = null,
+        ogrs4vScoreDto = null,
+        ogp2ScoreDto = null,
+        ovp2ScoreDto = null,
+        snsvScoreDto = null,
       )
     },
   )

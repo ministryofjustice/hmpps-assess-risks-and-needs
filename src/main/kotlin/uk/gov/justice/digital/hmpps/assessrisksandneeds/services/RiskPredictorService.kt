@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
@@ -13,6 +14,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 
 @Service
 class RiskPredictorService(
@@ -59,11 +61,34 @@ class RiskPredictorService(
   }
 
   fun getAllRiskScores(identifierType: IdentifierType, identifierValue: String): List<AllPredictorVersioned<Any>> {
-    log.debug("Entered getAllRiskScoresVersioned for {}: {}", identifierType, identifierValue)
+    log.debug("Entered getAllRiskScores for ${identifierType.value}: $identifierValue")
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf(identifierType.value to identifierValue))
     communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)
-    return AllPredictorVersionedLegacyDto.from(oasysRiskPredictorsDto)
+    return oasysRiskPredictorsDto
+      ?.assessments
+      ?.filter { it.assessmentType in listOf("LAYER3", "LAYER1") }
+      ?.map(AllPredictorVersionedLegacyDto::from)
+      .orEmpty()
+  }
+
+  fun getAllRiskScoresByAssessmentId(id: Long): AllPredictorVersioned<Any> {
+    log.debug("Entered getAllRiskScoresByAssessmentId for ID: $id")
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS_BY_ASSESSMENT_ID, mapOf("id" to id))
+    val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsByAssessmentId(id)
+    val crn = oasysRiskPredictorsDto?.probNumber
+    communityClient.verifyUserAccess(crn!!, RequestData.getUserName())
+    return oasysRiskPredictorsDto
+      ?.assessments
+      ?.first()
+      ?.let { assessment: RiskPredictorAssessmentDto ->
+        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: 0
+        if (version >= 6) {
+          AllPredictorVersionedDto.from(assessment)
+        } else {
+          AllPredictorVersionedLegacyDto.from(assessment)
+        }
+      } ?: throw NoSuchElementException("Risk predictors for assessment $id not found")
   }
 
   fun getAllRiskScoresWithoutLaoCheck(crn: String): List<RiskScoresDto> {

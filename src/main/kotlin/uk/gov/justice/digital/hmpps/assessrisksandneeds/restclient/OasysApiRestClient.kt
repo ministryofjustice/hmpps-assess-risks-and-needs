@@ -110,6 +110,35 @@ class OasysApiRestClient(
       .block().also { log.info("Retrieved risk predictor scores for completed Assessments for crn $crn") }
   }
 
+  fun getRiskPredictorsByAssessmentId(
+    id: Long,
+  ): OasysRiskPredictorsDto? {
+    val path = "/ass/riskscrass/ALLOW/$id"
+    return webClient
+      .get(path)
+      .retrieve()
+      .onStatus({ it.is4xxClientError }) {
+        log.error("4xx Error retrieving risk predictor scores for Assessment ID $id: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .onStatus({ it.is5xxServerError }) {
+        log.error("5xx Error retrieving risk predictor scores for Assessment ID $id: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve risk predictor scores for Assessment ID $id",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .bodyToMono(OasysRiskPredictorsDto::class.java)
+      .block().also { log.info("Retrieved risk predictor scores for Assessment ID $id") }
+  }
+
   fun getAssessmentTimeline(
     identifier: PersonIdentifier,
   ): Timeline? {
