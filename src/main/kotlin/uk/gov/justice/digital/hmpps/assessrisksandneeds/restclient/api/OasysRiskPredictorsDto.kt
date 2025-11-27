@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStat
 import java.time.LocalDateTime
 
 data class OasysRiskPredictorsDto(
+  var probNumber: String? = null,
   var assessments: List<RiskPredictorAssessmentDto>? = emptyList(),
 )
 

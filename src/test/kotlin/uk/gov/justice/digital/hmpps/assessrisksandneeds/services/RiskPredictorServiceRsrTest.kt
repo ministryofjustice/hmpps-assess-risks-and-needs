@@ -146,6 +146,7 @@ class RiskPredictorServiceRsrTest {
   }
 
   private fun getOasysPredictorNoRsr(): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+    crn,
     listOf(
       RiskPredictorAssessmentDto(
         dateCompleted = LocalDateTime.now(),
@@ -166,6 +167,7 @@ class RiskPredictorServiceRsrTest {
   )
 
   private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+    crn,
     completedDate.map {
       RiskPredictorAssessmentDto(
         dateCompleted = it,

@@ -81,6 +81,7 @@ class RiskPredictorServiceTest {
       val crn = "X12345"
 
       val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+        crn,
         listOf(
           provideVersionOneOutput(),
         ),
@@ -149,6 +150,7 @@ class RiskPredictorServiceTest {
       val crn = "X12345"
 
       val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+        crn,
         listOf(
           provideVersionOneOutput(),
         ),
@@ -220,6 +222,7 @@ class RiskPredictorServiceTest {
       val id = 1234567890L
 
       val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+        "X123456",
         listOf(
           provideVersionOneOutput(),
         ),
@@ -275,6 +278,7 @@ class RiskPredictorServiceTest {
       val id = 1234567890L
 
       val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+        "X123456",
         listOf(
           provideVersionTwoStaticOutput(),
         ),
@@ -324,6 +328,7 @@ class RiskPredictorServiceTest {
       val id = 1234567890L
 
       val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+        "X123456",
         listOf(
           provideVersionTwoDynamicOutput(),
         ),
