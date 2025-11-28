@@ -58,7 +58,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(rsrScores).hasSize(3)
-    assertThat(rsrScores[0].version).isEqualTo(1)
+    assertThat(rsrScores[0].outputVersion).isEqualTo("1")
     val firstLegacyRsrScore = rsrScores[0] as RsrPredictorVersionedLegacyDto
     with(firstLegacyRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
@@ -69,7 +69,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
     }
 
-    assertThat(rsrScores[2].version).isEqualTo(1)
+    assertThat(rsrScores[2].outputVersion).isEqualTo("1")
     val thirdLegacyRsrScore = rsrScores[2] as RsrPredictorVersionedLegacyDto
     with(thirdLegacyRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))

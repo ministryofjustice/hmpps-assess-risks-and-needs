@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.slf4j.Logger
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
@@ -75,7 +78,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   }
 
   @RequestMapping(path = ["/risks/predictors/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")
+  @Operation(description = "Gets risk predictors scores for all latest completed assessments")
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
@@ -99,6 +102,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
 
   @RequestMapping(path = ["/assessments/id/{id}/risk/predictors/all"], method = [RequestMethod.GET])
   @Operation(description = "Gets risk predictors scores for the requested assessment ID")
+  @Schema(oneOf = [AllPredictorVersionedLegacyDto::class, AllPredictorVersionedDto::class])
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "User does not have permission to access assessment with provided ID"),

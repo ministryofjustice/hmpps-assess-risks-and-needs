@@ -151,7 +151,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
             AllPredictorVersionedLegacyDto(
               completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
               status = AssessmentStatus.COMPLETE,
-              version = 1,
+              outputVersion = "1",
               output = RiskScoresDto(
                 groupReconvictionScore = OgrScoreDto(
                   oneYear = BigDecimal.valueOf(3),
@@ -251,7 +251,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
             AllPredictorVersionedLegacyDto(
               completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
               status = AssessmentStatus.COMPLETE,
-              version = 1,
+              outputVersion = "1",
               output = RiskScoresDto(
                 groupReconvictionScore = OgrScoreDto(
                   oneYear = BigDecimal.valueOf(3),
@@ -313,7 +313,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
             AllPredictorVersionedDto(
               completedDate = LocalDateTime.of(2022, 6, 12, 18, 23, 20),
               status = AssessmentStatus.COMPLETE,
-              version = 2,
+              outputVersion = "2",
               output = AllPredictorDto(
                 allReoffendingPredictor = StaticOrDynamicPredictorDto(
                   staticOrDynamic = ScoreType.STATIC,
