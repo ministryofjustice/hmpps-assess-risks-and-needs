@@ -165,7 +165,7 @@ class RiskPredictorServiceTest {
 
       val result = allRiskScores[0]
       assertThat(result.completedDate).isEqualTo(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
-      assertThat(result.version).isEqualTo(1)
+      assertThat(result.outputVersion).isEqualTo("1")
       val outputTyped = result.output as RiskScoresDto
 
       // Should
@@ -236,7 +236,7 @@ class RiskPredictorServiceTest {
       val result = riskPredictorsService.getAllRiskScoresByAssessmentId(id)
 
       assertThat(result.completedDate).isEqualTo(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
-      assertThat(result.version).isEqualTo(1)
+      assertThat(result.outputVersion).isEqualTo("1")
       val outputTyped = result.output as RiskScoresDto
 
       // Should
@@ -292,7 +292,7 @@ class RiskPredictorServiceTest {
       val result = riskPredictorsService.getAllRiskScoresByAssessmentId(id)
 
       assertThat(result.completedDate).isEqualTo(LocalDateTime.of(2025, 1, 2, 12, 0, 0))
-      assertThat(result.version).isEqualTo(2)
+      assertThat(result.outputVersion).isEqualTo("2")
       val outputTyped = result.output as AllPredictorDto
 
       // Should
@@ -342,7 +342,7 @@ class RiskPredictorServiceTest {
       val result = riskPredictorsService.getAllRiskScoresByAssessmentId(id)
 
       assertThat(result.completedDate).isEqualTo(LocalDateTime.of(2025, 1, 3, 12, 0, 0))
-      assertThat(result.version).isEqualTo(2)
+      assertThat(result.outputVersion).isEqualTo("2")
       val outputTyped = result.output as AllPredictorDto
 
       // Should

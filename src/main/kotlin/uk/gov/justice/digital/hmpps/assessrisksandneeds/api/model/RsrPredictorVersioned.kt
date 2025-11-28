@@ -6,8 +6,9 @@ import java.time.LocalDateTime
 
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,
-  include = JsonTypeInfo.As.PROPERTY,
-  property = "version",
+  include = JsonTypeInfo.As.EXISTING_PROPERTY,
+  property = "outputVersion",
+  visible = true,
 )
 @JsonSubTypes(
   JsonSubTypes.Type(value = RsrPredictorVersionedLegacyDto::class, name = "1"),
@@ -17,6 +18,6 @@ sealed interface RsrPredictorVersioned<out T> {
   val completedDate: LocalDateTime?
   val source: RsrScoreSource
   val status: AssessmentStatus
-  val version: Int?
+  val outputVersion: String
   val output: T?
 }

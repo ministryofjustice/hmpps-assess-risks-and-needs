@@ -70,7 +70,7 @@ class RiskPredictorServiceRsrTest {
     val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
 
     assertThat(rsrScores).hasSize(1)
-    assertThat(rsrScores[0].version).isEqualTo(1)
+    assertThat(rsrScores[0].outputVersion).isEqualTo("1")
     val legacyRsrScore = rsrScores[0] as RsrPredictorVersionedLegacyDto
     with(legacyRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
