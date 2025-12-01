@@ -25,7 +25,7 @@ data class AllPredictorDto(
   companion object {
 
     fun from(assessment: AllRisksPredictorAssessmentDto): AllPredictorDto = with(assessment) {
-      buildToAllPredictorDto(
+      buildAllPredictorDto(
         ogp2ScoreDto,
         ogrs4gScoreDto,
         ovp2ScoreDto,
@@ -37,7 +37,7 @@ data class AllPredictorDto(
     }
 
     fun from(assessment: RisksCrAssPredictorAssessmentDto): AllPredictorDto = with(assessment) {
-      buildToAllPredictorDto(
+      buildAllPredictorDto(
         ogp2ScoreDto,
         ogrs4gScoreDto,
         ovp2ScoreDto,
@@ -48,7 +48,7 @@ data class AllPredictorDto(
       )
     }
 
-    fun buildToAllPredictorDto(
+    fun buildAllPredictorDto(
       ogp: OasysOgp2Dto?,
       ogrs4g: OasysOgrs4gDto?,
       ovp: OasysOvp2Dto?,
