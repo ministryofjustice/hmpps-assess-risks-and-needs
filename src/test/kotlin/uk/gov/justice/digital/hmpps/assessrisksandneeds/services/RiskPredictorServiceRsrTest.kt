@@ -21,13 +21,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksOasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -145,10 +145,9 @@ class RiskPredictorServiceRsrTest {
     assertThat(rsrHistory).isEmpty()
   }
 
-  private fun getOasysPredictorNoRsr(): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
-    crn,
+  private fun getOasysPredictorNoRsr(): AllRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
     listOf(
-      RiskPredictorAssessmentDto(
+      AllRisksPredictorAssessmentDto(
         dateCompleted = LocalDateTime.now(),
         assessmentType = "LAYER3",
         assessmentStatus = AssessmentStatus.COMPLETE,
@@ -166,10 +165,9 @@ class RiskPredictorServiceRsrTest {
     ),
   )
 
-  private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
-    crn,
+  private fun getOasysPredictor(vararg completedDate: LocalDateTime): AllRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
     completedDate.map {
-      RiskPredictorAssessmentDto(
+      AllRisksPredictorAssessmentDto(
         dateCompleted = it,
         assessmentType = "LAYER3",
         assessmentStatus = AssessmentStatus.COMPLETE,

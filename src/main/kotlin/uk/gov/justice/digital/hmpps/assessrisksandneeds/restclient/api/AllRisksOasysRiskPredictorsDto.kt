@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import java.time.LocalDateTime
 
-data class OasysRiskPredictorsDto(
-  var probNumber: String? = null,
-  var assessments: List<RiskPredictorAssessmentDto>? = emptyList(),
+data class AllRisksOasysRiskPredictorsDto(
+  var assessments: List<AllRisksPredictorAssessmentDto>? = emptyList(),
 )
 
-data class RiskPredictorAssessmentDto(
+data class AllRisksPredictorAssessmentDto(
   val dateCompleted: LocalDateTime,
   val assessmentType: String,
   val assessmentStatus: AssessmentStatus,

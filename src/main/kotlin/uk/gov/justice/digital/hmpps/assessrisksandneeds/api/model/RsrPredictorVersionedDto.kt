@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import java.time.LocalDateTime
 
 data class RsrPredictorVersionedDto(
@@ -15,9 +15,9 @@ data class RsrPredictorVersionedDto(
 
   companion object {
 
-    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorVersionedDto> = oasysPredictorsDtos.map { from(it) }
+    fun from(oasysPredictorsDtos: List<AllRisksPredictorAssessmentDto>): List<RsrPredictorVersionedDto> = oasysPredictorsDtos.map { from(it) }
 
-    fun from(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorVersionedDto = RsrPredictorVersionedDto(
+    fun from(oasysPredictorsDto: AllRisksPredictorAssessmentDto): RsrPredictorVersionedDto = RsrPredictorVersionedDto(
       completedDate = oasysPredictorsDto.dateCompleted,
       source = RsrScoreSource.OASYS,
       status = oasysPredictorsDto.assessmentStatus,

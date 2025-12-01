@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.AllPredi
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksOasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgp2Dto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
@@ -32,10 +34,10 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvp2Dto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysSnsvDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssOasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -80,16 +82,15 @@ class RiskPredictorServiceTest {
       // Given
       val crn = "X12345"
 
-      val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
-        crn,
+      val allRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
         listOf(
-          provideVersionOneOutput(),
+          provideVersionOneAllRisksOutput(),
         ),
       )
 
       every {
         oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
-      }.returns(oasysRiskPredictorsDto)
+      }.returns(allRisksOasysRiskPredictorsDto)
 
       // When
       val allRiskScores = riskPredictorsService.getAllRiskScores(crn)
@@ -149,16 +150,15 @@ class RiskPredictorServiceTest {
       // Given
       val crn = "X12345"
 
-      val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
-        crn,
+      val allRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
         listOf(
-          provideVersionOneOutput(),
+          provideVersionOneAllRisksOutput(),
         ),
       )
 
       every {
         oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
-      }.returns(oasysRiskPredictorsDto)
+      }.returns(allRisksOasysRiskPredictorsDto)
 
       // When
       val allRiskScores = riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn)
@@ -221,21 +221,20 @@ class RiskPredictorServiceTest {
       // Given
       val id = 1234567890L
 
-      val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+      val risksCrAssOasysRiskPredictorsDto = RisksCrAssOasysRiskPredictorsDto(
         "X123456",
         listOf(
-          provideVersionOneOutput(),
+          provideVersionOneRisksCrAssOutput(),
         ),
       )
 
       every {
         oasysApiClient.getRiskPredictorsByAssessmentId(id)
-      }.returns(oasysRiskPredictorsDto)
+      }.returns(risksCrAssOasysRiskPredictorsDto)
 
       // When
       val result = riskPredictorsService.getAllRiskScoresByAssessmentId(id)
 
-      assertThat(result.completedDate).isEqualTo(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
       assertThat(result.outputVersion).isEqualTo("1")
       val outputTyped = result.output as RiskScoresDto
 
@@ -277,21 +276,20 @@ class RiskPredictorServiceTest {
       // Given
       val id = 1234567890L
 
-      val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+      val risksCrAssOasysRiskPredictorsDto = RisksCrAssOasysRiskPredictorsDto(
         "X123456",
         listOf(
-          provideVersionTwoStaticOutput(),
+          provideVersionTwoStaticRisksCrAssOutput(),
         ),
       )
 
       every {
         oasysApiClient.getRiskPredictorsByAssessmentId(id)
-      }.returns(oasysRiskPredictorsDto)
+      }.returns(risksCrAssOasysRiskPredictorsDto)
 
       // When
       val result = riskPredictorsService.getAllRiskScoresByAssessmentId(id)
 
-      assertThat(result.completedDate).isEqualTo(LocalDateTime.of(2025, 1, 2, 12, 0, 0))
       assertThat(result.outputVersion).isEqualTo("2")
       val outputTyped = result.output as AllPredictorDto
 
@@ -327,21 +325,20 @@ class RiskPredictorServiceTest {
       // Given
       val id = 1234567890L
 
-      val oasysRiskPredictorsDto = OasysRiskPredictorsDto(
+      val risksCrAssOasysRiskPredictorsDto = RisksCrAssOasysRiskPredictorsDto(
         "X123456",
         listOf(
-          provideVersionTwoDynamicOutput(),
+          provideVersionTwoDynamicRisksCrAssOutput(),
         ),
       )
 
       every {
         oasysApiClient.getRiskPredictorsByAssessmentId(id)
-      }.returns(oasysRiskPredictorsDto)
+      }.returns(risksCrAssOasysRiskPredictorsDto)
 
       // When
       val result = riskPredictorsService.getAllRiskScoresByAssessmentId(id)
 
-      assertThat(result.completedDate).isEqualTo(LocalDateTime.of(2025, 1, 3, 12, 0, 0))
       assertThat(result.outputVersion).isEqualTo("2")
       val outputTyped = result.output as AllPredictorDto
 
@@ -373,7 +370,7 @@ class RiskPredictorServiceTest {
     }
   }
 
-  fun provideVersionOneOutput(): RiskPredictorAssessmentDto = RiskPredictorAssessmentDto(
+  fun provideVersionOneAllRisksOutput(): AllRisksPredictorAssessmentDto = AllRisksPredictorAssessmentDto(
     dateCompleted = LocalDateTime.of(2025, 1, 1, 12, 0, 0),
     assessmentType = "LAYER3",
     assessmentStatus = AssessmentStatus.COMPLETE,
@@ -417,7 +414,7 @@ class RiskPredictorServiceTest {
     snsvScoreDto = null,
   )
 
-  fun provideVersionTwoStaticOutput(): RiskPredictorAssessmentDto = RiskPredictorAssessmentDto(
+  fun provideVersionTwoStaticAllRisksOutput(): AllRisksPredictorAssessmentDto = AllRisksPredictorAssessmentDto(
     dateCompleted = LocalDateTime.of(2025, 1, 2, 12, 0, 0),
     assessmentType = "LAYER3",
     assessmentStatus = AssessmentStatus.COMPLETE,
@@ -484,10 +481,179 @@ class RiskPredictorServiceTest {
     ),
   )
 
-  fun provideVersionTwoDynamicOutput(): RiskPredictorAssessmentDto = RiskPredictorAssessmentDto(
+  fun provideVersionTwoDynamicAllRisksOutput(): AllRisksPredictorAssessmentDto = AllRisksPredictorAssessmentDto(
     dateCompleted = LocalDateTime.of(2025, 1, 3, 12, 0, 0),
     assessmentType = "LAYER3",
     assessmentStatus = AssessmentStatus.COMPLETE,
+    ogpScoreDto = OasysOgpDto(
+      ogpStWesc = BigDecimal.valueOf(3),
+      ogpDyWesc = BigDecimal.valueOf(7),
+      ogpTotWesc = BigDecimal.valueOf(10),
+      ogp1Year = BigDecimal.valueOf(4),
+      ogp2Year = BigDecimal.valueOf(8),
+      ogpRisk = LOW.type,
+    ),
+    ovpScoreDto = OasysOvpDto(
+      ovpStWesc = BigDecimal.valueOf(14),
+      ovpDyWesc = BigDecimal.valueOf(3),
+      ovpTotWesc = BigDecimal.valueOf(17),
+      ovp1Year = BigDecimal.valueOf(4),
+      ovp2Year = BigDecimal.valueOf(7),
+      ovpRisk = LOW.type,
+    ),
+    ogrScoreDto = OasysOgrDto(
+      ogrs31Year = BigDecimal.valueOf(3),
+      ogrs32Year = BigDecimal.valueOf(5),
+      ogrs3RiskRecon = LOW.type,
+    ),
+    rsrScoreDto = OasysRsrDto(
+      rsrPercentageScore = BigDecimal.valueOf(50.1234),
+      rsrStaticOrDynamic = ScoreType.DYNAMIC,
+      rsrAlgorithmVersion = "6",
+      scoreLevel = MEDIUM.type,
+    ),
+    ospScoreDto = OasysOspDto(
+      ospDirectContactPercentageScore = BigDecimal.valueOf(2.81),
+      ospIndirectImagesChildrenPercentageScore = BigDecimal.valueOf(1.07),
+      ospDirectContactScoreLevel = MEDIUM.type,
+      ospIndirectImagesChildrenScoreLevel = MEDIUM.type,
+    ),
+    ogrs4gScoreDto = OasysOgrs4gDto(
+      ogrs4gYr2 = BigDecimal.valueOf(1.23),
+      ogrs4gBand = MEDIUM.type,
+      ogrs4gCalculated = "Y",
+    ),
+    ogrs4vScoreDto = OasysOgrs4vDto(
+      ogrs4vYr2 = BigDecimal.valueOf(1.34),
+      ogrs4vBand = MEDIUM.type,
+      ogrs4vCalculated = "Y",
+    ),
+    ogp2ScoreDto = OasysOgp2Dto(
+      ogp2Yr2 = BigDecimal.valueOf(10.23),
+      ogp2Band = HIGH.type,
+      ogp2Calculated = "Y",
+    ),
+    ovp2ScoreDto = OasysOvp2Dto(
+      ovp2Yr2 = BigDecimal.valueOf(10.34),
+      ovp2Band = HIGH.type,
+      ovp2Calculated = "Y",
+    ),
+    snsvScoreDto = OasysSnsvDto(
+      snsvStaticYr2 = BigDecimal.valueOf(1.45),
+      snsvDynamicYr2 = BigDecimal.valueOf(40.23),
+      snsvStaticYr2Band = MEDIUM.type,
+      snsvDynamicYr2Band = HIGH.type,
+      snsvStaticCalculated = "Y",
+      snsvDynamicCalculated = "Y",
+    ),
+  )
+
+  fun provideVersionOneRisksCrAssOutput(): RisksCrAssPredictorAssessmentDto = RisksCrAssPredictorAssessmentDto(
+    ogpScoreDto = OasysOgpDto(
+      ogpStWesc = BigDecimal.valueOf(3),
+      ogpDyWesc = BigDecimal.valueOf(7),
+      ogpTotWesc = BigDecimal.valueOf(10),
+      ogp1Year = BigDecimal.valueOf(4),
+      ogp2Year = BigDecimal.valueOf(8),
+      ogpRisk = LOW.type,
+    ),
+    ovpScoreDto = OasysOvpDto(
+      ovpStWesc = BigDecimal.valueOf(14),
+      ovpDyWesc = BigDecimal.valueOf(3),
+      ovpTotWesc = BigDecimal.valueOf(17),
+      ovp1Year = BigDecimal.valueOf(4),
+      ovp2Year = BigDecimal.valueOf(7),
+      ovpRisk = LOW.type,
+    ),
+    ogrScoreDto = OasysOgrDto(
+      ogrs31Year = BigDecimal.valueOf(3),
+      ogrs32Year = BigDecimal.valueOf(5),
+      ogrs3RiskRecon = LOW.type,
+    ),
+    rsrScoreDto = OasysRsrDto(
+      rsrPercentageScore = BigDecimal.valueOf(50.1234),
+      rsrStaticOrDynamic = ScoreType.DYNAMIC,
+      rsrAlgorithmVersion = "5",
+      scoreLevel = MEDIUM.type,
+    ),
+    ospScoreDto = OasysOspDto(
+      ospImagePercentageScore = BigDecimal.valueOf(2.81),
+      ospContactPercentageScore = BigDecimal.valueOf(1.07),
+      ospImageScoreLevel = MEDIUM.type,
+      ospContactScoreLevel = MEDIUM.type,
+    ),
+    ogrs4gScoreDto = null,
+    ogrs4vScoreDto = null,
+    ogp2ScoreDto = null,
+    ovp2ScoreDto = null,
+    snsvScoreDto = null,
+  )
+
+  fun provideVersionTwoStaticRisksCrAssOutput(): RisksCrAssPredictorAssessmentDto = RisksCrAssPredictorAssessmentDto(
+    ogpScoreDto = OasysOgpDto(
+      ogpStWesc = BigDecimal.valueOf(3),
+      ogpDyWesc = BigDecimal.valueOf(7),
+      ogpTotWesc = BigDecimal.valueOf(10),
+      ogp1Year = BigDecimal.valueOf(4),
+      ogp2Year = BigDecimal.valueOf(8),
+      ogpRisk = LOW.type,
+    ),
+    ovpScoreDto = OasysOvpDto(
+      ovpStWesc = BigDecimal.valueOf(14),
+      ovpDyWesc = BigDecimal.valueOf(3),
+      ovpTotWesc = BigDecimal.valueOf(17),
+      ovp1Year = BigDecimal.valueOf(4),
+      ovp2Year = BigDecimal.valueOf(7),
+      ovpRisk = LOW.type,
+    ),
+    ogrScoreDto = OasysOgrDto(
+      ogrs31Year = BigDecimal.valueOf(3),
+      ogrs32Year = BigDecimal.valueOf(5),
+      ogrs3RiskRecon = LOW.type,
+    ),
+    rsrScoreDto = OasysRsrDto(
+      rsrPercentageScore = BigDecimal.valueOf(2.34),
+      rsrStaticOrDynamic = ScoreType.STATIC,
+      rsrAlgorithmVersion = "6",
+      scoreLevel = LOW.type,
+    ),
+    ospScoreDto = OasysOspDto(
+      ospDirectContactPercentageScore = BigDecimal.valueOf(2.81),
+      ospIndirectImagesChildrenPercentageScore = BigDecimal.valueOf(1.07),
+      ospDirectContactScoreLevel = MEDIUM.type,
+      ospIndirectImagesChildrenScoreLevel = MEDIUM.type,
+    ),
+    ogrs4gScoreDto = OasysOgrs4gDto(
+      ogrs4gYr2 = BigDecimal.valueOf(1.23),
+      ogrs4gBand = MEDIUM.type,
+      ogrs4gCalculated = "Y",
+    ),
+    ogrs4vScoreDto = OasysOgrs4vDto(
+      ogrs4vYr2 = BigDecimal.valueOf(1.34),
+      ogrs4vBand = MEDIUM.type,
+      ogrs4vCalculated = "Y",
+    ),
+    ogp2ScoreDto = OasysOgp2Dto(
+      ogp2Yr2 = BigDecimal.valueOf(10.23),
+      ogp2Band = HIGH.type,
+      ogp2Calculated = "N",
+    ),
+    ovp2ScoreDto = OasysOvp2Dto(
+      ovp2Yr2 = BigDecimal.valueOf(10.34),
+      ovp2Band = HIGH.type,
+      ovp2Calculated = "N",
+    ),
+    snsvScoreDto = OasysSnsvDto(
+      snsvStaticYr2 = BigDecimal.valueOf(1.45),
+      snsvDynamicYr2 = BigDecimal.valueOf(40.23),
+      snsvStaticYr2Band = MEDIUM.type,
+      snsvDynamicYr2Band = HIGH.type,
+      snsvStaticCalculated = "Y",
+      snsvDynamicCalculated = "N",
+    ),
+  )
+
+  fun provideVersionTwoDynamicRisksCrAssOutput(): RisksCrAssPredictorAssessmentDto = RisksCrAssPredictorAssessmentDto(
     ogpScoreDto = OasysOgpDto(
       ogpStWesc = BigDecimal.valueOf(3),
       ogpDyWesc = BigDecimal.valueOf(7),

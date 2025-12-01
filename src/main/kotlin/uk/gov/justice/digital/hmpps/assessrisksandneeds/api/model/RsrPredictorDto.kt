@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -26,9 +26,9 @@ data class RsrPredictorDto(
 
   companion object {
 
-    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { from(it) }
+    fun from(oasysPredictorsDtos: List<AllRisksPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { from(it) }
 
-    fun from(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorDto {
+    fun from(oasysPredictorsDto: AllRisksPredictorAssessmentDto): RsrPredictorDto {
       with(oasysPredictorsDto) {
         return RsrPredictorDto(
           rsrPercentageScore = rsrScoreDto.rsrPercentageScore,
@@ -52,9 +52,9 @@ data class RsrPredictorDto(
       }
     }
 
-    fun fromVersioned(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { fromVersioned(it) }
+    fun fromVersioned(oasysPredictorsDtos: List<AllRisksPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { fromVersioned(it) }
 
-    fun fromVersioned(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorDto {
+    fun fromVersioned(oasysPredictorsDto: AllRisksPredictorAssessmentDto): RsrPredictorDto {
       with(oasysPredictorsDto) {
         return RsrPredictorDto(
           rsrPercentageScore = rsrScoreDto.rsrPercentageScore,

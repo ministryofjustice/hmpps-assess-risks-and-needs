@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
 
 @Service
 class RiskPredictorService(
@@ -81,7 +81,7 @@ class RiskPredictorService(
     return oasysRiskPredictorsDto
       ?.assessments
       ?.first()
-      ?.let { assessment: RiskPredictorAssessmentDto ->
+      ?.let { assessment: RisksCrAssPredictorAssessmentDto ->
         val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: 0
         if (version >= 6) {
           AllPredictorVersionedDto.from(assessment)
