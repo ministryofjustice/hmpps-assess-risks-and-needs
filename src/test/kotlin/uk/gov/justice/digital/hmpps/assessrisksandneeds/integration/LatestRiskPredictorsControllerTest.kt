@@ -249,8 +249,6 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
         assertThat(it).usingRecursiveComparison()
           .isEqualTo(
             AllPredictorVersionedLegacyDto(
-              completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
-              status = AssessmentStatus.COMPLETE,
               outputVersion = "1",
               output = RiskScoresDto(
                 groupReconvictionScore = OgrScoreDto(
@@ -311,8 +309,6 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
         assertThat(it).usingRecursiveComparison()
           .isEqualTo(
             AllPredictorVersionedDto(
-              completedDate = LocalDateTime.of(2022, 6, 12, 18, 23, 20),
-              status = AssessmentStatus.COMPLETE,
               outputVersion = "2",
               output = AllPredictorDto(
                 allReoffendingPredictor = StaticOrDynamicPredictorDto(

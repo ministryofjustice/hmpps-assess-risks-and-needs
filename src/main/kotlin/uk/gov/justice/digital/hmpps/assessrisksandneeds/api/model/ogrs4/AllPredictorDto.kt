@@ -2,7 +2,16 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4
 
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgp2Dto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4gDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4vDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvp2Dto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysSnsvDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
+import java.math.BigDecimal
 
 data class AllPredictorDto(
   val allReoffendingPredictor: StaticOrDynamicPredictorDto? = null,
@@ -15,69 +24,102 @@ data class AllPredictorDto(
 
   companion object {
 
-    fun from(assessment: RiskPredictorAssessmentDto): AllPredictorDto = AllPredictorDto(
-      allReoffendingPredictor = populateAllPredictor(assessment),
-      violentReoffendingPredictor = populateViolentPredictor(assessment),
-      seriousViolentReoffendingPredictor = populateSeriousViolentPredictor(assessment),
+    fun from(assessment: AllRisksPredictorAssessmentDto): AllPredictorDto = with(assessment) {
+      buildToAllPredictorDto(
+        ogp2ScoreDto,
+        ogrs4gScoreDto,
+        ovp2ScoreDto,
+        ogrs4vScoreDto,
+        snsvScoreDto,
+        ospScoreDto,
+        rsrScoreDto,
+      )
+    }
+
+    fun from(assessment: RisksCrAssPredictorAssessmentDto): AllPredictorDto = with(assessment) {
+      buildToAllPredictorDto(
+        ogp2ScoreDto,
+        ogrs4gScoreDto,
+        ovp2ScoreDto,
+        ogrs4vScoreDto,
+        snsvScoreDto,
+        ospScoreDto,
+        rsrScoreDto,
+      )
+    }
+
+    fun buildToAllPredictorDto(
+      ogp: OasysOgp2Dto?,
+      ogrs4g: OasysOgrs4gDto?,
+      ovp: OasysOvp2Dto?,
+      ogrs4v: OasysOgrs4vDto?,
+      snsv: OasysSnsvDto?,
+      osp: OasysOspDto,
+      rsr: OasysRsrDto,
+    ): AllPredictorDto = AllPredictorDto(
+      allReoffendingPredictor = buildStaticOrDynamicPredictorDto(
+        ogp?.ogp2Calculated,
+        ogp?.ogp2Yr2,
+        ogp?.ogp2Band,
+        ogrs4g?.ogrs4gCalculated,
+        ogrs4g?.ogrs4gYr2,
+        ogrs4g?.ogrs4gBand,
+      ),
+
+      violentReoffendingPredictor = buildStaticOrDynamicPredictorDto(
+        ovp?.ovp2Calculated,
+        ovp?.ovp2Yr2,
+        ovp?.ovp2Band,
+        ogrs4v?.ogrs4vCalculated,
+        ogrs4v?.ogrs4vYr2,
+        ogrs4v?.ogrs4vBand,
+      ),
+
+      seriousViolentReoffendingPredictor = buildStaticOrDynamicPredictorDto(
+        snsv?.snsvDynamicCalculated,
+        snsv?.snsvDynamicYr2,
+        snsv?.snsvDynamicYr2Band,
+        snsv?.snsvStaticCalculated,
+        snsv?.snsvStaticYr2,
+        snsv?.snsvStaticYr2Band,
+      ),
+
       directContactSexualReoffendingPredictor = BasePredictorDto(
-        score = assessment.ospScoreDto.ospDirectContactPercentageScore,
-        band = ScoreLevel.findByType(assessment.ospScoreDto.ospDirectContactScoreLevel),
+        score = osp.ospDirectContactPercentageScore,
+        band = ScoreLevel.findByType(osp.ospDirectContactScoreLevel),
       ),
+
       indirectImageContactSexualReoffendingPredictor = BasePredictorDto(
-        score = assessment.ospScoreDto.ospIndirectImagesChildrenPercentageScore,
-        band = ScoreLevel.findByType(assessment.ospScoreDto.ospIndirectImagesChildrenScoreLevel),
+        score = osp.ospIndirectImagesChildrenPercentageScore,
+        band = ScoreLevel.findByType(osp.ospIndirectImagesChildrenScoreLevel),
       ),
+
       combinedSeriousReoffendingPredictor = VersionedStaticOrDynamicPredictorDto(
-        algorithmVersion = assessment.rsrScoreDto.rsrAlgorithmVersion,
-        staticOrDynamic = assessment.rsrScoreDto.rsrStaticOrDynamic,
-        score = assessment.rsrScoreDto.rsrPercentageScore,
-        band = ScoreLevel.findByType(assessment.rsrScoreDto.scoreLevel),
+        algorithmVersion = rsr.rsrAlgorithmVersion,
+        staticOrDynamic = rsr.rsrStaticOrDynamic,
+        score = rsr.rsrPercentageScore,
+        band = ScoreLevel.findByType(rsr.scoreLevel),
       ),
     )
 
-    fun populateAllPredictor(dto: RiskPredictorAssessmentDto): StaticOrDynamicPredictorDto = if (dto.ogp2ScoreDto?.ogp2Calculated?.lowercase() == "y") {
+    fun buildStaticOrDynamicPredictorDto(
+      dynamicCalculated: String?,
+      dynamicYr2: BigDecimal?,
+      dynamicBand: String?,
+      staticCalculated: String?,
+      staticYr2: BigDecimal?,
+      staticBand: String?,
+    ): StaticOrDynamicPredictorDto? = if (dynamicCalculated?.lowercase() == "y") {
       StaticOrDynamicPredictorDto(
         staticOrDynamic = ScoreType.DYNAMIC,
-        score = dto.ogp2ScoreDto.ogp2Yr2,
-        band = ScoreLevel.findByType(dto.ogp2ScoreDto.ogp2Band),
+        score = dynamicYr2,
+        band = ScoreLevel.findByType(dynamicBand),
       )
-    } else if (dto.ogrs4gScoreDto?.ogrs4gCalculated?.lowercase() == "y") {
+    } else if (staticCalculated?.lowercase() == "y") {
       StaticOrDynamicPredictorDto(
         staticOrDynamic = ScoreType.STATIC,
-        score = dto.ogrs4gScoreDto.ogrs4gYr2,
-        band = ScoreLevel.findByType(dto.ogrs4gScoreDto.ogrs4gBand),
-      )
-    } else {
-      StaticOrDynamicPredictorDto()
-    }
-
-    fun populateViolentPredictor(dto: RiskPredictorAssessmentDto): StaticOrDynamicPredictorDto? = if (dto.ovp2ScoreDto?.ovp2Calculated?.lowercase() == "y") {
-      StaticOrDynamicPredictorDto(
-        staticOrDynamic = ScoreType.DYNAMIC,
-        score = dto.ovp2ScoreDto.ovp2Yr2,
-        band = ScoreLevel.findByType(dto.ovp2ScoreDto.ovp2Band),
-      )
-    } else if (dto.ogrs4vScoreDto?.ogrs4vCalculated?.lowercase() == "y") {
-      StaticOrDynamicPredictorDto(
-        staticOrDynamic = ScoreType.STATIC,
-        score = dto.ogrs4vScoreDto.ogrs4vYr2,
-        band = ScoreLevel.findByType(dto.ogrs4vScoreDto.ogrs4vBand),
-      )
-    } else {
-      StaticOrDynamicPredictorDto()
-    }
-
-    fun populateSeriousViolentPredictor(dto: RiskPredictorAssessmentDto): StaticOrDynamicPredictorDto? = if (dto.snsvScoreDto?.snsvDynamicCalculated?.lowercase() == "y") {
-      StaticOrDynamicPredictorDto(
-        staticOrDynamic = ScoreType.DYNAMIC,
-        score = dto.snsvScoreDto.snsvDynamicYr2,
-        band = ScoreLevel.findByType(dto.snsvScoreDto.snsvDynamicYr2Band),
-      )
-    } else if (dto.snsvScoreDto?.snsvStaticCalculated?.lowercase() == "y") {
-      StaticOrDynamicPredictorDto(
-        staticOrDynamic = ScoreType.STATIC,
-        score = dto.snsvScoreDto.snsvStaticYr2,
-        band = ScoreLevel.findByType(dto.snsvScoreDto.snsvStaticYr2Band),
+        score = staticYr2,
+        band = ScoreLevel.findByType(staticBand),
       )
     } else {
       StaticOrDynamicPredictorDto()
