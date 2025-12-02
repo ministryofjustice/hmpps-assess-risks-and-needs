@@ -33,8 +33,8 @@ class IntegrationController(
   @Operation(
     description = """
     Gets risk predictors scores for all latest completed assessments from the last 1 year
-    **Deprecated endpoint.**
-    Please use **/risks/predictors/all/{identifierType}/{identifierValue}** instead.
+    Deprecated endpoint.
+    Please use /risks/predictors/all/{identifierType}/{identifierValue} instead.
     This endpoint will be removed in a future release.
     """,
     deprecated = true,
