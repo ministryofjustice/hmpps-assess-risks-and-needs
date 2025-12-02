@@ -23,8 +23,17 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorSe
 
 @RestController
 class RiskPredictorsController(private val riskPredictorService: RiskPredictorService) {
+  @Deprecated("Use /risks/predictors/rsr/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/crn/{crn}/predictors/rsr/history"], method = [RequestMethod.GET])
-  @Operation(description = "Gets RSR score history for a CRN")
+  @Operation(
+    description = """
+    Gets RSR score history for a CRN
+    Deprecated endpoint.
+    Please use /risks/predictors/rsr/{identifierType}/{identifierValue} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
@@ -59,8 +68,17 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     identifierValue: String,
   ): List<RsrPredictorVersioned<Any>> = riskPredictorService.getAllRsrScores(identifierType, identifierValue)
 
+  @Deprecated("Use /risks/predictors/all/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/crn/{crn}/predictors/all"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")
+  @Operation(
+    description = """
+    Gets risk predictors scores for all latest completed assessments from the last 1 year
+    Deprecated endpoint.
+    Please use /risks/predictors/all/{identifierType}/{identifierValue} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
