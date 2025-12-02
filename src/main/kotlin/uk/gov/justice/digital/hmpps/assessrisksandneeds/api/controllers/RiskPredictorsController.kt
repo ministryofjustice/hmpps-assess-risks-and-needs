@@ -32,7 +32,8 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     Please use **/risks/predictors/rsr/{identifierType}/{identifierValue}** instead.
     This endpoint will be removed in a future release.
     """,
-    deprecated = true)
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
@@ -76,7 +77,8 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     Please use **/risks/predictors/all/{identifierType}/{identifierValue}** instead.
     This endpoint will be removed in a future release.
     """,
-    deprecated = true)
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),

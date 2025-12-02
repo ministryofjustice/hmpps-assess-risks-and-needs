@@ -37,7 +37,8 @@ class IntegrationController(
     Please use **/risks/predictors/all/{identifierType}/{identifierValue}** instead.
     This endpoint will be removed in a future release.
     """,
-    deprecated = true)
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(
