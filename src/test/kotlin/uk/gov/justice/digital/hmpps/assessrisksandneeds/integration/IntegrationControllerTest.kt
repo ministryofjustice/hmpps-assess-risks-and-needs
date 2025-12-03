@@ -261,6 +261,20 @@ class IntegrationControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get criminogenic needs by crn for an incomplete assessment`() {
+    val needsDto = webTestClient.get().uri("/needs/$crn?excludeIncomplete=false")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(needsDto?.assessedOn).isNull()
+    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
+    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+  }
+
+  @Test
   fun `get criminogenic needs by crn within timeframe`() {
     val timeframe = 60L
     val needsDto = webTestClient.get().uri("/needs/$crn/$timeframe")

@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifi
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredAnswer
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isCompletedWithinTimeframe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithinTimeframe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
@@ -29,7 +30,7 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient)
       throw EntityNotFoundException("No needs found for CRN: $crn")
     }
 
-    return AssessmentNeedsDto.from(sectionSummary.assessmentNeeds(), sectionSummary.assessment.completedDate!!)
+    return AssessmentNeedsDto.from(sectionSummary.assessmentNeeds(), sectionSummary.assessment.completedDate)
   }
 
   private fun SectionSummary.assessmentNeeds(): List<AssessmentNeedDto> = listOfNotNull(
@@ -69,6 +70,6 @@ fun needsPredicate(timeframe: Long, excludeIncomplete: Boolean = true): (Assessm
   listOf(
     it.assessmentType == AssessmentType.LAYER3.name,
     if (excludeIncomplete) it.status == AssessmentStatus.COMPLETE.name else true,
-    it.isWithinTimeframe(timeframe),
+    if (excludeIncomplete) it.isCompletedWithinTimeframe(timeframe) else it.isWithinTimeframe(timeframe),
   ).all { ok -> ok }
 }
