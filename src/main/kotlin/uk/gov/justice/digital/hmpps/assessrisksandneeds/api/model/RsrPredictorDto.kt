@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -19,16 +19,16 @@ data class RsrPredictorDto(
   val completedDate: LocalDateTime? = null,
   val signedDate: LocalDateTime? = null,
   val staticOrDynamic: ScoreType? = null,
-  val source: RsrScoreSource,
-  val status: AssessmentStatus,
+  val source: RsrScoreSource? = null,
+  val status: AssessmentStatus? = null,
   val algorithmVersion: String? = null,
 ) {
 
   companion object {
 
-    fun from(oasysPredictorsDtos: List<RiskPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { from(it) }
+    fun from(oasysPredictorsDtos: List<AllRisksPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { from(it) }
 
-    fun from(oasysPredictorsDto: RiskPredictorAssessmentDto): RsrPredictorDto {
+    fun from(oasysPredictorsDto: AllRisksPredictorAssessmentDto): RsrPredictorDto {
       with(oasysPredictorsDto) {
         return RsrPredictorDto(
           rsrPercentageScore = rsrScoreDto.rsrPercentageScore,
@@ -47,6 +47,27 @@ data class RsrPredictorDto(
           staticOrDynamic = rsrScoreDto.rsrStaticOrDynamic,
           source = RsrScoreSource.OASYS,
           status = assessmentStatus,
+          algorithmVersion = rsrScoreDto.rsrAlgorithmVersion,
+        )
+      }
+    }
+
+    fun fromVersioned(oasysPredictorsDtos: List<AllRisksPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { fromVersioned(it) }
+
+    fun fromVersioned(oasysPredictorsDto: AllRisksPredictorAssessmentDto): RsrPredictorDto {
+      with(oasysPredictorsDto) {
+        return RsrPredictorDto(
+          rsrPercentageScore = rsrScoreDto.rsrPercentageScore,
+          rsrScoreLevel = ScoreLevel.findByType(rsrScoreDto.scoreLevel),
+          ospcPercentageScore = ospScoreDto.ospContactPercentageScore,
+          ospcScoreLevel = ospScoreDto.ospContactScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospiPercentageScore = ospScoreDto.ospImagePercentageScore,
+          ospiScoreLevel = ospScoreDto.ospImageScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospiiPercentageScore = ospScoreDto.ospIndirectImagesChildrenPercentageScore,
+          ospdcPercentageScore = ospScoreDto.ospDirectContactPercentageScore,
+          ospiiScoreLevel = ospScoreDto.ospIndirectImagesChildrenScoreLevel?.let { ScoreLevel.findByType(it) },
+          ospdcScoreLevel = ospScoreDto.ospDirectContactScoreLevel?.let { ScoreLevel.findByType(it) },
+          staticOrDynamic = rsrScoreDto.rsrStaticOrDynamic,
           algorithmVersion = rsrScoreDto.rsrAlgorithmVersion,
         )
       }

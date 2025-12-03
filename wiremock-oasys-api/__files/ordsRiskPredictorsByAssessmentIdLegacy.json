@@ -1,0 +1,58 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 1000001
+  },
+  "probNumber": "X123456",
+  "prisNumber": "A4041AB",
+  "limitedAccessOffender": false,
+  "pnc": "74/2487362D",
+  "forename": "John",
+  "familyName": "Smith",
+  "gender": "1",
+  "custodyInd": "N",
+  "assessments": [
+    {
+      "OGP": {
+        "ogpStWesc": 3,
+        "ogpDyWesc": 7,
+        "ogpTotWesc": 10,
+        "ogp1Year": 4,
+        "ogp2Year": 8,
+        "ogpRisk": "Low"
+      },
+      "OVP": {
+        "ovpStWesc": 14,
+        "ovpDyWesc": 3,
+        "ovpTotWesc": 17,
+        "ovp1Year": 4,
+        "ovp2Year": 7,
+        "ovpRisk": "Low",
+        "ovpPrevWesc": 5,
+        "ovpNonVioWesc": 0,
+        "ovpAgeWesc": 8,
+        "ovpVioWesc": 4,
+        "ovpSexWesc": 5
+      },
+      "OGRS": {
+        "ogrs31Year": 3,
+        "ogrs32Year": 5,
+        "ogrs3RiskRecon": "Low"
+      },
+      "RSR": {
+        "rsrStaticOrDynamic": "DYNAMIC",
+        "rsrExceptionError": null,
+        "rsrAlgorithmVersion": 5,
+        "rsrPercentageScore": 50.1234,
+        "scoreLevel": "Medium"
+      },
+      "OSP": {
+        "ospImagePercentageScore": 2.81,
+        "ospContactPercentageScore": 1.07,
+        "ospImageScoreLevel": "Medium",
+        "ospContactScoreLevel": "Medium"
+      }
+    }
+  ]
+}

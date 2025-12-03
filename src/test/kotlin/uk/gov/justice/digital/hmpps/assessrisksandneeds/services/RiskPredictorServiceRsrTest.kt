@@ -11,20 +11,23 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksOasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgpDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RiskPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -60,6 +63,48 @@ class RiskPredictorServiceRsrTest {
   }
 
   @Test
+  fun `get all RSR scores from OASys and ARN`() {
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
+      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+
+    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
+
+    assertThat(rsrScores).hasSize(1)
+    assertThat(rsrScores[0].outputVersion).isEqualTo("1")
+    val legacyRsrScore = rsrScores[0] as RsrPredictorVersionedLegacyDto
+    with(legacyRsrScore) {
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(output?.rsrPercentageScore).isEqualTo(BigDecimal(10))
+      assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
+      assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+      assertThat(output?.algorithmVersion).isEqualTo("10")
+    }
+  }
+
+  @Test
+  fun `get all RSR scores are sorted by completed date`() {
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
+      getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), LocalDateTime.of(2021, 4, 1, 1, 1, 1))
+
+    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
+
+    assertThat(rsrScores).hasSize(2)
+    assertThat(rsrScores[0].completedDate).isEqualTo(LocalDateTime.of(2021, 4, 1, 1, 1, 1))
+    assertThat(rsrScores[1].completedDate).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+  }
+
+  @Test
+  fun `get all RSR scores does not include non-rsr predictor scores`() {
+    every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns getOasysPredictorNoRsr()
+
+    val rsrScores: List<RsrPredictorVersioned<Any>> = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
+
+    assertThat(rsrScores).isEmpty()
+  }
+
+  @Test
   fun `get all RSR scores history from OASys and ARN`() {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
@@ -80,7 +125,7 @@ class RiskPredictorServiceRsrTest {
   }
 
   @Test
-  fun `get all RSR scores are sorted by completed date`() {
+  fun `get all RSR scores history are sorted by completed date`() {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns
       getOasysPredictor(LocalDateTime.of(2020, 1, 1, 1, 1, 1), LocalDateTime.of(2021, 4, 1, 1, 1, 1))
 
@@ -92,7 +137,7 @@ class RiskPredictorServiceRsrTest {
   }
 
   @Test
-  fun `get all RSR scores does not include non-rsr predictor scores`() {
+  fun `get all RSR scores history does not include non-rsr predictor scores`() {
     every { oasysApiRestClient.getRiskPredictorsForCompletedAssessments(crn) } returns getOasysPredictorNoRsr()
 
     val rsrHistory: List<RsrPredictorDto> = riskPredictorsService.getAllRsrHistory(crn)
@@ -100,9 +145,9 @@ class RiskPredictorServiceRsrTest {
     assertThat(rsrHistory).isEmpty()
   }
 
-  private fun getOasysPredictorNoRsr(): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+  private fun getOasysPredictorNoRsr(): AllRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
     listOf(
-      RiskPredictorAssessmentDto(
+      AllRisksPredictorAssessmentDto(
         dateCompleted = LocalDateTime.now(),
         assessmentType = "LAYER3",
         assessmentStatus = AssessmentStatus.COMPLETE,
@@ -111,13 +156,18 @@ class RiskPredictorServiceRsrTest {
         ogpScoreDto = OasysOgpDto(),
         ogrScoreDto = OasysOgrDto(),
         rsrScoreDto = OasysRsrDto(),
+        ogrs4gScoreDto = null,
+        ogrs4vScoreDto = null,
+        ogp2ScoreDto = null,
+        ovp2ScoreDto = null,
+        snsvScoreDto = null,
       ),
     ),
   )
 
-  private fun getOasysPredictor(vararg completedDate: LocalDateTime): OasysRiskPredictorsDto = OasysRiskPredictorsDto(
+  private fun getOasysPredictor(vararg completedDate: LocalDateTime): AllRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
     completedDate.map {
-      RiskPredictorAssessmentDto(
+      AllRisksPredictorAssessmentDto(
         dateCompleted = it,
         assessmentType = "LAYER3",
         assessmentStatus = AssessmentStatus.COMPLETE,
@@ -136,6 +186,11 @@ class RiskPredictorServiceRsrTest {
         ogpScoreDto = OasysOgpDto(),
         ovpScoreDto = OasysOvpDto(),
         ogrScoreDto = OasysOgrDto(),
+        ogrs4gScoreDto = null,
+        ogrs4vScoreDto = null,
+        ogp2ScoreDto = null,
+        ovp2ScoreDto = null,
+        snsvScoreDto = null,
       )
     },
   )

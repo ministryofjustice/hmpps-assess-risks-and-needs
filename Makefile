@@ -85,3 +85,14 @@ db-connect: ## Connects to the remote DB though the port-forwarding pod
 
 db-export: ## Export the remote DB to out.sql
 	pg_dump --no-owner $$(make db-connection-string) > out.sql
+
+CLIENT_ID := hmpps-assess-risks-and-needs-client
+CLIENT_SECRET := clientsecret
+dev-api-token: ## Generates a JWT for authenticating with the local API. Override the default credentials with CLIENT_ID=XXXX CLIENT_SECRET=YYYY
+	docker compose ${DEV_COMPOSE_FILES} exec api \
+		curl --location 'http://hmpps-auth:9090/auth/oauth/token' \
+  	--header "authorization: Basic $$(printf '%s' "$(CLIENT_ID):$(CLIENT_SECRET)" | base64)" \
+  	--header 'Content-Type: application/x-www-form-urlencoded' \
+  	--data-urlencode 'grant_type=client_credentials' \
+  	| jq -r '.access_token' \
+  	| xargs printf "\nToken:\n%s\n"

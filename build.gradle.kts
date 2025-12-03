@@ -4,10 +4,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.2"
-  kotlin("plugin.spring") version "2.2.20"
-  kotlin("plugin.jpa") version "2.2.20"
-  id("org.jetbrains.kotlinx.kover") version "0.9.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.2.0"
+  kotlin("plugin.spring") version "2.2.21"
+  kotlin("plugin.jpa") version "2.2.21"
+  id("org.jetbrains.kotlinx.kover") version "0.9.3"
 }
 
 configurations {
@@ -28,16 +28,16 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.security:spring-security-oauth2-client")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.5.0")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
   implementation("com.zaxxer:HikariCP:7.0.2")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   implementation("com.beust:klaxon:5.6")
-  implementation("org.apache.commons:commons-lang3:3.19.0")
+  implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("org.postgresql:postgresql:42.7.8")
   implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  implementation("net.logstash.logback:logstash-logback-encoder:8.1")
+  implementation("net.logstash.logback:logstash-logback-encoder:9.0")
 
   testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -48,7 +48,7 @@ dependencies {
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
-  testImplementation("org.wiremock:wiremock-standalone:3.13.1")
+  testImplementation("org.wiremock:wiremock-standalone:3.13.2")
 }
 
 kotlin {

@@ -19,9 +19,10 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmen
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksOasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssOasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshContainer
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshFull
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshScreening
@@ -83,7 +84,7 @@ class OasysApiRestClient(
 
   fun getRiskPredictorsForCompletedAssessments(
     crn: String,
-  ): OasysRiskPredictorsDto? {
+  ): AllRisksOasysRiskPredictorsDto? {
     val path = "/ass/allrisk/$crn/ALLOW"
     return webClient
       .get(path)
@@ -106,8 +107,37 @@ class OasysApiRestClient(
           ExternalService.ASSESSMENTS_API,
         )
       }
-      .bodyToMono(OasysRiskPredictorsDto::class.java)
+      .bodyToMono(AllRisksOasysRiskPredictorsDto::class.java)
       .block().also { log.info("Retrieved risk predictor scores for completed Assessments for crn $crn") }
+  }
+
+  fun getRiskPredictorsByAssessmentId(
+    id: Long,
+  ): RisksCrAssOasysRiskPredictorsDto? {
+    val path = "/ass/riskscrass/ALLOW/$id"
+    return webClient
+      .get(path)
+      .retrieve()
+      .onStatus({ it.is4xxClientError }) {
+        log.error("4xx Error retrieving risk predictor scores for Assessment ID $id: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .onStatus({ it.is5xxServerError }) {
+        log.error("5xx Error retrieving risk predictor scores for Assessment ID $id: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve risk predictor scores for Assessment ID $id",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .bodyToMono(RisksCrAssOasysRiskPredictorsDto::class.java)
+      .block().also { log.info("Retrieved risk predictor scores for Assessment ID $id") }
   }
 
   fun getAssessmentTimeline(

@@ -28,8 +28,17 @@ class IntegrationController(
   private val needsService: AssessmentNeedsService,
   private val riskManagementPlanService: RiskManagementPlanService,
 ) {
+  @Deprecated("Use /risks/predictors/all/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/predictors/{crn}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for all latest completed assessments from the last 1 year")
+  @Operation(
+    description = """
+    Gets risk predictors scores for all latest completed assessments from the last 1 year
+    Deprecated endpoint.
+    Please use /risks/predictors/all/{identifierType}/{identifierValue} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(
