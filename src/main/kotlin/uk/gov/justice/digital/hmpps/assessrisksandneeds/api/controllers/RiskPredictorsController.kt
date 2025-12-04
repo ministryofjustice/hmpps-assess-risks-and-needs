@@ -116,7 +116,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @Parameter(description = "Identifier Value", required = true)
     @PathVariable
     identifierValue: String,
-  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue)
+  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScoresWithLaoCheck(identifierType, identifierValue)
 
   @RequestMapping(path = ["/assessments/id/{id}/risk/predictors/all"], method = [RequestMethod.GET])
   @Operation(description = "Gets risk predictors scores for the requested assessment ID")
