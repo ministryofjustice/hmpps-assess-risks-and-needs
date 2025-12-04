@@ -222,7 +222,6 @@ class RiskPredictorServiceTest {
       val id = 1234567890L
 
       val risksCrAssOasysRiskPredictorsDto = RisksCrAssOasysRiskPredictorsDto(
-        "X123456",
         listOf(
           provideVersionOneRisksCrAssOutput(),
         ),
@@ -277,7 +276,6 @@ class RiskPredictorServiceTest {
       val id = 1234567890L
 
       val risksCrAssOasysRiskPredictorsDto = RisksCrAssOasysRiskPredictorsDto(
-        "X123456",
         listOf(
           provideVersionTwoStaticRisksCrAssOutput(),
         ),
@@ -326,7 +324,6 @@ class RiskPredictorServiceTest {
       val id = 1234567890L
 
       val risksCrAssOasysRiskPredictorsDto = RisksCrAssOasysRiskPredictorsDto(
-        "X123456",
         listOf(
           provideVersionTwoDynamicRisksCrAssOutput(),
         ),
