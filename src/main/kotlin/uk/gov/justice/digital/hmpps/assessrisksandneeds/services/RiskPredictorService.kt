@@ -76,8 +76,6 @@ class RiskPredictorService(
     log.debug("Entered getAllRiskScoresByAssessmentId for ID: $id")
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS_BY_ASSESSMENT_ID, mapOf("id" to id))
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsByAssessmentId(id)
-    val crn = oasysRiskPredictorsDto?.probNumber
-    communityClient.verifyUserAccess(crn!!, RequestData.getUserName())
     return oasysRiskPredictorsDto
       ?.assessments
       ?.first()
