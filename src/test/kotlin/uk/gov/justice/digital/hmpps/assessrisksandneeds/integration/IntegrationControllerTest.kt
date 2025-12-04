@@ -32,7 +32,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.TierThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
