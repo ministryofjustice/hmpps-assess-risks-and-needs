@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class RisksCrAssOasysRiskPredictorsDto(
-  var probNumber: String? = null,
   var assessments: List<RisksCrAssPredictorAssessmentDto>? = emptyList(),
 )
 

@@ -130,7 +130,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
       ApiResponse(responseCode = "200", description = "OK"),
     ],
   )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION_API__ACCREDITED_PROGRAMMES__ASSESSMENT')")
+  @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO')")
   fun getRiskScoresByAssessmentId(
     @Parameter(description = "Assessment ID", required = true)
     @PathVariable

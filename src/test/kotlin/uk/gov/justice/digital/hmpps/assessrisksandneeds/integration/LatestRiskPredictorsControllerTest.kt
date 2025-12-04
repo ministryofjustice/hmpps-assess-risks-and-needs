@@ -240,7 +240,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
     webTestClient.get()
       .uri("/assessments/id/$id/risk/predictors/all")
       .header("Content-Type", "application/json")
-      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION_API__ACCREDITED_PROGRAMMES__ASSESSMENT")))
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       // Then
       .expectStatus().isEqualTo(HttpStatus.OK)
@@ -300,7 +300,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
     webTestClient.get()
       .uri("/assessments/id/$id/risk/predictors/all")
       .header("Content-Type", "application/json")
-      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION_API__ACCREDITED_PROGRAMMES__ASSESSMENT")))
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       // Then
       .expectStatus().isEqualTo(HttpStatus.OK)
@@ -355,7 +355,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
     webTestClient.get()
       .uri("/assessments/id/$id/risk/predictors/all")
       .header("Content-Type", "application/json")
-      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION_API__ACCREDITED_PROGRAMMES__ASSESSMENT")))
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       // Then
       .expectStatus().isNotFound
