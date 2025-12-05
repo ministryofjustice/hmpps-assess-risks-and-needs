@@ -10,11 +10,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
+import kotlin.collections.sortedByDescending
 
 @Service
 class RiskPredictorService(
@@ -48,7 +50,15 @@ class RiskPredictorService(
     val oasysPredictors = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)?.assessments ?: listOf()
     val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
     log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys for ${identifierType.value}: $identifierValue")
-    return RsrPredictorVersionedLegacyDto.from(oasysRsrPredictors).sortedByDescending { it.completedDate }
+    return oasysRsrPredictors.map { assessment ->
+      // rsrAlgorithmVersion always present due to hasRsrScores filter above
+      val version = assessment.rsrScoreDto.rsrAlgorithmVersion!!.toInt()
+      if (version >= 6) {
+        RsrPredictorVersionedDto.from(assessment)
+      } else {
+        RsrPredictorVersionedLegacyDto.from(assessment)
+      }
+    }.sortedByDescending { it.completedDate }
   }
 
   fun getAllRiskScores(crn: String): List<RiskScoresDto> {
@@ -68,7 +78,14 @@ class RiskPredictorService(
     return oasysRiskPredictorsDto
       ?.assessments
       ?.filter { it.assessmentType in listOf("LAYER3", "LAYER1") }
-      ?.map(AllPredictorVersionedLegacyDto::from)
+      ?.map { assessment ->
+        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: throw NoSuchElementException("rsrAlgorithmVersion for assessment ${identifierType.value}: $identifierValue not found")
+        if (version >= 6) {
+          AllPredictorVersionedDto.from(assessment)
+        } else {
+          AllPredictorVersionedLegacyDto.from(assessment)
+        }
+      }
       .orEmpty()
   }
 
@@ -80,13 +97,13 @@ class RiskPredictorService(
       ?.assessments
       ?.first()
       ?.let { assessment: RisksCrAssPredictorAssessmentDto ->
-        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: 0
+        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: throw NoSuchElementException("rsrAlgorithmVersion for assessment with id: $id not found")
         if (version >= 6) {
           AllPredictorVersionedDto.from(assessment)
         } else {
           AllPredictorVersionedLegacyDto.from(assessment)
         }
-      } ?: throw NoSuchElementException("Risk predictors for assessment $id not found")
+      } ?: throw NoSuchElementException("Risk predictors for assessment with id: $id not found")
   }
 
   fun getAllRiskScoresWithoutLaoCheck(crn: String): List<RiskScoresDto> {
