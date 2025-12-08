@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -51,11 +53,145 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   }
 
   @RequestMapping(path = ["/risks/predictors/rsr/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets RSR scores for an identifier type (e.g. CRN)")
+  @Operation(
+    description = """# Gets Combined Serious Reoffending Predictor scores for an identifier type (e.g. CRN)
+
+Returns a list of assessments containing Combined Serious Reoffending Predictor scores (previously known as RSR scores).  
+Assessments within the list will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.  
+
+## Determining the predictor score format
+Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.  
+
+### Legacy risk predictor score format (outputVersion = 1)
+```json
+[
+  {
+    "completedDate": "2025-10-23T03:02:59",
+    "source": "OASYS",
+    "status": "COMPLETE",
+    "outputVersion": "1",
+    "output": {
+      "staticOrDynamic": "STATIC",
+      "algorithmVersion": "string",
+      "rsrPercentageScore": 0,
+      "rsrScoreLevel": "LOW",
+      "ospcPercentageScore": 0,
+      "ospcScoreLevel": "LOW",
+      "ospiPercentageScore": 0,
+      "ospiScoreLevel": "LOW",
+      "ospiiPercentageScore": 0,
+      "ospdcPercentageScore": 0,
+      "ospiiScoreLevel": "LOW",
+      "ospdcScoreLevel": "LOW"
+    }
+  }
+]
+```
+
+### New risk predictor score format (outputVersion = 2)
+```json
+[
+  {
+    "completedDate": "2025-10-23T03:02:59",
+    "source": "OASYS",
+    "status": "COMPLETE",
+    "outputVersion": "2",
+    "output": {
+      "seriousViolentReoffendingPredictor": {
+        "staticOrDynamic": "STATIC",
+        "score": 10,
+        "band": "LOW"
+      },
+      "directContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "indirectImageContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "combinedSeriousReoffendingPredictor": {
+        "algorithmVersion": "string",
+        "staticOrDynamic": "STATIC",
+        "score": 0,
+        "band": "LOW"
+      }
+    }
+  }
+]
+```
+
+Please see the associated documentation for further information: [OGRS4 ARNS API Change Specification - RSR Risk Predictors](https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/5962203966/OGRS4+ARNS+API+Change+Specification#Endpoint-%233-Changes---RSR-Risk-Predictors).
+  """,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200", description = "OK",
+        content = [
+          Content(
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "List of assessments containing both Legacy RSR and New Combined Serious Reoffending Predictor score formats.",
+                summary = "RSR & Combined Serious Reoffending Predictor Assessments",
+                value = """
+[
+  {
+    "completedDate": "2025-10-23T03:02:59",
+    "source": "OASYS",
+    "status": "COMPLETE",
+    "outputVersion": "1",
+    "output": {
+      "staticOrDynamic": "STATIC",
+      "algorithmVersion": "string",
+      "rsrPercentageScore": 10,
+      "rsrScoreLevel": "LOW",
+      "ospcPercentageScore": 10,
+      "ospcScoreLevel": "LOW",
+      "ospiPercentageScore": 10,
+      "ospiScoreLevel": "LOW",
+      "ospiiPercentageScore": 10,
+      "ospdcPercentageScore": 10,
+      "ospiiScoreLevel": "LOW",
+      "ospdcScoreLevel": "LOW"
+    }
+  },
+  {
+    "completedDate": "2025-10-23T03:02:59",
+    "source": "OASYS",
+    "status": "COMPLETE",
+    "outputVersion": "2",
+    "output": {
+      "seriousViolentReoffendingPredictor": {
+        "staticOrDynamic": "STATIC",
+        "score": 10,
+        "band": "LOW"
+      },
+      "directContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "indirectImageContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "combinedSeriousReoffendingPredictor": {
+        "algorithmVersion": "string",
+        "staticOrDynamic": "STATIC",
+        "score": 10,
+        "band": "LOW"
+      }
+    }
+  }
+]
+              """,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
@@ -81,7 +217,10 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   )
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(
+        responseCode = "403",
+        description = "User does not have permission to access offender with provided CRN",
+      ),
       ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
       ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
@@ -96,16 +235,223 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   }
 
   @RequestMapping(path = ["/risks/predictors/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for all latest completed assessments")
+  @Operation(
+    description = """# Gets all risk predictor scores for completed assessments for an identifier type (e.g. CRN)
+
+Returns a list of completed assessments containing all predictor scores.  
+Assessments within the list will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.  
+
+## Determining the predictor score format
+Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.  
+
+### Legacy risk predictor score format (outputVersion = 1)
+```json
+[
+  {
+    "completedDate": "2025-10-23T03:02:59",
+    "source": "OASYS",
+    "status": "COMPLETE",
+    "outputVersion": "1",
+    "output": {
+      "groupReconvictionScore": {
+        "oneYear": 0,
+        "twoYears": 0,
+        "scoreLevel": "LOW"
+      },
+      "violencePredictorScore": {
+        "ovpStaticWeightedScore": 0,
+        "ovpDynamicWeightedScore": 0,
+        "ovpTotalWeightedScore": 0,
+        "oneYear": 0,
+        "twoYears": 0,
+        "ovpRisk": "LOW"
+      },
+      "generalPredictorScore": {
+        "ogpStaticWeightedScore": 0,
+        "ogpDynamicWeightedScore": 0,
+        "ogpTotalWeightedScore": 0,
+        "ogp1Year": 0,
+        "ogp2Year": 0,
+        "ogpRisk": "LOW"
+      },
+      "riskOfSeriousRecidivismScore": {
+        "percentageScore": 0,
+        "staticOrDynamic": "STATIC",
+        "source": "OASYS",
+        "algorithmVersion": "string",
+        "scoreLevel": "LOW"
+      },
+      "sexualPredictorScore": {
+        "ospIndecentPercentageScore": 0,
+        "ospContactPercentageScore": 0,
+        "ospIndecentScoreLevel": "LOW",
+        "ospContactScoreLevel": "LOW",
+        "ospIndirectImagePercentageScore": 0,
+        "ospDirectContactPercentageScore": 0,
+        "ospIndirectImageScoreLevel": "LOW",
+        "ospDirectContactScoreLevel": "LOW"
+      }
+    }
+  }
+]
+```
+
+### New risk predictor score format (outputVersion = 2)
+```json
+[
+  {
+    "completedDate": "2025-10-23T03:02:59",
+    "source": "OASYS",
+    "status": "COMPLETE",
+    "outputVersion": "2",
+    "output": {
+      "allReoffendingPredictor": {
+        "staticOrDynamic": "STATIC",
+        "score": 1,
+        "band": "LOW"
+      },
+      "violentReoffendingPredictor": {
+        "staticOrDynamic": "DYNAMIC",
+        "score": 30,
+        "band": "MEDIUM"
+      },
+      "seriousViolentReoffendingPredictor": {
+        "staticOrDynamic": "STATIC",
+        "score": 99,
+        "band": "HIGH"
+      },
+      "directContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "indirectImageContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "combinedSeriousReoffendingPredictor": {
+        "algorithmVersion": "string",
+        "staticOrDynamic": "STATIC",
+        "score": 0,
+        "band": "LOW"
+      }
+    }
+  }
+]
+```
+
+Please see the associated documentation for further information: [OGRS4 ARNS API Change Specification - All Risk Predictors](https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/5962203966/OGRS4+ARNS+API+Change+Specification#Endpoint-%232%2F%234-Changes---All-Risk-Predictors-by-CRN-or-assessment-id).
+  """,
+  )
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(
+        responseCode = "403",
+        description = "User does not have permission to access offender with provided CRN",
+      ),
       ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
       ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
       ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "400", description = "Bad request"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200", description = "OK",
+        content = [
+          Content(
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "List of completed assessments containing both Legacy and New predictor score formats.",
+                summary = "Completed assessments and associated risk predictor scores",
+                value = """
+[
+  {
+    "completedDate": "2025-01-01",
+    "status": "COMPLETE",
+    "outputVersion": "1",
+    "output": {
+      "groupReconvictionScore": {
+        "oneYear": 0,
+        "twoYears": 0,
+        "scoreLevel": "LOW"
+      },
+      "violencePredictorScore": {
+        "ovpStaticWeightedScore": 0,
+        "ovpDynamicWeightedScore": 0,
+        "ovpTotalWeightedScore": 0,
+        "oneYear": 0,
+        "twoYears": 0,
+        "ovpRisk": "LOW"
+      },
+      "generalPredictorScore": {
+        "ogpStaticWeightedScore": 0,
+        "ogpDynamicWeightedScore": 0,
+        "ogpTotalWeightedScore": 0,
+        "ogp1Year": 0,
+        "ogp2Year": 0,
+        "ogpRisk": "LOW"
+      },
+      "riskOfSeriousRecidivismScore": {
+        "percentageScore": 0,
+        "staticOrDynamic": "STATIC",
+        "source": "OASYS",
+        "algorithmVersion": "string",
+        "scoreLevel": "LOW"
+      },
+      "sexualPredictorScore": {
+        "ospIndecentPercentageScore": 0,
+        "ospContactPercentageScore": 0,
+        "ospIndecentScoreLevel": "LOW",
+        "ospContactScoreLevel": "LOW",
+        "ospIndirectImagePercentageScore": 0,
+        "ospDirectContactPercentageScore": 0,
+        "ospIndirectImageScoreLevel": "LOW",
+        "ospDirectContactScoreLevel": "LOW"
+      }
+    }
+  },
+  {
+    "completedDate": "2026-03-01",
+    "status": "COMPLETE",
+    "outputVersion": "2",
+    "output": {
+      "allReoffendingPredictor": {
+        "staticOrDynamic": "STATIC",
+        "score": 1,
+        "band": "LOW"
+      },
+      "violentReoffendingPredictor": {
+        "staticOrDynamic": "DYNAMIC",
+        "score": 30,
+        "band": "MEDIUM"
+      },
+      "seriousViolentReoffendingPredictor": {
+        "staticOrDynamic": "STATIC",
+        "score": 99,
+        "band": "HIGH"
+      },
+      "directContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "indirectImageContactSexualReoffendingPredictor": {
+        "score": 10,
+        "band": "LOW"
+      },
+      "combinedSeriousReoffendingPredictor": {
+        "algorithmVersion": "string",
+        "staticOrDynamic": "STATIC",
+        "score": 0,
+        "band": "LOW"
+      }
+    }
+  }
+]
+              """,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_RESETTLEMENT_PASSPORT_RO', 'ROLE_RISK_INTEGRATIONS_RO', 'ROLE_ACCREDITED_PROGRAMS_RO', 'ROLE_ARNS__MANAGE_PEOPLE_ON_PROBATION__RO')")
@@ -119,15 +465,220 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue)
 
   @RequestMapping(path = ["/assessments/id/{id}/risk/predictors/all"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for the requested assessment ID")
+  @Operation(
+    description = """# Gets all risk predictors scores for the requested assessment ID
+
+Returns the requested assessment containing all associated predictor scores.  
+The assessment will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.  
+
+## Determining the predictor score format
+The assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.  
+
+### Legacy risk predictor score format (outputVersion = 1)
+```json
+{
+  "completedDate": "2024-01-01",
+  "status": "COMPLETE",
+  "outputVersion": "1",
+  "output": {
+    "groupReconvictionScore": {
+      "oneYear": 0,
+      "twoYears": 0,
+      "scoreLevel": "LOW"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 0,
+      "ovpDynamicWeightedScore": 0,
+      "ovpTotalWeightedScore": 0,
+      "oneYear": 0,
+      "twoYears": 0,
+      "ovpRisk": "LOW"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 0,
+      "ogpDynamicWeightedScore": 0,
+      "ogpTotalWeightedScore": 0,
+      "ogp1Year": 0,
+      "ogp2Year": 0,
+      "ogpRisk": "LOW"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 0,
+      "staticOrDynamic": "STATIC",
+      "source": "OASYS",
+      "algorithmVersion": "string",
+      "scoreLevel": "LOW"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 0,
+      "ospContactPercentageScore": 0,
+      "ospIndecentScoreLevel": "LOW",
+      "ospContactScoreLevel": "LOW",
+      "ospIndirectImagePercentageScore": 0,
+      "ospDirectContactPercentageScore": 0,
+      "ospIndirectImageScoreLevel": "LOW",
+      "ospDirectContactScoreLevel": "LOW"
+    }
+  }
+}
+```
+
+### New risk predictor score format (outputVersion = 2)
+```json
+{
+  "completedDate": "2026-03-01",
+  "status": "COMPLETE",
+  "outputVersion": "2",
+  "output": {
+    "allReoffendingPredictor": {
+      "staticOrDynamic": "STATIC",
+      "score": 1,
+      "band": "LOW"
+    },
+    "violentReoffendingPredictor": {
+      "staticOrDynamic": "DYNAMIC",
+      "score": 30,
+      "band": "MEDIUM"
+    },
+    "seriousViolentReoffendingPredictor": {
+      "staticOrDynamic": "STATIC",
+      "score": 99,
+      "band": "HIGH"
+    },
+    "directContactSexualReoffendingPredictor": {
+      "score": 10,
+      "band": "LOW"
+    },
+    "indirectImageContactSexualReoffendingPredictor": {
+      "score": 10,
+      "band": "LOW"
+    },
+    "combinedSeriousReoffendingPredictor": {
+      "algorithmVersion": "string",
+      "staticOrDynamic": "STATIC",
+      "score": 0,
+      "band": "LOW"
+    }
+  }
+}
+```
+
+Please see the associated documentation for further information: [OGRS4 ARNS API Change Specification - All Risk Predictors](https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/5962203966/OGRS4+ARNS+API+Change+Specification#Endpoint-%232%2F%234-Changes---All-Risk-Predictors-by-CRN-or-assessment-id).
+  """,
+  )
   @Schema(oneOf = [AllPredictorVersionedLegacyDto::class, AllPredictorVersionedDto::class])
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "User does not have permission to access assessment with provided ID"),
+      ApiResponse(
+        responseCode = "403",
+        description = "User does not have permission to access assessment with provided ID",
+      ),
       ApiResponse(responseCode = "404", description = "Risk data does not exist for assessment ID"),
       ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "400", description = "Bad request"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200", description = "OK",
+        content = [
+          Content(
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "Assessment containing Legacy predictor score format.",
+                summary = "Assessment containing Legacy predictor score format",
+                value = """
+{
+  "completedDate": "2024-01-01",
+  "status": "COMPLETE",
+  "outputVersion": "1",
+  "output": {
+    "groupReconvictionScore": {
+      "oneYear": 0,
+      "twoYears": 0,
+      "scoreLevel": "LOW"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 0,
+      "ovpDynamicWeightedScore": 0,
+      "ovpTotalWeightedScore": 0,
+      "oneYear": 0,
+      "twoYears": 0,
+      "ovpRisk": "LOW"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 0,
+      "ogpDynamicWeightedScore": 0,
+      "ogpTotalWeightedScore": 0,
+      "ogp1Year": 0,
+      "ogp2Year": 0,
+      "ogpRisk": "LOW"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 0,
+      "staticOrDynamic": "STATIC",
+      "source": "OASYS",
+      "algorithmVersion": "string",
+      "scoreLevel": "LOW"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 0,
+      "ospContactPercentageScore": 0,
+      "ospIndecentScoreLevel": "LOW",
+      "ospContactScoreLevel": "LOW",
+      "ospIndirectImagePercentageScore": 0,
+      "ospDirectContactPercentageScore": 0,
+      "ospIndirectImageScoreLevel": "LOW",
+      "ospDirectContactScoreLevel": "LOW"
+    }
+  }
+}
+              """,
+              ),
+              ExampleObject(
+                name = "Assessment containing New predictor score format.",
+                summary = "Assessment containing New predictor score format",
+                value = """
+{
+  "completedDate": "2026-03-01",
+  "status": "COMPLETE",
+  "outputVersion": "2",
+  "output": {
+    "allReoffendingPredictor": {
+      "staticOrDynamic": "STATIC",
+      "score": 1,
+      "band": "LOW"
+    },
+    "violentReoffendingPredictor": {
+      "staticOrDynamic": "DYNAMIC",
+      "score": 30,
+      "band": "MEDIUM"
+    },
+    "seriousViolentReoffendingPredictor": {
+      "staticOrDynamic": "STATIC",
+      "score": 99,
+      "band": "HIGH"
+    },
+    "directContactSexualReoffendingPredictor": {
+      "score": 10,
+      "band": "LOW"
+    },
+    "indirectImageContactSexualReoffendingPredictor": {
+      "score": 10,
+      "band": "LOW"
+    },
+    "combinedSeriousReoffendingPredictor": {
+      "algorithmVersion": "string",
+      "staticOrDynamic": "STATIC",
+      "score": 0,
+      "band": "LOW"
+    }
+  }
+}
+              """,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO')")

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import java.time.LocalDateTime
@@ -9,7 +8,6 @@ data class RsrPredictorVersionedDto(
   override val completedDate: LocalDateTime? = null,
   override val source: RsrScoreSource,
   override val status: AssessmentStatus,
-  @Schema(description = "Version of the output", allowableValues = ["2"], defaultValue = "2")
   override val outputVersion: String = "2",
   override val output: RsrPredictorDto? = null,
 ) : RsrPredictorVersioned<RsrPredictorDto> {
