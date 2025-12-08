@@ -444,6 +444,13 @@ class AssessmentControllerTest : IntegrationTestBase() {
           "LAYER3",
           "OPEN",
         ),
+        BasicAssessmentSummary(
+          6661348,
+          null,
+          LocalDateTime.parse("2003-07-27T12:10:58"),
+          "LAYER3",
+          "COMPLETE",
+        ),
       ),
     )
 

@@ -317,7 +317,7 @@ class OasysApiRestClient(
 inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? = this[section] as T?
 
 fun AssessmentSummary.isCompletedWithinTimeframe(timeframe: Long) = completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(timeframe)) == false
-fun AssessmentSummary.isWithinTimeframe(timeframe: Long) = (completedDate ?: initiationDate).toLocalDate()?.isBefore(LocalDate.now().minusWeeks(timeframe)) == false
+fun AssessmentSummary.isWithinTimeframe(timeframe: Long) = (completedDate ?: initiationDate)?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(timeframe)) == false
 
 private fun riskPredicate(timeframe: Long): (AssessmentSummary) -> Boolean = {
   it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
