@@ -67,6 +67,11 @@
       "assessmentType": "LAYER3",
       "completedDate": "2003-07-27T12:10:58",
       "status": "COMPLETE"
+    },
+    {
+      "assessmentPk": 6661347,
+      "assessmentType": "LAYER3",
+      "status": "OPEN"
     }
   ]
 }

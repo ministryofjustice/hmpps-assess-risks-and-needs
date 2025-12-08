@@ -451,6 +451,13 @@ class AssessmentControllerTest : IntegrationTestBase() {
           "LAYER3",
           "COMPLETE",
         ),
+        BasicAssessmentSummary(
+          6661347,
+          null,
+          null,
+          "LAYER3",
+          "OPEN",
+        ),
       ),
     )
 
