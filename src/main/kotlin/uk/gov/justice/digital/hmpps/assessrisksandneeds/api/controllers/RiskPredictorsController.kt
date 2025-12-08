@@ -128,7 +128,8 @@ Please see the associated documentation for further information: [OGRS4 ARNS API
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(
-        responseCode = "200", description = "OK",
+        responseCode = "200",
+        description = "OK",
         content = [
           Content(
             mediaType = "application/json",
@@ -354,7 +355,8 @@ Please see the associated documentation for further information: [OGRS4 ARNS API
       ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "400", description = "Bad request"),
       ApiResponse(
-        responseCode = "200", description = "OK",
+        responseCode = "200",
+        description = "OK",
         content = [
           Content(
             mediaType = "application/json",
@@ -577,7 +579,8 @@ Please see the associated documentation for further information: [OGRS4 ARNS API
       ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "400", description = "Bad request"),
       ApiResponse(
-        responseCode = "200", description = "OK",
+        responseCode = "200",
+        description = "OK",
         content = [
           Content(
             mediaType = "application/json",
