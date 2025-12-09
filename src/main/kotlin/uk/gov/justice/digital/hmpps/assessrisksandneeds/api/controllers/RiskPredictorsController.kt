@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -12,6 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_DESC
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_LEGACY_EXAMPLE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_NEW_EXAMPLE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_DESC
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
@@ -51,11 +60,26 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   }
 
   @RequestMapping(path = ["/risks/predictors/rsr/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets RSR scores for an identifier type (e.g. CRN)")
+  @Operation(description = GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_DESC)
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "List of assessments containing both Legacy RSR and New Combined Serious Reoffending Predictor score formats.",
+                summary = "RSR & Combined Serious Reoffending Predictor Assessments",
+                value = GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
@@ -81,7 +105,10 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   )
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(
+        responseCode = "403",
+        description = "User does not have permission to access offender with provided CRN",
+      ),
       ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
       ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
@@ -96,16 +123,34 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   }
 
   @RequestMapping(path = ["/risks/predictors/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for all latest completed assessments")
+  @Operation(description = GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC)
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(
+        responseCode = "403",
+        description = "User does not have permission to access offender with provided CRN",
+      ),
       ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
       ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
       ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "400", description = "Bad request"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "List of completed assessments containing both Legacy and New predictor score formats.",
+                summary = "Completed assessments and associated risk predictor scores",
+                value = GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_RESETTLEMENT_PASSPORT_RO', 'ROLE_RISK_INTEGRATIONS_RO', 'ROLE_ACCREDITED_PROGRAMS_RO', 'ROLE_ARNS__MANAGE_PEOPLE_ON_PROBATION__RO')")
@@ -119,15 +164,38 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
   ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue)
 
   @RequestMapping(path = ["/assessments/id/{id}/risk/predictors/all"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for the requested assessment ID")
+  @Operation(description = GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_DESC)
   @Schema(oneOf = [AllPredictorVersionedLegacyDto::class, AllPredictorVersionedDto::class])
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "403", description = "User does not have permission to access assessment with provided ID"),
+      ApiResponse(
+        responseCode = "403",
+        description = "User does not have permission to access assessment with provided ID",
+      ),
       ApiResponse(responseCode = "404", description = "Risk data does not exist for assessment ID"),
       ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "400", description = "Bad request"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "Assessment containing Legacy predictor score format.",
+                summary = "Assessment containing Legacy predictor score format",
+                value = GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_LEGACY_EXAMPLE,
+              ),
+              ExampleObject(
+                name = "Assessment containing New predictor score format.",
+                summary = "Assessment containing New predictor score format",
+                value = GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_NEW_EXAMPLE,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO')")
