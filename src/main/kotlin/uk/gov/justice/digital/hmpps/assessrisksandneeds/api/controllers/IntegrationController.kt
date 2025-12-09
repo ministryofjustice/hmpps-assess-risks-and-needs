@@ -30,7 +30,7 @@ class IntegrationController(
   private val needsService: AssessmentNeedsService,
   private val riskManagementPlanService: RiskManagementPlanService,
 ) {
-  @Deprecated("Use /risks/predictors/internal/all/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
+  @Deprecated("Use /risks/predictors/unsafe/all/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/predictors/{crn}"], method = [RequestMethod.GET])
   @Operation(
     description = """
@@ -57,7 +57,7 @@ class IntegrationController(
   @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
   fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> = riskPredictorService.getAllRiskScoresWithoutLaoCheck(crn)
 
-  @RequestMapping(path = ["/risks/predictors/internal/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
+  @RequestMapping(path = ["/risks/predictors/unsafe/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
   @Operation(description = "Gets risk predictors scores for all latest completed assessments")
   @ApiResponses(
     value = [

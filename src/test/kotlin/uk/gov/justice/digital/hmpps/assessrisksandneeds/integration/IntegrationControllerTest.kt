@@ -445,7 +445,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
 
     // When
     webTestClient.get()
-      .uri("/risks/predictors/internal/all/$identifierType/$identifierValue")
+      .uri("/risks/predictors/unsafe/all/$identifierType/$identifierValue")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
@@ -503,7 +503,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
 
   @Test
   fun `should return not found error for invalid crn for versioned risk scores`() {
-    webTestClient.get().uri("/risks/predictors/internal/all/crn/X999999")
+    webTestClient.get().uri("/risks/predictors/unsafe/all/crn/X999999")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isNotFound
@@ -513,7 +513,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
   fun `should return 400 bad request for invalid identifier type for versioned risk scores`() {
     val identifierType = "INVALID_IDENTIFIER_TYPE"
     val identifierValue = "X234567"
-    webTestClient.get().uri("/risks/predictors/internal/all/$identifierType/$identifierValue")
+    webTestClient.get().uri("/risks/predictors/unsafe/all/$identifierType/$identifierValue")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isBadRequest
