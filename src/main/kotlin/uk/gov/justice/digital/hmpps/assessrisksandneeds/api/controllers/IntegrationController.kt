@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonView
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.enums.ParameterIn
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.security.access.prepost.PreAuthorize
@@ -58,7 +60,7 @@ class IntegrationController(
   fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> = riskPredictorService.getAllRiskScoresWithoutLaoCheck(crn)
 
   @RequestMapping(path = ["/risks/predictors/unsafe/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets risk predictors scores for all latest completed assessments")
+  @Operation(description = GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC)
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
@@ -67,7 +69,22 @@ class IntegrationController(
       ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
       ApiResponse(responseCode = "401", description = "Unauthorised"),
       ApiResponse(responseCode = "400", description = "Bad request"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "List of completed assessments containing both Legacy and New predictor score formats.",
+                summary = "Completed assessments and associated risk predictor scores",
+                value = GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO')")
