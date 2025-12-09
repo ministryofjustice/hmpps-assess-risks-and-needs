@@ -70,13 +70,14 @@ class RiskPredictorService(
     return RiskScoresDto.from(oasysRiskPredictorsDto)
   }
 
-  fun getAllRiskScoresWithLaoCheck(identifierType: IdentifierType, identifierValue: String): List<AllPredictorVersioned<Any>> {
-    communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
-    return getAllRiskScores(identifierType, identifierValue)
-  }
-
   fun getAllRiskScores(identifierType: IdentifierType, identifierValue: String): List<AllPredictorVersioned<Any>> {
     log.debug("Entered getAllRiskScores for ${identifierType.value}: $identifierValue")
+    communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
+    return getAllRiskScoresWithoutLaoCheck(identifierType, identifierValue)
+  }
+
+  fun getAllRiskScoresWithoutLaoCheck(identifierType: IdentifierType, identifierValue: String): List<AllPredictorVersioned<Any>> {
+    log.debug("Entered getAllRiskScoresWithoutLaoCheck for ${identifierType.value}: $identifierValue")
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf(identifierType.value to identifierValue))
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)
     return oasysRiskPredictorsDto

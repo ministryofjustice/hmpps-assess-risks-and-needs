@@ -78,7 +78,7 @@ class IntegrationController(
     @Parameter(description = "Identifier Value", required = true)
     @PathVariable
     identifierValue: String,
-  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue)
+  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScoresWithoutLaoCheck(identifierType, identifierValue)
 
   @RequestMapping(path = ["/risks/rosh/{crn}"], method = [RequestMethod.GET])
   @Operation(

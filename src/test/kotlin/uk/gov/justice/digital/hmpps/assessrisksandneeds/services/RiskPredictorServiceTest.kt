@@ -160,7 +160,7 @@ class RiskPredictorServiceTest {
       }.returns(allRisksOasysRiskPredictorsDto)
 
       // When
-      val allRiskScores = riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn)
+      val allRiskScores = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
 
       // Then
       assertThat(allRiskScores.size).isEqualTo(3)
@@ -280,7 +280,7 @@ class RiskPredictorServiceTest {
       }.returns(null)
 
       // When
-      val allRiskScores = riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn)
+      val allRiskScores = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
 
       // Should
       assertThat(allRiskScores.isEmpty())
@@ -476,7 +476,7 @@ class RiskPredictorServiceTest {
       }.returns(allRisksOasysRiskPredictorsDto)
 
       // When
-      val exception = assertThrows<NoSuchElementException> { riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn) }
+      val exception = assertThrows<NoSuchElementException> { riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn) }
 
       // Then
       assertThat("rsrAlgorithmVersion for assessment crn: X12345 not found").isEqualTo(exception.message)
