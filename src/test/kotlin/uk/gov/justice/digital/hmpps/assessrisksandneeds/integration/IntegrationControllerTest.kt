@@ -9,9 +9,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgpScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgrScoreDto
@@ -29,6 +33,10 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.AllPredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.BasePredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.StaticOrDynamicPredictorDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.VersionedStaticOrDynamicPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.TierThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
@@ -447,4 +455,125 @@ class IntegrationControllerTest : IntegrationTestBase() {
       tierThreshold = TierThreshold(4, 7),
     ),
   )
+
+  @Test
+  fun `should return versioned risk data for valid crn`() {
+    // Given
+    val identifierType = "crn"
+    val identifierValue = "X123456"
+
+    // When
+    webTestClient.get()
+      .uri("/risks/predictors/unsafe/all/$identifierType/$identifierValue")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      // Then
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<List<AllPredictorVersioned<Any>>>()
+      .consumeWith {
+        assertThat(it.responseBody).hasSize(5)
+        assertThat(it.responseBody!![0]).usingRecursiveComparison()
+          .isEqualTo(
+            AllPredictorVersionedLegacyDto(
+              completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
+              status = AssessmentStatus.COMPLETE,
+              outputVersion = "1",
+              output = RiskScoresDto(
+                groupReconvictionScore = OgrScoreDto(
+                  oneYear = BigDecimal.valueOf(3),
+                  twoYears = BigDecimal.valueOf(5),
+                  scoreLevel = ScoreLevel.LOW,
+                ),
+                violencePredictorScore = OvpScoreDto(
+                  ovpStaticWeightedScore = BigDecimal.valueOf(14),
+                  ovpDynamicWeightedScore = BigDecimal.valueOf(3),
+                  ovpTotalWeightedScore = BigDecimal.valueOf(17),
+                  oneYear = BigDecimal.valueOf(4),
+                  twoYears = BigDecimal.valueOf(7),
+                  ovpRisk = ScoreLevel.LOW,
+                ),
+                generalPredictorScore = OgpScoreDto(
+                  ogpStaticWeightedScore = BigDecimal.valueOf(3),
+                  ogpDynamicWeightedScore = BigDecimal.valueOf(7),
+                  ogpTotalWeightedScore = BigDecimal.valueOf(10),
+                  ogp1Year = BigDecimal.valueOf(4),
+                  ogp2Year = BigDecimal.valueOf(8),
+                  ogpRisk = ScoreLevel.LOW,
+                ),
+                riskOfSeriousRecidivismScore = RsrScoreDto(
+                  percentageScore = BigDecimal.valueOf(50.1234),
+                  staticOrDynamic = ScoreType.DYNAMIC,
+                  source = RsrScoreSource.OASYS,
+                  algorithmVersion = "5",
+                  ScoreLevel.MEDIUM,
+                ),
+                sexualPredictorScore = OspScoreDto(
+                  ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
+                  ospContactPercentageScore = BigDecimal.valueOf(1.07),
+                  ospIndecentScoreLevel = ScoreLevel.MEDIUM,
+                  ospContactScoreLevel = ScoreLevel.MEDIUM,
+                ),
+              ),
+            ),
+          )
+        assertThat(it.responseBody!![4]).usingRecursiveComparison()
+          .isEqualTo(
+            AllPredictorVersionedDto(
+              completedDate = LocalDateTime.of(2022, 6, 12, 18, 23, 20),
+              status = AssessmentStatus.COMPLETE,
+              outputVersion = "2",
+              output = AllPredictorDto(
+                allReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
+                ),
+                violentReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
+                ),
+                seriousViolentReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
+                ),
+                directContactSexualReoffendingPredictor = BasePredictorDto(
+                  score = BigDecimal.valueOf(2.81),
+                  band = ScoreLevel.MEDIUM,
+                ),
+                indirectImageContactSexualReoffendingPredictor = BasePredictorDto(
+                  score = BigDecimal.valueOf(1.07),
+                  band = ScoreLevel.MEDIUM,
+                ),
+                combinedSeriousReoffendingPredictor = VersionedStaticOrDynamicPredictorDto(
+                  algorithmVersion = "6",
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
+                ),
+              ),
+            ),
+          )
+      }
+  }
+
+  @Test
+  fun `should return not found error for invalid crn for versioned risk scores`() {
+    webTestClient.get().uri("/risks/predictors/unsafe/all/crn/X999999")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `should return 400 bad request for invalid identifier type for versioned risk scores`() {
+    val identifierType = "INVALID_IDENTIFIER_TYPE"
+    val identifierValue = "X234567"
+    webTestClient.get().uri("/risks/predictors/unsafe/all/$identifierType/$identifierValue")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isBadRequest
+  }
 }
