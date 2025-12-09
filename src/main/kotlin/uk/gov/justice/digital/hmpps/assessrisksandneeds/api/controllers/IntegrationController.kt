@@ -116,8 +116,8 @@ class IntegrationController(
   @JsonView(View.AllRisksView::class)
   fun getRoshRisksByCrnWithinTimeframe(
     @Parameter(description = "CRN", required = true, example = "D1974X")
-    @Parameter(description = "Timeframe", required = true, example = "70")
     @PathVariable crn: String,
+    @Parameter(description = "Timeframe", required = true, example = "70")
     @PathVariable timeframe: Long,
   ): AllRoshRiskDto = riskService.getRoshRisksWithoutLaoCheck(crn, timeframe)
 
@@ -155,10 +155,12 @@ class IntegrationController(
   @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
   fun getCriminogenicNeedsByCrnWithinTimeframe(
     @Parameter(description = "CRN", required = true, example = "D1974X")
-    @Parameter(description = "Timeframe", required = true, example = "70")
     @PathVariable crn: String,
+    @Parameter(description = "Timeframe", required = true, example = "70")
     @PathVariable timeframe: Long,
-  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, timeframe)
+    @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
+    excludeIncomplete: Boolean = true,
+  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, timeframe, excludeIncomplete)
 
   @RequestMapping(path = ["/risks/risk-management-plan/{crn}"], method = [RequestMethod.GET])
   @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")

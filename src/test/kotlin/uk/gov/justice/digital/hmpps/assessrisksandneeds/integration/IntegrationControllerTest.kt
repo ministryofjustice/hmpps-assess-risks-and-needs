@@ -61,7 +61,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<RiskScoresDto>>()
       .consumeWith {
-        assertThat(it.responseBody).hasSize(3)
+        assertThat(it.responseBody).hasSize(5)
         assertThat(it.responseBody[0]).usingRecursiveComparison()
           .isEqualTo(
             RiskScoresDto(
@@ -92,7 +92,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
                 percentageScore = BigDecimal.valueOf(50.1234),
                 staticOrDynamic = ScoreType.DYNAMIC,
                 source = RsrScoreSource.OASYS,
-                algorithmVersion = "11",
+                algorithmVersion = "5",
                 ScoreLevel.MEDIUM,
               ),
               sexualPredictorScore = OspScoreDto(
@@ -259,6 +259,20 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25))
+    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
+    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+  }
+
+  @Test
+  fun `get criminogenic needs by crn for an incomplete assessment`() {
+    val needsDto = webTestClient.get().uri("/needs/$crn?excludeIncomplete=false")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(needsDto?.assessedOn).isNull()
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
   }

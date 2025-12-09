@@ -12,6 +12,7 @@ import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
@@ -57,10 +58,20 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .expectBody<List<RsrPredictorVersioned<Any>>>()
       .returnResult().responseBody
 
-    assertThat(rsrScores).hasSize(3)
-    assertThat(rsrScores[0].outputVersion).isEqualTo("1")
-    val firstLegacyRsrScore = rsrScores[0] as RsrPredictorVersionedLegacyDto
+    assertThat(rsrScores).hasSize(5)
+    assertThat(rsrScores[0].outputVersion).isEqualTo("2")
+    val firstLegacyRsrScore = rsrScores[0] as RsrPredictorVersionedDto
     with(firstLegacyRsrScore) {
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 12, 18, 23, 20))
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.23))
+      assertThat(output?.combinedSeriousReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+    }
+    assertThat(rsrScores[2].outputVersion).isEqualTo("1")
+    val thirdLegacyRsrScore = rsrScores[2] as RsrPredictorVersionedLegacyDto
+    with(thirdLegacyRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
@@ -68,10 +79,9 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
       assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
     }
-
-    assertThat(rsrScores[2].outputVersion).isEqualTo("1")
-    val thirdLegacyRsrScore = rsrScores[2] as RsrPredictorVersionedLegacyDto
-    with(thirdLegacyRsrScore) {
+    assertThat(rsrScores[4].outputVersion).isEqualTo("1")
+    val fifthLegacyRsrScore = rsrScores[4] as RsrPredictorVersionedLegacyDto
+    with(fifthLegacyRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
@@ -121,8 +131,16 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .expectBody<List<RsrPredictorDto>>()
       .returnResult().responseBody
 
-    assertThat(rsrHistory).hasSize(3)
+    assertThat(rsrHistory).hasSize(5)
     with(rsrHistory[0]) {
+      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(1.23))
+      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 12, 18, 23, 20))
+      assertThat(staticOrDynamic).isEqualTo(ScoreType.STATIC)
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+    }
+    with(rsrHistory[2]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
@@ -130,7 +148,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
     }
-    with(rsrHistory[2]) {
+    with(rsrHistory[4]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(0.32))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
       assertThat(calculatedDate).isNull()

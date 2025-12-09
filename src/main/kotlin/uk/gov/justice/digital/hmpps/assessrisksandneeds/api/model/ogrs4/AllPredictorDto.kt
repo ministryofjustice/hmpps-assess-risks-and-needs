@@ -3,13 +3,9 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgp2Dto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4gDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOgrs4vDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysNewAllPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvp2Dto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysSnsvDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
 import java.math.BigDecimal
 
@@ -26,11 +22,7 @@ data class AllPredictorDto(
 
     fun from(assessment: AllRisksPredictorAssessmentDto): AllPredictorDto = with(assessment) {
       buildAllPredictorDto(
-        ogp2ScoreDto,
-        ogrs4gScoreDto,
-        ovp2ScoreDto,
-        ogrs4vScoreDto,
-        snsvScoreDto,
+        newAllPredictorScoresDto,
         ospScoreDto,
         rsrScoreDto,
       )
@@ -38,50 +30,42 @@ data class AllPredictorDto(
 
     fun from(assessment: RisksCrAssPredictorAssessmentDto): AllPredictorDto = with(assessment) {
       buildAllPredictorDto(
-        ogp2ScoreDto,
-        ogrs4gScoreDto,
-        ovp2ScoreDto,
-        ogrs4vScoreDto,
-        snsvScoreDto,
+        newAllPredictorScoresDto,
         ospScoreDto,
         rsrScoreDto,
       )
     }
 
     fun buildAllPredictorDto(
-      ogp: OasysOgp2Dto?,
-      ogrs4g: OasysOgrs4gDto?,
-      ovp: OasysOvp2Dto?,
-      ogrs4v: OasysOgrs4vDto?,
-      snsv: OasysSnsvDto?,
+      newAllPredictorScoresDto: OasysNewAllPredictorDto?,
       osp: OasysOspDto,
       rsr: OasysRsrDto,
     ): AllPredictorDto = AllPredictorDto(
       allReoffendingPredictor = buildStaticOrDynamicPredictorDto(
-        ogp?.ogp2Calculated,
-        ogp?.ogp2Yr2,
-        ogp?.ogp2Band,
-        ogrs4g?.ogrs4gCalculated,
-        ogrs4g?.ogrs4gYr2,
-        ogrs4g?.ogrs4gBand,
+        newAllPredictorScoresDto?.ogp2Calculated,
+        newAllPredictorScoresDto?.ogp2Yr2,
+        newAllPredictorScoresDto?.ogp2Band,
+        newAllPredictorScoresDto?.ogrs4gCalculated,
+        newAllPredictorScoresDto?.ogrs4gYr2,
+        newAllPredictorScoresDto?.ogrs4gBand,
       ),
 
       violentReoffendingPredictor = buildStaticOrDynamicPredictorDto(
-        ovp?.ovp2Calculated,
-        ovp?.ovp2Yr2,
-        ovp?.ovp2Band,
-        ogrs4v?.ogrs4vCalculated,
-        ogrs4v?.ogrs4vYr2,
-        ogrs4v?.ogrs4vBand,
+        newAllPredictorScoresDto?.ovp2Calculated,
+        newAllPredictorScoresDto?.ovp2Yr2,
+        newAllPredictorScoresDto?.ovp2Band,
+        newAllPredictorScoresDto?.ogrs4vCalculated,
+        newAllPredictorScoresDto?.ogrs4vYr2,
+        newAllPredictorScoresDto?.ogrs4vBand,
       ),
 
       seriousViolentReoffendingPredictor = buildStaticOrDynamicPredictorDto(
-        snsv?.snsvDynamicCalculated,
-        snsv?.snsvDynamicYr2,
-        snsv?.snsvDynamicYr2Band,
-        snsv?.snsvStaticCalculated,
-        snsv?.snsvStaticYr2,
-        snsv?.snsvStaticYr2Band,
+        newAllPredictorScoresDto?.snsvDynamicCalculated,
+        newAllPredictorScoresDto?.snsvDynamicYr2,
+        newAllPredictorScoresDto?.snsvDynamicYr2Band,
+        newAllPredictorScoresDto?.snsvStaticCalculated,
+        newAllPredictorScoresDto?.snsvStaticYr2,
+        newAllPredictorScoresDto?.snsvStaticYr2Band,
       ),
 
       directContactSexualReoffendingPredictor = BasePredictorDto(

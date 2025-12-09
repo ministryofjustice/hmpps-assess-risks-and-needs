@@ -13,12 +13,12 @@ data class AssessmentNeedsDto(
   @Schema(description = "Collection of assessment need sections which have not been answered")
   val unansweredNeeds: Collection<AssessmentNeedDto>,
   @Schema(description = "The date and time that the assessment needs were completed")
-  val assessedOn: LocalDateTime,
+  val assessedOn: LocalDateTime?,
 ) {
   companion object {
     fun from(
       needs: Collection<AssessmentNeedDto>,
-      assessedOn: LocalDateTime,
+      assessedOn: LocalDateTime?,
     ): AssessmentNeedsDto {
       val unansweredNeeds = mutableListOf<AssessmentNeedDto>()
       val identifiedNeeds = mutableListOf<AssessmentNeedDto>()

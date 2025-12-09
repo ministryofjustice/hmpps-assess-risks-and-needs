@@ -56,7 +56,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<RiskScoresDto>>()
       .consumeWith {
-        assertThat(it.responseBody).hasSize(3)
+        assertThat(it.responseBody).hasSize(5)
         assertThat(it.responseBody!![0]).usingRecursiveComparison()
           .isEqualTo(
             RiskScoresDto(
@@ -87,7 +87,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                 percentageScore = BigDecimal.valueOf(50.1234),
                 staticOrDynamic = ScoreType.DYNAMIC,
                 source = RsrScoreSource.OASYS,
-                algorithmVersion = "11",
+                algorithmVersion = "5",
                 ScoreLevel.MEDIUM,
               ),
               sexualPredictorScore = OspScoreDto(
@@ -145,7 +145,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<AllPredictorVersioned<Any>>>()
       .consumeWith {
-        assertThat(it.responseBody).hasSize(3)
+        assertThat(it.responseBody).hasSize(5)
         assertThat(it.responseBody!![0]).usingRecursiveComparison()
           .isEqualTo(
             AllPredictorVersionedLegacyDto(
@@ -178,7 +178,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                   percentageScore = BigDecimal.valueOf(50.1234),
                   staticOrDynamic = ScoreType.DYNAMIC,
                   source = RsrScoreSource.OASYS,
-                  algorithmVersion = "11",
+                  algorithmVersion = "5",
                   ScoreLevel.MEDIUM,
                 ),
                 sexualPredictorScore = OspScoreDto(
@@ -186,6 +186,45 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                   ospContactPercentageScore = BigDecimal.valueOf(1.07),
                   ospIndecentScoreLevel = ScoreLevel.MEDIUM,
                   ospContactScoreLevel = ScoreLevel.MEDIUM,
+                ),
+              ),
+            ),
+          )
+        assertThat(it.responseBody!![4]).usingRecursiveComparison()
+          .isEqualTo(
+            AllPredictorVersionedDto(
+              completedDate = LocalDateTime.of(2022, 6, 12, 18, 23, 20),
+              status = AssessmentStatus.COMPLETE,
+              outputVersion = "2",
+              output = AllPredictorDto(
+                allReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
+                ),
+                violentReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
+                ),
+                seriousViolentReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
+                ),
+                directContactSexualReoffendingPredictor = BasePredictorDto(
+                  score = BigDecimal.valueOf(2.81),
+                  band = ScoreLevel.MEDIUM,
+                ),
+                indirectImageContactSexualReoffendingPredictor = BasePredictorDto(
+                  score = BigDecimal.valueOf(1.07),
+                  band = ScoreLevel.MEDIUM,
+                ),
+                combinedSeriousReoffendingPredictor = VersionedStaticOrDynamicPredictorDto(
+                  algorithmVersion = "6",
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal.valueOf(1.23),
+                  band = ScoreLevel.LOW,
                 ),
               ),
             ),
