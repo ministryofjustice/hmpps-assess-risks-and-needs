@@ -17,6 +17,6 @@ data class RisksCrAssPredictorAssessmentDto(
   val rsrScoreDto: OasysRsrDto,
   @JsonProperty("OSP")
   val ospScoreDto: OasysOspDto,
-  @JsonProperty("NEWACTPREDICT")
+  @JsonProperty("newActuarialPredictors")
   val newAllPredictorScoresDto: OasysNewAllPredictorDto? = null,
 )
