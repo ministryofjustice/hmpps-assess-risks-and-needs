@@ -53,7 +53,7 @@
         "ospDirectContactScoreLevel": "Medium",
         "ospIndirectImagesChildrenScoreLevel": "Medium"
       },
-      "NEWACTPREDICT": {
+      "newActuarialPredictors": {
         "ogrs4gYr2": 1.23,
         "ogrs4gBand": "Low",
         "ogrs4gCalculated": "Y",
