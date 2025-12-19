@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.TierService
 class TierAssessmentController(private val tierService: TierService) {
   @GetMapping("/sections/{crn}")
   @Operation(description = "Gets all question answers required for a tier calculation")
-  @PreAuthorize("hasRole('ROLE_MANAGEMENT_TIER_UPDATE')")
+  //@PreAuthorize("hasRole('ROLE_MANAGEMENT_TIER_UPDATE')")
   fun getTierAssessmentAnswers(
     @PathVariable crn: String,
   ): ResponseEntity<SectionSummary> {
