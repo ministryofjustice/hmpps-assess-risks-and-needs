@@ -3,11 +3,13 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 const val GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_DESC =
   """# Gets Combined Serious Reoffending Predictor scores for an identifier type (e.g. CRN)
 
-Returns a list of assessments containing Combined Serious Reoffending Predictor scores (previously known as RSR scores).  
-Assessments within the list will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.  
+Returns a list of assessments containing Combined Serious Reoffending Predictor scores (previously known as RSR scores).
+Assessments within the list will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.
+
+Note that all fields should be implemented as nullable as data may not be available.
 
 ## Determining the predictor score format
-Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.  
+Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.
 
 ### Legacy risk predictor score format (outputVersion = 1)
 ```json
@@ -19,7 +21,7 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
     "outputVersion": "1",
     "output": {
       "staticOrDynamic": "STATIC",
-      "algorithmVersion": "string",
+      "algorithmVersion": "5",
       "rsrPercentageScore": 0,
       "rsrScoreLevel": "LOW",
       "ospcPercentageScore": 0,
@@ -58,7 +60,7 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
-        "algorithmVersion": "string",
+        "algorithmVersion": "6",
         "staticOrDynamic": "STATIC",
         "score": 0,
         "band": "LOW"
@@ -80,13 +82,13 @@ const val GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
     "outputVersion": "1",
     "output": {
       "staticOrDynamic": "STATIC",
-      "algorithmVersion": "string",
+      "algorithmVersion": "5",
       "rsrPercentageScore": 10,
       "rsrScoreLevel": "LOW",
-      "ospcPercentageScore": 10,
-      "ospcScoreLevel": "LOW",
-      "ospiPercentageScore": 10,
-      "ospiScoreLevel": "LOW",
+      "ospcPercentageScore": null,
+      "ospcScoreLevel": null,
+      "ospiPercentageScore": null,
+      "ospiScoreLevel": null,
       "ospiiPercentageScore": 10,
       "ospdcPercentageScore": 10,
       "ospiiScoreLevel": "LOW",
@@ -113,7 +115,7 @@ const val GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
-        "algorithmVersion": "string",
+        "algorithmVersion": "6",
         "staticOrDynamic": "STATIC",
         "score": 10,
         "band": "LOW"
@@ -126,11 +128,13 @@ const val GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
 const val GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC =
   """# Gets all risk predictor scores for completed assessments for an identifier type (e.g. CRN)
 
-Returns a list of completed assessments containing all predictor scores.  
-Assessments within the list will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.  
+Returns a list of completed assessments containing all predictor scores.
+Assessments within the list will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.
+
+Note that all fields should be implemented as nullable as data may not be available.
 
 ## Determining the predictor score format
-Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.  
+Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.
 
 ### Legacy risk predictor score format (outputVersion = 1)
 ```json
@@ -166,14 +170,14 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
         "percentageScore": 0,
         "staticOrDynamic": "STATIC",
         "source": "OASYS",
-        "algorithmVersion": "string",
+        "algorithmVersion": "5",
         "scoreLevel": "LOW"
       },
       "sexualPredictorScore": {
-        "ospIndecentPercentageScore": 0,
-        "ospContactPercentageScore": 0,
-        "ospIndecentScoreLevel": "LOW",
-        "ospContactScoreLevel": "LOW",
+        "ospIndecentPercentageScore": null,
+        "ospContactPercentageScore": null,
+        "ospIndecentScoreLevel": null,
+        "ospContactScoreLevel": null,
         "ospIndirectImagePercentageScore": 0,
         "ospDirectContactPercentageScore": 0,
         "ospIndirectImageScoreLevel": "LOW",
@@ -217,7 +221,7 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
-        "algorithmVersion": "string",
+        "algorithmVersion": "6",
         "staticOrDynamic": "STATIC",
         "score": 0,
         "band": "LOW"
@@ -262,14 +266,14 @@ const val GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
         "percentageScore": 0,
         "staticOrDynamic": "STATIC",
         "source": "OASYS",
-        "algorithmVersion": "string",
+        "algorithmVersion": "5",
         "scoreLevel": "LOW"
       },
       "sexualPredictorScore": {
-        "ospIndecentPercentageScore": 0,
-        "ospContactPercentageScore": 0,
-        "ospIndecentScoreLevel": "LOW",
-        "ospContactScoreLevel": "LOW",
+        "ospIndecentPercentageScore": null,
+        "ospContactPercentageScore": null,
+        "ospIndecentScoreLevel": null,
+        "ospContactScoreLevel": null,
         "ospIndirectImagePercentageScore": 0,
         "ospDirectContactPercentageScore": 0,
         "ospIndirectImageScoreLevel": "LOW",
@@ -306,7 +310,7 @@ const val GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
-        "algorithmVersion": "string",
+        "algorithmVersion": "6",
         "staticOrDynamic": "STATIC",
         "score": 0,
         "band": "LOW"
@@ -319,11 +323,13 @@ const val GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
 const val GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_DESC =
   """# Gets all risk predictors scores for the requested assessment ID
 
-Returns the requested assessment containing all associated predictor scores.  
-The assessment will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.  
+Returns the requested assessment containing all associated predictor scores.
+The assessment will have predictor scores in **either legacy** (OGRS3 generation) **or new** (OGRS4 generation) format.
+
+Note that all fields should be implemented as nullable as data may not be available.
 
 ## Determining the predictor score format
-The assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.  
+The assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.
 
 ### Legacy risk predictor score format (outputVersion = 1)
 ```json
@@ -357,14 +363,14 @@ The assessment contains a top level `outputVersion` field which dictates the for
       "percentageScore": 0,
       "staticOrDynamic": "STATIC",
       "source": "OASYS",
-      "algorithmVersion": "string",
+      "algorithmVersion": "5",
       "scoreLevel": "LOW"
     },
     "sexualPredictorScore": {
-      "ospIndecentPercentageScore": 0,
-      "ospContactPercentageScore": 0,
-      "ospIndecentScoreLevel": "LOW",
-      "ospContactScoreLevel": "LOW",
+      "ospIndecentPercentageScore": null,
+      "ospContactPercentageScore": null,
+      "ospIndecentScoreLevel": null,
+      "ospContactScoreLevel": null,
       "ospIndirectImagePercentageScore": 0,
       "ospDirectContactPercentageScore": 0,
       "ospIndirectImageScoreLevel": "LOW",
@@ -405,7 +411,7 @@ The assessment contains a top level `outputVersion` field which dictates the for
       "band": "LOW"
     },
     "combinedSeriousReoffendingPredictor": {
-      "algorithmVersion": "string",
+      "algorithmVersion": "6",
       "staticOrDynamic": "STATIC",
       "score": 0,
       "band": "LOW"
@@ -448,14 +454,14 @@ const val GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_LEGACY_EXAMPLE = """
       "percentageScore": 0,
       "staticOrDynamic": "STATIC",
       "source": "OASYS",
-      "algorithmVersion": "string",
+      "algorithmVersion": "5",
       "scoreLevel": "LOW"
     },
     "sexualPredictorScore": {
-      "ospIndecentPercentageScore": 0,
-      "ospContactPercentageScore": 0,
-      "ospIndecentScoreLevel": "LOW",
-      "ospContactScoreLevel": "LOW",
+      "ospIndecentPercentageScore": null,
+      "ospContactPercentageScore": null,
+      "ospIndecentScoreLevel": null,
+      "ospContactScoreLevel": null,
       "ospIndirectImagePercentageScore": 0,
       "ospDirectContactPercentageScore": 0,
       "ospIndirectImageScoreLevel": "LOW",
@@ -495,7 +501,7 @@ const val GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_NEW_EXAMPLE = """
       "band": "LOW"
     },
     "combinedSeriousReoffendingPredictor": {
-      "algorithmVersion": "string",
+      "algorithmVersion": "6",
       "staticOrDynamic": "STATIC",
       "score": 0,
       "band": "LOW"
