@@ -48,7 +48,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .expectBody<AssessmentNeedsDto>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25))
+    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25))
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
   }
@@ -63,7 +63,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .expectBody<AssessmentNeedsDto>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25))
+    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25))
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
   }
@@ -390,7 +390,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
       listOf(
         BasicAssessmentSummary(
           9650001,
-          LocalDateTime.parse("${LocalDateTime.now().year - 1}-12-25T16:57:25"),
+          LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 25, 16, 57, 25),
           null,
           "LAYER3",
           "OPEN",
@@ -398,7 +398,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
         BasicAssessmentSummary(
           9630348,
           LocalDateTime.parse("2023-12-17T16:57:25"),
-          LocalDateTime.parse("${LocalDateTime.now().year - 1}-12-19T16:57:25"),
+          LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
           "LAYER3",
           "COMPLETE",
         ),

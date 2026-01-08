@@ -191,7 +191,7 @@ class RiskControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
           ),
         )
       }
@@ -263,7 +263,7 @@ class RiskControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
           ),
         )
       }
@@ -334,7 +334,7 @@ class RiskControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
           ),
         )
       }
@@ -406,7 +406,7 @@ class RiskControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, 12, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
           ),
         )
       }
