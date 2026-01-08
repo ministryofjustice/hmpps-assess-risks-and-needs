@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @DisplayName("Tier calculation information tests")
-class TierAssessmentController : IntegrationTestBase() {
+class TierAssessmentControllerTest : IntegrationTestBase() {
   @Test
   fun `successfully returns the answers required for a tier calculation`() {
     val response = checkNotNull(
@@ -25,7 +25,7 @@ class TierAssessmentController : IntegrationTestBase() {
     )
     val assessmentSummary = checkNotNull(response["assessment"])
     assertThat(assessmentSummary["assessmentId"].asInt(), equalTo(9630348))
-    assertThat(assessmentSummary["completedDate"].asText(), equalTo("${LocalDateTime.now().year - 1}-12-19T16:57:25"))
+    assertThat(assessmentSummary["completedDate"].asText(), equalTo(LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25).toString()))
     assertThat(assessmentSummary["status"].asText(), equalTo("COMPLETE"))
     assertThat(assessmentSummary["sanIndicator"].asBoolean(), equalTo(false))
 
