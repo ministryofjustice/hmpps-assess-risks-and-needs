@@ -43,7 +43,9 @@ spring:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
 
   datasource:
-    url: 'jdbc:postgresql://${database.endpoint:localhost:5432}/${database.name:postgres}?currentSchema=${database.schema.name:hmppsassessrisksandneedsapi}&user=${database.username:root}&password=${database.password:dev}&stringtype=unspecified'
+    url: 'jdbc:postgresql://${database.endpoint:localhost:5432}/${database.name:postgres}?currentSchema=${database.schema.name:hmppsassessrisksandneedsapi}&stringtype=unspecified'
+    username: ${database.username:root}
+    password: ${database.password:dev}
 
   flyway:
     schemas: hmppsassessrisksandneedsapi
