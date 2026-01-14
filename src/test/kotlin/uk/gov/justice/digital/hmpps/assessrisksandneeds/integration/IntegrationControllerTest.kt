@@ -67,7 +67,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .expectBody<List<RiskScoresDto>>()
       .consumeWith {
         assertThat(it.responseBody).hasSize(5)
-        assertThat(it.responseBody[0]).usingRecursiveComparison()
+        assertThat(it?.responseBody?.get(0)).usingRecursiveComparison()
           .isEqualTo(
             RiskScoresDto(
               completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
@@ -176,7 +176,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
           ),
         )
       }
@@ -248,7 +248,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
               ),
               assessedOn = null,
             ),
-            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
           ),
         )
       }
@@ -263,7 +263,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .expectBody<AssessmentNeedsDto>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25))
+    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
   }
@@ -292,7 +292,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .expectBody<AssessmentNeedsDto>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25))
+    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
   }

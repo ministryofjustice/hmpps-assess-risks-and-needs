@@ -10,12 +10,12 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.HmppsAssessRisksAndNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.TestClockConfiguration
 import java.time.Duration
 
-@Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @ContextConfiguration
 @SpringBootTest(
-  classes = [HmppsAssessRisksAndNeeds::class],
+  classes = [HmppsAssessRisksAndNeeds::class, TestClockConfiguration::class],
   webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @ActiveProfiles("test")

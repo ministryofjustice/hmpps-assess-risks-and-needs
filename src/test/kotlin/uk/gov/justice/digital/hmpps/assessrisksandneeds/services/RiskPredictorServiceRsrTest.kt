@@ -221,7 +221,7 @@ class RiskPredictorServiceRsrTest {
   private fun getOasysPredictorNoRsr(): AllRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
     listOf(
       AllRisksPredictorAssessmentDto(
-        dateCompleted = LocalDateTime.now(),
+        dateCompleted = LocalDateTime.parse("2024-12-25T12:00:00"),
         assessmentType = "LAYER3",
         assessmentStatus = AssessmentStatus.COMPLETE,
         ovpScoreDto = OasysOvpDto(),

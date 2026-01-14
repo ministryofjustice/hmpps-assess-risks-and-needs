@@ -92,7 +92,7 @@ class WidgetControllerTest : IntegrationTestBase() {
         assertThat(it.responseBody).isEqualTo(
           RoshRiskWidgetDto(
             overallRisk = "VERY_HIGH",
-            assessedOn = LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25),
+            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
             riskInCommunity = mapOf(
               "Children" to "LOW",
               "Public" to "MEDIUM",

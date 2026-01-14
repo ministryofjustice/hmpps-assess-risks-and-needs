@@ -10,7 +10,7 @@
     {
       "assessmentPk": 45115261,
       "assessmentType": "LAYER3",
-      "dateCompleted": "{{now offset='-1 years' format='yyyy'}}-12-19T16:57:25",
+      "dateCompleted": "2014-12-19T16:57:25",
       "assessorSignedDate": "2023-12-19T16:55:32",
       "initiationDate": "2023-12-19T13:41:04",
       "assessmentStatus": "COMPLETE",

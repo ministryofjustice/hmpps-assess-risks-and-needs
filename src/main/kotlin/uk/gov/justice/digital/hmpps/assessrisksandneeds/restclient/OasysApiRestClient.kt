@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmen
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksOasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
@@ -39,11 +40,11 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.RE
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.THINKING_AND_BEHAVIOUR
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.SectionHeader
 import java.time.Duration
-import java.time.LocalDate
 
 @Component
 class OasysApiRestClient(
   @Qualifier("oasysApiWebClient") private val webClient: AuthenticatingRestClient,
+  private val clock: Clock,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -256,11 +257,11 @@ class OasysApiRestClient(
       .block().also { log.info("Retrieved assessment summary indicator for crn $crn") }!!
   }
 
-  fun getRoshSummary(identifier: PersonIdentifier, timeframe: Long): RiskRoshSummaryDto? = getLatestAssessment(identifier, riskPredicate(timeframe))?.let { assessment ->
+  fun getRoshSummary(identifier: PersonIdentifier, timeframe: Long): RiskRoshSummaryDto? = getLatestAssessment(identifier, riskPredicate(timeframe, clock))?.let { assessment ->
     getRoshSummary(assessment.assessmentId).map { it.asRiskRoshSummary() }.block()
   }
 
-  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier, timeframe: Long): AllRoshRiskDto? = getLatestAssessment(identifier, riskPredicate(timeframe))?.let { assessment ->
+  fun getRoshDetailForLatestCompletedAssessment(identifier: PersonIdentifier, timeframe: Long): AllRoshRiskDto? = getLatestAssessment(identifier, riskPredicate(timeframe, clock))?.let { assessment ->
     getRoshFull(assessment.assessmentId)
       .zipWith(getRoshScreening(assessment.assessmentId))
       .zipWith(getRoshSummary(assessment.assessmentId))
@@ -316,13 +317,13 @@ class OasysApiRestClient(
 
 inline fun <reified T : ScoredSection> Map<NeedsSection, ScoredSection>.section(section: NeedsSection): T? = this[section] as T?
 
-fun AssessmentSummary.isCompletedWithinTimeframe(timeframe: Long) = completedDate?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(timeframe)) == false
-fun AssessmentSummary.isWithinTimeframe(timeframe: Long) = (completedDate ?: initiationDate)?.toLocalDate()?.isBefore(LocalDate.now().minusWeeks(timeframe)) == false
+fun AssessmentSummary.isCompletedWithinTimeframe(timeframe: Long, clock: Clock) = completedDate?.toLocalDate()?.isBefore(clock.now().toLocalDate().minusWeeks(timeframe)) == false
+fun AssessmentSummary.isWithinTimeframe(timeframe: Long, clock: Clock) = (completedDate ?: initiationDate)?.toLocalDate()?.isBefore(clock.now().toLocalDate().minusWeeks(timeframe)) == false
 
-private fun riskPredicate(timeframe: Long): (AssessmentSummary) -> Boolean = {
+private fun riskPredicate(timeframe: Long, clock: Clock): (AssessmentSummary) -> Boolean = {
   it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
     it.status in listOf(AssessmentStatus.COMPLETE.name) &&
-    it.isCompletedWithinTimeframe(timeframe)
+    it.isCompletedWithinTimeframe(timeframe, clock)
 }
 
 data class SectionSummary(

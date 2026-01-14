@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Indicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -40,10 +41,11 @@ class AssessmentOffenceServiceTest {
   private val oasysClient: OasysApiRestClient = mockk()
   private val communityClient: CommunityApiRestClient = mockk()
   private val auditService: AuditService = mockk()
-  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService)
+  private val clock: Clock = mockk()
+  private val assessmentOffenceService = AssessmentOffenceService(oasysClient, communityClient, auditService, clock)
   private val crn = "T123456"
   private val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, crn)
-  private val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
+  private val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
 
   @BeforeEach
   fun setup() {

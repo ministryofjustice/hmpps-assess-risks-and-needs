@@ -36,7 +36,7 @@ class SupplementaryRiskServiceTest {
   private val source = "INTERVENTION_REFERRAL"
   private val sourceId = "123"
   private val crn = "CRN123"
-  private val createdDate = LocalDateTime.now()
+  private val createdDate = LocalDateTime.parse("2024-12-25T12:00:00")
   private val createdByUserType = "delius"
   private val createdBy = "Arnold G."
   private val riskComments = "risk comments bla bla"
@@ -393,6 +393,7 @@ class SupplementaryRiskServiceTest {
           crn = "XD83873",
           createdByUserType = "createdByUserType",
           riskSummaryComments = "comments",
+          createdDate = LocalDateTime.parse("2024-12-25T12:00:00"),
         ),
       )
     }

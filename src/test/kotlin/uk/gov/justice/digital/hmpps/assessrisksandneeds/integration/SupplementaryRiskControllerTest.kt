@@ -237,6 +237,7 @@ class SupplementaryRiskControllerTest : IntegrationTestBase() {
         crn = "X123457",
         riskSummaryComments = "risk to others",
         createdByUserType = "delius",
+        createdDate = LocalDateTime.parse("2024-12-25T12:00:00"),
       )
 
       webTestClient.post().uri("/risks/supplementary")

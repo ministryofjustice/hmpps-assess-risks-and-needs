@@ -12,13 +12,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
-class RequestData(excludeUris: String?) : HandlerInterceptor {
+class RequestData(excludeUris: String?, private val clock: Clock) : HandlerInterceptor {
 
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS")
   private val excludeUriRegex: Pattern = Pattern.compile(excludeUris)
 
   override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-    request.setAttribute("startTime", LocalDateTime.now().toString())
+    request.setAttribute("startTime", clock.now().toString())
     MDC.clear()
     MDC.put(USER_ID_HEADER, initialiseUserId(request))
     MDC.put(USER_NAME_HEADER, initialiseUserName(request))
@@ -37,7 +37,7 @@ class RequestData(excludeUris: String?) : HandlerInterceptor {
     val start = LocalDateTime.parse(
       request.getAttribute("startTime").toString(),
     )
-    val duration = Duration.between(start, LocalDateTime.now()).toMillis()
+    val duration = Duration.between(start, clock.now()).toMillis()
 
     if (log.isTraceEnabled && isLoggingAllowed) {
       log.trace("Response: ${request.method} ${request.requestURI} - Status $status - Start ${start.format(formatter)}, Duration $duration ms")

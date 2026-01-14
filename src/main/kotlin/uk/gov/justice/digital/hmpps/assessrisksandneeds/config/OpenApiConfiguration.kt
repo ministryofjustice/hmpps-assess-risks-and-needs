@@ -15,12 +15,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Configuration
-class OpenApiConfiguration(buildProperties: BuildProperties) {
+class OpenApiConfiguration(buildProperties: BuildProperties, clock: Clock) {
   private val version: String = buildProperties.version
 
   init {
     val schema: Schema<LocalDateTime> = Schema<LocalDateTime>()
-    schema.example(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+    schema.example(clock.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
     SpringDocUtils.getConfig().replaceWithSchema(LocalDateTime::class.java, schema)
   }
 
