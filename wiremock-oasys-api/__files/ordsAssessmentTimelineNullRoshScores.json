@@ -10,7 +10,7 @@
     {
       "assessmentPk": 45115261,
       "assessmentType": "LAYER1",
-      "completedDate": "{{now offset='-1 years' format='yyyy'}}-12-19T16:57:25",
+      "completedDate": "2024-12-19T16:57:25",
       "initiationDate": "2023-12-19T13:41:04",
       "status": "COMPLETE"
     }

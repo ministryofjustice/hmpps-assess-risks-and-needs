@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
-class SpringConfiguration : WebMvcConfigurer {
+class SpringConfiguration(private val clock: Clock) : WebMvcConfigurer {
 
   @Value("\${logging.uris.exclude.regex}")
   private val excludedLogUrls: String? = null
@@ -35,7 +35,7 @@ class SpringConfiguration : WebMvcConfigurer {
     .registerKotlinModule()
 
   @Bean
-  fun createRequestData(): RequestData = RequestData(excludedLogUrls)
+  fun createRequestData(): RequestData = RequestData(excludedLogUrls, clock)
 
   override fun addInterceptors(registry: InterceptorRegistry) {
     registry.addInterceptor(createRequestData())

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -21,6 +22,7 @@ class AssessmentOffenceService(
   private val oasysApiRestClient: OasysApiRestClient,
   private val communityClient: CommunityApiRestClient,
   private val auditService: AuditService,
+  private val clock: Clock,
 ) {
 
   private val limitedAccess = "ALLOW"
@@ -57,7 +59,7 @@ class AssessmentOffenceService(
   fun getSanIndicator(crn: String, timeframe: Long = 55): SanIndicatorResponse {
     oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
-      needsPredicate(timeframe),
+      needsPredicate(timeframe = timeframe, clock = clock),
     )?.let {
       oasysApiRestClient.getAssessmentSummaryIndicators(it, crn)?.assessments?.firstOrNull()?.let { indicator ->
         return SanIndicatorResponse(crn, indicator.getSanIndicator())

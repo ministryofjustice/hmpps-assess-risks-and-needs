@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeed
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
@@ -25,12 +26,13 @@ import java.time.LocalDateTime
 @DisplayName("Assessment Need Service Tests")
 class AssessmentNeedsServiceTest {
   private val oasysApiRestClient: OasysApiRestClient = mockk()
-  private val assessmentNeedsService = AssessmentNeedsService(oasysApiRestClient)
+  private val clock: Clock = mockk()
+  private val assessmentNeedsService = AssessmentNeedsService(oasysApiRestClient, clock)
 
   @Test
   fun `get assessment needs by crn returns identified needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
@@ -47,7 +49,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn includes unanswered needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(289457671, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(289457671, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {
@@ -64,7 +66,7 @@ class AssessmentNeedsServiceTest {
   @Test
   fun `get assessment needs by crn includes not identified needs`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE")
+    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
 
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every {

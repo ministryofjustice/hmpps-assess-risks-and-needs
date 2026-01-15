@@ -20,7 +20,7 @@ data class CreateSupplementaryRiskDto(
   val createdByUserType: String,
 
   @Schema(description = "Created At", example = "")
-  val createdDate: LocalDateTime = LocalDateTime.now(),
+  val createdDate: LocalDateTime,
 
   @Schema(description = "Redacted Risk Data", example = "Free text up to 4000 characters")
   val redactedRisk: RedactedOasysRiskDto? = null,

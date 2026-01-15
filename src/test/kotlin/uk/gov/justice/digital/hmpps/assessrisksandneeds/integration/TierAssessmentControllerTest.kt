@@ -25,7 +25,7 @@ class TierAssessmentControllerTest : IntegrationTestBase() {
     )
     val assessmentSummary = checkNotNull(response["assessment"])
     assertThat(assessmentSummary["assessmentId"].asInt(), equalTo(9630348))
-    assertThat(assessmentSummary["completedDate"].asText(), equalTo(LocalDateTime.of(LocalDateTime.now().year - 1, LocalDateTime.now().monthValue, 19, 16, 57, 25).toString()))
+    assertThat(assessmentSummary["completedDate"].asText(), equalTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25).toString()))
     assertThat(assessmentSummary["status"].asText(), equalTo("COMPLETE"))
     assertThat(assessmentSummary["sanIndicator"].asBoolean(), equalTo(false))
 

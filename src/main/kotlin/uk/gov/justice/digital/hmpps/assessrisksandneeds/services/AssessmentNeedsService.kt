@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStat
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredAnswer
@@ -17,11 +18,11 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithinTimef
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
 @Service
-class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient) {
+class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient, private val clock: Clock) {
   fun getAssessmentNeeds(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDto {
     val sectionSummary = oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
-      needsPredicate(timeframe, excludeIncomplete),
+      needsPredicate(timeframe, excludeIncomplete, clock),
     )?.let {
       oasysApiRestClient.getScoredSectionsForAssessment(it, NeedsSection.entries)
     }
@@ -66,10 +67,10 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient)
   }
 }
 
-fun needsPredicate(timeframe: Long, excludeIncomplete: Boolean = true): (AssessmentSummary) -> Boolean = {
+fun needsPredicate(timeframe: Long, excludeIncomplete: Boolean = true, clock: Clock): (AssessmentSummary) -> Boolean = {
   listOf(
     it.assessmentType == AssessmentType.LAYER3.name,
     if (excludeIncomplete) it.status == AssessmentStatus.COMPLETE.name else true,
-    if (excludeIncomplete) it.isCompletedWithinTimeframe(timeframe) else it.isWithinTimeframe(timeframe),
+    if (excludeIncomplete) it.isCompletedWithinTimeframe(timeframe, clock) else it.isWithinTimeframe(timeframe, clock),
   ).all { ok -> ok }
 }

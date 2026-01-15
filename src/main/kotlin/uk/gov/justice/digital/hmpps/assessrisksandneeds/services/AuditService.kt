@@ -5,9 +5,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import java.time.Instant
+import java.time.ZoneOffset
 
 @Service
 class AuditService(
@@ -15,6 +17,7 @@ class AuditService(
   private val objectMapper: ObjectMapper,
   @Value("\${spring.application.name}")
   private val serviceName: String,
+  private val clock: Clock,
 ) {
   private val auditQueue by lazy {
     hmppsQueueService.findByQueueId("audit") ?: throw RuntimeException("Queue with ID 'audit' does not exist'")
@@ -32,6 +35,7 @@ class AuditService(
       what = what.name,
       service = serviceName,
       details = details.toJson(),
+      `when` = clock.now().toInstant(ZoneOffset.UTC),
     )
 
     log.info("Sending audit event ${event.what} for ${event.who}")
@@ -51,7 +55,7 @@ class AuditService(
 data class AuditableEvent(
   val who: String,
   val what: String,
-  val `when`: Instant = Instant.now(),
+  val `when`: Instant,
   val service: String,
   val details: String,
 )
