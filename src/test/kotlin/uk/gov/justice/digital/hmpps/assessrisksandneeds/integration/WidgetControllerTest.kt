@@ -62,6 +62,25 @@ class WidgetControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get risk summary by crn for external provider not within timeframe`() {
+    val timeframe = 2L
+    webTestClient.get().uri("/risks/crn/$crn/widget/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RoshRiskWidgetDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          RoshRiskWidgetDto(
+            overallRisk = null,
+            assessedOn = null,
+            riskInCommunity = mapOf(),
+          ),
+        )
+      }
+  }
+
+  @Test
   fun `get risk summary by crn for external provider within timeframe - no risk summary`() {
     val timeframe = 5L
     webTestClient.get().uri("/risks/crn/$crn/widget/$timeframe")
