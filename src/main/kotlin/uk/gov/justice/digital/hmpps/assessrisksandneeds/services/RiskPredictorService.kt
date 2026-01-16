@@ -51,9 +51,9 @@ class RiskPredictorService(
     val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
     log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys for ${identifierType.value}: $identifierValue")
     return oasysRsrPredictors.map { assessment ->
-      // rsrAlgorithmVersion always present due to hasRsrScores filter above
-      val version = assessment.rsrScoreDto.rsrAlgorithmVersion!!.toInt()
-      if (version >= 6) {
+      val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull()
+      // If version is null, it's a legacy assessment
+      if (version != null && version >= 6) {
         RsrPredictorVersionedDto.from(assessment)
       } else {
         RsrPredictorVersionedLegacyDto.from(assessment)
@@ -84,8 +84,9 @@ class RiskPredictorService(
       ?.assessments
       ?.filter { it.assessmentType in listOf("LAYER3", "LAYER1") }
       ?.map { assessment ->
-        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: throw NoSuchElementException("rsrAlgorithmVersion for assessment ${identifierType.value}: $identifierValue not found")
-        if (version >= 6) {
+        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull()
+        // If version is null, it's a legacy assessment
+        if (version != null && version >= 6) {
           AllPredictorVersionedDto.from(assessment)
         } else {
           AllPredictorVersionedLegacyDto.from(assessment)
@@ -102,8 +103,9 @@ class RiskPredictorService(
       ?.assessments
       ?.first()
       ?.let { assessment: RisksCrAssPredictorAssessmentDto ->
-        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull() ?: throw NoSuchElementException("rsrAlgorithmVersion for assessment with id: $id not found")
-        if (version >= 6) {
+        val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull()
+        // If version is null, it's a legacy assessment
+        if (version != null && version >= 6) {
           AllPredictorVersionedDto.from(assessment)
         } else {
           AllPredictorVersionedLegacyDto.from(assessment)

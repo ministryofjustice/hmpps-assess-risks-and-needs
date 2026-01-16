@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
@@ -461,7 +460,7 @@ class RiskPredictorServiceTest {
     }
 
     @Test
-    fun `should throw `() {
+    fun `getAllRiskScoresWithoutLaoCheck - should default to legacy assessment when no rsrAlgorthmVersion`() {
       // Given
       val crn = "X12345"
 
@@ -476,14 +475,37 @@ class RiskPredictorServiceTest {
       }.returns(allRisksOasysRiskPredictorsDto)
 
       // When
-      val exception = assertThrows<NoSuchElementException> { riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn) }
+      val result = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
 
       // Then
-      assertThat("rsrAlgorithmVersion for assessment crn: X12345 not found").isEqualTo(exception.message)
+      assertThat(result[0].outputVersion).isEqualTo("1")
     }
 
     @Test
-    fun `should throw for getAllRiskScoresByAssessmentId when no rsrAlgorthmVersion`() {
+    fun `getAllRsrScores - should default to legacy assessment when no rsrAlgorthmVersion`() {
+      // Given
+      val crn = "X12345"
+
+      val allRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
+        listOf(
+          provideOutput(LocalDateTime.of(2025, 1, 1, 12, 0, 0), null, true),
+        ),
+      )
+
+      every {
+        oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
+      }.returns(allRisksOasysRiskPredictorsDto)
+
+      // When
+      val result = riskPredictorsService.getAllRsrScores(IdentifierType.CRN, crn)
+
+      // Then
+      // If RsrAlgorithmVersion is not provided there will be no RSR scores to return as this is an old (pre-RSR) assessment
+      assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getAllRiskScoresByAssessmentId - should default to legacy assessment when no rsrAlgorthmVersion`() {
       // Given
       val id = 1234567890L
       val providedDynamicOutput = provideOutput(LocalDateTime.of(2025, 1, 1, 12, 0, 0), null, true)
@@ -506,10 +528,10 @@ class RiskPredictorServiceTest {
       }.returns(risksCrAssOasysRiskPredictorsDto)
 
       // When
-      val exception = assertThrows<NoSuchElementException> { riskPredictorsService.getAllRiskScoresByAssessmentId(id) }
+      val result = riskPredictorsService.getAllRiskScoresByAssessmentId(id)
 
       // Then
-      assertThat("rsrAlgorithmVersion for assessment with id: 1234567890 not found").isEqualTo(exception.message)
+      assertThat(result.outputVersion).isEqualTo("1")
     }
   }
 
@@ -539,10 +561,16 @@ class RiskPredictorServiceTest {
       ogrs3RiskRecon = LOW.type,
     ),
     rsrScoreDto = OasysRsrDto(
-      rsrPercentageScore = BigDecimal.valueOf(50.1234),
-      rsrStaticOrDynamic = if (isDynamic) ScoreType.DYNAMIC else ScoreType.STATIC,
+      rsrPercentageScore = if (rsrAlgorithmVersion != null) BigDecimal.valueOf(50.1234) else null,
+      rsrStaticOrDynamic = if (rsrAlgorithmVersion == null) {
+        null
+      } else if (isDynamic) {
+        ScoreType.DYNAMIC
+      } else {
+        ScoreType.STATIC
+      },
       rsrAlgorithmVersion = rsrAlgorithmVersion,
-      scoreLevel = MEDIUM.type,
+      scoreLevel = if (rsrAlgorithmVersion != null) MEDIUM.type else null,
     ),
     ospScoreDto = OasysOspDto(
       ospDirectContactPercentageScore = BigDecimal.valueOf(2.81),
