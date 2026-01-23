@@ -134,7 +134,10 @@ data class RoshSummary(
   private val riskChildrenCommunity: String? = null,
   val whoAtRisk: String? = null,
   val factorsLikelyToReduceRisk: String? = null,
+  val factorsStrengthsAndProtective: String? = null,
   val factorsLikelyToIncreaseRisk: String? = null,
+  val factorsSituationsLikelyToOffend: String? = null,
+  val factorsAnalysisOfRisk: String? = null,
   val riskGreatest: String? = null,
   val natureOfRisk: String? = null,
 ) {
@@ -152,8 +155,9 @@ data class RoshSummary(
     whoAtRisk,
     natureOfRisk,
     riskGreatest,
-    factorsLikelyToIncreaseRisk,
-    factorsLikelyToReduceRisk,
+    factorsLikelyToIncreaseRisk ?: factorsSituationsLikelyToOffend,
+    factorsLikelyToReduceRisk ?: factorsStrengthsAndProtective,
+    factorsAnalysisOfRisk,
     listOf(
       CHILDREN to childrenCommunity,
       PUBLIC to publicCommunity,

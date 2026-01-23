@@ -37,6 +37,9 @@
       "riskChildrenCommunity": null,
       "factorsLikelyToReduceRisk": "riskMitigationFactors",
       "factorsLikelyToIncreaseRisk": "riskIncreaseFactors",
+      "factorsStrengthsAndProtective": null,
+      "factorsSituationsLikelyToOffend": null,
+      "factorsAnalysisOfRisk": "analysisOfRiskFactors",
       "riskGreatest": "riskImminence",
       "natureOfRisk": "natureOfRisk",
       "assessor": {

@@ -39,6 +39,13 @@ data class RiskRoshSummaryDto(
   val riskMitigationFactors: String? = null,
 
   @Schema(
+    description = "What other risk factors are there that might not be captured by RSR or that could indicate a sudden escalation in risk.",
+    example = "If offender in situation X the risk can be higher",
+  )
+  @JsonView(View.Hmpps::class, View.RiskView::class)
+  val analysisOfRiskFactors: String? = null,
+
+  @Schema(
     description = "Assess the risk of serious harm the offender poses in the community",
     example = " " +
       "{" +

@@ -164,6 +164,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
+              "analysisOfRiskFactors",
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
@@ -236,6 +237,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
+              "analysisOfRiskFactors",
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
