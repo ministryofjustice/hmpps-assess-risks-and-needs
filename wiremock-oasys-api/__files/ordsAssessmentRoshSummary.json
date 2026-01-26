@@ -35,8 +35,11 @@
       "riskPublicCommunity": "Medium",
       "riskChildrenCustody": "Low",
       "riskChildrenCommunity": "Low",
-      "factorsLikelyToReduceRisk": "riskMitigationFactors",
-      "factorsLikelyToIncreaseRisk": "riskIncreaseFactors",
+      "factorsLikelyToReduceRisk": null,
+      "factorsLikelyToIncreaseRisk": null,
+      "factorsStrengthsAndProtective": "riskMitigationFactors",
+      "factorsSituationsLikelyToOffend": "riskIncreaseFactors",
+      "factorsAnalysisOfRisk": "analysisOfRiskFactors",
       "riskGreatest": "riskImminence",
       "natureOfRisk": "natureOfRisk",
       "assessor": {

@@ -93,6 +93,7 @@ class RiskControllerTest : IntegrationTestBase() {
             "riskImminence",
             "riskIncreaseFactors",
             "riskMitigationFactors",
+            "analysisOfRiskFactors",
             mapOf(
               RiskLevel.LOW to listOf("Children", "Known Adult"),
               RiskLevel.MEDIUM to listOf("Public"),
@@ -179,6 +180,7 @@ class RiskControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
+              "analysisOfRiskFactors",
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
@@ -251,6 +253,7 @@ class RiskControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
+              "analysisOfRiskFactors",
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
@@ -322,6 +325,7 @@ class RiskControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
+              "analysisOfRiskFactors",
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
@@ -394,6 +398,7 @@ class RiskControllerTest : IntegrationTestBase() {
               "riskImminence",
               "riskIncreaseFactors",
               "riskMitigationFactors",
+              "analysisOfRiskFactors",
               mapOf(
                 RiskLevel.LOW to listOf("Children", "Known Adult"),
                 RiskLevel.MEDIUM to listOf("Public"),
@@ -428,6 +433,7 @@ class RiskControllerTest : IntegrationTestBase() {
             "riskImminence",
             "riskIncreaseFactors",
             "riskMitigationFactors",
+            "analysisOfRiskFactors",
             mapOf(
               RiskLevel.MEDIUM to listOf("Public"),
               RiskLevel.LOW to listOf("Known Adult"),
