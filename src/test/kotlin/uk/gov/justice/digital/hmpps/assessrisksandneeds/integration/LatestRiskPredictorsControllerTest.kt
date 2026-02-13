@@ -88,7 +88,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                 staticOrDynamic = ScoreType.DYNAMIC,
                 source = RsrScoreSource.OASYS,
                 algorithmVersion = "5",
-                ScoreLevel.MEDIUM,
+                scoreLevel = ScoreLevel.MEDIUM,
               ),
               sexualPredictorScore = OspScoreDto(
                 ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
@@ -179,7 +179,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                   staticOrDynamic = ScoreType.DYNAMIC,
                   source = RsrScoreSource.OASYS,
                   algorithmVersion = "5",
-                  ScoreLevel.MEDIUM,
+                  scoreLevel = ScoreLevel.MEDIUM,
                 ),
                 sexualPredictorScore = OspScoreDto(
                   ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
@@ -316,7 +316,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
                   staticOrDynamic = ScoreType.DYNAMIC,
                   source = RsrScoreSource.OASYS,
                   algorithmVersion = "5",
-                  ScoreLevel.MEDIUM,
+                  scoreLevel = ScoreLevel.MEDIUM,
                 ),
                 sexualPredictorScore = OspScoreDto(
                   ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
@@ -334,6 +334,61 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
   fun `should return OGRS4 risk data for OGRS4 assessment ID`() {
     // Given
     val id = "1000002"
+
+    // When
+    webTestClient.get()
+      .uri("/assessments/id/$id/risk/predictors/all")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      // Then
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<AllPredictorVersioned<Any>>()
+      .value {
+        assertThat(it).usingRecursiveComparison()
+          .isEqualTo(
+            AllPredictorVersionedDto(
+              outputVersion = "2",
+              output = AllPredictorDto(
+                allReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal("1.23"),
+                  band = ScoreLevel.LOW,
+                ),
+                violentReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal("1.23"),
+                  band = ScoreLevel.LOW,
+                ),
+                seriousViolentReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal("1.23"),
+                  band = ScoreLevel.LOW,
+                ),
+                directContactSexualReoffendingPredictor = BasePredictorDto(
+                  score = BigDecimal("2.81"),
+                  band = ScoreLevel.MEDIUM,
+                ),
+                indirectImageContactSexualReoffendingPredictor = BasePredictorDto(
+                  score = BigDecimal("1.07"),
+                  band = ScoreLevel.MEDIUM,
+                ),
+                combinedSeriousReoffendingPredictor = VersionedStaticOrDynamicPredictorDto(
+                  algorithmVersion = "6",
+                  staticOrDynamic = ScoreType.STATIC,
+                  score = BigDecimal("1.23"),
+                  band = ScoreLevel.LOW,
+                ),
+              ),
+            ),
+          )
+      }
+  }
+
+  @Test
+  fun `should return OGRS4 risk data for OGRS4 assessment ID and deserialize rsrScoreLevel`() {
+    // Given
+    val id = "1000004"
 
     // When
     webTestClient.get()
