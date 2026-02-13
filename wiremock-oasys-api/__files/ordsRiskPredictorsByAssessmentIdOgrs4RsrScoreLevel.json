@@ -1,0 +1,78 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 1000004
+  },
+  "probNumber": "X123456",
+  "prisNumber": "A4041AB",
+  "limitedAccessOffender": false,
+  "pnc": "74/2487362D",
+  "forename": "John",
+  "familyName": "Smith",
+  "gender": "1",
+  "custodyInd": "N",
+  "assessments": [
+    {
+      "OGP": {
+        "ogpStWesc": 3,
+        "ogpDyWesc": 7,
+        "ogpTotWesc": 10,
+        "ogp1Year": 4,
+        "ogp2Year": 8,
+        "ogpRisk": "Low"
+      },
+      "OVP": {
+        "ovpStWesc": 14,
+        "ovpDyWesc": 3,
+        "ovpTotWesc": 17,
+        "ovp1Year": 4,
+        "ovp2Year": 7,
+        "ovpRisk": "Low",
+        "ovpPrevWesc": 5,
+        "ovpNonVioWesc": 0,
+        "ovpAgeWesc": 8,
+        "ovpVioWesc": 4,
+        "ovpSexWesc": 5
+      },
+      "OGRS": {
+        "ogrs31Year": 3,
+        "ogrs32Year": 5,
+        "ogrs3RiskRecon": "Low"
+      },
+      "RSR": {
+        "rsrStaticOrDynamic": "STATIC",
+        "rsrExceptionError": null,
+        "rsrAlgorithmVersion": 6,
+        "rsrPercentageScore": 1.23,
+        "rsrScoreLevel": "Low"
+      },
+      "OSP": {
+        "ospDirectContactPercentageScore": 2.81,
+        "ospIndirectImagesChildrenPercentageScore": 1.07,
+        "ospDirectContactScoreLevel": "Medium",
+        "ospIndirectImagesChildrenScoreLevel": "Medium"
+      },
+      "newActuarialPredictors": {
+        "ogrs4gYr2": 1.23,
+        "ogrs4gBand": "Low",
+        "ogrs4gCalculated": "Y",
+        "ogrs4vYr2": 1.23,
+        "ogrs4vBand": "Low",
+        "ogrs4vCalculated": "Y",
+        "ogp2Yr2": 4.56,
+        "ogp2Band": "Medium",
+        "ogp2Calculated": "N",
+        "ovp2Yr2": 4.56,
+        "ovp2Band": "Medium",
+        "ovp2Calculated": "N",
+        "snsvStaticYr2": 1.23,
+        "snsvDynamicYr2": 4.56,
+        "snsvStaticYr2Band": "Low",
+        "snsvDynamicYr2Band": "Medium",
+        "snsvStaticCalculated": "Y",
+        "snsvDynamicCalculated": "N"
+      }
+    }
+  ]
+}
