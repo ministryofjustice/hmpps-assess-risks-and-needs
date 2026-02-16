@@ -42,6 +42,20 @@
           "message": "No assessments"
         }
       }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/riskscrass/ALLOW/1000004",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsRiskPredictorsByAssessmentIdOgrs4RsrScoreLevel.json",
+        "transformers": ["response-template"]
+      }
     }
   ]
 }
