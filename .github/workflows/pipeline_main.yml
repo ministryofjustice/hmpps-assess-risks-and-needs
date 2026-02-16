@@ -64,7 +64,6 @@ jobs:
     with:
       environment: 'dev'
       app_version: '${{ needs.build_docker.outputs.app_version }}'
-      helm_timeout: 15m
 
   deploy_preprod:
     name: Deploy to the preproduction environment
@@ -76,7 +75,6 @@ jobs:
     with:
       environment: 'preprod'
       app_version: '${{ needs.build_docker.outputs.app_version }}'
-      helm_timeout: 15m
 
   deploy_prod:
     name: Deploy to the production environment
@@ -88,4 +86,3 @@ jobs:
     with:
       environment: 'prod'
       app_version: '${{ needs.build_docker.outputs.app_version }}'
-      helm_timeout: 15m
