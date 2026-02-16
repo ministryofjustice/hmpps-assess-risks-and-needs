@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import java.math.BigDecimal
 
