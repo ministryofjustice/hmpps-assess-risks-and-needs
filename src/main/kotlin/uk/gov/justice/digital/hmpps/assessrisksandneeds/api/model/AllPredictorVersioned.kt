@@ -17,6 +17,7 @@ import java.time.LocalDateTime
 interface AllPredictorVersioned<out T> {
   val completedDate: LocalDateTime?
   val status: AssessmentStatus?
+  val assessmentType: AssessmentType?
   val outputVersion: String
   val output: T?
 }

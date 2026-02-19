@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 data class AllPredictorVersionedLegacyDto(
   override val completedDate: LocalDateTime? = null,
   override val status: AssessmentStatus? = null,
+  override val assessmentType: AssessmentType? = null,
   @Schema(description = "Version of the output", allowableValues = ["1"], defaultValue = "1")
   override val outputVersion: String = "1",
   override val output: RiskScoresDto? = null,
@@ -16,6 +17,7 @@ data class AllPredictorVersionedLegacyDto(
     fun from(assessment: AllRisksPredictorAssessmentDto): AllPredictorVersionedLegacyDto = AllPredictorVersionedLegacyDto(
       completedDate = assessment.dateCompleted,
       status = assessment.assessmentStatus,
+      assessmentType = AssessmentType.valueOf(assessment.assessmentType),
       output = RiskScoresDto.fromVersioned(assessment),
     )
     fun from(assessment: RisksCrAssPredictorAssessmentDto): AllPredictorVersionedLegacyDto = AllPredictorVersionedLegacyDto(

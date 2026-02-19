@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgpScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgrScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OspScoreDto
@@ -151,6 +152,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
             AllPredictorVersionedLegacyDto(
               completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
               status = AssessmentStatus.COMPLETE,
+              assessmentType = AssessmentType.LAYER3,
               outputVersion = "1",
               output = RiskScoresDto(
                 groupReconvictionScore = OgrScoreDto(
@@ -195,6 +197,7 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
             AllPredictorVersionedDto(
               completedDate = LocalDateTime.of(2022, 6, 12, 18, 23, 20),
               status = AssessmentStatus.COMPLETE,
+              assessmentType = AssessmentType.LAYER3,
               outputVersion = "2",
               output = AllPredictorDto(
                 allReoffendingPredictor = StaticOrDynamicPredictorDto(
