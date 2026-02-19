@@ -192,6 +192,28 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
               ),
             ),
           )
+        assertThat(it.responseBody!![1]).usingRecursiveComparison()
+          .isEqualTo(
+            AllPredictorVersionedLegacyDto(
+              completedDate = LocalDateTime.of(2022, 4, 27, 12, 46, 39),
+              status = AssessmentStatus.COMPLETE,
+              assessmentType = AssessmentType.LAYER1,
+              outputVersion = "1",
+              output = RiskScoresDto(
+                groupReconvictionScore = OgrScoreDto(),
+                violencePredictorScore = OvpScoreDto(),
+                generalPredictorScore = OgpScoreDto(),
+                riskOfSeriousRecidivismScore = RsrScoreDto(
+                  percentageScore = BigDecimal.valueOf(0.32),
+                  staticOrDynamic = ScoreType.STATIC,
+                  source = RsrScoreSource.OASYS,
+                  algorithmVersion = "3",
+                  scoreLevel = ScoreLevel.LOW,
+                ),
+                sexualPredictorScore = OspScoreDto(),
+              ),
+            ),
+          )
         assertThat(it.responseBody!![4]).usingRecursiveComparison()
           .isEqualTo(
             AllPredictorVersionedDto(
