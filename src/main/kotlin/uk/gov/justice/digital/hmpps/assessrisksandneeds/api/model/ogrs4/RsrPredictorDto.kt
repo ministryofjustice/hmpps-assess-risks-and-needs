@@ -1,10 +1,12 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4
 
+import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysNewAllPredictorDto
 
+@Schema(name = "Ogrs4RsrPredictorDto")
 data class RsrPredictorDto(
   val seriousViolentReoffendingPredictor: StaticOrDynamicPredictorDto? = null,
   val directContactSexualReoffendingPredictor: BasePredictorDto? = null,

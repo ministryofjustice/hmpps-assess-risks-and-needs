@@ -41,7 +41,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties, clock: Clock) {
           .bearerFormat("JWT")
           .`in`(SecurityScheme.In.HEADER)
           .name("Authorization"),
-      ),
+      ).addRiskActuarualSchemas(),
     )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt"))
 }

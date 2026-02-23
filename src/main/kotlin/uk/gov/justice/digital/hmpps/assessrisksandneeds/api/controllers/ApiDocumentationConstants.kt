@@ -12,6 +12,7 @@ Note that all fields should be implemented as nullable as data may not be availa
 Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.
 
 ### Legacy risk predictor score format (outputVersion = 1)
+All numbers should be coded as decimals as may not be integers
 ```json
 [
   {
@@ -22,14 +23,14 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
     "output": {
       "staticOrDynamic": "STATIC",
       "algorithmVersion": "5",
-      "rsrPercentageScore": 0,
-      "rsrScoreLevel": "LOW",
-      "ospcPercentageScore": 0,
-      "ospcScoreLevel": "LOW",
-      "ospiPercentageScore": 0,
-      "ospiScoreLevel": "LOW",
-      "ospiiPercentageScore": 0,
-      "ospdcPercentageScore": 0,
+      "rsrPercentageScore": 4.34,
+      "rsrScoreLevel": "MEDIUM",
+      "ospcPercentageScore": null,
+      "ospcScoreLevel": null,
+      "ospiPercentageScore": null,
+      "ospiScoreLevel": null,
+      "ospiiPercentageScore": 1,
+      "ospdcPercentageScore": 2,
       "ospiiScoreLevel": "LOW",
       "ospdcScoreLevel": "LOW"
     }
@@ -38,6 +39,7 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
 ```
 
 ### New risk predictor score format (outputVersion = 2)
+All numbers should be coded as decimals as may not be integers
 ```json
 [
   {
@@ -48,21 +50,21 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
     "output": {
       "seriousViolentReoffendingPredictor": {
         "staticOrDynamic": "STATIC",
-        "score": 10,
+        "score": 10.01,
         "band": "LOW"
       },
       "directContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 11.34,
         "band": "LOW"
       },
       "indirectImageContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 12.34,
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
         "algorithmVersion": "6",
         "staticOrDynamic": "STATIC",
-        "score": 0,
+        "score": 9.97,
         "band": "LOW"
       }
     }
@@ -83,8 +85,8 @@ const val GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
     "output": {
       "staticOrDynamic": "STATIC",
       "algorithmVersion": "5",
-      "rsrPercentageScore": 10,
-      "rsrScoreLevel": "LOW",
+      "rsrPercentageScore": 10.1,
+      "rsrScoreLevel": "HIGH",
       "ospcPercentageScore": null,
       "ospcScoreLevel": null,
       "ospiPercentageScore": null,
@@ -103,21 +105,21 @@ const val GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
     "output": {
       "seriousViolentReoffendingPredictor": {
         "staticOrDynamic": "STATIC",
-        "score": 10,
+        "score": 10.01,
         "band": "LOW"
       },
       "directContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 11.34,
         "band": "LOW"
       },
       "indirectImageContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 12.34,
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
         "algorithmVersion": "6",
         "staticOrDynamic": "STATIC",
-        "score": 10,
+        "score": 9.97,
         "band": "LOW"
       }
     }
@@ -137,51 +139,48 @@ Note that all fields should be implemented as nullable as data may not be availa
 Each assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.
 
 ### Legacy risk predictor score format (outputVersion = 1)
+All numbers should be coded as decimals as may not be integers
 ```json
 [
   {
     "completedDate": "2025-10-23T03:02:59",
-    "source": "OASYS",
     "status": "COMPLETE",
+    "assessmentType": "LAYER3",
     "outputVersion": "1",
     "output": {
       "groupReconvictionScore": {
-        "oneYear": 0,
-        "twoYears": 0,
+        "oneYear": 6,
+        "twoYears": 12,
         "scoreLevel": "LOW"
       },
       "violencePredictorScore": {
-        "ovpStaticWeightedScore": 0,
-        "ovpDynamicWeightedScore": 0,
-        "ovpTotalWeightedScore": 0,
-        "oneYear": 0,
-        "twoYears": 0,
+        "ovpStaticWeightedScore": 10,
+        "ovpDynamicWeightedScore": 4,
+        "ovpTotalWeightedScore": 14,
+        "oneYear": 3,
+        "twoYears": 5,
         "ovpRisk": "LOW"
       },
       "generalPredictorScore": {
-        "ogpStaticWeightedScore": 0,
+        "ogpStaticWeightedScore": 7,
         "ogpDynamicWeightedScore": 0,
-        "ogpTotalWeightedScore": 0,
-        "ogp1Year": 0,
-        "ogp2Year": 0,
+        "ogpTotalWeightedScore": 7,
+        "ogp1Year": 4,
+        "ogp2Year": 7,
         "ogpRisk": "LOW"
       },
       "riskOfSeriousRecidivismScore": {
-        "percentageScore": 0,
-        "staticOrDynamic": "STATIC",
+        "percentageScore": 0.05,
+        "staticOrDynamic": "DYNAMIC",
         "source": "OASYS",
         "algorithmVersion": "5",
         "scoreLevel": "LOW"
       },
       "sexualPredictorScore": {
-        "ospIndecentPercentageScore": null,
-        "ospContactPercentageScore": null,
-        "ospIndecentScoreLevel": null,
-        "ospContactScoreLevel": null,
         "ospIndirectImagePercentageScore": 0,
         "ospDirectContactPercentageScore": 0,
-        "ospIndirectImageScoreLevel": "LOW",
-        "ospDirectContactScoreLevel": "LOW"
+        "ospIndirectImageScoreLevel": "NOT_APPLICABLE",
+        "ospDirectContactScoreLevel": "NOT_APPLICABLE"
       }
     }
   }
@@ -189,41 +188,42 @@ Each assessment contains a top level `outputVersion` field which dictates the fo
 ```
 
 ### New risk predictor score format (outputVersion = 2)
+All numbers should be coded as decimals as may not be integers
 ```json
 [
-  {
-    "completedDate": "2025-10-23T03:02:59",
-    "source": "OASYS",
+ {
+    "completedDate": "2026-01-21T15:01:20",
     "status": "COMPLETE",
+    "assessmentType": "LAYER3",
     "outputVersion": "2",
     "output": {
       "allReoffendingPredictor": {
-        "staticOrDynamic": "STATIC",
-        "score": 1,
+        "staticOrDynamic": "DYNAMIC",
+        "score": 4.41,
         "band": "LOW"
       },
       "violentReoffendingPredictor": {
         "staticOrDynamic": "DYNAMIC",
-        "score": 30,
-        "band": "MEDIUM"
+        "score": 1.91,
+        "band": "LOW"
       },
       "seriousViolentReoffendingPredictor": {
-        "staticOrDynamic": "STATIC",
-        "score": 99,
-        "band": "HIGH"
+        "staticOrDynamic": "DYNAMIC",
+        "score": 0.03,
+        "band": "LOW"
       },
       "directContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 0.02,
         "band": "LOW"
       },
       "indirectImageContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 0.12,
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
         "algorithmVersion": "6",
-        "staticOrDynamic": "STATIC",
-        "score": 0,
+        "staticOrDynamic": "DYNAMIC",
+        "score": 0.17,
         "band": "LOW"
       }
     }
@@ -237,82 +237,80 @@ Please see the associated documentation for further information: [OGRS4 ARNS API
 const val GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = """
 [
   {
-    "completedDate": "2025-01-01",
+    "completedDate": "2025-10-23T03:02:59",
     "status": "COMPLETE",
+    "assessmentType": "LAYER3",
     "outputVersion": "1",
     "output": {
       "groupReconvictionScore": {
-        "oneYear": 0,
-        "twoYears": 0,
+        "oneYear": 6,
+        "twoYears": 12,
         "scoreLevel": "LOW"
       },
       "violencePredictorScore": {
-        "ovpStaticWeightedScore": 0,
-        "ovpDynamicWeightedScore": 0,
-        "ovpTotalWeightedScore": 0,
-        "oneYear": 0,
-        "twoYears": 0,
+        "ovpStaticWeightedScore": 10,
+        "ovpDynamicWeightedScore": 4,
+        "ovpTotalWeightedScore": 14,
+        "oneYear": 3,
+        "twoYears": 5,
         "ovpRisk": "LOW"
       },
       "generalPredictorScore": {
-        "ogpStaticWeightedScore": 0,
+        "ogpStaticWeightedScore": 7,
         "ogpDynamicWeightedScore": 0,
-        "ogpTotalWeightedScore": 0,
-        "ogp1Year": 0,
-        "ogp2Year": 0,
+        "ogpTotalWeightedScore": 7,
+        "ogp1Year": 4,
+        "ogp2Year": 7,
         "ogpRisk": "LOW"
       },
       "riskOfSeriousRecidivismScore": {
-        "percentageScore": 0,
-        "staticOrDynamic": "STATIC",
+        "percentageScore": 0.05,
+        "staticOrDynamic": "DYNAMIC",
         "source": "OASYS",
         "algorithmVersion": "5",
         "scoreLevel": "LOW"
       },
       "sexualPredictorScore": {
-        "ospIndecentPercentageScore": null,
-        "ospContactPercentageScore": null,
-        "ospIndecentScoreLevel": null,
-        "ospContactScoreLevel": null,
         "ospIndirectImagePercentageScore": 0,
         "ospDirectContactPercentageScore": 0,
-        "ospIndirectImageScoreLevel": "LOW",
-        "ospDirectContactScoreLevel": "LOW"
+        "ospIndirectImageScoreLevel": "NOT_APPLICABLE",
+        "ospDirectContactScoreLevel": "NOT_APPLICABLE"
       }
     }
   },
   {
-    "completedDate": "2026-03-01",
+    "completedDate": "2026-01-21T15:01:20",
     "status": "COMPLETE",
+    "assessmentType": "LAYER3",
     "outputVersion": "2",
     "output": {
       "allReoffendingPredictor": {
-        "staticOrDynamic": "STATIC",
-        "score": 1,
+        "staticOrDynamic": "DYNAMIC",
+        "score": 4.41,
         "band": "LOW"
       },
       "violentReoffendingPredictor": {
         "staticOrDynamic": "DYNAMIC",
-        "score": 30,
-        "band": "MEDIUM"
+        "score": 1.91,
+        "band": "LOW"
       },
       "seriousViolentReoffendingPredictor": {
-        "staticOrDynamic": "STATIC",
-        "score": 99,
-        "band": "HIGH"
+        "staticOrDynamic": "DYNAMIC",
+        "score": 0.03,
+        "band": "LOW"
       },
       "directContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 0.02,
         "band": "LOW"
       },
       "indirectImageContactSexualReoffendingPredictor": {
-        "score": 10,
+        "score": 0.12,
         "band": "LOW"
       },
       "combinedSeriousReoffendingPredictor": {
         "algorithmVersion": "6",
-        "staticOrDynamic": "STATIC",
-        "score": 0,
+        "staticOrDynamic": "DYNAMIC",
+        "score": 0.17,
         "band": "LOW"
       }
     }
@@ -332,88 +330,88 @@ Note that all fields should be implemented as nullable as data may not be availa
 The assessment contains a top level `outputVersion` field which dictates the format of the predictors nested within the `output` field.
 
 ### Legacy risk predictor score format (outputVersion = 1)
+All numbers should be coded as decimals as may not be integers
 ```json
 {
-  "completedDate": "2024-01-01",
+  "completedDate": "2025-10-23T03:02:59",
   "status": "COMPLETE",
+  "assessmentType": "LAYER3",
   "outputVersion": "1",
   "output": {
     "groupReconvictionScore": {
-      "oneYear": 0,
-      "twoYears": 0,
+      "oneYear": 6,
+      "twoYears": 12,
       "scoreLevel": "LOW"
     },
     "violencePredictorScore": {
-      "ovpStaticWeightedScore": 0,
-      "ovpDynamicWeightedScore": 0,
-      "ovpTotalWeightedScore": 0,
-      "oneYear": 0,
-      "twoYears": 0,
+      "ovpStaticWeightedScore": 10,
+      "ovpDynamicWeightedScore": 4,
+      "ovpTotalWeightedScore": 14,
+      "oneYear": 3,
+      "twoYears": 5,
       "ovpRisk": "LOW"
     },
     "generalPredictorScore": {
-      "ogpStaticWeightedScore": 0,
+      "ogpStaticWeightedScore": 7,
       "ogpDynamicWeightedScore": 0,
-      "ogpTotalWeightedScore": 0,
-      "ogp1Year": 0,
-      "ogp2Year": 0,
+      "ogpTotalWeightedScore": 7,
+      "ogp1Year": 4,
+      "ogp2Year": 7,
       "ogpRisk": "LOW"
     },
     "riskOfSeriousRecidivismScore": {
-      "percentageScore": 0,
-      "staticOrDynamic": "STATIC",
+      "percentageScore": 0.05,
+      "staticOrDynamic": "DYNAMIC",
       "source": "OASYS",
       "algorithmVersion": "5",
       "scoreLevel": "LOW"
     },
     "sexualPredictorScore": {
-      "ospIndecentPercentageScore": null,
-      "ospContactPercentageScore": null,
-      "ospIndecentScoreLevel": null,
-      "ospContactScoreLevel": null,
       "ospIndirectImagePercentageScore": 0,
       "ospDirectContactPercentageScore": 0,
-      "ospIndirectImageScoreLevel": "LOW",
-      "ospDirectContactScoreLevel": "LOW"
+      "ospIndirectImageScoreLevel": "NOT_APPLICABLE",
+      "ospDirectContactScoreLevel": "NOT_APPLICABLE"
     }
   }
 }
 ```
 
 ### New risk predictor score format (outputVersion = 2)
+All numbers should be coded as decimals as may not be integers
 ```json
 {
-  "completedDate": "2026-03-01",
+  "completedDate": "2026-01-21T15:01:20",
   "status": "COMPLETE",
+  "assessmentType": "LAYER3",
   "outputVersion": "2",
   "output": {
     "allReoffendingPredictor": {
-      "staticOrDynamic": "STATIC",
-      "score": 1,
+      "staticOrDynamic": "DYNAMIC",
+      "score": 4.41,
       "band": "LOW"
     },
     "violentReoffendingPredictor": {
       "staticOrDynamic": "DYNAMIC",
-      "score": 30,
-      "band": "MEDIUM"
+      "score": 1.91,
+      "band": "LOW"
     },
     "seriousViolentReoffendingPredictor": {
-      "staticOrDynamic": "STATIC",
-      "score": 99,
-      "band": "HIGH"
+      "staticOrDynamic": "DYNAMIC",
+      "score": 0.03,
+      "band": "LOW"
     },
     "directContactSexualReoffendingPredictor": {
-      "score": 10,
+      "score": 0.02,
       "band": "LOW"
     },
     "indirectImageContactSexualReoffendingPredictor": {
-      "score": 10,
+      "score": 0.12,
       "band": "LOW"
     },
     "combinedSeriousReoffendingPredictor": {
       "algorithmVersion": "6",
-      "staticOrDynamic": "STATIC",
-      "score": 0,
+      "staticOrDynamic": "DYNAMIC",
+      "score": 0.17,
       "band": "LOW"
     }
   }
@@ -425,47 +423,44 @@ Please see the associated documentation for further information: [OGRS4 ARNS API
 
 const val GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_LEGACY_EXAMPLE = """
 {
-  "completedDate": "2024-01-01",
+  "completedDate": "2025-10-23T03:02:59",
   "status": "COMPLETE",
+  "assessmentType": "LAYER3",
   "outputVersion": "1",
   "output": {
     "groupReconvictionScore": {
-      "oneYear": 0,
-      "twoYears": 0,
+      "oneYear": 6,
+      "twoYears": 12,
       "scoreLevel": "LOW"
     },
     "violencePredictorScore": {
-      "ovpStaticWeightedScore": 0,
-      "ovpDynamicWeightedScore": 0,
-      "ovpTotalWeightedScore": 0,
-      "oneYear": 0,
-      "twoYears": 0,
+      "ovpStaticWeightedScore": 10,
+      "ovpDynamicWeightedScore": 4,
+      "ovpTotalWeightedScore": 14,
+      "oneYear": 3,
+      "twoYears": 5,
       "ovpRisk": "LOW"
     },
     "generalPredictorScore": {
-      "ogpStaticWeightedScore": 0,
+      "ogpStaticWeightedScore": 7,
       "ogpDynamicWeightedScore": 0,
-      "ogpTotalWeightedScore": 0,
-      "ogp1Year": 0,
-      "ogp2Year": 0,
+      "ogpTotalWeightedScore": 7,
+      "ogp1Year": 4,
+      "ogp2Year": 7,
       "ogpRisk": "LOW"
     },
     "riskOfSeriousRecidivismScore": {
-      "percentageScore": 0,
-      "staticOrDynamic": "STATIC",
+      "percentageScore": 0.05,
+      "staticOrDynamic": "DYNAMIC",
       "source": "OASYS",
       "algorithmVersion": "5",
       "scoreLevel": "LOW"
     },
     "sexualPredictorScore": {
-      "ospIndecentPercentageScore": null,
-      "ospContactPercentageScore": null,
-      "ospIndecentScoreLevel": null,
-      "ospContactScoreLevel": null,
       "ospIndirectImagePercentageScore": 0,
       "ospDirectContactPercentageScore": 0,
-      "ospIndirectImageScoreLevel": "LOW",
-      "ospDirectContactScoreLevel": "LOW"
+      "ospIndirectImageScoreLevel": "NOT_APPLICABLE",
+      "ospDirectContactScoreLevel": "NOT_APPLICABLE"
     }
   }
 }
@@ -473,37 +468,38 @@ const val GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_LEGACY_EXAMPLE = """
 
 const val GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_NEW_EXAMPLE = """
 {
-  "completedDate": "2026-03-01",
+  "completedDate": "2026-01-21T15:01:20",
   "status": "COMPLETE",
+  "assessmentType": "LAYER3",
   "outputVersion": "2",
   "output": {
     "allReoffendingPredictor": {
-      "staticOrDynamic": "STATIC",
-      "score": 1,
+      "staticOrDynamic": "DYNAMIC",
+      "score": 4.41,
       "band": "LOW"
     },
     "violentReoffendingPredictor": {
       "staticOrDynamic": "DYNAMIC",
-      "score": 30,
-      "band": "MEDIUM"
+      "score": 1.91,
+      "band": "LOW"
     },
     "seriousViolentReoffendingPredictor": {
-      "staticOrDynamic": "STATIC",
-      "score": 99,
-      "band": "HIGH"
+      "staticOrDynamic": "DYNAMIC",
+      "score": 0.03,
+      "band": "LOW"
     },
     "directContactSexualReoffendingPredictor": {
-      "score": 10,
+      "score": 0.02,
       "band": "LOW"
     },
     "indirectImageContactSexualReoffendingPredictor": {
-      "score": 10,
+      "score": 0.12,
       "band": "LOW"
     },
     "combinedSeriousReoffendingPredictor": {
       "algorithmVersion": "6",
-      "staticOrDynamic": "STATIC",
-      "score": 0,
+      "staticOrDynamic": "DYNAMIC",
+      "score": 0.17,
       "band": "LOW"
     }
   }
