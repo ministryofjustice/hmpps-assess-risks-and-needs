@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
+import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
+@Schema(name = "Ogrs3RsrPredictorDto")
 data class RsrPredictorDto(
   val rsrPercentageScore: BigDecimal? = null,
   val rsrScoreLevel: ScoreLevel? = null,

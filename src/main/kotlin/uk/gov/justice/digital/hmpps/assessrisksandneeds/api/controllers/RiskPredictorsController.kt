@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
@@ -14,16 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_DESC
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_LEGACY_EXAMPLE
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_NEW_EXAMPLE
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_DESC
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
@@ -69,6 +61,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
         description = "OK",
         content = [
           Content(
+            array = ArraySchema(schema = Schema(ref = "RsrPredictorVersionedUnion")),
             mediaType = "application/json",
             examples = [
               ExampleObject(
@@ -140,6 +133,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
         description = "OK",
         content = [
           Content(
+            array = ArraySchema(schema = Schema(ref = "AllPredictorVersionedUnion")),
             mediaType = "application/json",
             examples = [
               ExampleObject(
@@ -165,7 +159,6 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
 
   @RequestMapping(path = ["/assessments/id/{id}/risk/predictors/all"], method = [RequestMethod.GET])
   @Operation(description = GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_DESC)
-  @Schema(oneOf = [AllPredictorVersionedLegacyDto::class, AllPredictorVersionedDto::class])
   @ApiResponses(
     value = [
       ApiResponse(
@@ -180,6 +173,7 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
         description = "OK",
         content = [
           Content(
+            schema = Schema(ref = "AllPredictorVersionedUnion"),
             mediaType = "application/json",
             examples = [
               ExampleObject(
