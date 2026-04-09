@@ -1,6 +1,6 @@
 services:
   hmpps-auth:
-    image: ghcr.io/ministryofjustice/hmpps-auth:latest
+    image: ghcr.io/ministryofjustice/hmpps-auth:2026-01-19.282.b6537e8
     networks:
       - hmpps
     depends_on:
