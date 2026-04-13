@@ -1,6 +1,6 @@
 services:
   hmpps-auth:
-    image: ghcr.io/ministryofjustice/hmpps-auth:latest
+    image: ghcr.io/ministryofjustice/hmpps-auth:2026-01-19.282.b6537e8
     networks:
       - hmpps
     depends_on:
@@ -49,7 +49,7 @@ services:
       retries: 50
 
   delius:
-    image: rodolpheche/wiremock
+    image: wiremock/wiremock:3.13.2
     volumes:
       - ./wiremock-delius:/home/wiremock
     networks:
@@ -59,7 +59,7 @@ services:
       - -global-response-templating
 
   oasys-api:
-    image: rodolpheche/wiremock
+    image: wiremock/wiremock:3.13.2
     volumes:
       - ./wiremock-oasys-api:/home/wiremock
     networks:
@@ -69,7 +69,7 @@ services:
       - -global-response-templating
 
   community-api:
-    image: rodolpheche/wiremock
+    image: wiremock/wiremock:3.13.2
     volumes:
       - ./wiremock-community-api:/home/wiremock
     networks:
