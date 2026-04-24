@@ -15,7 +15,10 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStat
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentVersion
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNeedsOasys
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
@@ -81,6 +84,37 @@ class OasysApiRestClient(
       needs.section(THINKING_AND_BEHAVIOUR),
       needs.section(ATTITUDE),
     )
+  }
+
+  fun getCriminogenicNeedsForAssessment(
+    assessment: AssessmentSummary,
+  ): CriminogenicNeedsOasys? {
+    val path = "/ass/crimneeds/ALLOW/${assessment.assessmentId}"
+    val needs = webClient
+      .get(path)
+      .retrieve()
+      .onStatus({ it.is4xxClientError }) {
+        log.error("4xx Error retrieving criminogenic needs for assessment ${assessment.assessmentId} code: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .onStatus({ it.is5xxServerError }) {
+        log.error("5xx Error retrieving criminogenic needs for assessment ${assessment.assessmentId} code: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve criminogenic needs for assessment ${assessment.assessmentId}",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .bodyToMono<CriminogenicNeedsOasys>()
+      .block()
+
+    return needs
   }
 
   fun getRiskPredictorsForCompletedAssessments(

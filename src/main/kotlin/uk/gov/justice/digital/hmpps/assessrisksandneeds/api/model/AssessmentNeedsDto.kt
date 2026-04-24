@@ -17,26 +17,11 @@ data class AssessmentNeedsDto(
 ) {
   companion object {
     fun from(
-      needs: Collection<AssessmentNeedDto>,
-      assessedOn: LocalDateTime?,
+      latestAssessment: AssessmentSummary,
+      needs: CriminogenicNeedsOasys,
     ): AssessmentNeedsDto {
-      val unansweredNeeds = mutableListOf<AssessmentNeedDto>()
-      val identifiedNeeds = mutableListOf<AssessmentNeedDto>()
-      val notIdentifiedNeeds = mutableListOf<AssessmentNeedDto>()
-
-      for (needDto in needs) {
-        when (needDto.severity) {
-          null -> unansweredNeeds.add(needDto)
-          NeedSeverity.STANDARD, NeedSeverity.SEVERE -> identifiedNeeds.add(needDto)
-          NeedSeverity.NO_NEED -> notIdentifiedNeeds.add(needDto)
-        }
-      }
-      return AssessmentNeedsDto(
-        identifiedNeeds = identifiedNeeds,
-        notIdentifiedNeeds = notIdentifiedNeeds,
-        unansweredNeeds = unansweredNeeds,
-        assessedOn = assessedOn,
-      )
+      // TODO
+      return AssessmentNeedsDto(identifiedNeeds = listOf(), notIdentifiedNeeds = listOf(), unansweredNeeds = listOf(), assessedOn = null)
     }
   }
 }
@@ -51,12 +36,14 @@ data class AssessmentNeedDto(
   @Schema(description = "Whether the section answers indicate a risk of reoffending", example = "false")
   val riskOfReoffending: Boolean? = null,
   @Schema(description = "The calculated severity of the need", example = "SEVERE")
+  // TODO deprecate and set to null?? Check with Martin
   val severity: NeedSeverity? = null,
   @Schema(description = "The score of the section", example = "3")
   val score: Int? = null,
   @Schema(description = "The thresholds for standard and severe needs from OASys", example = "3")
   val oasysThreshold: OasysThreshold? = null,
   @Schema(description = "The thresholds for standard and severe needs for used for tier", example = "3")
+  // TODO deprecate and set to null
   val tierThreshold: TierThreshold? = null,
 )
 

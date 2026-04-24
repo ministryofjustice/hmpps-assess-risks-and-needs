@@ -20,18 +20,18 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 @Service
 class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient, private val clock: Clock) {
   fun getAssessmentNeeds(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDto {
-    val sectionSummary = oasysApiRestClient.getLatestAssessment(
+    val latestAssessment = oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
       needsPredicate(timeframe, excludeIncomplete, clock),
-    )?.let {
-      oasysApiRestClient.getScoredSectionsForAssessment(it, NeedsSection.entries)
-    }
+    ) ?: throw EntityNotFoundException(
+      "No latest assessment found for CRN: $crn",
+    )
+    
+    val needs = oasysApiRestClient.getCriminogenicNeedsForAssessment(latestAssessment) ?: throw EntityNotFoundException(
+      "No needs found for CRN: $crn",
+    )
 
-    if (sectionSummary == null) {
-      throw EntityNotFoundException("No needs found for CRN: $crn")
-    }
-
-    return AssessmentNeedsDto.from(sectionSummary.assessmentNeeds(), sectionSummary.assessment.completedDate)
+    return AssessmentNeedsDto.from(latestAssessment, needs)
   }
 
   private fun SectionSummary.assessmentNeeds(): List<AssessmentNeedDto> = listOfNotNull(
