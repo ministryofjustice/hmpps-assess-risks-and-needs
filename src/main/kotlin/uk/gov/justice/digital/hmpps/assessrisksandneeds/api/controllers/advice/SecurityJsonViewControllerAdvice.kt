@@ -15,9 +15,8 @@ import java.util.stream.Collectors
 
 @RestControllerAdvice
 internal class SecurityJsonViewControllerAdvice : AbstractMappingJacksonResponseBodyAdvice() {
-  override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean =
-    super.supports(returnType, converterType) &&
-      returnType.declaringClass.packageName.startsWith("uk.gov.justice.digital.hmpps.assessrisksandneeds")
+  override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean = super.supports(returnType, converterType) &&
+    returnType.declaringClass.packageName.startsWith("uk.gov.justice.digital.hmpps.assessrisksandneeds")
 
   override fun beforeBodyWriteInternal(
     bodyContainer: MappingJacksonValue,
