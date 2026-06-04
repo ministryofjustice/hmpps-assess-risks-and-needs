@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
@@ -248,6 +249,26 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .returnResult().responseBody
 
     assertThat(response?.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+  }
+
+  @Test
+  fun `get sexually motivated offence details by crn`() {
+    val sexualOffenceDto = webTestClient.get().uri("/assessments/crn/$crn/sexually-motivated-offence")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<SexualOffenceDto>()
+      .returnResult().responseBody
+
+    assertThat(sexualOffenceDto).isEqualTo(SexualOffenceDto(true))
+  }
+
+  @Test
+  fun `get sexually motivated offence details not found`() {
+    webTestClient.get().uri("/assessments/crn/NOT_FOUND/sexually-motivated-offence")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 
   @ParameterizedTest

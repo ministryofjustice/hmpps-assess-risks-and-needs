@@ -5,9 +5,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
@@ -66,6 +68,14 @@ class AssessmentOffenceService(
       } ?: throw EntityNotFoundException("No assessment summary found for CRN: $crn")
     } ?: throw EntityNotFoundException("No assessment found for CRN: $crn")
   }
+
+  fun getSexuallyMotivatedOffenceDetails(crn: String): SexualOffenceDto = oasysApiRestClient.getLatestAssessment(PersonIdentifier(PersonIdentifier.Type.CRN, crn)) {
+    it.assessmentType == AssessmentType.LAYER3.name && it.status == AssessmentStatus.COMPLETE.name
+  }?.let {
+    oasysApiRestClient.getOffenderInformationAndPredictorsSection(it).assessments.firstOrNull()
+  }?.let {
+    SexualOffenceDto(it.everCommittedSexualOffence)
+  } ?: throw EntityNotFoundException("No assessment found for CRN: $crn")
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {
     val assessmentIds = oasysAssessmentOffenceDto.assessments.map { it.assessmentPk }
