@@ -69,7 +69,9 @@ class AssessmentOffenceService(
   }
 
   fun getSexuallyMotivatedOffenceDetails(crn: String): SexualOffenceDto = oasysApiRestClient.getLatestAssessment(PersonIdentifier(PersonIdentifier.Type.CRN, crn)) {
-    true // the response is valid from any assessment, including WIP assessments, regardless of layer
+    // the response is valid from any assessment, including WIP assessments, regardless of layer1 or layer 3
+    // note: we still need to filter out STANDALONE assessment types
+    it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name)
   }?.let {
     oasysApiRestClient.getOffenderInformationAndPredictorsSection(it).assessments.firstOrNull()
   }?.let {
