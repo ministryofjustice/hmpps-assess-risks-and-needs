@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
@@ -70,7 +69,7 @@ class AssessmentOffenceService(
   }
 
   fun getSexuallyMotivatedOffenceDetails(crn: String): SexualOffenceDto = oasysApiRestClient.getLatestAssessment(PersonIdentifier(PersonIdentifier.Type.CRN, crn)) {
-    it.assessmentType == AssessmentType.LAYER3.name && it.status == AssessmentStatus.COMPLETE.name
+    true // the response is valid from any assessment, including WIP assessments, regardless of layer
   }?.let {
     oasysApiRestClient.getOffenderInformationAndPredictorsSection(it).assessments.firstOrNull()
   }?.let {
