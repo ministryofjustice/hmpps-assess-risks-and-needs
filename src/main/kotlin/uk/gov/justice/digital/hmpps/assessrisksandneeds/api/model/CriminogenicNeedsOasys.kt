@@ -19,6 +19,8 @@ data class CriminogenicNeedsAssessmentOasys(
   val alcohol: AlcoholNeeds? = null,
   val think: ThinkNeeds? = null,
   val att: AttNeeds? = null,
+  val finance: FinanceNeeds? = null,
+  val emo: EmoNeeds? = null,
 )
 
 data class SanNeeds(
@@ -29,6 +31,8 @@ data class SanNeeds(
   val drugUseSan: DrugUseSanNeeds? = null,
   val alcoUseSan: AlcoUseSanNeeds? = null,
   val thinkBehavAndAttiSan: ThinkBehavAndAttiSanNeeds? = null,
+  val financeSan: FinanceSanNeeds? = null,
+  val healthAndWellbeingSan: HealthAndWellbeingSanNeeds? = null,
 )
 
 data class AccNeeds(
@@ -132,4 +136,34 @@ data class ThinkBehavAndAttiSanNeeds(
   val thinkBehavAndAttiSanLinkedToHarm: String? = null,
   val thinkBehavAndAttiSanLinkedToReoffending: String? = null,
   val thinkBehavAndAttiSanScore: Int? = null,
+)
+
+// Unscored sections - included in the detailed needs response but never carry a criminogenic need score.
+
+data class FinanceNeeds(
+  val financeThreshold: Int? = null,
+  val financeLinkedToHarm: String? = null,
+  val financeLinkedToReoffending: String? = null,
+  val financeOtherWeightedScore: Int? = null,
+)
+
+data class EmoNeeds(
+  val emoThreshold: Int? = null,
+  val emoLinkedToHarm: String? = null,
+  val emoLinkedToReoffending: String? = null,
+  val emoOtherWeightedScore: Int? = null,
+)
+
+data class FinanceSanNeeds(
+  val financeSanThreshold: Int? = null,
+  val financeSanLinkedToHarm: String? = null,
+  val financeSanLinkedToReoffending: String? = null,
+  val financeSanScore: Int? = null,
+)
+
+data class HealthAndWellbeingSanNeeds(
+  val healthAndWellbeingSanThreshold: Int? = null,
+  val healthAndWellbeingSanLinkedToHarm: String? = null,
+  val healthAndWellbeingSanLinkedToReoffending: String? = null,
+  val healthAndWellbeingSanScore: Int? = null,
 )

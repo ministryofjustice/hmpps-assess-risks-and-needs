@@ -60,13 +60,13 @@ enum class NeedSeverity {
   SEVERE,
 }
 
-private fun String?.toAssessmentVersion(): AssessmentVersion = when (this) {
+internal fun String?.toAssessmentVersion(): AssessmentVersion = when (this) {
   "1" -> AssessmentVersion.OASYS
   "2" -> AssessmentVersion.SAN
   else -> throw IllegalStateException("Unrecognised assessment version: $this")
 }
 
-private fun String?.toYesNoBoolean(): Boolean? = when (this?.uppercase()) {
+internal fun String?.toYesNoBoolean(): Boolean? = when (this?.uppercase()) {
   "YES" -> true
   "NO" -> false
   else -> null

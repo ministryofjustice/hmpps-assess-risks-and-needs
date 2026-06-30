@@ -54,6 +54,18 @@
         "attLinkedToHarm": "No",
         "attLinkedToReoffending": "No",
         "attOtherWeightedScore": 0
+      },
+      "finance": {
+        "financeThreshold": null,
+        "financeLinkedToHarm": "No",
+        "financeLinkedToReoffending": "No",
+        "financeOtherWeightedScore": null
+      },
+      "emo": {
+        "emoThreshold": null,
+        "emoLinkedToHarm": "No",
+        "emoLinkedToReoffending": "No",
+        "emoOtherWeightedScore": null
       }
     }
   ]
