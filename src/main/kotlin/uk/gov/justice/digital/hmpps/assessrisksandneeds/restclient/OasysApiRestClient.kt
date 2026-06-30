@@ -15,9 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStat
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummaryIndicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentVersion
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNeedsOasys
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto

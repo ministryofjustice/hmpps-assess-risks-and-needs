@@ -1,0 +1,60 @@
+{
+  "source": "OASys",
+  "assessments": [
+    {
+      "assessmentPk": 9650001,
+      "assessmentType": "LAYER3",
+      "assessmentVersion": "1",
+      "dateCompleted": null,
+      "sanCrimNeedScore": null,
+      "acc": {
+        "accThreshold": 2,
+        "accLinkedToHarm": "No",
+        "accLinkedToReoffending": "No",
+        "accOtherWeightedScore": 0
+      },
+      "eTE": {
+        "eTEThreshold": 3,
+        "eTELinkedToHarm": "No",
+        "eTELinkedToReoffending": "No",
+        "eTEOtherWeightedScore": 3
+      },
+      "rel": {
+        "relThreshold": 2,
+        "relLinkedToHarm": "No",
+        "relLinkedToReoffending": "No",
+        "relOtherWeightedScore": 3
+      },
+      "lifestyle": {
+        "lifestyleThreshold": 2,
+        "lifestyleLinkedToHarm": "Yes",
+        "lifestyleLinkedToReoffending": "Yes",
+        "lifestyleOtherWeightedScore": 3
+      },
+      "drug": {
+        "drugThreshold": 2,
+        "drugLinkedToHarm": null,
+        "drugLinkedToReoffending": null,
+        "drugOtherWeightedScore": 0
+      },
+      "alcohol": {
+        "alcoholThreshold": 4,
+        "alcoholLinkedToHarm": "No",
+        "alcoholLinkedToReoffending": "Yes",
+        "alcoholOtherWeightedScore": 4
+      },
+      "think": {
+        "thinkThreshold": 4,
+        "thinkLinkedToHarm": "Yes",
+        "thinkLinkedToReoffending": "Yes",
+        "thinkOtherWeightedScore": 7
+      },
+      "att": {
+        "attThreshold": 2,
+        "attLinkedToHarm": "No",
+        "attLinkedToReoffending": "No",
+        "attOtherWeightedScore": 0
+      }
+    }
+  ]
+}

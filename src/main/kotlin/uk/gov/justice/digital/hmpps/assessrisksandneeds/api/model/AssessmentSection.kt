@@ -1,16 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
 
-data class CriminogenicNeeds(
-  val needScores: Map<AssessmentSection, NeedScores>,
-)
-
-data class NeedScores(
-  val threshold: Int,
-  val score: Int,
-  val linkedToHarm: Boolean,
-  val linkedToReoffending: Boolean,
-)
-
 enum class AssessmentSection {
   // All assessments
   ACCOMMODATION,

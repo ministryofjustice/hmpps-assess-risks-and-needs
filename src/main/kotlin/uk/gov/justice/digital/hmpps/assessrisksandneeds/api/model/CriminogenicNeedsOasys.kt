@@ -7,13 +7,14 @@ data class CriminogenicNeedsOasys(
 )
 
 data class CriminogenicNeedsAssessmentOasys(
+  val assessmentPk: Long? = null,
   val assessmentVersion: String? = null,
   val dateCompleted: LocalDateTime? = null,
   val sanCrimNeedScore: SanNeeds? = null,
   val acc: AccNeeds? = null,
   val eTE: ETENeeds? = null,
   val rel: RelNeeds? = null,
-  val lifecycle: LifecycleNeeds? = null,
+  val lifestyle: LifestyleNeeds? = null,
   val drug: DrugNeeds? = null,
   val alcohol: AlcoholNeeds? = null,
   val think: ThinkNeeds? = null,
@@ -51,11 +52,11 @@ data class RelNeeds(
   val relOtherWeightedScore: Int? = null,
 )
 
-data class LifecycleNeeds(
-  val lifecycleThreshold: Int? = null,
-  val lifecycleLinkedToHarm: String? = null,
-  val lifecycleLinkedToReoffending: String? = null,
-  val lifecycleOtherWeightedScore: Int? = null,
+data class LifestyleNeeds(
+  val lifestyleThreshold: Int? = null,
+  val lifestyleLinkedToHarm: String? = null,
+  val lifestyleLinkedToReoffending: String? = null,
+  val lifestyleOtherWeightedScore: Int? = null,
 )
 
 data class DrugNeeds(
@@ -109,8 +110,6 @@ data class PersRelAndCommSanNeeds(
 
 data class LifeAndAssocSanNeeds(
   val lifeAndAssocSanThreshold: Int? = null,
-  val lifeAndAssocSanLinkedToHarm: String? = null,
-  val lifeAndAssocSanLinkedToReoffending: String? = null,
   val lifeAndAssocSanScore: Int? = null,
 )
 
@@ -122,10 +121,10 @@ data class DrugUseSanNeeds(
 )
 
 data class AlcoUseSanNeeds(
-  val alcoholUseSanThreshold: Int? = null,
-  val alcoholUseSanLinkedToHarm: String? = null,
-  val alcoholUseSanLinkedToReoffending: String? = null,
-  val alcoholUseSanScore: Int? = null,
+  val alcoUseSanThreshold: Int? = null,
+  val alcoUseSanLinkedToHarm: String? = null,
+  val alcoUseSanLinkedToReoffending: String? = null,
+  val alcoUseSanScore: Int? = null,
 )
 
 data class ThinkBehavAndAttiSanNeeds(
