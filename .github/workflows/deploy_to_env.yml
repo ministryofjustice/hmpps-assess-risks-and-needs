@@ -28,3 +28,7 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       image_tag: ${{ inputs.image_tag }}
+  int_test:
+    needs: deploy_to_env
+    if: ${{ inputs.environment == 'dev' }}
+    uses: ./.github/workflows/int_test.yml

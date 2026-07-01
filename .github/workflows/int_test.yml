@@ -1,0 +1,25 @@
+name: Integration Test
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  inttest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Int Tests
+        run: make int-test
+
+      - name: Upload test results
+        if: '!cancelled()'
+        uses: actions/upload-artifact@v5
+        with:
+          name: test_results
+          path: |
+            build/test_results
+            build/reports/tests

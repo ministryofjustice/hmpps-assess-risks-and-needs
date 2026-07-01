@@ -1,0 +1,14 @@
+services:
+  int:
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs:local
+    build:
+      target: development
+    # Changed to target ONLY the test task
+    command: ./gradlew --parallel --build-cache cleanTest test
+    volumes:
+      - ./.git:/app/.git
+      - ./.gradle:/home/gradle/.gradle
+      - ./build:/app/build
+      - ./src:/app/src
+      - ./build.gradle.kts:/app/build.gradle.kts
+      - ./settings.gradle.kts:/app/settings.gradle.kts
