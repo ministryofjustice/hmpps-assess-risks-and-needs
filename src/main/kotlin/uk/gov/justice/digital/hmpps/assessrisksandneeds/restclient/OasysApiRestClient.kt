@@ -23,12 +23,14 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksOasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentWrapper
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRiskManagementPlanDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssOasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshContainer
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshFull
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshScreening
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysSection1
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection.ACCOMMODATION

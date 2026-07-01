@@ -321,6 +321,9 @@ class IntegrationControllerTest : IntegrationTestBase() {
     assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
     assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 20, 10, 0, 0))
     assertThat(needsDto?.needs).containsExactlyElementsOf(sanNeedDetails())
+    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
+    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(sanNotIdentifiedNeeds())
+    assertThat(needsDto?.unansweredNeeds).isEmpty()
   }
 
   @Test
@@ -452,6 +455,9 @@ class IntegrationControllerTest : IntegrationTestBase() {
       needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
       riskOfHarm = null,
       riskOfReoffending = null,
+    AssessmentNeedDto(
+      section = NeedsSection.DRUG_MISUSE.name,
+      name = NeedsSection.DRUG_MISUSE.description,
       score = 0,
       oasysThreshold = OasysThreshold(2),
     ),

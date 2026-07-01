@@ -132,6 +132,31 @@ class AssessmentNeedsServiceTest {
     val assessment = BasicAssessmentSummary(9700001, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
     every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { sanNeeds(assessment.assessmentId) }
+    assertThat(needs.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
+    assertThat(needs.assessedOn).isEqualTo(LocalDateTime.parse("2024-12-19T16:57:25"))
+    assertThat(needs.identifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.ACCOMMODATION.name,
+      AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
+      AssessmentSection.THINKING_AND_BEHAVIOUR.name,
+    )
+    assertThat(needs.notIdentifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
+      AssessmentSection.DRUG_MISUSE.name,
+      AssessmentSection.ATTITUDE.name,
+    )
+    assertThat(needs.unansweredNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.RELATIONSHIPS.name,
+      AssessmentSection.ALCOHOL_MISUSE.name,
+    )
+  }
+
+  @Test
+  fun `should map OASYS section fields onto the need`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { oasysNeeds(assessment.assessmentId) }
 
     // Act
     val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
@@ -180,6 +205,42 @@ class AssessmentNeedsServiceTest {
 
   @Test
   fun `should return all SAN need details with finance and health and wellbeing unscored`() {
+    val accommodation = needs.identifiedNeeds.single { it.section == AssessmentSection.ACCOMMODATION.name }
+    assertThat(accommodation.name).isEqualTo("Accommodation")
+    assertThat(accommodation.riskOfHarm).isTrue()
+    assertThat(accommodation.riskOfReoffending).isFalse()
+    assertThat(accommodation.score).isEqualTo(5)
+    assertThat(accommodation.oasysThreshold).isEqualTo(OasysThreshold(2))
+  }
+
+  @Test
+  fun `should map a SAN assessment using sanCrimNeedScore`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9700001, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { sanNeeds(assessment.assessmentId) }
+
+    // Act
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+
+    // Assert
+    assertThat(needs.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
+    assertThat(needs.identifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.EMPLOYMENT_AND_EDUCATION.name,
+      AssessmentSection.PERSONAL_RELATIONSHIPS_AND_COMMUNITY.name,
+      AssessmentSection.THINKING_ATTITUDES_AND_BEHAVIOUR.name,
+    )
+    assertThat(needs.notIdentifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.ACCOMMODATION.name,
+      AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
+      AssessmentSection.ALCOHOL_USE.name,
+    )
+    assertThat(needs.unansweredNeeds.map { it.section }).containsExactly(AssessmentSection.DRUG_USE.name)
+  }
+
+  @Test
+  fun `should set risk of harm and reoffending to null for SAN lifestyle and associates`() {
     // Arrange
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
     val assessment = BasicAssessmentSummary(9700001, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
@@ -209,6 +270,13 @@ class AssessmentNeedsServiceTest {
     assertThat(health.oasysThreshold).isNull()
     assertThat(health.riskOfHarm).isNull()
     assertThat(health.riskOfReoffending).isNull()
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+
+    // Assert
+    val lifestyle = needs.notIdentifiedNeeds.single { it.section == AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name }
+    assertThat(lifestyle.name).isEqualTo("Lifestyle and associates")
+    assertThat(lifestyle.riskOfHarm).isNull()
+    assertThat(lifestyle.riskOfReoffending).isNull()
   }
 
   @Test

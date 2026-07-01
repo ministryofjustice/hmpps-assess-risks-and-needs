@@ -24,13 +24,16 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Indicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentWrapper
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysSection1
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
 import java.time.LocalDateTime
@@ -391,5 +394,47 @@ class AssessmentOffenceServiceTest {
 
     val response = assessmentOffenceService.getSanIndicator(crn)
     assertThat(response.sanIndicator).isFalse
+  }
+
+  @ParameterizedTest
+  @CsvSource("Yes, true", "No, false")
+  fun `returns sexually motivated offence details from latest complete layer 3 assessment`(
+    everCommittedSexualOffence: String,
+    expectedResult: Boolean,
+  ) {
+    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysClient.getOffenderInformationAndPredictorsSection(eq(assessment)) } answers {
+      OasysAssessmentWrapper(crn, listOf(OasysSection1(everCommittedSexualOffence)))
+    }
+
+    val response = assessmentOffenceService.getSexuallyMotivatedOffenceDetails(crn)
+
+    assertThat(response).isEqualTo(SexualOffenceDto(expectedResult))
+    verify(exactly = 1) { oasysClient.getLatestAssessment(identifier, any()) }
+    verify(exactly = 1) { oasysClient.getOffenderInformationAndPredictorsSection(assessment) }
+  }
+
+  @Test
+  fun `returns null sexually motivated offence details when latest complete layer 3 assessment has no answer`() {
+    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysClient.getOffenderInformationAndPredictorsSection(eq(assessment)) } answers {
+      OasysAssessmentWrapper(crn, listOf(OasysSection1(null)))
+    }
+
+    val response = assessmentOffenceService.getSexuallyMotivatedOffenceDetails(crn)
+
+    assertThat(response).isEqualTo(SexualOffenceDto(null))
+  }
+
+  @Test
+  fun `throws not found when no latest complete layer 3 assessment exists`() {
+    every { oasysClient.getLatestAssessment(eq(identifier), any()) } answers { null }
+
+    val response = assertThrows<EntityNotFoundException> {
+      assessmentOffenceService.getSexuallyMotivatedOffenceDetails(crn)
+    }
+
+    assertThat(response.message).isEqualTo("No assessment found for CRN: $crn")
+    verify(exactly = 0) { oasysClient.getOffenderInformationAndPredictorsSection(any()) }
   }
 }

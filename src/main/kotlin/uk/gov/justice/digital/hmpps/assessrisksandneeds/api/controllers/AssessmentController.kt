@@ -76,6 +76,20 @@ class AssessmentController(
     crn: String,
   ): AssessmentOffenceDto = assessmentOffenceService.getAssessmentOffence(crn)
 
+  @RequestMapping(path = ["/assessments/crn/{crn}/sexually-motivated-offence"], method = [RequestMethod.GET])
+  @Operation(description = "Gets sexually motivated offence details from section 1 of the latest complete assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "404", description = "Assessment does not exist"),
+      ApiResponse(responseCode = "403", description = "Missing role: `ROLE_PROBATION` or `ROLE_ARNS__RISKS__RO`"),
+      ApiResponse(responseCode = "200", description = "OK"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_ARNS__RISKS__RO')")
+  fun getAssessmentSexuallyMotivatedOffenceDetails(
+    @PathVariable crn: String,
+  ) = assessmentOffenceService.getSexuallyMotivatedOffenceDetails(crn)
+
   @RequestMapping(path = ["/assessments/timeline/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
   @Operation(description = "Gets assessment timeline for an identifier")
   @ApiResponses(
