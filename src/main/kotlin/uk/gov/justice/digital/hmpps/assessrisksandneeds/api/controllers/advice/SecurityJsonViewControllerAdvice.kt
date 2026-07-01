@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.advice
 
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
+import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJacksonValue
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
@@ -14,6 +15,9 @@ import java.util.stream.Collectors
 
 @RestControllerAdvice
 internal class SecurityJsonViewControllerAdvice : AbstractMappingJacksonResponseBodyAdvice() {
+  override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean = super.supports(returnType, converterType) &&
+    returnType.declaringClass.packageName.startsWith("uk.gov.justice.digital.hmpps.assessrisksandneeds")
+
   override fun beforeBodyWriteInternal(
     bodyContainer: MappingJacksonValue,
     contentType: MediaType?,

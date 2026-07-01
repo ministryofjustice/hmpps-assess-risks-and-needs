@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
@@ -66,6 +67,16 @@ class AssessmentOffenceService(
       } ?: throw EntityNotFoundException("No assessment summary found for CRN: $crn")
     } ?: throw EntityNotFoundException("No assessment found for CRN: $crn")
   }
+
+  fun getSexuallyMotivatedOffenceDetails(crn: String): SexualOffenceDto = oasysApiRestClient.getLatestAssessment(PersonIdentifier(PersonIdentifier.Type.CRN, crn)) {
+    // the response is valid from any assessment, including WIP assessments, regardless of layer1 or layer 3
+    // note: we still need to filter out STANDALONE assessment types
+    it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name)
+  }?.let {
+    oasysApiRestClient.getOffenderInformationAndPredictorsSection(it).assessments.firstOrNull()
+  }?.let {
+    SexualOffenceDto(it.everCommittedSexualOffence)
+  } ?: throw EntityNotFoundException("No assessment found for CRN: $crn")
 
   private fun mapTimelineToAssessments(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto): AssessmentOffenceDto {
     val assessmentIds = oasysAssessmentOffenceDto.assessments.map { it.assessmentPk }
