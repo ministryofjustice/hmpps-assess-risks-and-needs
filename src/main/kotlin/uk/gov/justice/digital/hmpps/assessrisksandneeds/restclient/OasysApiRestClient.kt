@@ -117,6 +117,13 @@ class OasysApiRestClient(
     return needs
   }
 
+  fun getOffenderInformationAndPredictorsSection(assessment: AssessmentSummary): OasysAssessmentWrapper<OasysSection1> = webClient
+    .get("/ass/section1/ALLOW/${assessment.assessmentId}")
+    .retrieve()
+    .bodyToMono<OasysAssessmentWrapper<OasysSection1>>()
+    .retryWhen(Retry.backoff(3, Duration.ofMillis(200)))
+    .block()!!
+
   fun getRiskPredictorsForCompletedAssessments(
     crn: String,
   ): AllRisksOasysRiskPredictorsDto? {
