@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
@@ -11,8 +10,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredAnswer
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isCompletedWithinTimeframe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.isWithinTimeframe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
@@ -20,50 +17,30 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 @Service
 class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient, private val clock: Clock) {
   fun getAssessmentNeeds(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDto {
-    val sectionSummary = oasysApiRestClient.getLatestAssessment(
+    val latestAssessment = oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
       needsPredicate(timeframe, excludeIncomplete, clock),
-    )?.let {
-      oasysApiRestClient.getScoredSectionsForAssessment(it, NeedsSection.entries)
-    }
+    ) ?: throw EntityNotFoundException("No needs found for CRN: $crn")
 
-    if (sectionSummary == null) {
-      throw EntityNotFoundException("No needs found for CRN: $crn")
-    }
+    val needs = oasysApiRestClient.getCriminogenicNeedsForAssessment(latestAssessment)
+      ?: throw EntityNotFoundException("No needs found for CRN: $crn")
 
-    return AssessmentNeedsDto.from(sectionSummary.assessmentNeeds(), sectionSummary.assessment.completedDate)
-  }
+    val assessment = needs.assessments.firstOrNull { it.assessmentPk == latestAssessment.assessmentId }
+      ?: needs.assessments.singleOrNull()?.also {
+        log.warn(
+          "Criminogenic needs for assessment {} (CRN {}) contained no matching assessmentPk; using the only assessment returned (pk={})",
+          latestAssessment.assessmentId,
+          crn,
+          it.assessmentPk,
+        )
+      }
+      ?: throw EntityNotFoundException("No needs found for CRN: $crn")
 
-  private fun SectionSummary.assessmentNeeds(): List<AssessmentNeedDto> = listOfNotNull(
-    accommodation,
-    educationTrainingEmployability,
-    relationships,
-    lifestyleAndAssociates,
-    drugMisuse,
-    alcoholMisuse,
-    thinkingAndBehaviour,
-    attitudes,
-  ).map {
-    AssessmentNeedDto(
-      it.section.name,
-      it.section.description,
-      it.linkedToHarm.toBoolean(),
-      it.linkedToReOffending.toBoolean(),
-      it.getSeverity(),
-      it.getScore(),
-      it.oasysThreshold,
-      it.tierThreshold,
-    )
-  }
-
-  private fun ScoredAnswer.YesNo?.toBoolean(): Boolean? = when (this) {
-    ScoredAnswer.YesNo.Yes -> true
-    ScoredAnswer.YesNo.No -> false
-    else -> null
+    return AssessmentNeedsDto.from(assessment)
   }
 
   companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
+    private val log: Logger = LoggerFactory.getLogger(AssessmentNeedsService::class.java)
   }
 }
 

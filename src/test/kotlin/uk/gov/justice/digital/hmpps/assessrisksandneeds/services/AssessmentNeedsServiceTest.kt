@@ -9,16 +9,31 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AccNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AccomSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AlcoUseSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AlcoholNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSection
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentVersion
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AttNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedSeverity
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNeedsAssessmentOasys
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNeedsOasys
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DrugNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DrugUseSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ETENeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmpAndEduSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.LifeAndAssocSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.LifestyleNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersRelAndCommSanNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RelNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ThinkBehavAndAttiSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ThinkNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.SectionSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.TierThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.time.LocalDateTime
 
@@ -30,310 +45,219 @@ class AssessmentNeedsServiceTest {
   private val assessmentNeedsService = AssessmentNeedsService(oasysApiRestClient, clock)
 
   @Test
-  fun `get assessment needs by crn returns identified needs`() {
+  fun `should bucket OASYS needs by score against threshold`() {
+    // Arrange
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
-
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
     every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
-    every {
-      oasysApiRestClient.getScoredSectionsForAssessment(assessment, NeedsSection.entries)
-    } answers { allOffenderNeeds(assessment) }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { oasysNeeds(assessment.assessmentId) }
 
+    // Act
     val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
-    assertThat(needs.assessedOn).isEqualTo(assessment.completedDate)
-    assertThat(needs.identifiedNeeds).hasSize(8)
-    assertThat(needs.notIdentifiedNeeds).hasSize(0)
-    assertThat(needs.unansweredNeeds).hasSize(0)
-  }
 
-  @Test
-  fun `get assessment needs by crn includes unanswered needs`() {
-    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(289457671, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
-
-    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
-    every {
-      oasysApiRestClient.getScoredSectionsForAssessment(assessment, NeedsSection.entries)
-    } answers { offenderNeedsWithUnanswered(assessment) }
-
-    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
-    assertThat(needs.assessedOn).isEqualTo(assessment.completedDate)
-    assertThat(needs.identifiedNeeds).hasSize(6)
-    assertThat(needs.notIdentifiedNeeds).hasSize(0)
-    assertThat(needs.unansweredNeeds).isEqualTo(unansweredNeeds())
-  }
-
-  @Test
-  fun `get assessment needs by crn includes not identified needs`() {
-    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
-    val assessment = BasicAssessmentSummary(6758939181, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
-
-    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
-    every {
-      oasysApiRestClient.getScoredSectionsForAssessment(assessment, NeedsSection.entries)
-    } answers { offenderNeedsWithNotIdentified(assessment) }
-
-    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
-    assertThat(needs.assessedOn).isEqualTo(assessment.completedDate)
-    assertThat(needs.identifiedNeeds).hasSize(6)
-    assertThat(needs.notIdentifiedNeeds).isEqualTo(notIdentifiedNeeds())
-    assertThat(needs.unansweredNeeds).hasSize(0)
-  }
-
-  @Test
-  fun `get assessment needs by crn throws Exception when empty needs found`() {
-    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "N123456")
-    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { null }
-
-    val exception = assertThrows<EntityNotFoundException> {
-      assessmentNeedsService.getAssessmentNeeds(identifier.value)
-    }
-    assertEquals(
-      "No needs found for CRN: ${identifier.value}",
-      exception.message,
+    // Assert
+    assertThat(needs.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
+    assertThat(needs.assessedOn).isEqualTo(LocalDateTime.parse("2024-12-19T16:57:25"))
+    assertThat(needs.identifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.ACCOMMODATION.name,
+      AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
+      AssessmentSection.THINKING_AND_BEHAVIOUR.name,
+    )
+    assertThat(needs.notIdentifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
+      AssessmentSection.DRUG_MISUSE.name,
+      AssessmentSection.ATTITUDE.name,
+    )
+    assertThat(needs.unansweredNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.RELATIONSHIPS.name,
+      AssessmentSection.ALCOHOL_MISUSE.name,
     )
   }
 
-  private fun unansweredNeeds() = listOf(
-    AssessmentNeedDto(
-      section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
-      name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
-      score = null,
-      oasysThreshold = OasysThreshold(standard = 4),
-      tierThreshold = TierThreshold(standard = 4, severe = 7),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.ATTITUDE.name,
-      name = NeedsSection.ATTITUDE.description,
-      score = null,
-      oasysThreshold = OasysThreshold(standard = 2),
-      tierThreshold = TierThreshold(standard = 2, severe = 7),
+  @Test
+  fun `should map OASYS section fields onto the need`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { oasysNeeds(assessment.assessmentId) }
+
+    // Act
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+
+    // Assert
+    val accommodation = needs.identifiedNeeds.single { it.section == AssessmentSection.ACCOMMODATION.name }
+    assertThat(accommodation.name).isEqualTo("Accommodation")
+    assertThat(accommodation.riskOfHarm).isTrue()
+    assertThat(accommodation.riskOfReoffending).isFalse()
+    assertThat(accommodation.score).isEqualTo(5)
+    assertThat(accommodation.oasysThreshold).isEqualTo(OasysThreshold(2))
+  }
+
+  @Test
+  fun `should map a SAN assessment using sanCrimNeedScore`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9700001, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { sanNeeds(assessment.assessmentId) }
+
+    // Act
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+
+    // Assert
+    assertThat(needs.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
+    assertThat(needs.identifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.EMPLOYMENT_AND_EDUCATION.name,
+      AssessmentSection.PERSONAL_RELATIONSHIPS_AND_COMMUNITY.name,
+      AssessmentSection.THINKING_ATTITUDES_AND_BEHAVIOUR.name,
+    )
+    assertThat(needs.notIdentifiedNeeds.map { it.section }).containsExactlyInAnyOrder(
+      AssessmentSection.ACCOMMODATION.name,
+      AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
+      AssessmentSection.ALCOHOL_USE.name,
+    )
+    assertThat(needs.unansweredNeeds.map { it.section }).containsExactly(AssessmentSection.DRUG_USE.name)
+  }
+
+  @Test
+  fun `should set risk of harm and reoffending to null for SAN lifestyle and associates`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9700001, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { sanNeeds(assessment.assessmentId) }
+
+    // Act
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+
+    // Assert
+    val lifestyle = needs.notIdentifiedNeeds.single { it.section == AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name }
+    assertThat(lifestyle.name).isEqualTo("Lifestyle and associates")
+    assertThat(lifestyle.riskOfHarm).isNull()
+    assertThat(lifestyle.riskOfReoffending).isNull()
+  }
+
+  @Test
+  fun `should throw exception when no latest assessment found`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "N123456")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { null }
+
+    // Act
+    val exception = assertThrows<EntityNotFoundException> {
+      assessmentNeedsService.getAssessmentNeeds(identifier.value)
+    }
+
+    // Assert
+    assertEquals("No needs found for CRN: ${identifier.value}", exception.message)
+  }
+
+  @Test
+  fun `should throw exception when criminogenic needs not found`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "N123456")
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { null }
+
+    // Act
+    val exception = assertThrows<EntityNotFoundException> {
+      assessmentNeedsService.getAssessmentNeeds(identifier.value)
+    }
+
+    // Assert
+    assertEquals("No needs found for CRN: ${identifier.value}", exception.message)
+  }
+
+  @Test
+  fun `should throw when assessment version is unrecognised`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    val needs = CriminogenicNeedsOasys(listOf(CriminogenicNeedsAssessmentOasys(assessmentPk = assessment.assessmentId, assessmentVersion = "3")))
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { needs }
+
+    // Act & Assert
+    assertThrows<IllegalStateException> {
+      assessmentNeedsService.getAssessmentNeeds(identifier.value)
+    }
+  }
+
+  @Test
+  fun `should throw exception when no returned assessment matches the latest assessment`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    val needs = CriminogenicNeedsOasys(
+      listOf(
+        CriminogenicNeedsAssessmentOasys(assessmentPk = 111, assessmentVersion = "1"),
+        CriminogenicNeedsAssessmentOasys(assessmentPk = 222, assessmentVersion = "1"),
+      ),
+    )
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { needs }
+
+    // Act
+    val exception = assertThrows<EntityNotFoundException> {
+      assessmentNeedsService.getAssessmentNeeds(identifier.value)
+    }
+
+    // Assert
+    assertEquals("No needs found for CRN: ${identifier.value}", exception.message)
+  }
+
+  @Test
+  fun `should use the only returned assessment when its pk does not match the latest assessment`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { oasysNeeds(assessmentPk = 999) }
+
+    // Act
+    val needs = assessmentNeedsService.getAssessmentNeeds(identifier.value)
+
+    // Assert
+    assertThat(needs.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
+    assertThat(needs.identifiedNeeds).isNotEmpty()
+  }
+
+  private fun oasysNeeds(assessmentPk: Long) = CriminogenicNeedsOasys(
+    assessments = listOf(
+      CriminogenicNeedsAssessmentOasys(
+        assessmentPk = assessmentPk,
+        assessmentVersion = "1",
+        dateCompleted = LocalDateTime.parse("2024-12-19T16:57:25"),
+        acc = AccNeeds(accThreshold = 2, accLinkedToHarm = "Yes", accLinkedToReoffending = "No", accOtherWeightedScore = 5),
+        eTE = ETENeeds(eTEThreshold = 3, eTELinkedToHarm = "No", eTELinkedToReoffending = "No", eTEOtherWeightedScore = 1),
+        rel = RelNeeds(relThreshold = 2, relLinkedToHarm = "No", relLinkedToReoffending = "No", relOtherWeightedScore = null),
+        lifestyle = LifestyleNeeds(lifestyleThreshold = 2, lifestyleLinkedToHarm = "Yes", lifestyleLinkedToReoffending = "Yes", lifestyleOtherWeightedScore = 2),
+        drug = DrugNeeds(drugThreshold = 2, drugLinkedToHarm = "No", drugLinkedToReoffending = "No", drugOtherWeightedScore = 0),
+        alcohol = AlcoholNeeds(alcoholThreshold = 4, alcoholLinkedToHarm = "No", alcoholLinkedToReoffending = "No", alcoholOtherWeightedScore = null),
+        think = ThinkNeeds(thinkThreshold = 4, thinkLinkedToHarm = "Yes", thinkLinkedToReoffending = "Yes", thinkOtherWeightedScore = 8),
+        att = AttNeeds(attThreshold = 2, attLinkedToHarm = "No", attLinkedToReoffending = "No", attOtherWeightedScore = 1),
+      ),
     ),
   )
 
-  private fun notIdentifiedNeeds() = listOf(
-    AssessmentNeedDto(
-      section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
-      name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
-      riskOfReoffending = false,
-      riskOfHarm = false,
-      severity = NeedSeverity.NO_NEED,
-      score = 0,
-      oasysThreshold = OasysThreshold(standard = 4),
-      tierThreshold = TierThreshold(standard = 4, severe = 7),
+  private fun sanNeeds(assessmentPk: Long) = CriminogenicNeedsOasys(
+    assessments = listOf(
+      CriminogenicNeedsAssessmentOasys(
+        assessmentPk = assessmentPk,
+        assessmentVersion = "2",
+        dateCompleted = LocalDateTime.parse("2024-12-20T10:00:00"),
+        sanCrimNeedScore = SanNeeds(
+          accomSan = AccomSanNeeds(accomSanThreshold = 2, accomSanLinkedToHarm = "No", accomSanLinkedToReoffending = "No", accomSanScore = 1),
+          empAndEduSan = EmpAndEduSanNeeds(empAndEduSanThreshold = 2, empAndEduSanLinkedToHarm = "No", empAndEduSanLinkedToReoffending = "No", empAndEduSanScore = 4),
+          persRelAndCommSan = PersRelAndCommSanNeeds(persRelAndCommSanThreshold = 2, persRelAndCommSanLinkedToHarm = "No", persRelAndCommSanLinkedToReoffending = "No", persRelAndCommSanScore = 3),
+          lifeAndAssocSan = LifeAndAssocSanNeeds(lifeAndAssocSanThreshold = 2, lifeAndAssocSanScore = 0),
+          drugUseSan = DrugUseSanNeeds(drugUseSanThreshold = 2, drugUseSanLinkedToHarm = "No", drugUseSanLinkedToReoffending = "No", drugUseSanScore = null),
+          alcoUseSan = AlcoUseSanNeeds(alcoUseSanThreshold = 2, alcoUseSanLinkedToHarm = "No", alcoUseSanLinkedToReoffending = "No", alcoUseSanScore = 0),
+          thinkBehavAndAttiSan = ThinkBehavAndAttiSanNeeds(thinkBehavAndAttiSanThreshold = 2, thinkBehavAndAttiSanLinkedToHarm = "No", thinkBehavAndAttiSanLinkedToReoffending = "No", thinkBehavAndAttiSanScore = 6),
+        ),
+      ),
     ),
-    AssessmentNeedDto(
-      section = NeedsSection.ATTITUDE.name,
-      name = NeedsSection.ATTITUDE.description,
-      riskOfReoffending = false,
-      riskOfHarm = false,
-      severity = NeedSeverity.NO_NEED,
-      score = 0,
-      oasysThreshold = OasysThreshold(standard = 2),
-      tierThreshold = TierThreshold(standard = 2, severe = 7),
-    ),
-  )
-
-  private fun allOffenderNeeds(assessmentSummary: BasicAssessmentSummary) = SectionSummary(
-    assessmentSummary,
-    ScoredSection.Accommodation(
-      accLinkedToHarm = "Yes",
-      accLinkedToReoffending = "Yes",
-      noFixedAbodeOrTransient = "NO",
-      suitabilityOfAccommodation = "1-Some problems",
-      locationOfAccommodation = "2-Significant problems",
-      permanenceOfAccommodation = "1-Some problems",
-    ),
-    ScoredSection.EducationTrainingEmployability(
-      eTeLinkedToHarm = "Yes",
-      eTeLinkedToReoffending = "Yes",
-      unemployed = "0-No",
-      workRelatedSkills = "0-No problems",
-      employmentHistory = "2-Significant problems",
-      attitudeToEmployment = "1-Some problems",
-    ),
-    ScoredSection.Relationships(
-      relLinkedToHarm = "No",
-      relLinkedToReoffending = "Yes",
-      relParentalResponsibilities = "No",
-      experienceOfChildhood = "2-Significant problems",
-      relCloseFamily = "1-Some problems",
-      prevCloseRelationships = "2-Significant problems",
-    ),
-    ScoredSection.LifestyleAndAssociates(
-      lifestyleLinkedToHarm = "Yes",
-      lifestyleLinkedToReoffending = "Yes",
-      regActivitiesEncourageOffending = "0-No problems",
-      recklessness = "1-Some problems",
-      easilyInfluenced = "1-Some problems",
-    ),
-    ScoredSection.DrugMisuse(
-      drugLinkedToHarm = "Yes",
-      drugLinkedToReoffending = "Yes",
-      levelOfUseOfMainDrug = "1-Some problems",
-      everInjectedDrugs = "Never",
-      currentDrugNoted = "1-Some problems",
-      motivationToTackleDrugMisuse = "0-No problems",
-      drugsMajorActivity = "1-Some problems",
-    ),
-    ScoredSection.AlcoholMisuse(
-      alcoholLinkedToHarm = "Yes",
-      alcoholLinkedToReoffending = "No",
-      bingeDrinking = "1-Some problems",
-      currentUse = "1-Some problems",
-      frequencyAndLevel = "1-Some problems",
-      alcoholTackleMotivation = "2-Significant problemsø",
-    ),
-    ScoredSection.ThinkingAndBehaviour(
-      thinkLinkedToHarm = "No",
-      thinkLinkedToReoffending = "Yes",
-      recogniseProblems = "1-Some problems",
-      awarenessOfConsequences = "1-Some problems",
-      understandsViewsOfOthers = "2-Significant problems",
-      temperControlStr = "2-Significant problems",
-      impulsivityStr = "2-Significant problems",
-      problemSolvingSkills = "1-Some problems",
-    ),
-    ScoredSection.Attitudes(
-      attLinkedToHarm = "No",
-      attLinkedToReoffending = "Yes",
-      proCriminalAttitudes = "1-Some problems",
-      attitudesTowardsSupervision = "2-Significant problems",
-      motivationToAddressBehaviour = "2-Significant problems",
-      attitudesTowardsCommunitySociety = "2-Significant problems",
-    ),
-  )
-
-  private fun offenderNeedsWithNotIdentified(assessmentSummary: BasicAssessmentSummary) = SectionSummary(
-    assessmentSummary,
-    ScoredSection.Accommodation(
-      accLinkedToHarm = "Yes",
-      accLinkedToReoffending = "Yes",
-      noFixedAbodeOrTransient = "NO",
-      suitabilityOfAccommodation = "1-Some problems",
-      locationOfAccommodation = "2-Significant problems",
-      permanenceOfAccommodation = "1-Some problems",
-    ),
-    ScoredSection.EducationTrainingEmployability(
-      eTeLinkedToHarm = "Yes",
-      eTeLinkedToReoffending = "Yes",
-      unemployed = "0-No",
-      workRelatedSkills = "0-No problems",
-      employmentHistory = "2-Significant problems",
-      attitudeToEmployment = "1-Some problems",
-    ),
-    ScoredSection.Relationships(
-      relLinkedToHarm = "No",
-      relLinkedToReoffending = "Yes",
-      relParentalResponsibilities = "No",
-      experienceOfChildhood = "2-Significant problems",
-      relCloseFamily = "1-Some problems",
-      prevCloseRelationships = "2-Significant problems",
-    ),
-    ScoredSection.LifestyleAndAssociates(
-      lifestyleLinkedToHarm = "Yes",
-      lifestyleLinkedToReoffending = "Yes",
-      regActivitiesEncourageOffending = "0-No problems",
-      recklessness = "1-Some problems",
-      easilyInfluenced = "1-Some problems",
-    ),
-    ScoredSection.DrugMisuse(
-      drugLinkedToHarm = "Yes",
-      drugLinkedToReoffending = "Yes",
-      levelOfUseOfMainDrug = "1-Some problems",
-      everInjectedDrugs = "Never",
-      currentDrugNoted = "1-Some problems",
-      motivationToTackleDrugMisuse = "0-No problems",
-      drugsMajorActivity = "1-Some problems",
-    ),
-    ScoredSection.AlcoholMisuse(
-      alcoholLinkedToHarm = "Yes",
-      alcoholLinkedToReoffending = "No",
-      bingeDrinking = "1-Some problems",
-      currentUse = "1-Some problems",
-      frequencyAndLevel = "1-Some problems",
-      alcoholTackleMotivation = "2-Significant problemsø",
-    ),
-    ScoredSection.ThinkingAndBehaviour(
-      thinkLinkedToHarm = "No",
-      thinkLinkedToReoffending = "No",
-      recogniseProblems = "0-No problems",
-      awarenessOfConsequences = "0-No problems",
-      understandsViewsOfOthers = "0-No problems",
-      temperControlStr = "0-No problems",
-      impulsivityStr = "0-No problems",
-      problemSolvingSkills = "0-No problems",
-    ),
-    ScoredSection.Attitudes(
-      attLinkedToHarm = "No",
-      attLinkedToReoffending = "No",
-      proCriminalAttitudes = "0-No problems",
-      attitudesTowardsSupervision = "0-No problems",
-      motivationToAddressBehaviour = "0-No problems",
-      attitudesTowardsCommunitySociety = "0-No problems",
-    ),
-  )
-
-  private fun offenderNeedsWithUnanswered(assessmentSummary: BasicAssessmentSummary) = SectionSummary(
-    assessmentSummary,
-    ScoredSection.Accommodation(
-      accLinkedToHarm = "Yes",
-      accLinkedToReoffending = "Yes",
-      noFixedAbodeOrTransient = "NO",
-      suitabilityOfAccommodation = "1-Some problems",
-      locationOfAccommodation = "2-Significant problems",
-      permanenceOfAccommodation = "1-Some problems",
-    ),
-    ScoredSection.EducationTrainingEmployability(
-      eTeLinkedToHarm = "Yes",
-      eTeLinkedToReoffending = "Yes",
-      unemployed = "0-No",
-      workRelatedSkills = "0-No problems",
-      employmentHistory = "2-Significant problems",
-      attitudeToEmployment = "1-Some problems",
-    ),
-    ScoredSection.Relationships(
-      relLinkedToHarm = "No",
-      relLinkedToReoffending = "Yes",
-      relParentalResponsibilities = "No",
-      experienceOfChildhood = "2-Significant problems",
-      relCloseFamily = "1-Some problems",
-      prevCloseRelationships = "2-Significant problems",
-    ),
-    ScoredSection.LifestyleAndAssociates(
-      lifestyleLinkedToHarm = "Yes",
-      lifestyleLinkedToReoffending = "Yes",
-      regActivitiesEncourageOffending = "0-No problems",
-      recklessness = "1-Some problems",
-      easilyInfluenced = "1-Some problems",
-    ),
-    ScoredSection.DrugMisuse(
-      drugLinkedToHarm = "Yes",
-      drugLinkedToReoffending = "Yes",
-      levelOfUseOfMainDrug = "1-Some problems",
-      everInjectedDrugs = "Never",
-      currentDrugNoted = "1-Some problems",
-      motivationToTackleDrugMisuse = "0-No problems",
-      drugsMajorActivity = "1-Some problems",
-    ),
-    ScoredSection.AlcoholMisuse(
-      alcoholLinkedToHarm = "Yes",
-      alcoholLinkedToReoffending = "No",
-      bingeDrinking = "1-Some problems",
-      currentUse = "1-Some problems",
-      frequencyAndLevel = "1-Some problems",
-      alcoholTackleMotivation = "2-Significant problemsø",
-    ),
-    ScoredSection.ThinkingAndBehaviour(
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-    ),
-    ScoredSection.Attitudes(null, null, null, null, null, null),
   )
 }

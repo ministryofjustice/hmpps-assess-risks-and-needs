@@ -44,6 +44,20 @@
     },
     {
       "request": {
+        "urlPattern": "/eor/oasys/ass/allasslist/prob/X654321/ALLOW",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsAssessmentTimelineSan.json",
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
         "urlPattern": "/eor/oasys/ass/allasslist/prob/NOT_FOUND/ALLOW",
         "method": "GET"
       },
