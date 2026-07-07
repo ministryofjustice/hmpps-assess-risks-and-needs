@@ -13,12 +13,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDetailDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentVersion
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgpScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgrScoreDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OspScoreDto
@@ -41,7 +42,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.StaticOr
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.VersionedStaticOrDynamicPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -263,13 +263,12 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<AssessmentNeedsDetailsDto>()
       .returnResult().responseBody
 
     assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
     assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetails())
   }
 
   @Test
@@ -278,13 +277,12 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<AssessmentNeedsDetailsDto>()
       .returnResult().responseBody
 
     assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
     assertThat(needsDto?.assessedOn).isNull()
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetails())
   }
 
   @Test
@@ -294,19 +292,18 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<AssessmentNeedsDetailsDto>()
       .returnResult().responseBody
 
     assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
     assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetails())
   }
 
   @Test
   fun `get criminogenic needs by crn within timeframe not found`() {
     val timeframe = 2L
-    val needsDto = webTestClient.get().uri("/needs/$crn/$timeframe")
+    webTestClient.get().uri("/needs/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isNotFound
@@ -318,14 +315,12 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<AssessmentNeedsDetailsDto>()
       .returnResult().responseBody
 
     assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
     assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 20, 10, 0, 0))
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(sanNotIdentifiedNeeds())
-    assertThat(needsDto?.unansweredNeeds).isEmpty()
+    assertThat(needsDto?.needs).containsExactlyElementsOf(sanNeedDetails())
   }
 
   @Test
@@ -394,133 +389,182 @@ class IntegrationControllerTest : IntegrationTestBase() {
     }
   }
 
-  private fun scoredNotNeeds() = listOf(
-    AssessmentNeedDto(
-      section = NeedsSection.ACCOMMODATION.name,
-      name = NeedsSection.ACCOMMODATION.description,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.DRUG_MISUSE.name,
-      name = NeedsSection.DRUG_MISUSE.description,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.ATTITUDE.name,
-      name = NeedsSection.ATTITUDE.description,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-  )
-
-  private fun identifiedNeeds() = listOf(
-    AssessmentNeedDto(
-      section = NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
-      name = NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.description,
+  // Detailed needs are returned as a single list ordered by need status (identified, not-identified, unanswered,
+  // unscored) and, within each status, in canonical section order.
+  private fun oasysNeedDetails() = listOf(
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
+      name = "Education, Training and Employability",
+      needStatus = NeedStatus.IDENTIFIED_NEED,
       riskOfHarm = false,
       riskOfReoffending = false,
       score = 3,
       oasysThreshold = OasysThreshold(3),
     ),
-    AssessmentNeedDto(
-      section = NeedsSection.RELATIONSHIPS.name,
-      name = NeedsSection.RELATIONSHIPS.description,
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.RELATIONSHIPS.name,
+      name = "Relationships",
+      needStatus = NeedStatus.IDENTIFIED_NEED,
       riskOfHarm = false,
       riskOfReoffending = false,
       score = 3,
       oasysThreshold = OasysThreshold(2),
     ),
-    AssessmentNeedDto(
-      section = NeedsSection.LIFESTYLE_AND_ASSOCIATES.name,
-      name = NeedsSection.LIFESTYLE_AND_ASSOCIATES.description,
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
+      name = "Lifestyle and Associates",
+      needStatus = NeedStatus.IDENTIFIED_NEED,
       riskOfHarm = true,
       riskOfReoffending = true,
       score = 3,
       oasysThreshold = OasysThreshold(2),
     ),
-    AssessmentNeedDto(
-      section = NeedsSection.ALCOHOL_MISUSE.name,
-      name = NeedsSection.ALCOHOL_MISUSE.description,
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.ALCOHOL_MISUSE.name,
+      name = "Alcohol Misuse",
+      needStatus = NeedStatus.IDENTIFIED_NEED,
       riskOfHarm = false,
       riskOfReoffending = true,
       score = 4,
       oasysThreshold = OasysThreshold(4),
     ),
-    AssessmentNeedDto(
-      section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
-      name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.THINKING_AND_BEHAVIOUR.name,
+      name = "Thinking and Behaviour",
+      needStatus = NeedStatus.IDENTIFIED_NEED,
       riskOfHarm = true,
       riskOfReoffending = true,
       score = 7,
       oasysThreshold = OasysThreshold(4),
     ),
-  )
-
-  private fun sanIdentifiedNeeds() = listOf(
-    AssessmentNeedDto(
-      section = AssessmentSection.PERSONAL_RELATIONSHIPS_AND_COMMUNITY.name,
-      name = "Personal relationships and community",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 3,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = AssessmentSection.THINKING_ATTITUDES_AND_BEHAVIOUR.name,
-      name = "Thinking, behaviours and attitudes",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 6,
-      oasysThreshold = OasysThreshold(2),
-    ),
-  )
-
-  private fun sanNotIdentifiedNeeds() = listOf(
-    AssessmentNeedDto(
+    AssessmentNeedDetailDto(
       section = AssessmentSection.ACCOMMODATION.name,
       name = "Accommodation",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 1,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = AssessmentSection.EMPLOYMENT_AND_EDUCATION.name,
-      name = "Employment and education",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
       riskOfHarm = false,
       riskOfReoffending = false,
       score = 0,
       oasysThreshold = OasysThreshold(2),
     ),
-    AssessmentNeedDto(
-      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
-      name = "Lifestyle and associates",
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.DRUG_MISUSE.name,
+      name = "Drug Misuse",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
       riskOfHarm = null,
       riskOfReoffending = null,
       score = 0,
       oasysThreshold = OasysThreshold(2),
     ),
-    AssessmentNeedDto(
-      section = AssessmentSection.DRUG_USE.name,
-      name = "Drug use",
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.ATTITUDE.name,
+      name = "Attitudes",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
       riskOfHarm = false,
       riskOfReoffending = false,
       score = 0,
       oasysThreshold = OasysThreshold(2),
     ),
-    AssessmentNeedDto(
-      section = AssessmentSection.ALCOHOL_USE.name,
-      name = "Alcohol use",
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.FINANCE.name,
+      name = "Finance",
+      needStatus = NeedStatus.UNSCORED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.EMOTIONAL_WELLBEING.name,
+      name = "Emotional Well-being",
+      needStatus = NeedStatus.UNSCORED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+  )
+
+  private fun sanNeedDetails() = listOf(
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.PERSONAL_RELATIONSHIPS_AND_COMMUNITY.name,
+      name = "Personal relationships and community",
+      needStatus = NeedStatus.IDENTIFIED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = 3,
+      oasysThreshold = OasysThreshold(2),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.THINKING_ATTITUDES_AND_BEHAVIOUR.name,
+      name = "Thinking, behaviours and attitudes",
+      needStatus = NeedStatus.IDENTIFIED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = 6,
+      oasysThreshold = OasysThreshold(2),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.ACCOMMODATION.name,
+      name = "Accommodation",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = 1,
+      oasysThreshold = OasysThreshold(2),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.EMPLOYMENT_AND_EDUCATION.name,
+      name = "Employment and education",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
       riskOfHarm = false,
       riskOfReoffending = false,
       score = 0,
       oasysThreshold = OasysThreshold(2),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
+      name = "Lifestyle and associates",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
+      riskOfHarm = null,
+      riskOfReoffending = null,
+      score = 0,
+      oasysThreshold = OasysThreshold(2),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.DRUG_USE.name,
+      name = "Drug use",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = 0,
+      oasysThreshold = OasysThreshold(2),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.ALCOHOL_USE.name,
+      name = "Alcohol use",
+      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = 0,
+      oasysThreshold = OasysThreshold(2),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.FINANCE.name,
+      name = "Finance",
+      needStatus = NeedStatus.UNSCORED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.HEALTH_AND_WELLBEING.name,
+      name = "Health and wellbeing",
+      needStatus = NeedStatus.UNSCORED_NEED,
+      riskOfHarm = null,
+      riskOfReoffending = null,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
     ),
   )
 

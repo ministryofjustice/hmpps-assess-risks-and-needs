@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
@@ -161,7 +161,7 @@ class IntegrationController(
       example = "false",
     )
     excludeIncomplete: Boolean = true,
-  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, excludeIncomplete = excludeIncomplete)
+  ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, excludeIncomplete = excludeIncomplete)
 
   @RequestMapping(path = ["/needs/{crn}/{timeframe}"], method = [RequestMethod.GET])
   @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")
@@ -180,7 +180,7 @@ class IntegrationController(
     @PathVariable timeframe: Long,
     @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
     excludeIncomplete: Boolean = true,
-  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, timeframe, excludeIncomplete)
+  ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, timeframe, excludeIncomplete)
 
   @RequestMapping(path = ["/risks/risk-management-plan/{crn}"], method = [RequestMethod.GET])
   @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")

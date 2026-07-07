@@ -3,10 +3,12 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNeedsAssessmentOasys
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
@@ -16,7 +18,11 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 
 @Service
 class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient, private val clock: Clock) {
-  fun getAssessmentNeeds(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDto {
+  fun getAssessmentNeeds(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDto = AssessmentNeedsDto.from(latestCriminogenicNeeds(crn, timeframe, excludeIncomplete))
+
+  fun getAssessmentNeedsDetails(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDetailsDto = AssessmentNeedsDetailsDto.from(latestCriminogenicNeeds(crn, timeframe, excludeIncomplete))
+
+  private fun latestCriminogenicNeeds(crn: String, timeframe: Long, excludeIncomplete: Boolean): CriminogenicNeedsAssessmentOasys {
     val latestAssessment = oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
       needsPredicate(timeframe, excludeIncomplete, clock),
@@ -25,7 +31,7 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient,
     val needs = oasysApiRestClient.getCriminogenicNeedsForAssessment(latestAssessment)
       ?: throw EntityNotFoundException("No needs found for CRN: $crn")
 
-    val assessment = needs.assessments.firstOrNull { it.assessmentPk == latestAssessment.assessmentId }
+    return needs.assessments.firstOrNull { it.assessmentPk == latestAssessment.assessmentId }
       ?: needs.assessments.singleOrNull()?.also {
         log.warn(
           "Criminogenic needs for assessment {} (CRN {}) contained no matching assessmentPk; using the only assessment returned (pk={})",
@@ -35,8 +41,6 @@ class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient,
         )
       }
       ?: throw EntityNotFoundException("No needs found for CRN: $crn")
-
-    return AssessmentNeedsDto.from(assessment)
   }
 
   companion object {

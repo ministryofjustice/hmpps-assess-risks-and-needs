@@ -22,9 +22,14 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CriminogenicNe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DrugNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.DrugUseSanNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ETENeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmoNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.EmpAndEduSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.FinanceNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.FinanceSanNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.HealthAndWellbeingSanNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.LifeAndAssocSanNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.LifestyleNeeds
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersRelAndCommSanNeeds
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RelNeeds
@@ -139,6 +144,74 @@ class AssessmentNeedsServiceTest {
   }
 
   @Test
+  fun `should return all OASYS need details ordered by need status with finance and emotional wellbeing unscored`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9630348, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { oasysNeeds(assessment.assessmentId) }
+
+    // Act
+    val needs = assessmentNeedsService.getAssessmentNeedsDetails(identifier.value)
+
+    // Assert
+    assertThat(needs.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
+    assertThat(needs.assessedOn).isEqualTo(LocalDateTime.parse("2024-12-19T16:57:25"))
+    assertThat(needs.needs.map { it.section to it.needStatus }).containsExactly(
+      AssessmentSection.ACCOMMODATION.name to NeedStatus.IDENTIFIED_NEED,
+      AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name to NeedStatus.IDENTIFIED_NEED,
+      AssessmentSection.THINKING_AND_BEHAVIOUR.name to NeedStatus.IDENTIFIED_NEED,
+      AssessmentSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name to NeedStatus.NOT_IDENTIFIED_NEED,
+      AssessmentSection.DRUG_MISUSE.name to NeedStatus.NOT_IDENTIFIED_NEED,
+      AssessmentSection.ATTITUDE.name to NeedStatus.NOT_IDENTIFIED_NEED,
+      AssessmentSection.RELATIONSHIPS.name to NeedStatus.UNANSWERED_NEED,
+      AssessmentSection.ALCOHOL_MISUSE.name to NeedStatus.UNANSWERED_NEED,
+      AssessmentSection.FINANCE.name to NeedStatus.UNSCORED_NEED,
+      AssessmentSection.EMOTIONAL_WELLBEING.name to NeedStatus.UNSCORED_NEED,
+    )
+
+    val finance = needs.needs.single { it.section == AssessmentSection.FINANCE.name }
+    assertThat(finance.name).isEqualTo("Finance")
+    assertThat(finance.score).isNull()
+    assertThat(finance.oasysThreshold).isEqualTo(OasysThreshold(null))
+    assertThat(finance.riskOfHarm).isFalse()
+    assertThat(finance.riskOfReoffending).isFalse()
+  }
+
+  @Test
+  fun `should return all SAN need details with finance and health and wellbeing unscored`() {
+    // Arrange
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "T123456")
+    val assessment = BasicAssessmentSummary(9700001, LocalDateTime.parse("2024-12-25T12:00:00"), LocalDateTime.parse("2024-12-25T12:00:00"), "LAYER3", "COMPLETE")
+    every { oasysApiRestClient.getLatestAssessment(eq(identifier), any()) } answers { assessment }
+    every { oasysApiRestClient.getCriminogenicNeedsForAssessment(assessment) } answers { sanNeeds(assessment.assessmentId) }
+
+    // Act
+    val needs = assessmentNeedsService.getAssessmentNeedsDetails(identifier.value)
+
+    // Assert
+    assertThat(needs.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
+    assertThat(needs.needs.map { it.section to it.needStatus }).containsExactly(
+      AssessmentSection.EMPLOYMENT_AND_EDUCATION.name to NeedStatus.IDENTIFIED_NEED,
+      AssessmentSection.PERSONAL_RELATIONSHIPS_AND_COMMUNITY.name to NeedStatus.IDENTIFIED_NEED,
+      AssessmentSection.THINKING_ATTITUDES_AND_BEHAVIOUR.name to NeedStatus.IDENTIFIED_NEED,
+      AssessmentSection.ACCOMMODATION.name to NeedStatus.NOT_IDENTIFIED_NEED,
+      AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name to NeedStatus.NOT_IDENTIFIED_NEED,
+      AssessmentSection.ALCOHOL_USE.name to NeedStatus.NOT_IDENTIFIED_NEED,
+      AssessmentSection.DRUG_USE.name to NeedStatus.UNANSWERED_NEED,
+      AssessmentSection.FINANCE.name to NeedStatus.UNSCORED_NEED,
+      AssessmentSection.HEALTH_AND_WELLBEING.name to NeedStatus.UNSCORED_NEED,
+    )
+
+    val health = needs.needs.single { it.section == AssessmentSection.HEALTH_AND_WELLBEING.name }
+    assertThat(health.name).isEqualTo("Health and wellbeing")
+    assertThat(health.score).isNull()
+    assertThat(health.oasysThreshold).isEqualTo(OasysThreshold(null))
+    assertThat(health.riskOfHarm).isNull()
+    assertThat(health.riskOfReoffending).isNull()
+  }
+
+  @Test
   fun `should throw exception when no latest assessment found`() {
     // Arrange
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "N123456")
@@ -238,6 +311,8 @@ class AssessmentNeedsServiceTest {
         alcohol = AlcoholNeeds(alcoholThreshold = 4, alcoholLinkedToHarm = "No", alcoholLinkedToReoffending = "No", alcoholOtherWeightedScore = null),
         think = ThinkNeeds(thinkThreshold = 4, thinkLinkedToHarm = "Yes", thinkLinkedToReoffending = "Yes", thinkOtherWeightedScore = 8),
         att = AttNeeds(attThreshold = 2, attLinkedToHarm = "No", attLinkedToReoffending = "No", attOtherWeightedScore = 1),
+        finance = FinanceNeeds(financeThreshold = null, financeLinkedToHarm = "No", financeLinkedToReoffending = "No", financeOtherWeightedScore = null),
+        emo = EmoNeeds(emoThreshold = null, emoLinkedToHarm = "No", emoLinkedToReoffending = "No", emoOtherWeightedScore = null),
       ),
     ),
   )
@@ -256,6 +331,8 @@ class AssessmentNeedsServiceTest {
           drugUseSan = DrugUseSanNeeds(drugUseSanThreshold = 2, drugUseSanLinkedToHarm = "No", drugUseSanLinkedToReoffending = "No", drugUseSanScore = null),
           alcoUseSan = AlcoUseSanNeeds(alcoUseSanThreshold = 2, alcoUseSanLinkedToHarm = "No", alcoUseSanLinkedToReoffending = "No", alcoUseSanScore = 0),
           thinkBehavAndAttiSan = ThinkBehavAndAttiSanNeeds(thinkBehavAndAttiSanThreshold = 2, thinkBehavAndAttiSanLinkedToHarm = "No", thinkBehavAndAttiSanLinkedToReoffending = "No", thinkBehavAndAttiSanScore = 6),
+          financeSan = FinanceSanNeeds(financeSanThreshold = null, financeSanLinkedToHarm = "No", financeSanLinkedToReoffending = "No", financeSanScore = null),
+          healthAndWellbeingSan = HealthAndWellbeingSanNeeds(),
         ),
       ),
     ),

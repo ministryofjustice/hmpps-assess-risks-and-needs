@@ -4,6 +4,7 @@ enum class AssessmentSection {
   // All assessments
   ACCOMMODATION,
   LIFESTYLE_AND_ASSOCIATES,
+  FINANCE,
 
   // OASys layer 3 assessment
   EDUCATION_TRAINING_AND_EMPLOYABILITY,
@@ -12,6 +13,7 @@ enum class AssessmentSection {
   ALCOHOL_MISUSE,
   THINKING_AND_BEHAVIOUR,
   ATTITUDE,
+  EMOTIONAL_WELLBEING,
 
   // SAN assessment
   EMPLOYMENT_AND_EDUCATION,
@@ -19,4 +21,5 @@ enum class AssessmentSection {
   DRUG_USE,
   ALCOHOL_USE,
   THINKING_ATTITUDES_AND_BEHAVIOUR,
+  HEALTH_AND_WELLBEING,
 }
