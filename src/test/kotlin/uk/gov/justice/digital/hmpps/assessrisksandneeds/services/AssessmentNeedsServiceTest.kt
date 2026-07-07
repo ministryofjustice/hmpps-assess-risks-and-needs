@@ -173,7 +173,7 @@ class AssessmentNeedsServiceTest {
     val finance = needs.needs.single { it.section == AssessmentSection.FINANCE.name }
     assertThat(finance.name).isEqualTo("Finance")
     assertThat(finance.score).isNull()
-    assertThat(finance.oasysThreshold).isNull()
+    assertThat(finance.oasysThreshold).isEqualTo(OasysThreshold(null))
     assertThat(finance.riskOfHarm).isFalse()
     assertThat(finance.riskOfReoffending).isFalse()
   }
@@ -206,7 +206,7 @@ class AssessmentNeedsServiceTest {
     val health = needs.needs.single { it.section == AssessmentSection.HEALTH_AND_WELLBEING.name }
     assertThat(health.name).isEqualTo("Health and wellbeing")
     assertThat(health.score).isNull()
-    assertThat(health.oasysThreshold).isNull()
+    assertThat(health.oasysThreshold).isEqualTo(OasysThreshold(null))
     assertThat(health.riskOfHarm).isNull()
     assertThat(health.riskOfReoffending).isNull()
   }

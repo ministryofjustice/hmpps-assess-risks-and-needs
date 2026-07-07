@@ -471,7 +471,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = false,
       score = null,
-      oasysThreshold = null,
+      oasysThreshold = OasysThreshold(null),
     ),
     AssessmentNeedDetailDto(
       section = AssessmentSection.EMOTIONAL_WELLBEING.name,
@@ -480,7 +480,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = false,
       score = null,
-      oasysThreshold = null,
+      oasysThreshold = OasysThreshold(null),
     ),
   )
 
@@ -555,7 +555,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       riskOfHarm = false,
       riskOfReoffending = false,
       score = null,
-      oasysThreshold = null,
+      oasysThreshold = OasysThreshold(null),
     ),
     AssessmentNeedDetailDto(
       section = AssessmentSection.HEALTH_AND_WELLBEING.name,
@@ -564,7 +564,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
       riskOfHarm = null,
       riskOfReoffending = null,
       score = null,
-      oasysThreshold = null,
+      oasysThreshold = OasysThreshold(null),
     ),
   )
 

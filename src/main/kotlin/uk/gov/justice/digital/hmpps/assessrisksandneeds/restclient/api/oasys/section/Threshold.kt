@@ -5,4 +5,4 @@ interface Threshold {
 }
 
 data class TierThreshold(override val standard: Int, val severe: Int) : Threshold
-data class OasysThreshold(override val standard: Int) : Threshold
+data class OasysThreshold(val standard: Int?)

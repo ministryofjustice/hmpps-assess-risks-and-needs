@@ -85,7 +85,7 @@ private fun need(
   riskOfHarm = linkedToHarm.toYesNoBoolean(),
   riskOfReoffending = linkedToReoffending.toYesNoBoolean(),
   score = score,
-  oasysThreshold = threshold?.let { OasysThreshold(it) },
+  oasysThreshold = OasysThreshold(threshold),
 )
 
 private fun CriminogenicNeedsAssessmentOasys.oasysNeeds(): List<AssessmentNeedDto> = listOf(
