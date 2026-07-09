@@ -22,7 +22,7 @@ class ArnsApiTest {
 
   protected lateinit var authTestClient: WebTestClient
 
-  private val crn = "X643390"
+  private val crn = System.getenv("AAP_CLIENT_SECRET") ?: "X643390"
 
   @BeforeAll
   fun setup() {

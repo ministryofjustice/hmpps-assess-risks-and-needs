@@ -32,3 +32,5 @@ jobs:
     needs: deploy_to_env
     if: ${{ inputs.environment == 'dev' }}
     uses: ./.github/workflows/int_test.yml
+    with:
+      environment: ${{ inputs.environment }}
