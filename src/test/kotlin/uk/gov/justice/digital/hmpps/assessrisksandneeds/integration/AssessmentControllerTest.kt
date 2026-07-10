@@ -474,13 +474,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
     val timeline = Timeline(
       listOf(
         BasicAssessmentSummary(
-          9650001,
-          LocalDateTime.of(2024, 12, 25, 16, 57, 25),
-          null,
-          "LAYER3",
-          "OPEN",
-        ),
-        BasicAssessmentSummary(
           9630348,
           LocalDateTime.parse("2023-12-17T16:57:25"),
           LocalDateTime.of(2024, 12, 19, 16, 57, 25),

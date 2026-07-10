@@ -53,6 +53,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
   private lateinit var auditService: AuditService
 
   private val crn = "X123456"
+  private val incompleteCrn = "X934567"
 
   @BeforeEach
   fun setup() {
@@ -273,7 +274,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get criminogenic needs by crn for an incomplete assessment`() {
-    val needsDto = webTestClient.get().uri("/needs/$crn?excludeIncomplete=false")
+    val needsDto = webTestClient.get().uri("/needs/$incompleteCrn?excludeIncomplete=false")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
@@ -282,7 +283,7 @@ class IntegrationControllerTest : IntegrationTestBase() {
 
     assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
     assertThat(needsDto?.assessedOn).isNull()
-    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetails())
+    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetailsIncomplete())
   }
 
   @Test
@@ -479,6 +480,101 @@ class IntegrationControllerTest : IntegrationTestBase() {
       needStatus = NeedStatus.UNSCORED_NEED,
       riskOfHarm = false,
       riskOfReoffending = false,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+  )
+
+  // Detailed needs are returned as a single list ordered by need status (identified, not-identified, unanswered,
+  // unscored) and, within each status, in canonical section order.
+  private fun oasysNeedDetailsIncomplete() = listOf(
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.ACCOMMODATION.name,
+      name = "Accommodation",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = null,
+      riskOfReoffending = null,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
+      name = "Education, Training and Employability",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.RELATIONSHIPS.name,
+      name = "Relationships",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
+      name = "Lifestyle and Associates",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = true,
+      riskOfReoffending = true,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.DRUG_MISUSE.name,
+      name = "Drug Misuse",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = null,
+      riskOfReoffending = null,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.ALCOHOL_MISUSE.name,
+      name = "Alcohol Misuse",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = true,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.THINKING_AND_BEHAVIOUR.name,
+      name = "Thinking and Behaviour",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = null,
+      riskOfReoffending = null,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.ATTITUDE.name,
+      name = "Attitudes",
+      needStatus = NeedStatus.UNANSWERED_NEED,
+      riskOfHarm = false,
+      riskOfReoffending = false,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.FINANCE.name,
+      name = "Finance",
+      needStatus = NeedStatus.UNSCORED_NEED,
+      riskOfHarm = null,
+      riskOfReoffending = null,
+      score = null,
+      oasysThreshold = OasysThreshold(null),
+    ),
+    AssessmentNeedDetailDto(
+      section = AssessmentSection.EMOTIONAL_WELLBEING.name,
+      name = "Emotional Well-being",
+      needStatus = NeedStatus.UNSCORED_NEED,
+      riskOfHarm = null,
+      riskOfReoffending = null,
       score = null,
       oasysThreshold = OasysThreshold(null),
     ),

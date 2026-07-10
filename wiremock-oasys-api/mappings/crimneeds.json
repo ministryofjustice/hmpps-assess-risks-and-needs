@@ -16,7 +16,7 @@
     },
     {
       "request": {
-        "urlPattern": "/eor/oasys/ass/crimneeds/ALLOW/9650001",
+        "urlPattern": "/eor/oasys/ass/crimneeds/ALLOW/9950001",
         "method": "GET"
       },
       "response": {

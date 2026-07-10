@@ -8,12 +8,6 @@
   "limitedAccessOffender": false,
   "timeline": [
     {
-      "assessmentPk": 9650001,
-      "assessmentType": "LAYER3",
-      "initiationDate": "2024-12-25T16:57:25",
-      "status": "OPEN"
-    },
-    {
       "assessmentPk": 9630348,
       "assessmentType": "LAYER3",
       "initiationDate": "2023-12-17T16:57:25",
