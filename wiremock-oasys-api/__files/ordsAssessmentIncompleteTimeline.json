@@ -1,0 +1,17 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "crn": "X934567",
+    "laoPrivilege": "ALLOW"
+  },
+  "crn": "X934567",
+  "limitedAccessOffender": false,
+  "timeline": [
+    {
+      "assessmentPk": 9950001,
+      "assessmentType": "LAYER3",
+      "initiationDate": "2024-12-25T16:57:25",
+      "status": "OPEN"
+    }
+  ]
+}
