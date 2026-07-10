@@ -147,24 +147,28 @@ class IntegrationController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK", content = [
-        Content(
-          schema = Schema(ref = "AssessmentNeedsDetailsDto"),
-          mediaType = "application/json",
-          examples = [
-            ExampleObject(
-              name = "OASys assessment needs data",
-              summary = "Completed OASys strengths and needs assessment",
-              value = GET_NEEDS_BY_CRN_OASYS_ASSESSMENT_VERSION,
-            ),
-            ExampleObject(
-              name = "SAN assessment needs data",
-              summary = "Completed SAN strengths and needs assessment",
-              value = GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION,
-            ),
-          ]
-        ),
-      ]),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            schema = Schema(ref = "AssessmentNeedsDetailsDto"),
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "OASys assessment needs data",
+                summary = "Completed OASys strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_OASYS_ASSESSMENT_VERSION,
+              ),
+              ExampleObject(
+                name = "SAN assessment needs data",
+                summary = "Completed SAN strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO', 'ROLE_SENTENCE_PLAN_READ')")
@@ -186,24 +190,28 @@ class IntegrationController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK", content = [
-        Content(
-          schema = Schema(ref = "AssessmentNeedsDetailsDto"),
-          mediaType = "application/json",
-          examples = [
-            ExampleObject(
-              name = "OASys assessment needs data",
-              summary = "Completed OASys strengths and needs assessment",
-              value = GET_NEEDS_BY_CRN_OASYS_ASSESSMENT_VERSION,
-            ),
-            ExampleObject(
-              name = "SAN assessment needs data",
-              summary = "Completed SAN strengths and needs assessment",
-              value = GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION,
-            ),
-          ]
-        ),
-      ]),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            schema = Schema(ref = "AssessmentNeedsDetailsDto"),
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "OASys assessment needs data",
+                summary = "Completed OASys strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_OASYS_ASSESSMENT_VERSION,
+              ),
+              ExampleObject(
+                name = "SAN assessment needs data",
+                summary = "Completed SAN strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
