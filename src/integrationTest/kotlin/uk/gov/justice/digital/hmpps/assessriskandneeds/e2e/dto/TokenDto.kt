@@ -8,5 +8,5 @@ data class TokenDto(
   val sub: String,
   val auth_source: String,
   val iss: String,
-  val jti: String
+  val jti: String,
 )

@@ -1,19 +1,16 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.e2e
 
-import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.util.Base64
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
+import java.util.Base64
 
 @DisplayName("ARNS API Tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -22,7 +19,7 @@ class ArnsApiTest {
 
   protected lateinit var authTestClient: WebTestClient
 
-  private val crn = System.getenv("AAP_CLIENT_SECRET") ?: "X643390"
+  private val crn = System.getenv("ARNS_API_CRN") ?: "X643390"
 
   @BeforeAll
   fun setup() {

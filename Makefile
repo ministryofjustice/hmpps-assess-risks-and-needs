@@ -41,8 +41,6 @@ watch: ## Watches for file changes and live-reloads the API. To be used in conju
 test: ## Runs all the test suites.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle test --parallel
 
-AAP_UI_CLIENT_ID := $(shell kubectl -n hmpps-arns-assessment-platform-dev get secret hmpps-arns-assessment-platform-ui-client-creds -o jsonpath='{.data.CLIENT_CREDS_CLIENT_ID}' | base64 -d)
-AAP_UI_CLIENT_SECRET := $(shell kubectl -n hmpps-arns-assessment-platform-dev get secret hmpps-arns-assessment-platform-ui-client-creds -o jsonpath='{.data.CLIENT_CREDS_CLIENT_SECRET}' | base64 -d)
 int-test-dev: ## Runs all integration tests
 	docker compose ${TEST_COMPOSE_FILES} run --env AAP_CLIENT_ID="${AAP_UI_CLIENT_ID}" --env AAP_CLIENT_SECRET="${AAP_UI_CLIENT_SECRET}" int gradle integrationTest
 
