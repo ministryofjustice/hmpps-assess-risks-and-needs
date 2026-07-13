@@ -79,7 +79,7 @@ tasks {
 }
 
 tasks.test {
-    exclude("src/integrationTest/**")
+  exclude("src/integrationTest/**")
 }
 
 tasks.register<Test>("integrationTest") {
