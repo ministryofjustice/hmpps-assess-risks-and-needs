@@ -78,6 +78,10 @@ tasks {
   }
 }
 
+tasks.test {
+    exclude("src/integrationTest/**")
+}
+
 tasks.register<Test>("integrationTest") {
   description = "Runs integration tests."
   group = "verification"
