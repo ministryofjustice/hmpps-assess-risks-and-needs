@@ -96,9 +96,9 @@ tasks.register<Test>("integrationTest") {
 }
 
 tasks.named("integrationTest") {
-    onlyIf {
-        !gradle.startParameter.taskNames.any { it.contains("koverHtmlReport") }
-    }
+  onlyIf {
+      !gradle.startParameter.taskNames.any { it.contains("koverHtmlReport") }
+  }
 }
 
 tasks.check {
