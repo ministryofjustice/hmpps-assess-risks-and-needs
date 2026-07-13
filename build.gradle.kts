@@ -79,7 +79,7 @@ tasks {
 }
 
 tasks.test {
-  exclude("src/integrationTest/**")
+  exclude("**/src/integrationTest/**")
 }
 
 tasks.register<Test>("integrationTest") {
@@ -93,6 +93,12 @@ tasks.register<Test>("integrationTest") {
   outputs.upToDateWhen { false }
 
   useJUnitPlatform()
+}
+
+tasks.named("integrationTest") {
+    onlyIf {
+        !gradle.startParameter.taskNames.any { it.contains("koverHtmlReport") }
+    }
 }
 
 tasks.check {
