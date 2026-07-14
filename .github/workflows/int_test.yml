@@ -1,6 +1,10 @@
 name: Integration Test
 
 on:
+  workflow_dispatch:  # Keep this
+  push:               # Add this temporarily
+    branches:
+      - arns-api-integration-tests
   workflow_call:
     inputs:
       environment:
