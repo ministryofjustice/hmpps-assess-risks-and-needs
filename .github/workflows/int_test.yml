@@ -36,8 +36,8 @@ jobs:
       - name: Run integration tests
         run: ./gradlew integrationTest
         env:
-          AAP_UI_CLIENT_ID: ${{ secrets.ARNS_ASSESSMENT_CLIENT_ID }}
-          AAP_UI_CLIENT_SECRET: ${{ secrets.ARNS_ASSESSMENT_CLIENT_SECRET }}
+          AAP_CLIENT_ID: ${{ secrets.ARNS_ASSESSMENT_CLIENT_ID }}
+          AAP_CLIENT_SECRET: ${{ secrets.ARNS_ASSESSMENT_CLIENT_SECRET }}
 
       - name: Upload test results
         if: '!cancelled()'
