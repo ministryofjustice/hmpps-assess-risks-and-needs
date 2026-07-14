@@ -1,0 +1,162 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9700001
+  },
+  "probNumber": "D026001",
+  "limitedAccessOffender": false,
+  "pnc": "UNKNOWN PNC",
+  "forename": "zeb",
+  "familyName": "zara",
+  "gender": "2",
+  "custodyInd": "N",
+  "assessments": [
+    {
+      "assessmentPk": 9700001,
+      "assessmentType": "LAYER3",
+      "assessmentVersion": "2",
+      "dateCompleted": "2024-12-20T10:00:00",
+      "assessorSignedDate": null,
+      "initiationDate": "2024-12-17T16:57:25",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": false,
+      "latestWIPDate": null,
+      "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2024-12-20T10:00:00",
+      "sanCrimNeedScore": {
+        "accomSan": {
+          "accomSanThreshold": 2,
+          "accomSanScore": 1,
+          "accomSanLinkedToHarm": "No",
+          "accomSanLinkedToReoffending": "No",
+          "accomSanStrength": "Yes"
+        },
+        "empAndEduSan": {
+          "empAndEduSanThreshold": 2,
+          "empAndEduSanScore": 0,
+          "empAndEduSanLinkedToHarm": "No",
+          "empAndEduSanLinkedToReoffending": "No",
+          "empAndEduSanStrength": "No"
+        },
+        "persRelAndCommSan": {
+          "persRelAndCommSanThreshold": 2,
+          "persRelAndCommSanScore": 3,
+          "persRelAndCommSanLinkedToHarm": "No",
+          "persRelAndCommSanLinkedToReoffending": "No",
+          "persRelAndCommSanStrength": "No"
+        },
+        "lifeAndAssocSan": {
+          "lifeAndAssocSanThreshold": 2,
+          "lifeAndAssocSanScore": 0
+        },
+        "drugUseSan": {
+          "drugUseSanThreshold": 2,
+          "drugUseSanScore": 0,
+          "drugUseSanLinkedToHarm": "No",
+          "drugUseSanLinkedToReoffending": "No",
+          "drugUseSanStrength": "Yes"
+        },
+        "alcoUseSan": {
+          "alcoUseSanThreshold": 2,
+          "alcoUseSanScore": 0,
+          "alcoUseSanLinkedToHarm": "No",
+          "alcoUseSanLinkedToReoffending": "No",
+          "alcoUseSanStrength": "Yes"
+        },
+        "thinkBehavAndAttiSan": {
+          "thinkBehavAndAttiSanThreshold": 2,
+          "thinkBehavAndAttiSanScore": 6,
+          "thinkBehavAndAttiSanLinkedToHarm": "No",
+          "thinkBehavAndAttiSanLinkedToReoffending": "No",
+          "thinkBehavAndAttiSanStrength": "No"
+        },
+        "financeSan": {
+          "financeSanThreshold": null,
+          "financeSanScore": null,
+          "financeSanLinkedToHarm": "No",
+          "financeSanLinkedToReoffending": "No",
+          "financeSanStrength": "Yes"
+        },
+        "healthAndWellbeingSan": {
+          "healthAndWellbeingSanThreshold": null,
+          "healthAndWellbeingSanScore": null,
+          "healthAndWellbeingSanLinkedToHarm": null,
+          "healthAndWellbeingSanLinkedToReoffending": null,
+          "healthAndWellbeingSanStrength": null
+        }
+      },
+      "emo": {
+        "emoThreshold": null,
+        "emoLowScoreNeedsAttention": null,
+        "emoLinkedToHarm": null,
+        "emoLinkedToReoffending": null,
+        "emoOtherWeightedScore": null
+      },
+      "think": {
+        "thinkThreshold": 4,
+        "thinkLowScoreNeedsAttention": null,
+        "thinkLinkedToHarm": null,
+        "thinkLinkedToReoffending": null,
+        "thinkOtherWeightedScore": null
+      },
+      "att": {
+        "attThreshold": 2,
+        "attLowScoreNeedsAttention": null,
+        "attLinkedToHarm": null,
+        "attLinkedToReoffending": null,
+        "attOtherWeightedScore": null
+      },
+      "acc": {
+        "accThreshold": 2,
+        "accLowScoreNeedsAttention": "N",
+        "accLinkedToHarm": "No",
+        "accLinkedToReoffending": "Yes",
+        "accOtherWeightedScore": null
+      },
+      "eTE": {
+        "eTEThreshold": 2,
+        "eTELowScoreNeedsAttention": "N",
+        "eTELinkedToHarm": "Yes",
+        "eTELinkedToReoffending": "Yes",
+        "eTEOtherWeightedScore": null
+      },
+      "finance": {
+        "financeThreshold": null,
+        "financeLowScoreNeedsAttention": null,
+        "financeLinkedToHarm": "No",
+        "financeLinkedToReoffending": "No",
+        "financeOtherWeightedScore": null
+      },
+      "rel": {
+        "relThreshold": 2,
+        "relLowScoreNeedsAttention": null,
+        "relLinkedToHarm": "No",
+        "relLinkedToReoffending": "No",
+        "relOtherWeightedScore": null
+      },
+      "lifestyle": {
+        "lifestyleThreshold": 2,
+        "lifestyleLowScoreNeedsAttention": null,
+        "lifestyleLinkedToHarm": null,
+        "lifestyleLinkedToReoffending": null,
+        "lifestyleOtherWeightedScore": null
+      },
+      "drug": {
+        "drugThreshold": 1,
+        "drugLowScoreNeedsAttention": "N",
+        "drugLinkedToHarm": "Yes",
+        "drugLinkedToReoffending": "Yes",
+        "drugOtherWeightedScore": null
+      },
+      "alcohol": {
+        "alcoholThreshold": 2,
+        "alcoholLowScoreNeedsAttention": "N",
+        "alcoholLinkedToHarm": "Yes",
+        "alcoholLinkedToReoffending": "No",
+        "alcoholOtherWeightedScore": null
+      }
+    }
+  ]
+}

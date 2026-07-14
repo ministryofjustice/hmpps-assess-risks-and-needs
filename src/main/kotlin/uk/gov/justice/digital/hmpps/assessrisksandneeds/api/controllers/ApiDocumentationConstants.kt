@@ -505,3 +505,227 @@ const val GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_NEW_EXAMPLE = """
   }
 }
   """
+
+const val GET_NEEDS_BY_CRN_OASYS_ASSESSMENT_VERSION = """
+  {
+    "needs": [
+        {
+            "section": "DRUG_MISUSE",
+            "name": "Drug Misuse",
+            "needStatus": "IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 8,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "ACCOMMODATION",
+            "name": "Accommodation",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "EDUCATION_TRAINING_AND_EMPLOYABILITY",
+            "name": "Education, Training and Employability",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 3
+            }
+        },
+        {
+            "section": "RELATIONSHIPS",
+            "name": "Relationships",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "LIFESTYLE_AND_ASSOCIATES",
+            "name": "Lifestyle and Associates",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "ALCOHOL_MISUSE",
+            "name": "Alcohol Misuse",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 4
+            }
+        },
+        {
+            "section": "THINKING_AND_BEHAVIOUR",
+            "name": "Thinking and Behaviour",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 4
+            }
+        },
+        {
+            "section": "ATTITUDE",
+            "name": "Attitudes",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "FINANCE",
+            "name": "Finance",
+            "needStatus": "UNSCORED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "oasysThreshold": {}
+        },
+        {
+            "section": "EMOTIONAL_WELLBEING",
+            "name": "Emotional Well-being",
+            "needStatus": "UNSCORED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "oasysThreshold": {}
+        }
+    ],
+    "assessmentVersion": "OASYS",
+    "assessedOn": "2025-09-10T09:58:12"
+}
+"""
+
+const val GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION = """
+  {
+    "needs": [
+        {
+            "section": "DRUG_USE",
+            "name": "Drug use",
+            "needStatus": "IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 8,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "ACCOMMODATION",
+            "name": "Accommodation",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "EMPLOYMENT_AND_EDUCATION",
+            "name": "Employment and education",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 3
+            }
+        },
+        {
+            "section": "PERSONAL_RELATIONSHIPS_AND_COMMUNITY",
+            "name": "Personal relationships and community",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "LIFESTYLE_AND_ASSOCIATES",
+            "name": "Lifestyle and Associates",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "ALCOHOL_USE",
+            "name": "Alcohol use",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 4
+            }
+        },
+        {
+            "section": "THINKING_ATTITUDES_AND_BEHAVIOUR",
+            "name": "Thinking, behaviours and attitudes",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 4
+            }
+        },
+        {
+            "section": "ATTITUDE",
+            "name": "Attitudes",
+            "needStatus": "NOT_IDENTIFIED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "score": 0,
+            "oasysThreshold": {
+                "standard": 2
+            }
+        },
+        {
+            "section": "FINANCE",
+            "name": "Finance",
+            "needStatus": "UNSCORED_NEED",
+            "riskOfHarm": false,
+            "riskOfReoffending": false,
+            "oasysThreshold": {}
+        },
+        {
+            "section": "HEALTH_AND_WELLBEING",
+            "name": "Health and wellbeing",
+            "needStatus": "UNSCORED_NEED",
+            "oasysThreshold": {}
+        }
+    ],
+    "assessmentVersion": "SAN",
+    "assessedOn": "2025-09-10T09:58:12"
+}
+"""

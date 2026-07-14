@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
@@ -147,7 +147,28 @@ class IntegrationController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            schema = Schema(ref = "AssessmentNeedsDetailsDto"),
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "OASys assessment needs data",
+                summary = "Completed OASys strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_OASYS_ASSESSMENT_VERSION,
+              ),
+              ExampleObject(
+                name = "SAN assessment needs data",
+                summary = "Completed SAN strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO', 'ROLE_SENTENCE_PLAN_READ')")
@@ -161,7 +182,7 @@ class IntegrationController(
       example = "false",
     )
     excludeIncomplete: Boolean = true,
-  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, excludeIncomplete = excludeIncomplete)
+  ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, excludeIncomplete = excludeIncomplete)
 
   @RequestMapping(path = ["/needs/{crn}/{timeframe}"], method = [RequestMethod.GET])
   @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")
@@ -169,7 +190,28 @@ class IntegrationController(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
       ApiResponse(responseCode = "404", description = "CRN Not Found"),
-      ApiResponse(responseCode = "200", description = "OK"),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            schema = Schema(ref = "AssessmentNeedsDetailsDto"),
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "OASys assessment needs data",
+                summary = "Completed OASys strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_OASYS_ASSESSMENT_VERSION,
+              ),
+              ExampleObject(
+                name = "SAN assessment needs data",
+                summary = "Completed SAN strengths and needs assessment",
+                value = GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION,
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   )
   @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
@@ -180,7 +222,7 @@ class IntegrationController(
     @PathVariable timeframe: Long,
     @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
     excludeIncomplete: Boolean = true,
-  ): AssessmentNeedsDto = needsService.getAssessmentNeeds(crn, timeframe, excludeIncomplete)
+  ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, timeframe, excludeIncomplete)
 
   @RequestMapping(path = ["/risks/risk-management-plan/{crn}"], method = [RequestMethod.GET])
   @Operation(description = "Gets Risk Management Plan from latest complete assessments for crn")

@@ -2,7 +2,7 @@
   "mappings": [
     {
       "request": {
-        "urlPattern": "/eor/oasys/ass/section1/ALLOW/9630348",
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/(9630348|9650001)",
         "method": "GET"
       },
       "response": {

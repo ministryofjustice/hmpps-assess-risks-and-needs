@@ -12,6 +12,7 @@
               { "equalToJson": "[\"X12345\"]" },
               { "equalToJson": "[\"X234567\"]" },
               { "equalToJson": "[\"X654321\"]" },
+              { "equalToJson": "[\"X934567\"]" },
               { "equalToJson": "[\"FORBIDDEN\"]" },
               { "equalToJson": "[\"USER_ACCESS_NOT_FOUND\"]" },
               { "equalToJson": "[\"RANDOMCRN\"]" }

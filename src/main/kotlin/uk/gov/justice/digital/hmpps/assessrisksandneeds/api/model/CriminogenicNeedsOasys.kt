@@ -1,0 +1,169 @@
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model
+
+import java.time.LocalDateTime
+
+data class CriminogenicNeedsOasys(
+  val assessments: List<CriminogenicNeedsAssessmentOasys>,
+)
+
+data class CriminogenicNeedsAssessmentOasys(
+  val assessmentPk: Long? = null,
+  val assessmentVersion: String? = null,
+  val dateCompleted: LocalDateTime? = null,
+  val sanCrimNeedScore: SanNeeds? = null,
+  val acc: AccNeeds? = null,
+  val eTE: ETENeeds? = null,
+  val rel: RelNeeds? = null,
+  val lifestyle: LifestyleNeeds? = null,
+  val drug: DrugNeeds? = null,
+  val alcohol: AlcoholNeeds? = null,
+  val think: ThinkNeeds? = null,
+  val att: AttNeeds? = null,
+  val finance: FinanceNeeds? = null,
+  val emo: EmoNeeds? = null,
+)
+
+data class SanNeeds(
+  val accomSan: AccomSanNeeds? = null,
+  val empAndEduSan: EmpAndEduSanNeeds? = null,
+  val persRelAndCommSan: PersRelAndCommSanNeeds? = null,
+  val lifeAndAssocSan: LifeAndAssocSanNeeds? = null,
+  val drugUseSan: DrugUseSanNeeds? = null,
+  val alcoUseSan: AlcoUseSanNeeds? = null,
+  val thinkBehavAndAttiSan: ThinkBehavAndAttiSanNeeds? = null,
+  val financeSan: FinanceSanNeeds? = null,
+  val healthAndWellbeingSan: HealthAndWellbeingSanNeeds? = null,
+)
+
+data class AccNeeds(
+  val accThreshold: Int? = null,
+  val accLinkedToHarm: String? = null,
+  val accLinkedToReoffending: String? = null,
+  val accOtherWeightedScore: Int? = null,
+)
+
+data class ETENeeds(
+  val eTEThreshold: Int? = null,
+  val eTELinkedToHarm: String? = null,
+  val eTELinkedToReoffending: String? = null,
+  val eTEOtherWeightedScore: Int? = null,
+)
+
+data class RelNeeds(
+  val relThreshold: Int? = null,
+  val relLinkedToHarm: String? = null,
+  val relLinkedToReoffending: String? = null,
+  val relOtherWeightedScore: Int? = null,
+)
+
+data class LifestyleNeeds(
+  val lifestyleThreshold: Int? = null,
+  val lifestyleLinkedToHarm: String? = null,
+  val lifestyleLinkedToReoffending: String? = null,
+  val lifestyleOtherWeightedScore: Int? = null,
+)
+
+data class DrugNeeds(
+  val drugThreshold: Int? = null,
+  val drugLinkedToHarm: String? = null,
+  val drugLinkedToReoffending: String? = null,
+  val drugOtherWeightedScore: Int? = null,
+)
+
+data class AlcoholNeeds(
+  val alcoholThreshold: Int? = null,
+  val alcoholLinkedToHarm: String? = null,
+  val alcoholLinkedToReoffending: String? = null,
+  val alcoholOtherWeightedScore: Int? = null,
+)
+
+data class ThinkNeeds(
+  val thinkThreshold: Int? = null,
+  val thinkLinkedToHarm: String? = null,
+  val thinkLinkedToReoffending: String? = null,
+  val thinkOtherWeightedScore: Int? = null,
+)
+
+data class AttNeeds(
+  val attThreshold: Int? = null,
+  val attLinkedToHarm: String? = null,
+  val attLinkedToReoffending: String? = null,
+  val attOtherWeightedScore: Int? = null,
+)
+
+data class AccomSanNeeds(
+  val accomSanThreshold: Int? = null,
+  val accomSanLinkedToHarm: String? = null,
+  val accomSanLinkedToReoffending: String? = null,
+  val accomSanScore: Int? = null,
+)
+
+data class EmpAndEduSanNeeds(
+  val empAndEduSanThreshold: Int? = null,
+  val empAndEduSanLinkedToHarm: String? = null,
+  val empAndEduSanLinkedToReoffending: String? = null,
+  val empAndEduSanScore: Int? = null,
+)
+
+data class PersRelAndCommSanNeeds(
+  val persRelAndCommSanThreshold: Int? = null,
+  val persRelAndCommSanLinkedToHarm: String? = null,
+  val persRelAndCommSanLinkedToReoffending: String? = null,
+  val persRelAndCommSanScore: Int? = null,
+)
+
+data class LifeAndAssocSanNeeds(
+  val lifeAndAssocSanThreshold: Int? = null,
+  val lifeAndAssocSanScore: Int? = null,
+)
+
+data class DrugUseSanNeeds(
+  val drugUseSanThreshold: Int? = null,
+  val drugUseSanLinkedToHarm: String? = null,
+  val drugUseSanLinkedToReoffending: String? = null,
+  val drugUseSanScore: Int? = null,
+)
+
+data class AlcoUseSanNeeds(
+  val alcoUseSanThreshold: Int? = null,
+  val alcoUseSanLinkedToHarm: String? = null,
+  val alcoUseSanLinkedToReoffending: String? = null,
+  val alcoUseSanScore: Int? = null,
+)
+
+data class ThinkBehavAndAttiSanNeeds(
+  val thinkBehavAndAttiSanThreshold: Int? = null,
+  val thinkBehavAndAttiSanLinkedToHarm: String? = null,
+  val thinkBehavAndAttiSanLinkedToReoffending: String? = null,
+  val thinkBehavAndAttiSanScore: Int? = null,
+)
+
+// Unscored sections - included in the detailed needs response but never carry a criminogenic need score.
+
+data class FinanceNeeds(
+  val financeThreshold: Int? = null,
+  val financeLinkedToHarm: String? = null,
+  val financeLinkedToReoffending: String? = null,
+  val financeOtherWeightedScore: Int? = null,
+)
+
+data class EmoNeeds(
+  val emoThreshold: Int? = null,
+  val emoLinkedToHarm: String? = null,
+  val emoLinkedToReoffending: String? = null,
+  val emoOtherWeightedScore: Int? = null,
+)
+
+data class FinanceSanNeeds(
+  val financeSanThreshold: Int? = null,
+  val financeSanLinkedToHarm: String? = null,
+  val financeSanLinkedToReoffending: String? = null,
+  val financeSanScore: Int? = null,
+)
+
+data class HealthAndWellbeingSanNeeds(
+  val healthAndWellbeingSanThreshold: Int? = null,
+  val healthAndWellbeingSanLinkedToHarm: String? = null,
+  val healthAndWellbeingSanLinkedToReoffending: String? = null,
+  val healthAndWellbeingSanScore: Int? = null,
+)
