@@ -1,10 +1,7 @@
 name: Integration Test
 
 on:
-  workflow_dispatch:  # Keep this
-  push:               # Add this temporarily
-    branches:
-      - arns-api-integration-tests
+  workflow_dispatch:
   workflow_call:
     inputs:
       environment:
@@ -23,7 +20,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Int Tests
-        run: make int-test-${{ inputs.environment }}
+        run: make int-test-${{ inputs.environment || 'dev' }}
         env:
           AAP_UI_CLIENT_ID: ${{ secrets.ARNS_ASSESSMENT_CLIENT_ID }}
           AAP_UI_CLIENT_SECRET: ${{ secrets.ARNS_ASSESSMENT_CLIENT_SECRET }}
