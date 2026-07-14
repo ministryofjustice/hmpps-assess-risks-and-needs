@@ -58,9 +58,9 @@ class ArnsApiTest {
       .accept(MediaType.APPLICATION_JSON)
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<AssessmentNeedsDetailsDto>()
       .returnResult().responseBody
 
-    assertThat(needsResponse?.identifiedNeeds).isNotEmpty()
+    assertThat(needsResponse?.needs).isNotEmpty()
   }
 }
