@@ -10,6 +10,17 @@ plugins {
   id("org.jetbrains.kotlinx.kover") version "0.9.3"
 }
 
+sourceSets {
+  create("integrationTest") {
+    compileClasspath += sourceSets["main"].output + sourceSets["test"].output
+    runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
+  }
+}
+
+configurations.named("integrationTestImplementation") {
+  extendsFrom(configurations.testImplementation.get())
+}
+
 configurations {
   implementation { exclude(mapOf("module" to "tomcat-jdbc")) }
   testImplementation { exclude(group = "org.junit.vintage") }
@@ -65,6 +76,33 @@ tasks {
       "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
     )
   }
+}
+
+tasks.test {
+  exclude("**/src/integrationTest/**")
+}
+
+tasks.register<Test>("integrationTest") {
+  description = "Runs integration tests."
+  group = "verification"
+
+  testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+  classpath = sourceSets["integrationTest"].runtimeClasspath
+
+  // Optional: Force tests to run even if outputs haven't changed
+  outputs.upToDateWhen { false }
+
+  useJUnitPlatform()
+}
+
+tasks.named("integrationTest") {
+  onlyIf {
+    !gradle.startParameter.taskNames.any { it.contains("koverHtmlReport") }
+  }
+}
+
+tasks.check {
+  dependsOn(tasks.named("integrationTest"))
 }
 
 // this is to address JLLeitschuh/ktlint-gradle#809

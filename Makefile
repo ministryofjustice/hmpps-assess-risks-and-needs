@@ -1,6 +1,7 @@
 SHELL = '/bin/bash'
 LOCAL_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
 DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.dev.yml
+TEST_COMPOSE_FILES = -f docker-compose.test.yml
 PROJECT_NAME = hmpps-assess-risks-and-needs-api
 
 export COMPOSE_PROJECT_NAME=${PROJECT_NAME}
@@ -39,6 +40,9 @@ watch: ## Watches for file changes and live-reloads the API. To be used in conju
 
 test: ## Runs all the test suites.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle test --parallel
+
+int-test-dev: ## Runs all integration tests
+	docker compose ${TEST_COMPOSE_FILES} run --env AAP_CLIENT_ID="${AAP_UI_CLIENT_ID}" --env AAP_CLIENT_SECRET="${AAP_UI_CLIENT_SECRET}" int gradle integrationTest
 
 test-coverage: ## Runs the test suite and outputs a code coverage report.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle koverHtmlReport --parallel
