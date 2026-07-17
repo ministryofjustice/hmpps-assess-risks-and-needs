@@ -152,7 +152,7 @@ class IntegrationController(
         description = "OK",
         content = [
           Content(
-            schema = Schema(ref = "AssessmentNeedsDetailsDto"),
+            schema = Schema(implementation = AssessmentNeedsDetailsDto::class),
             mediaType = "application/json",
             examples = [
               ExampleObject(
@@ -195,7 +195,7 @@ class IntegrationController(
         description = "OK",
         content = [
           Content(
-            schema = Schema(ref = "AssessmentNeedsDetailsDto"),
+            schema = Schema(implementation = AssessmentNeedsDetailsDto::class),
             mediaType = "application/json",
             examples = [
               ExampleObject(
