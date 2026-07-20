@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffenceService
 
@@ -137,4 +138,38 @@ class AssessmentController(
     @PathVariable crn: String,
     @PathVariable timeframe: Long,
   ) = assessmentOffenceService.getSanIndicator(crn, timeframe)
+
+  @RequestMapping(path = ["/assessments/mapps/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
+  @Operation(
+    description = """
+      Gets latest COMPLETE OASys assessment data for MAPPS external integration.
+      
+      Returns ALL latest COMPLETE assessments with:
+      - Assessment metadata (dates, type, status)
+      - Assessor name (always present)
+      - Countersigner name (optional - may be null)
+      
+      This endpoint:
+      - Does NOT perform Limited Access Offenders (LAO) checks - bypasses internal authorization
+      - Returns all COMPLETE assessments sorted by completion date (latest first)
+      - Fetches assessor/countersigner details from section1 endpoint per assessment
+      - Skips assessments where section1 data cannot be fetched
+      - Is only available to ROLE_ARNS__EXTERNAL_API_RO role
+    """,
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "OK - returns list of complete assessments"),
+      ApiResponse(responseCode = "403", description = "Unauthorized - insufficient role"),
+      ApiResponse(responseCode = "404", description = "No complete assessments found or no section1 data available"),
+    ],
+  )
+  @PreAuthorize("hasRole('ROLE_ARNS__EXTERNAL_API_RO')")
+  fun getMappasAssessmentData(
+    @Parameter(description = "Identifier type (e.g. crn, pnc)", required = true, example = "crn")
+    @PathVariable identifierType: String,
+    @Parameter(description = "Identifier value (e.g. X123456)", required = true, example = "X123456")
+    @PathVariable identifierValue: String,
+  ): MappsAssessmentTimeline = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(
+      PersonIdentifier.from(identifierType, identifierValue))
 }

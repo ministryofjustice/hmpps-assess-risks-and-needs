@@ -59,3 +59,18 @@ class OasysAssessmentDto(
   override val laterCompleteAssessmentExists: Boolean? = null,
   override val latestCompleteDate: LocalDateTime? = null,
 ) : RelatedAssessmentState
+
+// Create a new DTO specifically for MAPPS integration
+data class MappsAssessmentDto(
+  val assessmentId: Long,
+  val initiationDate: LocalDateTime?,
+  val dateCompleted: LocalDateTime?,
+  val assessmentType: String,          // LAYER1 | LAYER3
+  val assessmentStatus: String,        // OPEN | SIGNED | LOCKED_INCOMPLETE | AWAITING_PSR | AWAITING_SBC | COMPLETE
+  val assessorName: String?,
+  val countersignerName: String?,
+)
+
+data class MappsAssessmentTimeline(
+  val assessments: List<MappsAssessmentDto>
+)

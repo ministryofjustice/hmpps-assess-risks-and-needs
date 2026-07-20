@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
@@ -14,6 +15,8 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
@@ -90,6 +93,59 @@ class AssessmentOffenceService(
       limitedAccessOffender = oasysAssessmentOffenceDto.limitedAccessOffender,
       assessments = (summaryAssessmentDtos + assessmentDtos).sortedBy { it.initiationDate },
     )
+  }
+
+  /**
+   * Gets the latest COMPLETE assessment data for MAPPS integration.
+   * Fetches assessor/countersigner names from section1 endpoint for all assessments.
+   */
+  fun getLatestCompleteAssessmentsForMapps(identifier: PersonIdentifier): MappsAssessmentTimeline {
+    log.info("Getting latest complete assessment for MAPPS: $identifier")
+
+    // 1. Get timeline (list of all assessments)
+    val timeline = oasysApiRestClient.getAssessmentTimeline(identifier)
+      ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
+
+    // 2. Filter to COMPLETE assessments only (LAYER1 and LAYER3)
+    val completeAssessments = timeline.timeline
+      .filter {
+        it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
+          it.status == "COMPLETE"
+      }
+      .sortedWith(compareByDescending<BasicAssessmentSummary> { it.completedDate ?: it.initiationDate })
+
+    if (completeAssessments.isEmpty()) {
+      throw EntityNotFoundException("No complete assessment found for $identifier")
+    }
+
+    // 3. For each COMPLETE assessment, fetch section1 to get assessor/countersigner details
+    val mappasAssessments = completeAssessments.mapNotNull { assessment ->
+      try {
+        // Fetch section1 data which contains assessor/countersigner names
+        val section1Data = oasysApiRestClient.getOffenderInformationAndPredictorsSection(assessment)
+        val assessorInfo = section1Data.assessments.firstOrNull()
+
+        MappsAssessmentDto(
+          assessmentId = assessment.assessmentId,
+          initiationDate = assessment.initiationDate,
+          dateCompleted = assessment.completedDate,
+          assessmentType = assessment.assessmentType,
+          assessmentStatus = assessment.status,
+          assessorName = assessorInfo?.assessorName,
+          countersignerName = assessorInfo?.countersignerName,  // May be null - that's OK
+        )
+      } catch (e: Exception) {
+        log.warn("Failed to fetch section1 data for assessment ${assessment.assessmentId}: ${e.message}. Skipping this assessment.")
+        null  // Skip this assessment if section1 fetch fails
+      }
+    }
+
+    if (mappasAssessments.isEmpty()) {
+      throw EntityNotFoundException("No assessments with valid section1 data found for $identifier")
+    }
+
+    log.info("Retrieved ${mappasAssessments.size} complete MAPPS assessments for $identifier")
+    return MappsAssessmentTimeline(assessments = mappasAssessments)
   }
 
   private fun mapAssessmentDtos(oasysAssessmentOffenceDto: OasysAssessmentOffenceDto) = oasysAssessmentOffenceDto.assessments.map {
