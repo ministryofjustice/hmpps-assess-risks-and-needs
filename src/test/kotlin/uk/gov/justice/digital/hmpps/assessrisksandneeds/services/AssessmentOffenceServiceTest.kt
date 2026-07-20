@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Indicators
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.Clock
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ExternalService
@@ -436,5 +437,137 @@ class AssessmentOffenceServiceTest {
 
     assertThat(response.message).isEqualTo("No assessment found for CRN: $crn")
     verify(exactly = 0) { oasysClient.getOffenderInformationAndPredictorsSection(any()) }
+  }
+
+  @Test
+  fun `getLatestCompleteAssessmentsForMapps throws when no timeline found`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
+    every { oasysClient.getAssessmentTimeline(identifier) } returns null
+
+    assertThrows<EntityNotFoundException> {
+      assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+    }.apply {
+      assertThat(message).contains("Assessment timeline not found")
+    }
+  }
+
+  @Test
+  fun `Returns only COMPLETE assessments filtered by type`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
+    val timeline = Timeline(listOf(
+      BasicAssessmentSummary(1L, LocalDateTime.now().minusMonths(2), LocalDateTime.now().minusMonths(2), "LAYER3", "COMPLETE"),
+      BasicAssessmentSummary(2L, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusMonths(1), "LAYER1", "COMPLETE"),
+      BasicAssessmentSummary(3L, LocalDateTime.now(), null, "LAYER3", "OPEN"),  // Should be filtered
+      BasicAssessmentSummary(4L, LocalDateTime.now(), LocalDateTime.now(), "STANDALONE", "COMPLETE"),  // Should be filtered
+    ))
+
+    every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
+    every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } answers {
+      val assessment = firstArg<BasicAssessmentSummary>()
+      OasysAssessmentWrapper(
+        crn = "X123456",
+        assessments = listOf(OasysSection1(null, "Assessor ${assessment.assessmentId}", "Counter ${assessment.assessmentId}"))
+      )
+    }
+
+    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+
+    assertThat(result.assessments).hasSize(2)  // Only LAYER1 and LAYER3 COMPLETE
+    assertThat(result.assessments).allMatch { it.assessmentStatus == "COMPLETE" }
+    assertThat(result.assessments).allMatch { it.assessmentType in listOf("LAYER1", "LAYER3") }
+  }
+
+  @Test
+  fun `Sorts assessments by completion date descending`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
+    val date1 = LocalDateTime.of(2024, 1, 1, 12, 0)
+    val date2 = LocalDateTime.of(2024, 6, 1, 12, 0)
+    val date3 = LocalDateTime.of(2024, 12, 1, 12, 0)
+
+    val timeline = Timeline(listOf(
+      BasicAssessmentSummary(1L, date1, date1, "LAYER3", "COMPLETE"),
+      BasicAssessmentSummary(3L, date3, date3, "LAYER3", "COMPLETE"),
+      BasicAssessmentSummary(2L, date2, date2, "LAYER3", "COMPLETE"),
+    ))
+
+    every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
+    every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } answers {
+      OasysAssessmentWrapper(
+        crn = "X123456",
+        assessments = listOf(OasysSection1(null, "Assessor", null))
+      )
+    }
+
+    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+
+    val dates = result.assessments.map { it.dateCompleted }
+    assertThat(dates).containsExactly(date3, date2, date1)
+  }
+
+  @Test
+  fun `Skips assessments where section1 fetch fails`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
+    val timeline = Timeline(listOf(
+      BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
+      BasicAssessmentSummary(2L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
+    ))
+
+    every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
+    // First call fails, second succeeds
+    every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } answers {
+      val assessment = firstArg<BasicAssessmentSummary>()
+      if (assessment.assessmentId == 1L) {
+        throw RuntimeException("Section1 fetch failed")
+      } else {
+        OasysAssessmentWrapper(
+          crn = "X123456",
+          assessments = listOf(OasysSection1(null, "Assessor", null))
+        )
+      }
+    }
+
+    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+
+    // Should have only 1 assessment (the successful one)
+    assertThat(result.assessments).hasSize(1)
+    assertThat(result.assessments[0].assessmentId).isEqualTo(2L)
+  }
+
+  @Test
+  fun `Throws when all section1 fetches fail`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
+    val timeline = Timeline(listOf(
+      BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
+    ))
+
+    every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
+    every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } throws RuntimeException("All failed")
+
+    assertThrows<EntityNotFoundException> {
+      assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+    }.apply {
+      assertThat(message).contains("No assessments with valid section1 data found")
+    }
+  }
+
+  @Test
+  fun `Handles null countersigner gracefully`() {
+    val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
+    val timeline = Timeline(
+      listOf(
+        BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
+      )
+    )
+
+    every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
+    every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } returns OasysAssessmentWrapper(
+      crn = "X123456",
+      assessments = listOf(OasysSection1(null, "Assessor Name", null))  // No countersigner
+    )
+
+    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+
+    assertThat(result.assessments[0].assessorName).isEqualTo("Assessor Name")
+    assertThat(result.assessments[0].countersignerName).isNull()
   }
 }
