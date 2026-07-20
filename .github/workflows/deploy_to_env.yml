@@ -34,3 +34,4 @@ jobs:
     uses: ./.github/workflows/int_test.yml
     with:
       environment: ${{ inputs.environment }}
+    secrets: inherit
