@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorRe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
@@ -338,6 +339,194 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
+  }
+
+  @Test
+  @DisplayName("AC1 - Returns timeline endpoint without LAO check")
+  fun `GET mapps endpoint returns 200 with complete assessment data`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        val body = response.responseBody!!
+        assertThat(body.assessments).isNotEmpty
+        assertThat(body.assessments).hasSizeGreaterThanOrEqualTo(2)
+      }
+  }
+
+  @Test
+  @DisplayName("AC2 - All required fields present in response")
+  fun `AC2 - Returns all required MAPPS fields`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        val assessment = response.responseBody!!.assessments[0]
+
+        // AC2: All required fields
+        assertThat(assessment.assessmentId).isNotNull()
+        assertThat(assessment.initiationDate).isNotNull()
+        assertThat(assessment.dateCompleted).isNotNull()
+        assertThat(assessment.assessmentType).isIn("LAYER1", "LAYER3")
+        assertThat(assessment.assessmentStatus).isEqualTo("COMPLETE")
+        assertThat(assessment.assessorName).isNotNull()
+          .isEqualTo("John Smith")  // From wiremock data
+      }
+  }
+
+  @Test
+  @DisplayName("AC2 - Countersigner can be null")
+  fun `AC2 - Countersigner name is optional`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        val assessments = response.responseBody!!.assessments
+        // Some assessments may have null countersigner
+        assertThat(assessments).anySatisfy { assessment ->
+          // At least one has countersigner
+          assertThat(assessment.countersignerName).isNotNull()
+        }
+      }
+  }
+
+  @Test
+  @DisplayName("AC2 - Handles missing countersigner gracefully")
+  fun `Assessment without countersigner returns null for countersignerName`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X654321")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        val assessment = response.responseBody!!.assessments[0]
+        assertThat(assessment.countersignerName).isNull()
+      }
+  }
+
+  @Test
+  @DisplayName("AC3 - Multiple complete assessments sorted by completion date")
+  fun `AC3 - Returns all complete assessments sorted by date descending`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        val assessments = response.responseBody!!.assessments
+        assertThat(assessments.size).isGreaterThanOrEqualTo(2)
+
+        // Verify all COMPLETE
+        assertThat(assessments).allMatch { it.assessmentStatus == "COMPLETE" }
+
+        // Verify sorted descending by completion date
+        val dates = assessments.mapNotNull { it.dateCompleted }
+        assertThat(dates).isSortedAccordingTo(compareByDescending { it })
+      }
+  }
+
+  @Test
+  @DisplayName("AC4 - Returns 404 when no complete assessments found")
+  fun `AC4 - Returns 404 when no complete assessments exist`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/NOT_FOUND")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .consumeWith { response ->
+        assertThat(response.responseBody!!.developerMessage)
+          .contains("Assessment timeline not found")
+      }
+  }
+
+  @Test
+  @DisplayName("AC4 - Returns 404 when section1 data unavailable")
+  fun `Returns 404 when no section1 data available for all assessments`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/NO_SECTION1")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody<ApiErrorResponse>()
+      .consumeWith { response ->
+        assertThat(response.responseBody!!.developerMessage)
+          .contains("No assessments with valid section1 data found")
+      }
+  }
+
+  @Test
+  @DisplayName("Authorization - Requires ROLE_ARNS__EXTERNAL_API_RO")
+  fun `Returns 403 without correct role`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  @DisplayName("Authorization - Requires authentication")
+  fun `Returns 401 without authentication`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  @DisplayName("Supports nomisId identifier type")
+  fun `Endpoint accepts nomisId as identifier type`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/nomisId/A1234YZ")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        assertThat(response.responseBody!!.assessments).isNotEmpty
+      }
+  }
+
+  @Test
+  @DisplayName("Filters out non-COMPLETE assessments")
+  fun `Does not return OPEN or other incomplete statuses`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        assertThat(response.responseBody!!.assessments)
+          .allMatch { it.assessmentStatus == "COMPLETE" }
+      }
+  }
+
+  @Test
+  @DisplayName("Filters out STANDALONE assessment type")
+  fun `Does not return STANDALONE assessment types`() {
+    webTestClient.get()
+      .uri("/assessments/mapps/crn/X123456")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<MappsAssessmentTimeline>()
+      .consumeWith { response ->
+        assertThat(response.responseBody!!.assessments)
+          .allMatch { it.assessmentType in listOf("LAYER1", "LAYER3") }
+      }
   }
 
   private fun scoredNotNeeds() = listOf(

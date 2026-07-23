@@ -1,0 +1,107 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/section1/ALLOW/9630348"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentSection1Mapps9630348.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/section1/ALLOW/9634348"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentSection1Mapps9634348.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/section1/ALLOW/9635350"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentSection1Mapps9635350.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/section1/ALLOW/9635351"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentSection1Mapps9635351.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/section1/ALLOW/9639348"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentSection1Mapps9639348.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/section1/ALLOW/9700001"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentSection1Mapps9700001.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/section1/ALLOW/9999999"
+      },
+      "response": {
+        "status": 404,
+        "jsonBody": {
+          "message": "Assessment not found"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/ass/allasslist/crn/NO_SECTION1/ALLOW"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentTimelineNoSection1.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9634348
+  },
+  "probNumber": "X123456",
+  "limitedAccessOffender": false,
+  "pnc": "UNKNOWN PNC",
+  "forename": "Forename",
+  "familyName": "Surname",
+  "gender": "2",
+  "custodyInd": "N",
+  "assessments": [
+    {
+      "assessmentPk": 9634348,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2022-06-09T15:16:21",
+      "assessorSignedDate": "2022-06-09T15:16:21",
+      "initiationDate": "2022-06-09T15:13:55",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2022-06-09T15:16:21",
+      "everCommittedSexualOffence": "Yes",
+      "assessor": {
+        "name": "Mike Johnson"
+      },
+      "countersigner": {
+        "name": null
+      }
+    }
+  ]
+}

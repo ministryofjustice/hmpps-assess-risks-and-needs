@@ -34,6 +34,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAsse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysAssessmentWrapper
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TimelineDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.Assessor
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysSection1
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiForbiddenException
@@ -466,8 +467,8 @@ class AssessmentOffenceServiceTest {
       val assessment = firstArg<BasicAssessmentSummary>()
       OasysAssessmentWrapper(
         crn = "X123456",
-        assessments = listOf(OasysSection1(null, "Assessor ${assessment.assessmentId}", "Counter ${assessment.assessmentId}"))
-      )
+        assessments = listOf(OasysSection1(null, Assessor(""), Assessor(""))
+      ))
     }
 
     val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
@@ -494,8 +495,8 @@ class AssessmentOffenceServiceTest {
     every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } answers {
       OasysAssessmentWrapper(
         crn = "X123456",
-        assessments = listOf(OasysSection1(null, "Assessor", null))
-      )
+        assessments = listOf(OasysSection1(null, Assessor("Assessor"), Assessor(null))
+      ))
     }
 
     val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
@@ -521,7 +522,7 @@ class AssessmentOffenceServiceTest {
       } else {
         OasysAssessmentWrapper(
           crn = "X123456",
-          assessments = listOf(OasysSection1(null, "Assessor", null))
+          assessments = listOf(OasysSection1(null, Assessor("Assessor"), Assessor(null)))
         )
       }
     }
@@ -562,8 +563,8 @@ class AssessmentOffenceServiceTest {
     every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
     every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } returns OasysAssessmentWrapper(
       crn = "X123456",
-      assessments = listOf(OasysSection1(null, "Assessor Name", null))  // No countersigner
-    )
+      assessments = listOf(OasysSection1(null, Assessor("Assessor Name"), Assessor(null))  // No countersigner
+    ))
 
     val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
 
