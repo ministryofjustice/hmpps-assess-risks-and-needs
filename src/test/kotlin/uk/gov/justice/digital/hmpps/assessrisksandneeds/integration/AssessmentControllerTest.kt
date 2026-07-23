@@ -342,7 +342,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("AC1 - Returns timeline endpoint without LAO check")
   fun `GET mapps endpoint returns 200 with complete assessment data`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
@@ -358,8 +357,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("AC2 - All required fields present in response")
-  fun `AC2 - Returns all required MAPPS fields`() {
+  fun `Returns all required MAPPS fields, if possible`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
@@ -381,8 +379,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("AC2 - Countersigner can be null")
-  fun `AC2 - Countersigner name is optional`() {
+  fun `Countersigner name is optional`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
@@ -400,7 +397,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("AC2 - Handles missing countersigner gracefully")
   fun `Assessment without countersigner returns null for countersignerName`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X654321")
@@ -415,8 +411,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("AC3 - Multiple complete assessments sorted by completion date")
-  fun `AC3 - Returns all complete assessments sorted by date descending`() {
+  fun `Returns all complete assessments sorted by date descending`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
@@ -447,8 +442,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("Authorization - Requires ROLE_ARNS__EXTERNAL_API_RO")
-  fun `Returns 403 without correct role`() {
+  fun `Returns 403 without correct role ROLE_ARNS__EXTERNAL_API_RO`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
@@ -457,7 +451,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("Authorization - Requires authentication")
   fun `Returns 401 without authentication`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
@@ -466,7 +459,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("Supports nomisId identifier type")
   fun `Endpoint accepts nomisId as identifier type`() {
     webTestClient.get()
       .uri("/assessments/mapps/nomisId/A1234YZ")
@@ -480,7 +472,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("Filters out non-COMPLETE assessments")
   fun `Does not return OPEN or other incomplete statuses`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
@@ -495,7 +486,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("Filters out STANDALONE assessment type")
   fun `Does not return STANDALONE assessment types`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
