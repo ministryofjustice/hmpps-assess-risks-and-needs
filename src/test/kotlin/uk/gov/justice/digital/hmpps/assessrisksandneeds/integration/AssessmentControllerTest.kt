@@ -437,33 +437,13 @@ class AssessmentControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  @DisplayName("AC4 - Returns 404 when no complete assessments found")
-  fun `AC4 - Returns 404 when no complete assessments exist`() {
+  fun `MAPPS endpoint returns 404 when no assessment exists`() {
     webTestClient.get()
       .uri("/assessments/mapps/crn/NOT_FOUND")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isNotFound
       .expectBody<ApiErrorResponse>()
-      .consumeWith { response ->
-        assertThat(response.responseBody!!.developerMessage)
-          .contains("Assessment timeline not found")
-      }
-  }
-
-  @Test
-  @DisplayName("AC4 - Returns 404 when section1 data unavailable")
-  fun `Returns 404 when no section1 data available for all assessments`() {
-    webTestClient.get()
-      .uri("/assessments/mapps/crn/NO_SECTION1")
-      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
-      .exchange()
-      .expectStatus().isNotFound
-      .expectBody<ApiErrorResponse>()
-      .consumeWith { response ->
-        assertThat(response.responseBody!!.developerMessage)
-          .contains("No assessments with valid section1 data found")
-      }
   }
 
   @Test

@@ -3,20 +3,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPattern": "/ass/section1/ALLOW/9630348"
-      },
-      "response": {
-        "status": 200,
-        "bodyFileName": "ordsAssessmentSection1Mapps9630348.json",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      }
-    },
-    {
-      "request": {
-        "method": "GET",
-        "urlPattern": "/ass/section1/ALLOW/9634348"
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/9634348"
       },
       "response": {
         "status": 200,
@@ -29,7 +16,20 @@
     {
       "request": {
         "method": "GET",
-        "urlPattern": "/ass/section1/ALLOW/9635350"
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/6661348"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "ordsAssessmentSection1Mapps6661348.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/9635350"
       },
       "response": {
         "status": 200,
@@ -42,7 +42,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPattern": "/ass/section1/ALLOW/9635351"
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/9635351"
       },
       "response": {
         "status": 200,
@@ -55,7 +55,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPattern": "/ass/section1/ALLOW/9639348"
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/9639348"
       },
       "response": {
         "status": 200,
@@ -68,7 +68,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPattern": "/ass/section1/ALLOW/9700001"
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/9700001"
       },
       "response": {
         "status": 200,
@@ -81,7 +81,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPattern": "/ass/section1/ALLOW/9999999"
+        "urlPattern": "/eor/oasys/ass/section1/ALLOW/9999999"
       },
       "response": {
         "status": 404,
@@ -93,7 +93,7 @@
     {
       "request": {
         "method": "GET",
-        "urlPattern": "/ass/allasslist/crn/NO_SECTION1/ALLOW"
+        "urlPattern": "/eor/oasys/ass/allasslist/crn/NO_SECTION1/ALLOW"
       },
       "response": {
         "status": 200,
