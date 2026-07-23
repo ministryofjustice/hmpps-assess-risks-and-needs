@@ -376,7 +376,7 @@ class AssessmentControllerTest : IntegrationTestBase() {
         assertThat(assessment.assessmentType).isIn("LAYER1", "LAYER3")
         assertThat(assessment.assessmentStatus).isEqualTo("COMPLETE")
         assertThat(assessment.assessorName).isNotNull()
-          .isEqualTo("John Smith")  // From wiremock data
+          .isEqualTo("John Smith") // From wiremock data
       }
   }
 

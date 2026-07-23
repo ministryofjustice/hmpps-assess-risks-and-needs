@@ -31,5 +31,5 @@ data class OasysSection1(
 
 data class Assessor(
   @param:JsonProperty("name")
-  val name: String? = null
+  val name: String? = null,
 )

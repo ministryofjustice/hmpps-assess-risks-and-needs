@@ -132,11 +132,11 @@ class AssessmentOffenceService(
           assessmentType = assessment.assessmentType,
           assessmentStatus = assessment.status,
           assessorName = assessorInfo?.assessorName,
-          countersignerName = assessorInfo?.countersignerName,  // May be null - that's OK
+          countersignerName = assessorInfo?.countersignerName, // May be null - that's OK
         )
       } catch (e: Exception) {
         log.warn("Failed to fetch section1 data for assessment ${assessment.assessmentId}: ${e.message}. Skipping this assessment.")
-        null  // Skip this assessment if section1 fetch fails
+        null // Skip this assessment if section1 fetch fails
       }
     }
 

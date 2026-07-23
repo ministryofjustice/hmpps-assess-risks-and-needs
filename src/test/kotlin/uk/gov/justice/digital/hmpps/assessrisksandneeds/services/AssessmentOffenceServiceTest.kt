@@ -455,25 +455,29 @@ class AssessmentOffenceServiceTest {
   @Test
   fun `Returns only COMPLETE assessments filtered by type`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
-    val timeline = Timeline(listOf(
-      BasicAssessmentSummary(1L, LocalDateTime.now().minusMonths(2), LocalDateTime.now().minusMonths(2), "LAYER3", "COMPLETE"),
-      BasicAssessmentSummary(2L, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusMonths(1), "LAYER1", "COMPLETE"),
-      BasicAssessmentSummary(3L, LocalDateTime.now(), null, "LAYER3", "OPEN"),  // Should be filtered
-      BasicAssessmentSummary(4L, LocalDateTime.now(), LocalDateTime.now(), "STANDALONE", "COMPLETE"),  // Should be filtered
-    ))
+    val timeline = Timeline(
+      listOf(
+        BasicAssessmentSummary(1L, LocalDateTime.now().minusMonths(2), LocalDateTime.now().minusMonths(2), "LAYER3", "COMPLETE"),
+        BasicAssessmentSummary(2L, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusMonths(1), "LAYER1", "COMPLETE"),
+        BasicAssessmentSummary(3L, LocalDateTime.now(), null, "LAYER3", "OPEN"), // Should be filtered
+        BasicAssessmentSummary(4L, LocalDateTime.now(), LocalDateTime.now(), "STANDALONE", "COMPLETE"), // Should be filtered
+      ),
+    )
 
     every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
     every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } answers {
       val assessment = firstArg<BasicAssessmentSummary>()
       OasysAssessmentWrapper(
         crn = "X123456",
-        assessments = listOf(OasysSection1(null, Assessor(""), Assessor(""))
-      ))
+        assessments = listOf(
+          OasysSection1(null, Assessor(""), Assessor("")),
+        ),
+      )
     }
 
     val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
 
-    assertThat(result.assessments).hasSize(2)  // Only LAYER1 and LAYER3 COMPLETE
+    assertThat(result.assessments).hasSize(2) // Only LAYER1 and LAYER3 COMPLETE
     assertThat(result.assessments).allMatch { it.assessmentStatus == "COMPLETE" }
     assertThat(result.assessments).allMatch { it.assessmentType in listOf("LAYER1", "LAYER3") }
   }
@@ -485,18 +489,22 @@ class AssessmentOffenceServiceTest {
     val date2 = LocalDateTime.of(2024, 6, 1, 12, 0)
     val date3 = LocalDateTime.of(2024, 12, 1, 12, 0)
 
-    val timeline = Timeline(listOf(
-      BasicAssessmentSummary(1L, date1, date1, "LAYER3", "COMPLETE"),
-      BasicAssessmentSummary(3L, date3, date3, "LAYER3", "COMPLETE"),
-      BasicAssessmentSummary(2L, date2, date2, "LAYER3", "COMPLETE"),
-    ))
+    val timeline = Timeline(
+      listOf(
+        BasicAssessmentSummary(1L, date1, date1, "LAYER3", "COMPLETE"),
+        BasicAssessmentSummary(3L, date3, date3, "LAYER3", "COMPLETE"),
+        BasicAssessmentSummary(2L, date2, date2, "LAYER3", "COMPLETE"),
+      ),
+    )
 
     every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
     every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } answers {
       OasysAssessmentWrapper(
         crn = "X123456",
-        assessments = listOf(OasysSection1(null, Assessor("Assessor"), Assessor(null))
-      ))
+        assessments = listOf(
+          OasysSection1(null, Assessor("Assessor"), Assessor(null)),
+        ),
+      )
     }
 
     val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
@@ -508,10 +516,12 @@ class AssessmentOffenceServiceTest {
   @Test
   fun `Skips assessments where section1 fetch fails`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
-    val timeline = Timeline(listOf(
-      BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
-      BasicAssessmentSummary(2L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
-    ))
+    val timeline = Timeline(
+      listOf(
+        BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
+        BasicAssessmentSummary(2L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
+      ),
+    )
 
     every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
     // First call fails, second succeeds
@@ -522,7 +532,7 @@ class AssessmentOffenceServiceTest {
       } else {
         OasysAssessmentWrapper(
           crn = "X123456",
-          assessments = listOf(OasysSection1(null, Assessor("Assessor"), Assessor(null)))
+          assessments = listOf(OasysSection1(null, Assessor("Assessor"), Assessor(null))),
         )
       }
     }
@@ -537,9 +547,11 @@ class AssessmentOffenceServiceTest {
   @Test
   fun `Throws when all section1 fetches fail`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
-    val timeline = Timeline(listOf(
-      BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
-    ))
+    val timeline = Timeline(
+      listOf(
+        BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
+      ),
+    )
 
     every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
     every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } throws RuntimeException("All failed")
@@ -557,14 +569,16 @@ class AssessmentOffenceServiceTest {
     val timeline = Timeline(
       listOf(
         BasicAssessmentSummary(1L, LocalDateTime.now(), LocalDateTime.now(), "LAYER3", "COMPLETE"),
-      )
+      ),
     )
 
     every { oasysClient.getAssessmentTimeline(identifier) } returns timeline
     every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } returns OasysAssessmentWrapper(
       crn = "X123456",
-      assessments = listOf(OasysSection1(null, Assessor("Assessor Name"), Assessor(null))  // No countersigner
-    ))
+      assessments = listOf(
+        OasysSection1(null, Assessor("Assessor Name"), Assessor(null)), // No countersigner
+      ),
+    )
 
     val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
 

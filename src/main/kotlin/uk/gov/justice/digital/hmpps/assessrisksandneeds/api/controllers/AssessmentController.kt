@@ -171,5 +171,6 @@ class AssessmentController(
     @Parameter(description = "Identifier value (e.g. X123456)", required = true, example = "X123456")
     @PathVariable identifierValue: String,
   ): MappsAssessmentTimeline = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(
-      PersonIdentifier.from(identifierType, identifierValue))
+    PersonIdentifier.from(identifierType, identifierValue),
+  )
 }
