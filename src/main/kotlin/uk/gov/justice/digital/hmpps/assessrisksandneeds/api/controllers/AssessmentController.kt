@@ -164,7 +164,7 @@ class AssessmentController(
       ApiResponse(responseCode = "404", description = "No complete assessments found or no section1 data available"),
     ],
   )
-  @PreAuthorize("hasAnyRole('ROLE_ARNS__EXTERNAL_API_RO', 'ROLE_CRS_PROVIDER')")
+  @PreAuthorize("hasRole('ROLE_ARNS__EXTERNAL_API_RO')")
   fun getMappasAssessmentData(
     @Parameter(description = "Identifier type (e.g. crn, pnc)", required = true, example = "crn")
     @PathVariable identifierType: String,
