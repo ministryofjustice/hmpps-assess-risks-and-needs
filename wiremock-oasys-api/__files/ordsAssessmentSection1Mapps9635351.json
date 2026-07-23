@@ -1,0 +1,28 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9635351
+  },
+  "probNumber": "X123456",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "assessmentPk": 9635351,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2022-07-21T15:43:12",
+      "assessorSignedDate": "2022-07-21T15:43:12",
+      "initiationDate": "2022-06-10T18:23:51",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "latestCompleteDate": "2022-07-21T15:43:12",
+      "everCommittedSexualOffence": "No",
+      "assessor": {
+        "name": "David Garcia"
+      },
+      "countersigner": {
+        "name": "Emma Martinez"
+      }
+    }
+  ]
+}
