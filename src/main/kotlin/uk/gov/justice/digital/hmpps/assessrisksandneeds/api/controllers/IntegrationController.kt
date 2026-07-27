@@ -19,10 +19,13 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffenceService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskManagementPlanService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
@@ -33,6 +36,7 @@ class IntegrationController(
   private val riskService: RiskService,
   private val needsService: AssessmentNeedsService,
   private val riskManagementPlanService: RiskManagementPlanService,
+  private val assessmentOffenceService: AssessmentOffenceService,
 ) {
   @Deprecated("Use /risks/predictors/unsafe/all/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/predictors/{crn}"], method = [RequestMethod.GET])
@@ -242,4 +246,38 @@ class IntegrationController(
     @PathVariable
     crn: String,
   ): RiskManagementPlansDto = riskManagementPlanService.getRiskManagementPlanWithoutLaoCheck(crn)
+
+  @RequestMapping(path = ["/assessments/mapps/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
+  @Operation(
+    description = """
+      Gets latest COMPLETE OASys assessment data for MAPPS external integration.
+      
+      Returns ALL latest COMPLETE assessments with:
+      - Assessment metadata (dates, type, status)
+      - Assessor name (always present)
+      - Countersigner name (optional - may be null)
+      
+      This endpoint:
+      - Does NOT perform Limited Access Offenders (LAO) checks - bypasses internal authorization
+      - Returns all COMPLETE assessments sorted by completion date (latest first)
+      - Fetches assessor/countersigner details from section1 endpoint per assessment
+      - Is only available to ROLE_ARNS__EXTERNAL_API_RO role
+    """,
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "OK - returns list of complete assessments"),
+      ApiResponse(responseCode = "403", description = "Unauthorized - insufficient role"),
+      ApiResponse(responseCode = "404", description = "No complete assessments found or no section1 data available"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_ARNS__EXTERNAL_API_RO', 'ROLE_OFFENDER_RISK_RO')")
+  fun getMappasAssessmentData(
+    @Parameter(description = "Identifier type (e.g. crn, pnc)", required = true, example = "crn")
+    @PathVariable identifierType: String,
+    @Parameter(description = "Identifier value (e.g. X123456)", required = true, example = "X123456")
+    @PathVariable identifierValue: String,
+  ): MappsAssessmentTimeline = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(
+    PersonIdentifier.from(identifierType, identifierValue),
+  )
 }
