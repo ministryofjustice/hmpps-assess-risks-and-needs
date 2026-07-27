@@ -1,0 +1,28 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9700001
+  },
+  "probNumber": "X654321",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "assessmentPk": 9700001,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2024-12-20T14:30:00",
+      "assessorSignedDate": "2024-12-20T14:30:00",
+      "initiationDate": "2024-12-15T10:00:00",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "latestCompleteDate": "2024-12-20T14:30:00",
+      "everCommittedSexualOffence": "No",
+      "assessor": {
+        "name": "Mike Johnson"
+      },
+      "countersigner": {
+        "name": null
+      }
+    }
+  ]
+}

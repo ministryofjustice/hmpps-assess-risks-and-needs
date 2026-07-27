@@ -1,0 +1,28 @@
+{
+  "source": "OASys",
+  "inputs": {
+    "laoPrivilege": "ALLOW",
+    "assessmentPk": 9639348
+  },
+  "probNumber": "X123456",
+  "limitedAccessOffender": false,
+  "assessments": [
+    {
+      "assessmentPk": 9639348,
+      "assessmentType": "LAYER3",
+      "dateCompleted": "2022-07-27T12:09:41",
+      "assessorSignedDate": "2022-07-27T12:09:41",
+      "initiationDate": "2022-07-21T15:43:58",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "latestCompleteDate": "2022-07-27T12:09:41",
+      "everCommittedSexualOffence": "Yes",
+      "assessor": {
+        "name": "Lisa Chen"
+      },
+      "countersigner": {
+        "name": null
+      }
+    }
+  ]
+}
