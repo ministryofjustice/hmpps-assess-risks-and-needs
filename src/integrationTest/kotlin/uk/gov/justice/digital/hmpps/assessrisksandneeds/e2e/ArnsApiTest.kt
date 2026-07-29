@@ -9,12 +9,13 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.e2e.dto.TokenDto
 import java.util.Base64
 
-@DisplayName("MAPPS API Tests")
+@DisplayName("ARNS API Tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MappsArnsApiTest {
+class ArnsApiTest {
   protected lateinit var webTestClient: WebTestClient
 
   protected lateinit var authTestClient: WebTestClient
@@ -53,14 +54,14 @@ class MappsArnsApiTest {
   }
 
   @Test
-  fun `get Mapps assessment timeline by crn`() {
-    val timelineResponse = webTestClient.get().uri("/assessments/mapps/crn/$crn")
+  fun `get assessment needs by crn`() {
+    val needsResponse = webTestClient.get().uri("/needs/$crn")
       .accept(MediaType.APPLICATION_JSON)
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
+      .expectBody<AssessmentNeedsDetailsDto>()
       .returnResult().responseBody
 
-    assertThat(timelineResponse?.assessments).isNotEmpty()
+    assertThat(needsResponse?.needs).isNotEmpty()
   }
 }
