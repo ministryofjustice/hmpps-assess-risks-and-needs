@@ -441,19 +441,19 @@ class AssessmentOffenceServiceTest {
   }
 
   @Test
-  fun `getLatestCompleteAssessmentsForMapps throws when no timeline found`() {
+  fun `getAssessmentsForMapps throws when no timeline found`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
     every { oasysClient.getAssessmentTimeline(identifier) } returns null
 
     assertThrows<EntityNotFoundException> {
-      assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+      assessmentOffenceService.getAssessmentsForMapps(identifier)
     }.apply {
       assertThat(message).contains("Assessment timeline not found")
     }
   }
 
   @Test
-  fun `Returns only COMPLETE assessments filtered by type`() {
+  fun `Returns assessments filtered by type`() {
     val identifier = PersonIdentifier(PersonIdentifier.Type.CRN, "X123456")
     val timeline = Timeline(
       listOf(
@@ -475,10 +475,9 @@ class AssessmentOffenceServiceTest {
       )
     }
 
-    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+    val result = assessmentOffenceService.getAssessmentsForMapps(identifier)
 
-    assertThat(result.assessments).hasSize(2) // Only LAYER1 and LAYER3 COMPLETE
-    assertThat(result.assessments).allMatch { it.assessmentStatus == "COMPLETE" }
+    assertThat(result.assessments).hasSize(3) // Only LAYER1 and LAYER3
     assertThat(result.assessments).allMatch { it.assessmentType in listOf("LAYER1", "LAYER3") }
   }
 
@@ -507,7 +506,7 @@ class AssessmentOffenceServiceTest {
       )
     }
 
-    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+    val result = assessmentOffenceService.getAssessmentsForMapps(identifier)
 
     val dates = result.assessments.map { it.dateCompleted }
     assertThat(dates).containsExactly(date3, date2, date1)
@@ -537,7 +536,7 @@ class AssessmentOffenceServiceTest {
       }
     }
 
-    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+    val result = assessmentOffenceService.getAssessmentsForMapps(identifier)
 
     // Should have only 1 assessment (the successful one)
     assertThat(result.assessments).hasSize(1)
@@ -557,7 +556,7 @@ class AssessmentOffenceServiceTest {
     every { oasysClient.getOffenderInformationAndPredictorsSection(any()) } throws RuntimeException("All failed")
 
     assertThrows<EntityNotFoundException> {
-      assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+      assessmentOffenceService.getAssessmentsForMapps(identifier)
     }.apply {
       assertThat(message).contains("No assessments with valid section1 data found")
     }
@@ -580,7 +579,7 @@ class AssessmentOffenceServiceTest {
       ),
     )
 
-    val result = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(identifier)
+    val result = assessmentOffenceService.getAssessmentsForMapps(identifier)
 
     assertThat(result.assessments[0].assessorName).isEqualTo("Assessor Name")
     assertThat(result.assessments[0].countersignerName).isNull()

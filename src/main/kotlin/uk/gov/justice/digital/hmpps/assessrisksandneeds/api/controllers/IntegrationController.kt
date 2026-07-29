@@ -272,12 +272,12 @@ class IntegrationController(
     ],
   )
   @PreAuthorize("hasRole('ROLE_ARNS__EXTERNAL_API_RO')")
-  fun getMappasAssessmentData(
+  fun getMappsAssessmentData(
     @Parameter(description = "Identifier type (e.g. crn, pnc)", required = true, example = "crn")
     @PathVariable identifierType: String,
     @Parameter(description = "Identifier value (e.g. X123456)", required = true, example = "X123456")
     @PathVariable identifierValue: String,
-  ): MappsAssessmentTimeline = assessmentOffenceService.getLatestCompleteAssessmentsForMapps(
+  ): MappsAssessmentTimeline = assessmentOffenceService.getAssessmentsForMapps(
     PersonIdentifier.from(identifierType, identifierValue),
   )
 }
