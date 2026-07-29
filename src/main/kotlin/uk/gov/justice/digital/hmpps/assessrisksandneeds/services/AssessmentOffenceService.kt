@@ -96,21 +96,21 @@ class AssessmentOffenceService(
   }
 
   /**
-   * Gets the latest COMPLETE assessment data for MAPPS integration.
+   * Gets the assessment data for MAPPS integration.
    * Fetches assessor/countersigner names from section1 endpoint for all assessments.
    */
-  fun getLatestCompleteAssessmentsForMapps(identifier: PersonIdentifier): MappsAssessmentTimeline {
+  fun getAssessmentsForMapps(identifier: PersonIdentifier): MappsAssessmentTimeline {
     log.info("Getting latest complete assessment for MAPPS: $identifier")
 
     // 1. Get timeline (list of all assessments)
     val timeline = oasysApiRestClient.getAssessmentTimeline(identifier)
       ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
 
-    // 2. Filter to COMPLETE assessments only (LAYER1 and LAYER3)
+    // 2. Filter
     val completeAssessments = timeline.timeline
       .filter {
         it.assessmentType in listOf(AssessmentType.LAYER3.name, AssessmentType.LAYER1.name) &&
-          it.status == "COMPLETE"
+          it.status in listOf("OPEN", "SIGNED", "LOCKED_INCOMPLETE", "AWAITING_PSR", "AWAITING_SBC", "COMPLETE")
       }
       .sortedWith(compareByDescending<BasicAssessmentSummary> { it.completedDate ?: it.initiationDate })
 
@@ -118,7 +118,7 @@ class AssessmentOffenceService(
       throw EntityNotFoundException("No complete assessment found for $identifier")
     }
 
-    // 3. For each COMPLETE assessment, fetch section1 to get assessor/countersigner details
+    // 3. For each assessment, fetch section1 to get assessor/countersigner details
     val mappasAssessments = completeAssessments.mapNotNull { assessment ->
       try {
         // Fetch section1 data which contains assessor/countersigner names
