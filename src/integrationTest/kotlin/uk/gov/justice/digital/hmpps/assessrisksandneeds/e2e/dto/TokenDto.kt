@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessrisksandneeds.e2e
+package uk.gov.justice.digital.hmpps.assessrisksandneeds.e2e.dto
 
 data class TokenDto(
   val access_token: String,

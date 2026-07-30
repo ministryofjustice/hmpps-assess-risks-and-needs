@@ -10,7 +10,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
-import java.util.Base64
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.e2e.dto.TokenDto
 
 @DisplayName("ARNS API Tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -29,12 +29,10 @@ class ArnsApiTest {
 
     val clientId = System.getenv("AAP_CLIENT_ID") ?: "local-development-client-id"
     val clientSecret = System.getenv("AAP_CLIENT_SECRET") ?: "default_secret"
-    var secret = "$clientId:$clientSecret".toByteArray()
-    val encodedAuth = Base64.getEncoder().encodeToString(secret)
 
     val body = authTestClient.post()
       .uri("/auth/oauth/token")
-      .header("Authorization", "Basic $encodedAuth")
+      .headers { it.setBasicAuth(clientId, clientSecret) }
       .contentType(MediaType.APPLICATION_FORM_URLENCODED)
       .body(BodyInserters.fromFormData("grant_type", "client_credentials"))
       .exchange()
