@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
@@ -159,7 +160,7 @@ class RiskPredictorServiceTest {
       }.returns(allRisksOasysRiskPredictorsDto)
 
       // When
-      val allRiskScores = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
+      val allRiskScores = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn, false)
 
       // Then
       assertThat(allRiskScores.size).isEqualTo(3)
@@ -279,7 +280,7 @@ class RiskPredictorServiceTest {
       }.returns(null)
 
       // When
-      val allRiskScores = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
+      val allRiskScores = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn, false)
 
       // Should
       assertThat(allRiskScores.isEmpty())
@@ -475,7 +476,7 @@ class RiskPredictorServiceTest {
       }.returns(allRisksOasysRiskPredictorsDto)
 
       // When
-      val result = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
+      val result = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn, false)
 
       // Then
       assertThat(result[0].outputVersion).isEqualTo("1")
@@ -532,6 +533,54 @@ class RiskPredictorServiceTest {
 
       // Then
       assertThat(result.outputVersion).isEqualTo("1")
+    }
+
+    @Test
+    fun `getAllRiskScores - should include standalone assessments when requested`() {
+      // Given
+      val crn = "X12345"
+
+      val allRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
+        listOf(
+          provideOutput(LocalDateTime.of(2025, 1, 1, 12, 0, 0), null, true).copy(assessmentType = "STANDALONE"),
+        ),
+      )
+
+      every {
+        oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
+      }.returns(allRisksOasysRiskPredictorsDto)
+
+      // When
+      val result = riskPredictorsService.getAllRiskScores(IdentifierType.CRN, crn, includeStandaloneAssessments = true)
+
+      // Then
+      assertThat(result[0].assessmentType).isEqualTo(AssessmentType.STANDALONE)
+    }
+
+    @Test
+    fun `getAllRiskScoresWithoutLaoCheck - should include standalone assessments when requested`() {
+      // Given
+      val crn = "X12345"
+
+      val allRisksOasysRiskPredictorsDto = AllRisksOasysRiskPredictorsDto(
+        listOf(
+          provideOutput(LocalDateTime.of(2025, 1, 1, 12, 0, 0), null, true).copy(assessmentType = "STANDALONE"),
+        ),
+      )
+
+      every {
+        oasysApiClient.getRiskPredictorsForCompletedAssessments(crn)
+      }.returns(allRisksOasysRiskPredictorsDto)
+
+      // When
+      val result = riskPredictorsService.getAllRiskScoresWithoutLaoCheck(
+        IdentifierType.CRN,
+        crn,
+        includeStandaloneAssessments = true,
+      )
+
+      // Then
+      assertThat(result[0].assessmentType).isEqualTo(AssessmentType.STANDALONE)
     }
   }
 

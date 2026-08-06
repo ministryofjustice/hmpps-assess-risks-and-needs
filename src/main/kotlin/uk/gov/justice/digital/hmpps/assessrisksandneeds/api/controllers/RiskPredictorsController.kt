@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
@@ -155,7 +156,10 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @Parameter(description = "Identifier Value", required = true)
     @PathVariable
     identifierValue: String,
-  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue)
+    @Parameter(description = "Include standalone assessments. Defaults to false.", required = false)
+    @RequestParam(defaultValue = "false")
+    includeStandaloneAssessments: Boolean = false,
+  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScores(identifierType, identifierValue, includeStandaloneAssessments)
 
   @RequestMapping(path = ["/assessments/id/{id}/risk/predictors/all"], method = [RequestMethod.GET])
   @Operation(description = GET_ALL_RISK_SCORES_BY_ASSESSMENT_ID_DESC)

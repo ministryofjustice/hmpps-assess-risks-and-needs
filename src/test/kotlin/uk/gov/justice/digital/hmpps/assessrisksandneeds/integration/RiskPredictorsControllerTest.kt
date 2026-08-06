@@ -58,10 +58,20 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .expectBody<List<RsrPredictorVersioned<Any>>>()
       .returnResult().responseBody
 
-    assertThat(rsrScores).hasSize(5)
+    assertThat(rsrScores).hasSize(6)
     assertThat(rsrScores[0].outputVersion).isEqualTo("2")
-    val firstLegacyRsrScore = rsrScores[0] as RsrPredictorVersionedDto
-    with(firstLegacyRsrScore) {
+    val standaloneRsrScore = rsrScores[0] as RsrPredictorVersionedDto
+    with(standaloneRsrScore) {
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2026, 7, 27, 15, 40, 41))
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.79))
+      assertThat(output?.combinedSeriousReoffendingPredictor?.band).isEqualTo(ScoreLevel.MEDIUM)
+      assertThat(output?.combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
+    }
+    assertThat(rsrScores[1].outputVersion).isEqualTo("2")
+    val secondVersionedRsrScore = rsrScores[1] as RsrPredictorVersionedDto
+    with(secondVersionedRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 12, 18, 23, 20))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
@@ -69,9 +79,9 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(output?.combinedSeriousReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
       assertThat(output?.combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
     }
-    assertThat(rsrScores[2].outputVersion).isEqualTo("1")
-    val thirdLegacyRsrScore = rsrScores[2] as RsrPredictorVersionedLegacyDto
-    with(thirdLegacyRsrScore) {
+    assertThat(rsrScores[3].outputVersion).isEqualTo("1")
+    val fourthLegacyRsrScore = rsrScores[3] as RsrPredictorVersionedLegacyDto
+    with(fourthLegacyRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
@@ -79,9 +89,9 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
       assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
     }
-    assertThat(rsrScores[4].outputVersion).isEqualTo("1")
-    val fifthLegacyRsrScore = rsrScores[4] as RsrPredictorVersionedLegacyDto
-    with(fifthLegacyRsrScore) {
+    assertThat(rsrScores[5].outputVersion).isEqualTo("1")
+    val sixthLegacyRsrScore = rsrScores[5] as RsrPredictorVersionedLegacyDto
+    with(sixthLegacyRsrScore) {
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
@@ -131,8 +141,16 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .expectBody<List<RsrPredictorDto>>()
       .returnResult().responseBody
 
-    assertThat(rsrHistory).hasSize(5)
+    assertThat(rsrHistory).hasSize(6)
     with(rsrHistory[0]) {
+      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(1.79))
+      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
+      assertThat(completedDate).isEqualTo(LocalDateTime.of(2026, 7, 27, 15, 40, 41))
+      assertThat(staticOrDynamic).isEqualTo(ScoreType.STATIC)
+      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
+      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
+    }
+    with(rsrHistory[1]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(1.23))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 12, 18, 23, 20))
@@ -140,7 +158,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
     }
-    with(rsrHistory[2]) {
+    with(rsrHistory[3]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
       assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
@@ -148,7 +166,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       assertThat(source).isEqualTo(RsrScoreSource.OASYS)
       assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
     }
-    with(rsrHistory[4]) {
+    with(rsrHistory[5]) {
       assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(0.32))
       assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
       assertThat(calculatedDate).isNull()

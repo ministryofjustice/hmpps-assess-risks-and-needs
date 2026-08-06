@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
@@ -102,7 +103,10 @@ class IntegrationController(
     @Parameter(description = "Identifier Value", required = true)
     @PathVariable
     identifierValue: String,
-  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScoresWithoutLaoCheck(identifierType, identifierValue)
+    @Parameter(description = "Include standalone assessments. Defaults to false.", required = false)
+    @RequestParam(defaultValue = "false")
+    includeStandaloneAssessments: Boolean = false,
+  ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScoresWithoutLaoCheck(identifierType, identifierValue, includeStandaloneAssessments)
 
   @RequestMapping(path = ["/risks/rosh/{crn}"], method = [RequestMethod.GET])
   @Operation(
