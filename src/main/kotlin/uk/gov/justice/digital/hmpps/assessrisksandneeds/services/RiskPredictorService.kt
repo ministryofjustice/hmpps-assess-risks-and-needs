@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
-import kotlin.collections.sortedByDescending
 
 @Service
 class RiskPredictorService(
@@ -70,19 +69,33 @@ class RiskPredictorService(
     return RiskScoresDto.from(oasysRiskPredictorsDto)
   }
 
-  fun getAllRiskScores(identifierType: IdentifierType, identifierValue: String): List<AllPredictorVersioned<Any>> {
+  fun getAllRiskScores(
+    identifierType: IdentifierType,
+    identifierValue: String,
+    includeStandaloneAssessments: Boolean,
+  ): List<AllPredictorVersioned<Any>> {
     log.debug("Entered getAllRiskScores for ${identifierType.value}: $identifierValue")
     communityClient.verifyUserAccess(identifierValue, RequestData.getUserName())
-    return getAllRiskScoresWithoutLaoCheck(identifierType, identifierValue)
+    return getAllRiskScoresWithoutLaoCheck(identifierType, identifierValue, includeStandaloneAssessments)
   }
 
-  fun getAllRiskScoresWithoutLaoCheck(identifierType: IdentifierType, identifierValue: String): List<AllPredictorVersioned<Any>> {
+  fun getAllRiskScoresWithoutLaoCheck(
+    identifierType: IdentifierType,
+    identifierValue: String,
+    includeStandaloneAssessments: Boolean,
+  ): List<AllPredictorVersioned<Any>> {
     log.debug("Entered getAllRiskScoresWithoutLaoCheck for ${identifierType.value}: $identifierValue")
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf(identifierType.value to identifierValue))
     val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(identifierValue)
     return oasysRiskPredictorsDto
       ?.assessments
-      ?.filter { it.assessmentType in listOf("LAYER3", "LAYER1") }
+      ?.filter {
+        it.assessmentType in listOfNotNull(
+          "LAYER3",
+          "LAYER1",
+          "STANDALONE".takeIf { includeStandaloneAssessments },
+        )
+      }
       ?.map { assessment ->
         val version = assessment.rsrScoreDto.rsrAlgorithmVersion?.toIntOrNull()
         // If version is null, it's a legacy assessment

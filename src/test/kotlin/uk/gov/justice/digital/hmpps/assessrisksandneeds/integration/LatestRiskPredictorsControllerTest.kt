@@ -258,6 +258,28 @@ class LatestRiskPredictorsControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `should include standalone assessments when requested`() {
+    // Given
+    val identifierType = "crn"
+    val identifierValue = "X123456"
+
+    // When
+    webTestClient.get()
+      .uri("/risks/predictors/all/$identifierType/$identifierValue?includeStandaloneAssessments=true")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      // Then
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<List<AllPredictorVersioned<Any>>>()
+      .consumeWith { response ->
+        assertThat(response.responseBody)
+          .hasSize(6)
+          .anyMatch { it.assessmentType == AssessmentType.STANDALONE }
+      }
+  }
+
+  @Test
   fun `should return not found error for invalid crn for versioned risk scores`() {
     webTestClient.get().uri("/risks/predictors/all/crn/X999999")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))

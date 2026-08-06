@@ -56,6 +56,13 @@
       "initiationDate": "2022-06-11T18:22:02",
       "status": "COMPLETE",
       "completedDate": "2022-06-11T18:23:20"
+    },
+    {
+      "assessmentPk": 123,
+      "assessmentType": "STANDALONE",
+      "initiationDate": "2026-07-27T15:36:59",
+      "status": "COMPLETE",
+      "completedDate": "2026-07-27T15:40:41"
     }
   ],
   "assessments": [
@@ -377,6 +384,90 @@
         "snsvDynamicYr2Band": "Medium",
         "snsvStaticCalculated": "Y",
         "snsvDynamicCalculated": "N"
+      }
+    },
+    {
+      "assessmentPk": 123,
+      "assessmentType": "STANDALONE",
+      "assessmentVersion": null,
+      "dateCompleted": "2026-07-27T15:40:41",
+      "assessorSignedDate": null,
+      "initiationDate": "2026-07-27T15:36:59",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "laterWIPAssessmentExists": false,
+      "latestWIPDate": null,
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": null,
+      "laterPartCompUnsignedAssessmentExists": false,
+      "latestPartCompUnsignedDate": "2015-04-08T13:24:14",
+      "laterPartCompSignedAssessmentExists": false,
+      "latestPartCompSignedDate": "2018-02-20T15:32:29",
+      "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2026-07-27T15:40:41",
+      "OGP": {
+        "ogpStWesc": null,
+        "ogpDyWesc": null,
+        "ogpTotWesc": null,
+        "ogp1Year": null,
+        "ogp2Year": null,
+        "ogpRisk": null
+      },
+      "OVP": {
+        "ovpStWesc": null,
+        "ovpDyWesc": null,
+        "ovpTotWesc": null,
+        "ovp1Year": null,
+        "ovp2Year": null,
+        "ovpRisk": null,
+        "ovpPrevWesc": null,
+        "ovpNonVioWesc": null,
+        "ovpAgeWesc": null,
+        "ovpVioWesc": null,
+        "ovpSexWesc": null
+      },
+      "OGRS": {
+        "ogrs31Year": 54,
+        "ogrs32Year": 71,
+        "ogrs3RiskRecon": null
+      },
+      "RSR": {
+        "rsrStaticOrDynamic": "STATIC",
+        "rsrExceptionError": null,
+        "rsrAlgorithmVersion": 6,
+        "rsrPercentageScore": 1.79,
+        "scoreLevel": "Medium"
+      },
+      "OSP": {
+        "ospImagePercentageScore": null,
+        "ospContactPercentageScore": null,
+        "ospImageScoreLevel": null,
+        "ospContactScoreLevel": null,
+        "ospIndirectImagesChildrenPercentageScore": 0,
+        "ospDirectContactPercentageScore": 0,
+        "ospIndirectImagesChildrenScoreLevel": "Not Applicable",
+        "ospDirectContactScoreLevel": "Not Applicable",
+        "ospDirectContactRiskReduction": null
+      },
+      "newActuarialPredictors": {
+        "ogrs4gYr2": 65.12,
+        "ogrs4gBand": "Medium",
+        "ogrs4gCalculated": "Y",
+        "ogrs4vYr2": 35.04,
+        "ogrs4vBand": "Medium",
+        "ogrs4vCalculated": "Y",
+        "ogp2Yr2": null,
+        "ogp2Band": null,
+        "ogp2Calculated": "E",
+        "ovp2Yr2": null,
+        "ovp2Band": null,
+        "ovp2Calculated": "E",
+        "snsvStaticYr2": 1.79,
+        "snsvStaticYr2Band": "Medium",
+        "snsvStaticCalculated": "Y",
+        "snsvDynamicYr2": null,
+        "snsvDynamicYr2Band": null,
+        "snsvDynamicCalculated": "E"
       }
     }
   ]
