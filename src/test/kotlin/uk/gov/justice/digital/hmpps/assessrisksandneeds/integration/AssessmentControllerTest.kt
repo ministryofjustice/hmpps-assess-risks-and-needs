@@ -107,9 +107,6 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(needsDto?.identifiedNeeds).isEmpty()
   }
 
-  // The case this ticket exists for: SAN sections are finished and scored, but the assessment is
-  // still OPEN because RoSH has not been signed off. The scores match the complete SAN assessment
-  // above, so completeness is the only variable.
   @Test
   fun `get criminogenic needs by crn for a SAN assessment that is not yet signed off`() {
     val needsDto = webTestClient.get().uri("/needs/crn/$incompleteSanCrn?excludeIncomplete=false")
