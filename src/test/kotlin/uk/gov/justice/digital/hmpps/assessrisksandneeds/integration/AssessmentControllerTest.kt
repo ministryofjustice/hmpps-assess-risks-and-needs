@@ -36,6 +36,10 @@ class AssessmentControllerTest : IntegrationTestBase() {
 
   private val crn = "X123456"
 
+  private val incompleteCrn = "X934567"
+
+  private val incompleteSanCrn = "X845678"
+
   @BeforeEach
   fun setup() {
     every { auditService.sendEvent(any(), any()) } returns Unit
@@ -86,6 +90,79 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(sanNotIdentifiedNeeds())
     assertThat(needsDto?.unansweredNeeds).isEmpty()
+  }
+
+  @Test
+  fun `get criminogenic needs by crn for an incomplete assessment`() {
+    val needsDto = webTestClient.get().uri("/needs/crn/$incompleteCrn?excludeIncomplete=false")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
+    assertThat(needsDto?.assessedOn).isNull()
+    assertThat(needsDto?.unansweredNeeds).isNotEmpty()
+    assertThat(needsDto?.identifiedNeeds).isEmpty()
+  }
+
+  @Test
+  fun `get criminogenic needs by crn for a SAN assessment that is not yet signed off`() {
+    val needsDto = webTestClient.get().uri("/needs/crn/$incompleteSanCrn?excludeIncomplete=false")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
+    assertThat(needsDto?.assessedOn).isNull()
+    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
+    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(sanNotIdentifiedNeeds())
+    assertThat(needsDto?.unansweredNeeds).isEmpty()
+  }
+
+  @Test
+  fun `get criminogenic needs by crn for a SAN assessment that is not yet signed off returns not found by default`() {
+    webTestClient.get().uri("/needs/crn/$incompleteSanCrn")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get criminogenic needs by crn within timeframe for an assessment that is not yet signed off`() {
+    val timeframe = 70L
+    val needsDto = webTestClient.get().uri("/needs/crn/$incompleteSanCrn/$timeframe?excludeIncomplete=false")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
+    assertThat(needsDto?.assessedOn).isNull()
+    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
+  }
+
+  // An assessment that is still open has no completedDate, so recency is measured from its
+  // initiationDate instead. Including incomplete assessments must not disable the timeframe.
+  @Test
+  fun `get criminogenic needs by crn within timeframe excludes an unsigned assessment initiated too long ago`() {
+    val timeframe = 5L
+    webTestClient.get().uri("/needs/crn/$incompleteSanCrn/$timeframe?excludeIncomplete=false")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get criminogenic needs by crn for an incomplete assessment returns not found by default`() {
+    webTestClient.get().uri("/needs/crn/$incompleteCrn")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 
   @Test

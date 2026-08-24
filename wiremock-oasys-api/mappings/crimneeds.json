@@ -41,6 +41,20 @@
         "bodyFileName": "ordsCriminogenicNeedsSan.json",
         "transformers": ["response-template"]
       }
+    },
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/crimneeds/ALLOW/9700002",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsCriminogenicNeedsOpenSan.json",
+        "transformers": ["response-template"]
+      }
     }
   ]
 }
