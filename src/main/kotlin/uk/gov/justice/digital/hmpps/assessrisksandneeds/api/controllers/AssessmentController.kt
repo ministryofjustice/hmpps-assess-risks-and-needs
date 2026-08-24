@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.security.access.prepost.PreAuthorize
@@ -35,7 +36,9 @@ class AssessmentController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn)
+    @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
+    excludeIncomplete: Boolean = true,
+  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, excludeIncomplete = excludeIncomplete)
 
   @RequestMapping(path = ["/needs/crn/{crn}/{timeframe}"], method = [RequestMethod.GET])
   @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")
@@ -52,7 +55,9 @@ class AssessmentController(
     @Parameter(description = "Timeframe", required = true, example = "70")
     @PathVariable crn: String,
     @PathVariable timeframe: Long,
-  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, timeframe)
+    @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
+    excludeIncomplete: Boolean = true,
+  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, timeframe, excludeIncomplete)
 
   @RequestMapping(path = ["/assessments/crn/{crn}/offence"], method = [RequestMethod.GET])
   @Operation(description = "Gets offence details from latest complete assessment for crn")
