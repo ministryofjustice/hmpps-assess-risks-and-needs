@@ -60,7 +60,7 @@ class AssessmentOffenceService(
     } ?: throw EntityNotFoundException("Assessment timeline not found for $identifier")
   }
 
-  fun getSanIndicator(crn: String, timeframe: Long = 55): SanIndicatorResponse {
+  fun getSanIndicator(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS): SanIndicatorResponse {
     oasysApiRestClient.getLatestAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
       needsPredicate(timeframe = timeframe, clock = clock),

@@ -259,6 +259,39 @@ class IntegrationControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get rosh by crn with timeframe query param matches the deprecated path variant`() {
+    val timeframe = 60L
+    val fromQueryParam = webTestClient.get().uri("/risks/rosh/$crn?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .returnResult().responseBody
+
+    val fromPath = webTestClient.get().uri("/risks/rosh/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .returnResult().responseBody
+
+    assertThat(fromQueryParam).isEqualTo(fromPath)
+  }
+
+  @Test
+  fun `get rosh by crn with a timeframe query param that excludes all assessments returns no assessed date`() {
+    val timeframe = 2L
+    val roshRisk = webTestClient.get().uri("/risks/rosh/$crn?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AllRoshRiskDto>()
+      .returnResult().responseBody
+
+    assertThat(roshRisk?.assessedOn).isNull()
+  }
+
+  @Test
   fun `get criminogenic needs by crn`() {
     val needsDto = webTestClient.get().uri("/needs/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
@@ -305,6 +338,35 @@ class IntegrationControllerTest : IntegrationTestBase() {
   fun `get criminogenic needs by crn within timeframe not found`() {
     val timeframe = 2L
     webTestClient.get().uri("/needs/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get criminogenic needs by crn with timeframe query param matches the deprecated path variant`() {
+    val timeframe = 60L
+    val fromQueryParam = webTestClient.get().uri("/needs/$crn?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDetailsDto>()
+      .returnResult().responseBody
+
+    val fromPath = webTestClient.get().uri("/needs/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDetailsDto>()
+      .returnResult().responseBody
+
+    assertThat(fromQueryParam).isEqualTo(fromPath)
+  }
+
+  @Test
+  fun `get criminogenic needs by crn with timeframe query param not found`() {
+    val timeframe = 2L
+    webTestClient.get().uri("/needs/$crn?timeframe=$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isNotFound

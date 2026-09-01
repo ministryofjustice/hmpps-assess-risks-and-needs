@@ -3,17 +3,20 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 import com.fasterxml.jackson.annotation.JsonView
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.DEFAULT_TIMEFRAME_WEEKS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskManagementPlanService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
 
@@ -38,10 +41,22 @@ class RisksController(
     @JsonView(View.SingleRisksView::class)
     @PathVariable
     crn: String,
-  ): RiskRoshSummaryDto = riskService.getRoshRiskSummaryByCrn(crn)
+    @Parameter(description = TIMEFRAME_QUERY_PARAM_DESC, `in` = ParameterIn.QUERY, example = "70")
+    @RequestParam(required = false)
+    timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
+  ): RiskRoshSummaryDto = riskService.getRoshRiskSummaryByCrn(crn, timeframe)
 
+  @Deprecated("Use /risks/crn/{crn}/summary?timeframe={timeframe}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/crn/{crn}/summary/{timeframe}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets rosh summary for crn. Returns only assessments completed within specified timeframe, measured in weeks.")
+  @Operation(
+    description = """
+    Gets rosh summary for crn. Returns only assessments completed within specified timeframe, measured in weeks.
+    Deprecated endpoint.
+    Please use /risks/crn/{crn}/summary?timeframe={timeframe} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
@@ -76,12 +91,22 @@ class RisksController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AllRoshRiskDto = riskService.getRoshRisksByCrn(crn)
+    @Parameter(description = TIMEFRAME_QUERY_PARAM_DESC, `in` = ParameterIn.QUERY, example = "70")
+    @RequestParam(required = false)
+    timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
+  ): AllRoshRiskDto = riskService.getRoshRisksByCrn(crn, timeframe)
 
+  @Deprecated("Use /risks/crn/{crn}?timeframe={timeframe}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/crn/{crn}/{timeframe}"], method = [RequestMethod.GET])
   @Operation(
-    description = "Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes. " +
-      "Returns only assessments completed within specified timeframe, measured in weeks",
+    description = """
+    Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes.
+    Returns only assessments completed within specified timeframe, measured in weeks.
+    Deprecated endpoint.
+    Please use /risks/crn/{crn}?timeframe={timeframe} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
   )
   @ApiResponses(
     value = [
@@ -117,12 +142,22 @@ class RisksController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AllRoshRiskDto = riskService.getFulltextRoshRisksByCrn(crn)
+    @Parameter(description = TIMEFRAME_QUERY_PARAM_DESC, `in` = ParameterIn.QUERY, example = "70")
+    @RequestParam(required = false)
+    timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
+  ): AllRoshRiskDto = riskService.getFulltextRoshRisksByCrn(crn, timeframe)
 
+  @Deprecated("Use /risks/crn/{crn}/fulltext?timeframe={timeframe}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/crn/{crn}/fulltext/{timeframe}"], method = [RequestMethod.GET])
   @Operation(
-    description = "Gets ROSH risks for crn. Returns freeform concerns text regardless of answer to corresponding risk question. " +
-      "Returns only assessments completed within specified timeframe, measured in weeks",
+    description = """
+    Gets ROSH risks for crn. Returns freeform concerns text regardless of answer to corresponding risk question.
+    Returns only assessments completed within specified timeframe, measured in weeks.
+    Deprecated endpoint.
+    Please use /risks/crn/{crn}/fulltext?timeframe={timeframe} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
   )
   @ApiResponses(
     value = [

@@ -9,12 +9,14 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffenceService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.DEFAULT_TIMEFRAME_WEEKS
 
 @RestController
 class AssessmentController(
@@ -36,12 +38,24 @@ class AssessmentController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
+    @Parameter(description = TIMEFRAME_QUERY_PARAM_DESC, `in` = ParameterIn.QUERY, example = "70")
+    @RequestParam(required = false)
+    timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
     @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
     excludeIncomplete: Boolean = true,
-  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, excludeIncomplete = excludeIncomplete)
+  ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, timeframe, excludeIncomplete)
 
+  @Deprecated("Use /needs/crn/{crn}?timeframe={timeframe}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/needs/crn/{crn}/{timeframe}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")
+  @Operation(
+    description = """
+    Gets criminogenic needs for crn within specified timeframe, measured in weeks.
+    Deprecated endpoint.
+    Please use /needs/crn/{crn}?timeframe={timeframe} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
@@ -124,10 +138,22 @@ class AssessmentController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ) = assessmentOffenceService.getSanIndicator(crn)
+    @Parameter(description = TIMEFRAME_QUERY_PARAM_DESC, `in` = ParameterIn.QUERY, example = "70")
+    @RequestParam(required = false)
+    timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
+  ) = assessmentOffenceService.getSanIndicator(crn, timeframe)
 
+  @Deprecated("Use /san-indicator/crn/{crn}?timeframe={timeframe}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/san-indicator/crn/{crn}/{timeframe}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets san-indicator by CRN within specified timeframe, measured in weeks")
+  @Operation(
+    description = """
+    Gets san-indicator by CRN within specified timeframe, measured in weeks.
+    Deprecated endpoint.
+    Please use /san-indicator/crn/{crn}?timeframe={timeframe} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
