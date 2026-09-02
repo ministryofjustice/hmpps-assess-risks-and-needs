@@ -42,6 +42,7 @@ class AssessmentController(
     @RequestParam(required = false)
     timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
     @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
+    @RequestParam(required = false)
     excludeIncomplete: Boolean = true,
   ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, timeframe, excludeIncomplete)
 
@@ -70,6 +71,7 @@ class AssessmentController(
     @PathVariable crn: String,
     @PathVariable timeframe: Long,
     @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
+    @RequestParam(required = false)
     excludeIncomplete: Boolean = true,
   ): AssessmentNeedsDto = assessmentNeedsService.getAssessmentNeeds(crn, timeframe, excludeIncomplete)
 

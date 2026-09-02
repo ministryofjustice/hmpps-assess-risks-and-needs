@@ -203,6 +203,7 @@ class IntegrationController(
       `in` = ParameterIn.QUERY,
       example = "false",
     )
+    @RequestParam(required = false)
     excludeIncomplete: Boolean = true,
   ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, timeframe, excludeIncomplete)
 
@@ -252,6 +253,7 @@ class IntegrationController(
     @Parameter(description = "Timeframe", required = true, example = "70")
     @PathVariable timeframe: Long,
     @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
+    @RequestParam(required = false)
     excludeIncomplete: Boolean = true,
   ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, timeframe, excludeIncomplete)
 
