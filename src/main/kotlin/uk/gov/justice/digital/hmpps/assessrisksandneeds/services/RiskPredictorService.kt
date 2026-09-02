@@ -7,8 +7,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVe
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
@@ -27,21 +25,6 @@ class RiskPredictorService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getAllRsrHistory(crn: String): List<RsrPredictorDto> {
-    log.info("Retrieving RSR scores from each service")
-    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTOR_HISTORY, mapOf("crn" to crn))
-    communityClient.verifyUserAccess(crn, RequestData.getUserName())
-
-    return getRsrScoresFromOasys(crn).sortedByDescending { it.completedDate }
-  }
-
-  private fun getRsrScoresFromOasys(crn: String): List<RsrPredictorDto> {
-    val oasysPredictors = oasysClient.getRiskPredictorsForCompletedAssessments(crn)?.assessments ?: listOf()
-    val oasysRsrPredictors = oasysPredictors.filter { it.hasRsrScores() }
-    log.info("Retrieved ${oasysRsrPredictors.size} RSR scores from OASys")
-    return RsrPredictorDto.from(oasysRsrPredictors)
-  }
-
   fun getAllRsrScores(identifierType: IdentifierType, identifierValue: String): List<RsrPredictorVersioned<Any>> {
     log.info("Retrieving RSR scores from each service for ${identifierType.value}: $identifierValue")
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTOR_HISTORY, mapOf(identifierType.value to identifierValue))
@@ -58,15 +41,6 @@ class RiskPredictorService(
         RsrPredictorVersionedLegacyDto.from(assessment)
       }
     }.sortedByDescending { it.completedDate }
-  }
-
-  fun getAllRiskScores(crn: String): List<RiskScoresDto> {
-    log.debug("Entered getAllRiskScores for crn: $crn")
-    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf("crn" to crn))
-    communityClient.verifyUserAccess(crn, RequestData.getUserName())
-
-    val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(crn)
-    return RiskScoresDto.from(oasysRiskPredictorsDto)
   }
 
   fun getAllRiskScores(
@@ -124,11 +98,5 @@ class RiskPredictorService(
           AllPredictorVersionedLegacyDto.from(assessment)
         }
       } ?: throw NoSuchElementException("Risk predictors for assessment with id: $id not found")
-  }
-
-  fun getAllRiskScoresWithoutLaoCheck(crn: String): List<RiskScoresDto> {
-    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf("crn" to crn))
-    val oasysRiskPredictorsDto = oasysClient.getRiskPredictorsForCompletedAssessments(crn)
-    return RiskScoresDto.from(oasysRiskPredictorsDto)
   }
 }

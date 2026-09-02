@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
@@ -127,67 +126,5 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isBadRequest
-  }
-
-  @Test
-  fun `get all rsr score history for a crn`() {
-    val crn = "X123456"
-    val rsrHistory = webTestClient.get()
-      .uri("/risks/crn/$crn/predictors/rsr/history")
-      .header("Content-Type", "application/json")
-      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
-      .exchange()
-      .expectStatus().isEqualTo(HttpStatus.OK)
-      .expectBody<List<RsrPredictorDto>>()
-      .returnResult().responseBody
-
-    assertThat(rsrHistory).hasSize(6)
-    with(rsrHistory[0]) {
-      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(1.79))
-      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2026, 7, 27, 15, 40, 41))
-      assertThat(staticOrDynamic).isEqualTo(ScoreType.STATIC)
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-    }
-    with(rsrHistory[1]) {
-      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(1.23))
-      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 12, 18, 23, 20))
-      assertThat(staticOrDynamic).isEqualTo(ScoreType.STATIC)
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-    }
-    with(rsrHistory[3]) {
-      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
-      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
-      assertThat(staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-    }
-    with(rsrHistory[5]) {
-      assertThat(rsrPercentageScore).isEqualTo(BigDecimal.valueOf(0.32))
-      assertThat(rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
-      assertThat(calculatedDate).isNull()
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
-      assertThat(staticOrDynamic).isEqualTo(ScoreType.STATIC)
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-    }
-  }
-
-  @Test
-  fun `get all rsr score history for a crn when no rsr returned from assessment API`() {
-    val crn = "X234567"
-    val rsrHistory = webTestClient.get()
-      .uri("/risks/crn/$crn/predictors/rsr/history")
-      .header("Content-Type", "application/json")
-      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
-      .exchange()
-      .expectStatus().isEqualTo(HttpStatus.OK)
-      .expectBody<List<RsrPredictorDto>>()
-      .returnResult().responseBody
-    assertThat(rsrHistory).isEmpty()
   }
 }
