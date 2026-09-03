@@ -18,9 +18,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.Enti
 
 @Service
 class AssessmentNeedsService(private val oasysApiRestClient: OasysApiRestClient, private val clock: Clock) {
-  fun getAssessmentNeeds(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDto = AssessmentNeedsDto.from(latestCriminogenicNeeds(crn, timeframe, excludeIncomplete))
+  fun getAssessmentNeeds(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS, excludeIncomplete: Boolean = true): AssessmentNeedsDto = AssessmentNeedsDto.from(latestCriminogenicNeeds(crn, timeframe, excludeIncomplete))
 
-  fun getAssessmentNeedsDetails(crn: String, timeframe: Long = 55, excludeIncomplete: Boolean = true): AssessmentNeedsDetailsDto = AssessmentNeedsDetailsDto.from(latestCriminogenicNeeds(crn, timeframe, excludeIncomplete))
+  fun getAssessmentNeedsDetails(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS, excludeIncomplete: Boolean = true): AssessmentNeedsDetailsDto = AssessmentNeedsDetailsDto.from(latestCriminogenicNeeds(crn, timeframe, excludeIncomplete))
 
   private fun latestCriminogenicNeeds(crn: String, timeframe: Long, excludeIncomplete: Boolean): CriminogenicNeedsAssessmentOasys {
     val latestAssessment = oasysApiRestClient.getLatestAssessment(

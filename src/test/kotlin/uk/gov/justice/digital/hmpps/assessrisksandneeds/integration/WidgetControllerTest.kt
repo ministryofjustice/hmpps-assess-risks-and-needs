@@ -101,6 +101,45 @@ class WidgetControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `get risk summary by crn with timeframe query param matches the deprecated path variant`() {
+    val timeframe = 60L
+    val fromQueryParam = webTestClient.get().uri("/risks/crn/$crn/widget?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RoshRiskWidgetDto>()
+      .returnResult().responseBody
+
+    val fromPath = webTestClient.get().uri("/risks/crn/$crn/widget/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RoshRiskWidgetDto>()
+      .returnResult().responseBody
+
+    assertThat(fromQueryParam).isEqualTo(fromPath)
+  }
+
+  @Test
+  fun `get risk summary by crn with a timeframe query param that excludes all assessments`() {
+    val timeframe = 2L
+    webTestClient.get().uri("/risks/crn/$crn/widget?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<RoshRiskWidgetDto>()
+      .consumeWith {
+        assertThat(it.responseBody).isEqualTo(
+          RoshRiskWidgetDto(
+            overallRisk = null,
+            assessedOn = null,
+            riskInCommunity = mapOf(),
+          ),
+        )
+      }
+  }
+
+  @Test
   fun `get risk summary by crn for probation practitioner`() {
     webTestClient.get().uri("/risks/crn/$crn/widget")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))

@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentOffenceService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.DEFAULT_TIMEFRAME_WEEKS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskManagementPlanService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskService
@@ -126,12 +127,22 @@ class IntegrationController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
-  ): AllRoshRiskDto = riskService.getRoshRisksWithoutLaoCheck(crn)
+    @Parameter(description = TIMEFRAME_QUERY_PARAM_DESC, `in` = ParameterIn.QUERY, example = "70")
+    @RequestParam(required = false)
+    timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
+  ): AllRoshRiskDto = riskService.getRoshRisksWithoutLaoCheck(crn, timeframe)
 
+  @Deprecated("Use /risks/rosh/{crn}?timeframe={timeframe}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/risks/rosh/{crn}/{timeframe}"], method = [RequestMethod.GET])
   @Operation(
-    description = "Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes. " +
-      "Returns only assessments completed within specified timeframe, measured in weeks",
+    description = """
+    Gets ROSH risks for crn. Only returns freeform text concerns for risk to self where answer to corresponding risk question is Yes.
+    Returns only assessments completed within specified timeframe, measured in weeks.
+    Deprecated endpoint.
+    Please use /risks/rosh/{crn}?timeframe={timeframe} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
   )
   @ApiResponses(
     value = [
@@ -184,16 +195,29 @@ class IntegrationController(
     @Parameter(description = "CRN", required = true, example = "D1974X")
     @PathVariable
     crn: String,
+    @Parameter(description = TIMEFRAME_QUERY_PARAM_DESC, `in` = ParameterIn.QUERY, example = "70")
+    @RequestParam(required = false)
+    timeframe: Long = DEFAULT_TIMEFRAME_WEEKS,
     @Parameter(
       description = "Exclude incomplete assessments",
       `in` = ParameterIn.QUERY,
       example = "false",
     )
+    @RequestParam(required = false)
     excludeIncomplete: Boolean = true,
-  ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, excludeIncomplete = excludeIncomplete)
+  ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, timeframe, excludeIncomplete)
 
+  @Deprecated("Use /needs/{crn}?timeframe={timeframe}. This endpoint will be removed in a future release.")
   @RequestMapping(path = ["/needs/{crn}/{timeframe}"], method = [RequestMethod.GET])
-  @Operation(description = "Gets criminogenic needs for crn within specified timeframe, measured in weeks")
+  @Operation(
+    description = """
+    Gets criminogenic needs for crn within specified timeframe, measured in weeks.
+    Deprecated endpoint.
+    Please use /needs/{crn}?timeframe={timeframe} instead.
+    This endpoint will be removed in a future release.
+    """,
+    deprecated = true,
+  )
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "403", description = "Unauthorized"),
@@ -229,6 +253,7 @@ class IntegrationController(
     @Parameter(description = "Timeframe", required = true, example = "70")
     @PathVariable timeframe: Long,
     @Parameter(description = "Exclude incomplete assessments", `in` = ParameterIn.QUERY, example = "false")
+    @RequestParam(required = false)
     excludeIncomplete: Boolean = true,
   ): AssessmentNeedsDetailsDto = needsService.getAssessmentNeedsDetails(crn, timeframe, excludeIncomplete)
 

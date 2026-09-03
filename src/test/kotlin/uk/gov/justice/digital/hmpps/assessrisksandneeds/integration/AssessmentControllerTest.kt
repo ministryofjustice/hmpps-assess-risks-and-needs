@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorRespo
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.DEFAULT_TIMEFRAME_WEEKS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import java.time.LocalDateTime
 
@@ -74,6 +75,62 @@ class AssessmentControllerTest : IntegrationTestBase() {
     assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
     assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
     assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+  }
+
+  @Test
+  fun `get criminogenic needs by crn with timeframe query param matches the deprecated path variant`() {
+    val timeframe = 70L
+    val fromQueryParam = webTestClient.get().uri("/needs/crn/$crn?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    val fromPath = webTestClient.get().uri("/needs/crn/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(fromQueryParam).isEqualTo(fromPath)
+  }
+
+  @Test
+  fun `get criminogenic needs by crn with timeframe query param not found`() {
+    val timeframe = 5L
+    webTestClient.get().uri("/needs/crn/$crn?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get criminogenic needs by crn without timeframe query param uses the default timeframe`() {
+    val fromDefault = webTestClient.get().uri("/needs/crn/$crn")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    val fromExplicitDefault = webTestClient.get().uri("/needs/crn/$crn?timeframe=$DEFAULT_TIMEFRAME_WEEKS")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<AssessmentNeedsDto>()
+      .returnResult().responseBody
+
+    assertThat(fromDefault).isEqualTo(fromExplicitDefault)
+  }
+
+  @Test
+  fun `get criminogenic needs by crn with invalid timeframe query param returns bad request`() {
+    webTestClient.get().uri("/needs/crn/$crn?timeframe=notANumber")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isBadRequest
   }
 
   @Test
@@ -413,6 +470,35 @@ class AssessmentControllerTest : IntegrationTestBase() {
   fun `get san signal within timeframe not found`() {
     val timeframe = 5L
     val response = webTestClient.get().uri("/san-indicator/crn/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get san signal with timeframe query param matches the deprecated path variant`() {
+    val timeframe = 70L
+    val fromQueryParam = webTestClient.get().uri("/san-indicator/crn/$crn?timeframe=$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<SanIndicatorResponse>()
+      .returnResult().responseBody
+
+    val fromPath = webTestClient.get().uri("/san-indicator/crn/$crn/$timeframe")
+      .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody<SanIndicatorResponse>()
+      .returnResult().responseBody
+
+    assertThat(fromQueryParam).isEqualTo(fromPath)
+  }
+
+  @Test
+  fun `get san signal with timeframe query param not found`() {
+    val timeframe = 5L
+    webTestClient.get().uri("/san-indicator/crn/$crn?timeframe=$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
