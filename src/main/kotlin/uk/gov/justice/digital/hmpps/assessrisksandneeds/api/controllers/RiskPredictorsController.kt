@@ -18,39 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.RiskPredictorService
 
 @RestController
 class RiskPredictorsController(private val riskPredictorService: RiskPredictorService) {
-  @Deprecated("Use /risks/predictors/rsr/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
-  @RequestMapping(path = ["/risks/crn/{crn}/predictors/rsr/history"], method = [RequestMethod.GET])
-  @Operation(
-    description = """
-    Gets RSR score history for a CRN
-    Deprecated endpoint.
-    Please use /risks/predictors/rsr/{identifierType}/{identifierValue} instead.
-    This endpoint will be removed in a future release.
-    """,
-    deprecated = true,
-  )
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "403", description = "Unauthorized"),
-      ApiResponse(responseCode = "200", description = "OK"),
-    ],
-  )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
-  fun getRsrScoresByCrn(
-    @Parameter(description = "CRN", required = true)
-    @PathVariable
-    crn: String,
-  ): List<RsrPredictorDto> {
-    log.info("Retrieving RSR score history for crn: $crn")
-    return riskPredictorService.getAllRsrHistory(crn)
-  }
 
   @RequestMapping(path = ["/risks/predictors/rsr/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
   @Operation(description = GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_DESC)
@@ -85,36 +57,6 @@ class RiskPredictorsController(private val riskPredictorService: RiskPredictorSe
     @PathVariable
     identifierValue: String,
   ): List<RsrPredictorVersioned<Any>> = riskPredictorService.getAllRsrScores(identifierType, identifierValue)
-
-  @Deprecated("Use /risks/predictors/all/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
-  @RequestMapping(path = ["/risks/crn/{crn}/predictors/all"], method = [RequestMethod.GET])
-  @Operation(
-    description = """
-    Gets risk predictors scores for all latest completed assessments from the last 1 year
-    Deprecated endpoint.
-    Please use /risks/predictors/all/{identifierType}/{identifierValue} instead.
-    This endpoint will be removed in a future release.
-    """,
-    deprecated = true,
-  )
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "403",
-        description = "User does not have permission to access offender with provided CRN",
-      ),
-      ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
-      ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
-      ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
-      ApiResponse(responseCode = "401", description = "Unauthorised"),
-      ApiResponse(responseCode = "200", description = "OK"),
-    ],
-  )
-  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_RISK_RESETTLEMENT_PASSPORT_RO', 'ROLE_RISK_INTEGRATIONS_RO', 'ROLE_ACCREDITED_PROGRAMS_RO', 'ROLE_ARNS__MANAGE_PEOPLE_ON_PROBATION__RO')")
-  fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> {
-    log.info("Entered getAllRiskScores for crn: $crn")
-    return riskPredictorService.getAllRiskScores(crn)
-  }
 
   @RequestMapping(path = ["/risks/predictors/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
   @Operation(description = GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC)

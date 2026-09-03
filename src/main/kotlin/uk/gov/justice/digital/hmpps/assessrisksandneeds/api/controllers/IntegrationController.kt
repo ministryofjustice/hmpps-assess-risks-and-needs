@@ -22,7 +22,6 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeed
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AssessmentNeedsService
@@ -40,32 +39,6 @@ class IntegrationController(
   private val riskManagementPlanService: RiskManagementPlanService,
   private val assessmentOffenceService: AssessmentOffenceService,
 ) {
-  @Deprecated("Use /risks/predictors/unsafe/all/{identifierType}/{identifierValue}. This endpoint will be removed in a future release.")
-  @RequestMapping(path = ["/risks/predictors/{crn}"], method = [RequestMethod.GET])
-  @Operation(
-    description = """
-    Gets risk predictors scores for all latest completed assessments from the last 1 year
-    Deprecated endpoint.
-    Please use /risks/predictors/all/{identifierType}/{identifierValue} instead.
-    This endpoint will be removed in a future release.
-    """,
-    deprecated = true,
-  )
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "403",
-        description = "User does not have permission to access offender with provided CRN",
-      ),
-      ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
-      ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
-      ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
-      ApiResponse(responseCode = "401", description = "Unauthorised"),
-      ApiResponse(responseCode = "200", description = "OK"),
-    ],
-  )
-  @PreAuthorize("hasRole('ROLE_ARNS__RISKS__RO')")
-  fun getAllRiskScores(@PathVariable crn: String): List<RiskScoresDto> = riskPredictorService.getAllRiskScoresWithoutLaoCheck(crn)
 
   @RequestMapping(path = ["/risks/predictors/unsafe/all/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
   @Operation(description = GET_ALL_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC)
