@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers
 
+const val TIMEFRAME_QUERY_PARAM_DESC =
+  "Only consider assessments from within this many weeks. Defaults to 55 weeks when omitted."
+
 const val GET_ALL_RSR_SCORES_BY_IDENTIFIER_TYPE_DESC =
   """# Gets Combined Serious Reoffending Predictor scores for an identifier type (e.g. CRN)
 

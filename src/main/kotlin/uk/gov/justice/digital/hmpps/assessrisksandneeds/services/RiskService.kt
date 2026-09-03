@@ -22,7 +22,7 @@ class RiskService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getRoshRisksByCrn(crn: String, timeframe: Long = 55): AllRoshRiskDto {
+  fun getRoshRisksByCrn(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS): AllRoshRiskDto {
     log.info("Get Rosh Risk for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS, mapOf("crn" to crn))
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
@@ -33,7 +33,7 @@ class RiskService(
     ) ?: AllRoshRiskDto.empty
   }
 
-  fun getRoshRisksWithoutLaoCheck(crn: String, timeframe: Long = 55): AllRoshRiskDto {
+  fun getRoshRisksWithoutLaoCheck(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS): AllRoshRiskDto {
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS, mapOf("crn" to crn))
     return oasysApiRestClient.getRoshDetailForLatestCompletedAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
@@ -41,7 +41,7 @@ class RiskService(
     ) ?: AllRoshRiskDto.empty
   }
 
-  fun getFulltextRoshRisksByCrn(crn: String, timeframe: Long = 55): AllRoshRiskDto {
+  fun getFulltextRoshRisksByCrn(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS): AllRoshRiskDto {
     log.info("Get Full Text Rosh Risk for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_FULLTEXT, mapOf("crn" to crn))
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
@@ -52,7 +52,7 @@ class RiskService(
     ) ?: AllRoshRiskDto.empty
   }
 
-  fun getRoshRiskSummaryByCrn(crn: String, timeframe: Long = 55): RiskRoshSummaryDto {
+  fun getRoshRiskSummaryByCrn(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS): RiskRoshSummaryDto {
     log.info("Get Rosh Risk summary for crn $crn")
     auditService.sendEvent(EventType.ACCESSED_ROSH_RISKS_SUMMARY, mapOf("crn" to crn))
     communityClient.verifyUserAccess(crn, RequestData.getUserName())
@@ -69,7 +69,7 @@ class RiskService(
     return null
   }
 
-  fun getRoshRiskWidgetDataForCrn(crn: String, timeframe: Long = 55): RoshRiskWidgetDto {
+  fun getRoshRiskWidgetDataForCrn(crn: String, timeframe: Long = DEFAULT_TIMEFRAME_WEEKS): RoshRiskWidgetDto {
     log.info("Get Rosh Risk widget data for crn $crn")
     return oasysApiRestClient.getRoshDetailForLatestCompletedAssessment(
       PersonIdentifier(PersonIdentifier.Type.CRN, crn),
