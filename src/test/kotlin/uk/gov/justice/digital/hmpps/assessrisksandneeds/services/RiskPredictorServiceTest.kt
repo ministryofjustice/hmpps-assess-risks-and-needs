@@ -4,23 +4,28 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CaseAccess
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource.OASYS
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.HIGH
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.LOW
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel.MEDIUM
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.AllPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
@@ -35,6 +40,9 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOvpD
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssOasysRiskPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorScoresDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorsDto
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -513,6 +521,148 @@ class RiskPredictorServiceTest {
 
       // Then
       assertThat(result[0].assessmentType).isEqualTo(AssessmentType.STANDALONE)
+    }
+
+    @Test
+    fun `should return tier risk predictors for the latest eligible assessment`() {
+      // Given
+      val crn = "X12345"
+      val initiationDate = LocalDateTime.of(2025, 1, 1, 12, 0)
+      val completedDate = LocalDateTime.of(2025, 1, 4, 12, 0)
+      val assessment = BasicAssessmentSummary(2, initiationDate, completedDate, "LAYER3", "COMPLETE")
+      val providedOutput = provideOutput(completedDate, "6", true)
+
+      every {
+        oasysApiClient.getAssessmentTimeline(PersonIdentifier.from("crn", crn))
+      }.returns(
+        Timeline(
+          listOf(
+            BasicAssessmentSummary(1, initiationDate.plusDays(1), completedDate.minusDays(1), "LAYER1", "COMPLETE"),
+            assessment,
+            assessment.copy(assessmentId = 3, completedDate = completedDate.plusDays(1), assessmentType = "LAYER2"),
+            assessment.copy(assessmentId = 4, completedDate = completedDate.plusDays(2), status = "LOCKED_INCOMPLETE"),
+          ),
+        ),
+      )
+      every {
+        oasysApiClient.getTierRiskPredictors(assessment.assessmentId, AssessmentType.LAYER3)
+      }.returns(
+        TierPredictorsDto(
+          TierPredictorScoresDto(
+            providedOutput.rsrScoreDto,
+            providedOutput.ospScoreDto,
+            checkNotNull(providedOutput.newAllPredictorScoresDto),
+          ),
+          listOf(
+            TierPredictorAssessmentDto(assessment.assessmentId, AssessmentStatus.COMPLETE, "LAYER3", initiationDate, completedDate),
+          ),
+        ),
+      )
+
+      // When
+      val result = riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
+
+      // Then
+      assertThat(result.completedDate).isEqualTo(completedDate)
+      assertThat(result.status).isEqualTo(AssessmentStatus.COMPLETE)
+      assertThat(result.assessmentType).isEqualTo(AssessmentType.LAYER3)
+      assertThat(result.outputVersion).isEqualTo("2")
+      with(checkNotNull(result.output)) {
+        assertThat(allReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(10.23))
+        assertThat(allReoffendingPredictor?.band).isEqualTo(HIGH)
+        assertThat(allReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+
+        assertThat(violentReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(10.34))
+        assertThat(violentReoffendingPredictor?.band).isEqualTo(HIGH)
+        assertThat(violentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+
+        assertThat(seriousViolentReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(40.23))
+        assertThat(seriousViolentReoffendingPredictor?.band).isEqualTo(HIGH)
+        assertThat(seriousViolentReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+
+        assertThat(directContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(2.81))
+        assertThat(directContactSexualReoffendingPredictor?.band).isEqualTo(MEDIUM)
+
+        assertThat(indirectImageContactSexualReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.07))
+        assertThat(indirectImageContactSexualReoffendingPredictor?.band).isEqualTo(MEDIUM)
+
+        assertThat(combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(50.1234))
+        assertThat(combinedSeriousReoffendingPredictor?.band).isEqualTo(MEDIUM)
+        assertThat(combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
+        assertThat(combinedSeriousReoffendingPredictor?.algorithmVersion).isEqualTo("6")
+      }
+      verify(exactly = 1) { auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf("crn" to crn)) }
+      verify(exactly = 0) { communityApiRestClient.verifyUserAccess(any(), any()) }
+    }
+
+    @Test
+    fun `should throw not found when the latest open standalone assessment has no tier risk predictors`() {
+      // Given
+      val crn = "X12345"
+      val initiationDate = LocalDateTime.of(2025, 1, 1, 12, 0)
+      every {
+        oasysApiClient.getAssessmentTimeline(PersonIdentifier.from("crn", crn))
+      }.returns(
+        Timeline(
+          listOf(
+            BasicAssessmentSummary(2, initiationDate.plusDays(2), null, "STANDALONE", "OPEN"),
+            BasicAssessmentSummary(1, initiationDate, initiationDate.plusDays(1), "LAYER3", "COMPLETE"),
+          ),
+        ),
+      )
+      every { oasysApiClient.getTierRiskPredictors(2, AssessmentType.STANDALONE) }.returns(null)
+
+      // When
+      val exception = assertThrows<NoSuchElementException> {
+        riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
+      }
+
+      // Then
+      assertThat(exception.message).isEqualTo("Tier risk predictors for assessment not found")
+      verify(exactly = 1) { oasysApiClient.getTierRiskPredictors(2, AssessmentType.STANDALONE) }
+    }
+
+    @Test
+    fun `should throw not found when no assessment timeline exists for tier risk scores`() {
+      // Given
+      val crn = "X12345"
+      every { oasysApiClient.getAssessmentTimeline(PersonIdentifier.from("crn", crn)) }.returns(null)
+
+      // When
+      val exception = assertThrows<NoSuchElementException> {
+        riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
+      }
+
+      // Then
+      assertThat(exception.message).isEqualTo("Tier risk predictors for assessment not found")
+      verify(exactly = 0) { oasysApiClient.getTierRiskPredictors(any(), any()) }
+    }
+
+    @Test
+    fun `should throw not found when no eligible assessments exist for tier risk scores`() {
+      // Given
+      val crn = "X12345"
+      val initiationDate = LocalDateTime.of(2025, 1, 1, 12, 0)
+      val completedDate = initiationDate.plusDays(1)
+      every {
+        oasysApiClient.getAssessmentTimeline(PersonIdentifier.from("crn", crn))
+      }.returns(
+        Timeline(
+          listOf(
+            BasicAssessmentSummary(1, initiationDate, completedDate, "LAYER3", "LOCKED_INCOMPLETE"),
+            BasicAssessmentSummary(2, initiationDate, completedDate, "LAYER2", "COMPLETE"),
+          ),
+        ),
+      )
+
+      // When
+      val exception = assertThrows<NoSuchElementException> {
+        riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
+      }
+
+      // Then
+      assertThat(exception.message).isEqualTo("Tier risk predictors for assessment not found")
+      verify(exactly = 0) { oasysApiClient.getTierRiskPredictors(any(), any()) }
     }
   }
 

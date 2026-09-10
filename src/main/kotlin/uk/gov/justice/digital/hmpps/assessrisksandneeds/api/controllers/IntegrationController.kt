@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
@@ -81,6 +82,45 @@ class IntegrationController(
     @RequestParam(defaultValue = "false")
     includeStandaloneAssessments: Boolean = false,
   ): List<AllPredictorVersioned<Any>> = riskPredictorService.getAllRiskScoresWithoutLaoCheck(identifierType, identifierValue, includeStandaloneAssessments)
+
+  @RequestMapping(path = ["/risks/predictors/unsafe/tier/{identifierType}/{identifierValue}"], method = [RequestMethod.GET])
+  @Operation(description = GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC)
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "403", description = "User does not have permission to access offender with provided CRN"),
+      ApiResponse(responseCode = "404", description = "Risk data does not exist for CRN"),
+      ApiResponse(responseCode = "404", description = "Offender does not exist in Delius for provided CRN"),
+      ApiResponse(responseCode = "404", description = "User does not exist in Delius for provided user name"),
+      ApiResponse(responseCode = "401", description = "Unauthorised"),
+      ApiResponse(responseCode = "400", description = "Bad request"),
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = [
+          Content(
+            array = ArraySchema(schema = Schema(ref = "AllPredictorVersionedUnion")),
+            mediaType = "application/json",
+            examples = [
+              ExampleObject(
+                name = "Latest risk predictor scores, including from open assessments and with offence-free month recalculation.",
+                summary = "Latest risk predictor scores",
+                value = GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_ARNS__RISKS__RO')")
+  fun getTierPredictors(
+    @Parameter(description = "Identifier type (e.g. crn)", required = true)
+    @PathVariable
+    identifierType: IdentifierType,
+    @Parameter(description = "Identifier Value", required = true)
+    @PathVariable
+    identifierValue: String,
+  ): AllPredictorVersionedDto = riskPredictorService.getTierRiskScoresWithoutLaoCheck(identifierType, identifierValue)
 
   @RequestMapping(path = ["/risks/rosh/{crn}"], method = [RequestMethod.GET])
   @Operation(

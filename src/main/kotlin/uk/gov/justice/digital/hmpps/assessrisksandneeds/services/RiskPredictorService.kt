@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.IdentifierType
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.PersonIdentifier
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
@@ -80,6 +83,26 @@ class RiskPredictorService(
         }
       }
       .orEmpty()
+  }
+
+  fun getTierRiskScoresWithoutLaoCheck(
+    identifierType: IdentifierType,
+    identifierValue: String,
+  ): AllPredictorVersionedDto {
+    log.debug("Entered getTierRiskScoresWithoutLaoCheck for ${identifierType.value}: $identifierValue")
+    auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf(identifierType.value to identifierValue))
+    return oasysClient.getAssessmentTimeline(PersonIdentifier.from(identifierType.value, identifierValue))?.timeline
+      ?.filter {
+        it.status != AssessmentStatus.LOCKED_INCOMPLETE.name && it.assessmentType in listOfNotNull(
+          AssessmentType.LAYER3.name,
+          AssessmentType.LAYER1.name,
+          AssessmentType.STANDALONE.name,
+        )
+      }
+      ?.maxByOrNull { it.completedDate ?: checkNotNull(it.initiationDate) { "Assessment with no initiation date" } }
+      ?.let { oasysClient.getTierRiskPredictors(it.assessmentId, AssessmentType.valueOf(it.assessmentType)) }
+      ?.let { AllPredictorVersionedDto.from(it) }
+      ?: throw NoSuchElementException("Tier risk predictors for assessment not found")
   }
 
   fun getAllRiskScoresByAssessmentId(id: Long): AllPredictorVersioned<Any> {

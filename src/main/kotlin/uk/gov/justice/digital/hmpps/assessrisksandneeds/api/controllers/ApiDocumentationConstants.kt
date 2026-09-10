@@ -732,3 +732,36 @@ const val GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION = """
     "assessedOn": "2025-09-10T09:58:12"
 }
 """
+
+const val GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC = /* language=markdown */
+"""# Gets the latest CSRP, ARP, and DC-SRP risk predictor scores for open or completed assessments for an identifier type (e.g. CRN)
+
+Returns a single OGRS4 generation assessment containing CSRP, ARP, and DC-SRP predictor scores, with offence-free months adjustments taken into account.
+The assessment may be work in progress or complete.
+The assessment will only have predictor scores in the new (OGRS4 generation) format. Older OGRS3 assessments will be recalculated into the OGRS4 format on-the-fly.
+"""
+
+const val GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = /* language=json */ """
+{
+  "status": "OPEN",
+  "assessmentType": "LAYER3",
+  "outputVersion": "2",
+  "output": {
+    "allReoffendingPredictor": {
+      "staticOrDynamic": "DYNAMIC",
+      "score": 4.41,
+      "band": "LOW"
+    },
+    "directContactSexualReoffendingPredictor": {
+      "score": 0.02,
+      "band": "LOW"
+    },
+    "combinedSeriousReoffendingPredictor": {
+      "algorithmVersion": "6",
+      "staticOrDynamic": "DYNAMIC",
+      "score": 0.17,
+      "band": "LOW"
+    }
+  }
+}
+"""
