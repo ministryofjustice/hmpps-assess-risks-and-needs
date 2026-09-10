@@ -733,7 +733,8 @@ const val GET_NEEDS_BY_CRN_SAN_ASSESSMENT_VERSION = """
 }
 """
 
-const val GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC = /* language=markdown */
+// language=markdown
+const val GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_DESC =
 """# Gets the latest risk predictor scores for use by the Tiering service
 
 Returns a single OGRS4 generation assessment containing CSRP, ARP, and DC-SRP predictor scores, with offence-free months adjustments taken into account.
@@ -741,7 +742,9 @@ The assessment may be work in progress or complete.
 The assessment will only have predictor scores in the new (OGRS4 generation) format. Older OGRS3 assessments will be recalculated into the OGRS4 format on-the-fly.
 """
 
-const val GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE = /* language=json */ """
+// language=json
+const val GET_TIER_RISK_SCORES_BY_IDENTIFIER_TYPE_EXAMPLE =
+"""
 {
   "status": "OPEN",
   "assessmentType": "LAYER3",
