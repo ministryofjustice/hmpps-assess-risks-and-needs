@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.AllPredictorDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.AllRisksPredictorAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorsDto
 import java.time.LocalDateTime
 
 data class AllPredictorVersionedDto(
@@ -24,5 +25,14 @@ data class AllPredictorVersionedDto(
     fun from(assessment: RisksCrAssPredictorAssessmentDto): AllPredictorVersionedDto = AllPredictorVersionedDto(
       output = AllPredictorDto.from(assessment),
     )
+    fun from(response: TierPredictorsDto): AllPredictorVersionedDto {
+      val assessment = response.assessments.first()
+      return AllPredictorVersionedDto(
+        completedDate = assessment.dateCompleted,
+        status = assessment.assessmentStatus,
+        assessmentType = AssessmentType.valueOf(assessment.assessmentType),
+        output = AllPredictorDto.from(response.tierPredictors),
+      )
+    }
   }
 }

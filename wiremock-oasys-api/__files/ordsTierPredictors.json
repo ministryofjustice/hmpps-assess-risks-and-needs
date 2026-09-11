@@ -1,0 +1,31 @@
+{
+  "tierPredictors": {
+    "rsr": {
+      "rsrStaticOrDynamic": "DYNAMIC",
+      "rsrAlgorithmVersion": 6,
+      "rsrPercentageScore": 0.93,
+      "rsrScoreLevel": "Low"
+    },
+    "osp": {
+      "ospDirectContactPercentageScore": 2.81,
+      "ospDirectContactScoreLevel": "Medium"
+    },
+    "newActuarialPredictors": {
+      "ogrs4gYr2": null,
+      "ogrs4gBand": null,
+      "ogrs4gCalculated": "N",
+      "ogp2Yr2": 26.88,
+      "ogp2Band": "Low",
+      "ogp2Calculated": "Y"
+    }
+  },
+  "assessments": [
+    {
+      "assessmentPk": 45115261,
+      "assessmentStatus": "COMPLETE",
+      "assessmentType": "LAYER1",
+      "initiationDate": "2023-12-19T13:41:04",
+      "dateCompleted": "2024-12-19T16:57:25"
+    }
+  ]
+}

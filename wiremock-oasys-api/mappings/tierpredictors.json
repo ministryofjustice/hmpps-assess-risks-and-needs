@@ -1,0 +1,18 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/eor/oasys/ass/tierpredictors/ALLOW/45115261:O",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "bodyFileName": "ordsTierPredictors.json",
+        "transformers": ["response-template"]
+      }
+    }
+  ]
+}

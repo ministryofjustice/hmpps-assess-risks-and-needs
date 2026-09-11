@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshConta
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshFull
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshScreening
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RoshSummary
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorsDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysSection1
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.ScoredSection
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
@@ -180,6 +181,34 @@ class OasysApiRestClient(
       }
       .bodyToMono(RisksCrAssOasysRiskPredictorsDto::class.java)
       .block().also { log.info("Retrieved risk predictor scores for Assessment ID $id") }
+  }
+
+  fun getTierRiskPredictors(id: Long, type: AssessmentType): TierPredictorsDto? {
+    val recordType = if (type == AssessmentType.STANDALONE) "R" else "O"
+    val path = "/ass/tierpredictors/ALLOW/$id:$recordType"
+    return webClient
+      .get(path)
+      .retrieve()
+      .onStatus({ it.is4xxClientError }) {
+        log.error("4xx Error retrieving tier predictor scores for Assessment ID $id: ${it.statusCode().value()}")
+        handle4xxError(
+          it,
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .onStatus({ it.is5xxServerError }) {
+        log.error("5xx Error retrieving tier predictor scores for Assessment ID $id: ${it.statusCode().value()}")
+        handle5xxError(
+          "Failed to retrieve tier predictor scores for Assessment ID $id",
+          HttpMethod.GET,
+          path,
+          ExternalService.ASSESSMENTS_API,
+        )
+      }
+      .bodyToMono<TierPredictorsDto>()
+      .block().also { log.info("Retrieved tier predictor scores for Assessment ID $id") }
   }
 
   fun getAssessmentTimeline(

@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysNewA
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysOspDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.OasysRsrDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorScoresDto
 import java.math.BigDecimal
 
 data class AllPredictorDto(
@@ -29,6 +30,14 @@ data class AllPredictorDto(
     }
 
     fun from(assessment: RisksCrAssPredictorAssessmentDto): AllPredictorDto = with(assessment) {
+      buildAllPredictorDto(
+        newAllPredictorScoresDto,
+        ospScoreDto,
+        rsrScoreDto,
+      )
+    }
+
+    fun from(assessment: TierPredictorScoresDto): AllPredictorDto = with(assessment) {
       buildAllPredictorDto(
         newAllPredictorScoresDto,
         ospScoreDto,

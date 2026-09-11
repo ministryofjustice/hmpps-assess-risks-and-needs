@@ -795,4 +795,62 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isBadRequest
   }
+
+  @Test
+  fun `should return tier risk data for valid crn`() {
+    webTestClient.get()
+      .uri("/risks/predictors/unsafe/tier/crn/X234567")
+      .header("Content-Type", "application/json")
+      .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isEqualTo(HttpStatus.OK)
+      .expectBody<AllPredictorVersionedDto>()
+      .consumeWith {
+        assertThat(it.responseBody).usingRecursiveComparison()
+          .isEqualTo(
+            AllPredictorVersionedDto(
+              completedDate = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
+              status = AssessmentStatus.COMPLETE,
+              assessmentType = AssessmentType.LAYER1,
+              outputVersion = "2",
+              output = AllPredictorDto(
+                allReoffendingPredictor = StaticOrDynamicPredictorDto(
+                  staticOrDynamic = ScoreType.DYNAMIC,
+                  score = BigDecimal.valueOf(26.88),
+                  band = ScoreLevel.LOW,
+                ),
+                violentReoffendingPredictor = StaticOrDynamicPredictorDto(),
+                seriousViolentReoffendingPredictor = StaticOrDynamicPredictorDto(),
+                directContactSexualReoffendingPredictor = BasePredictorDto(
+                  score = BigDecimal.valueOf(2.81),
+                  band = ScoreLevel.MEDIUM,
+                ),
+                indirectImageContactSexualReoffendingPredictor = BasePredictorDto(),
+                combinedSeriousReoffendingPredictor = VersionedStaticOrDynamicPredictorDto(
+                  algorithmVersion = "6",
+                  staticOrDynamic = ScoreType.DYNAMIC,
+                  score = BigDecimal.valueOf(0.93),
+                  band = ScoreLevel.LOW,
+                ),
+              ),
+            ),
+          )
+      }
+  }
+
+  @Test
+  fun `should return not found error for invalid crn for tier risk scores`() {
+    webTestClient.get().uri("/risks/predictors/unsafe/tier/crn/NOT_FOUND")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `should return 400 bad request for invalid identifier type for tier risk scores`() {
+    webTestClient.get().uri("/risks/predictors/unsafe/tier/INVALID_IDENTIFIER_TYPE/X234567")
+      .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
+      .exchange()
+      .expectStatus().isBadRequest
+  }
 }
