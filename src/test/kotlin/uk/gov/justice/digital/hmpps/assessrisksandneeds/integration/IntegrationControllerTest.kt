@@ -810,7 +810,6 @@ class IntegrationControllerTest : IntegrationTestBase() {
           .isEqualTo(
             AllPredictorVersionedDto(
               completedDate = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-              status = AssessmentStatus.COMPLETE,
               assessmentType = AssessmentType.LAYER1,
               outputVersion = "2",
               output = AllPredictorDto(

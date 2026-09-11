@@ -554,7 +554,7 @@ class RiskPredictorServiceTest {
             checkNotNull(providedOutput.newAllPredictorScoresDto),
           ),
           listOf(
-            TierPredictorAssessmentDto(assessment.assessmentId, AssessmentStatus.COMPLETE, "LAYER3", initiationDate, completedDate),
+            TierPredictorAssessmentDto(assessment.assessmentId, "OPEN", "LAYER3", initiationDate, completedDate),
           ),
         ),
       )
@@ -564,7 +564,6 @@ class RiskPredictorServiceTest {
 
       // Then
       assertThat(result.completedDate).isEqualTo(completedDate)
-      assertThat(result.status).isEqualTo(AssessmentStatus.COMPLETE)
       assertThat(result.assessmentType).isEqualTo(AssessmentType.LAYER3)
       assertThat(result.outputVersion).isEqualTo("2")
       with(checkNotNull(result.output)) {

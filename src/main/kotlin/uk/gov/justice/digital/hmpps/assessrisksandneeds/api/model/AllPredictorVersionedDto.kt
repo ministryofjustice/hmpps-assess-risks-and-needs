@@ -29,7 +29,6 @@ data class AllPredictorVersionedDto(
       val assessment = response.assessments.first()
       return AllPredictorVersionedDto(
         completedDate = assessment.dateCompleted,
-        status = assessment.assessmentStatus,
         assessmentType = AssessmentType.valueOf(assessment.assessmentType),
         output = AllPredictorDto.from(response.tierPredictors),
       )
