@@ -1,13 +1,13 @@
 {
   "role": {
-    "name": "hmpps-assess-risks-and-needs"
+    "name": "hmpps-arns-assessment-platform-api"
   },
   "customDimensions": {
     "service.version": "${BUILD_NUMBER}"
   },
   "instrumentation": {
     "logging": {
-      "level": "WARN"
+      "level": "DEBUG"
     }
   },
   "selfDiagnostics": {
@@ -25,7 +25,7 @@
             "matchType": "regexp"
           }
         ],
-        "percentage": 10
+        "percentage": 100
       }
     ]
   }

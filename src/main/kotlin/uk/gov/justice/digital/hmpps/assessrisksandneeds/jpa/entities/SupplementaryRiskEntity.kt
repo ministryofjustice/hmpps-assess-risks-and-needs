@@ -1,13 +1,13 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.jpa.entities
 
-import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.hibernate.annotations.Type
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -40,7 +40,7 @@ class SupplementaryRiskEntity(
   @Column(name = "CREATED_BY")
   val createdBy: String,
 
-  @Type(JsonType::class)
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb", name = "RISK_ANSWERS")
   val riskAnswers: Map<String, Any> = mutableMapOf(),
 

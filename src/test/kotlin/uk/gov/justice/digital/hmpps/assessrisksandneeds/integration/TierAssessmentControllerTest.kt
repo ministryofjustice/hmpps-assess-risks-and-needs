@@ -1,17 +1,20 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @DisplayName("Tier calculation information tests")
 class TierAssessmentControllerTest : IntegrationTestBase() {
+  private val objectMapper = ObjectMapper()
+
   @Test
   fun `successfully returns the answers required for a tier calculation`() {
     val response = checkNotNull(
@@ -20,9 +23,9 @@ class TierAssessmentControllerTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_MANAGEMENT_TIER_UPDATE")))
         .exchange()
         .expectStatus().isOk
-        .expectBody<JsonNode>()
+        .expectBody<String>()
         .returnResult().responseBody,
-    )
+    ).let(objectMapper::readTree)
     val assessmentSummary = checkNotNull(response["assessment"])
     assertThat(assessmentSummary["assessmentId"].asInt(), equalTo(9630348))
     assertThat(assessmentSummary["completedDate"].asText(), equalTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25).toString()))

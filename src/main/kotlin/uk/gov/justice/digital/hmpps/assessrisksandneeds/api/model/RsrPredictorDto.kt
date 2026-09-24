@@ -54,8 +54,6 @@ data class RsrPredictorDto(
       }
     }
 
-    fun fromVersioned(oasysPredictorsDtos: List<AllRisksPredictorAssessmentDto>): List<RsrPredictorDto> = oasysPredictorsDtos.map { fromVersioned(it) }
-
     fun fromVersioned(oasysPredictorsDto: AllRisksPredictorAssessmentDto): RsrPredictorDto {
       with(oasysPredictorsDto) {
         return RsrPredictorDto(

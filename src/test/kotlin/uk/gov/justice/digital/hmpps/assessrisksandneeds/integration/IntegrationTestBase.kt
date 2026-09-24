@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -14,6 +15,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.TestClockConfigur
 import java.time.Duration
 
 @ContextConfiguration
+@AutoConfigureWebTestClient
 @SpringBootTest(
   classes = [HmppsAssessRisksAndNeeds::class, TestClockConfiguration::class],
   webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,

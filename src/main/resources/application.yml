@@ -1,19 +1,23 @@
 info.app:
-  name: Hmpps Assess Risks And Needs
+  name: HMPPS Assess Risks And Needs
   version: 1.0
 
 spring:
   application:
     name: hmpps-assess-risks-and-needs
-  codec:
-    max-in-memory-size: 10MB
+  http:
+    codecs:
+      max-in-memory-size: 10MB
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
     deserialization:
       fail-on-ignored-properties: false
+    mapper:
+      # Jackson 3 changed this default from true (Jackson 2 behaviour) to false. Restoring it ensures fields with
+      # no @JsonView annotation are always serialised, regardless of any active view - see
+      # SecurityJsonViewControllerAdvice for where views are applied.
+      default-view-inclusion: true
 
   security:
     oauth2:
@@ -41,11 +45,13 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
+          jwk-set-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/.well-known/jwks.json
 
   datasource:
     url: 'jdbc:postgresql://${database.endpoint:localhost:5432}/${database.name:postgres}?currentSchema=${database.schema.name:hmppsassessrisksandneedsapi}&stringtype=unspecified'
     username: ${database.username:root}
     password: ${database.password:dev}
+    driver-class-name: org.postgresql.Driver
 
   flyway:
     schemas: hmppsassessrisksandneedsapi
@@ -67,6 +73,9 @@ spring:
     group:
       test:
         - "stdout"
+  web:
+    error:
+      include-message: always
 
 server:
   port: 8080
@@ -79,8 +88,7 @@ server:
       protocol-header: x-forwarded-proto
       internal-proxies: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1|100\.6[4-9]\.\d{1,3}\.\d{1,3}|100\.[7-9][0-9]{1}\.\d{1,3}\.\d{1,3}|100\.1[0-1][0-9]{1}\.\d{1,3}\.\d{1,3}|100\.12[0-7]\.\d{1,3}\.\d{1,3}
   shutdown: graceful
-  error:
-    include-message: always
+
 web:
   client:
     connect-timeout-ms: 100000
@@ -105,15 +113,6 @@ management:
     info:
       cache:
         time-to-live: 2000ms
-
-azure:
-  application-insights:
-    web:
-      enable-W3C: true
-
-graceful:
-  shutdown:
-    enabled: true
 
 logging:
   level:

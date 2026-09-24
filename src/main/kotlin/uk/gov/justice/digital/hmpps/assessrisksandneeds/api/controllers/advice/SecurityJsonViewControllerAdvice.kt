@@ -1,44 +1,49 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.api.controllers.advice
 
+import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJacksonValue
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import org.springframework.web.servlet.mvc.method.annotation.AbstractMappingJacksonResponseBodyAdvice
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.View
-import java.util.stream.Collectors
 
 @RestControllerAdvice
-internal class SecurityJsonViewControllerAdvice : AbstractMappingJacksonResponseBodyAdvice() {
-  override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean = super.supports(returnType, converterType) &&
-    returnType.declaringClass.packageName.startsWith("uk.gov.justice.digital.hmpps.assessrisksandneeds")
+internal class SecurityJsonViewControllerAdvice : ResponseBodyAdvice<Any> {
+  // Applying the active view to endpoints without any @JsonView usage is harmless: with
+  // spring.jackson.mapper.default-view-inclusion=true (see application.yml), fields without a @JsonView
+  // annotation are always serialised regardless of the active view.
+  override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean = returnType.declaringClass.packageName.startsWith("uk.gov.justice.digital.hmpps.assessrisksandneeds")
 
-  override fun beforeBodyWriteInternal(
-    bodyContainer: MappingJacksonValue,
-    contentType: MediaType?,
-    returnType: MethodParameter?,
-    request: ServerHttpRequest?,
-    response: ServerHttpResponse?,
-  ) {
-    if (SecurityContextHolder.getContext().authentication != null &&
-      SecurityContextHolder.getContext().authentication.authorities != null
-    ) {
-      val authorities = SecurityContextHolder.getContext().authentication.authorities
-      val jsonViews = authorities.stream()
-        .map { obj: GrantedAuthority -> obj.authority }
-        .filter { it.equals(View.Role.ROLE_CRS_PROVIDER.name) || it.equals(View.Role.ROLE_PROBATION.name) }
-        .map<Any>(View.Role::valueOf)
-        .map<Any>(View.roleMap::get)
-        .collect(Collectors.toList())
-      if (jsonViews.size == 1) {
-        bodyContainer.serializationView = jsonViews[0] as Class<*>?
-        return
-      }
-    }
+  // Not used: the active view is applied via determineWriteHints below, since that's the mechanism honoured by
+  // the current Jackson message converter. This method is only required to satisfy the ResponseBodyAdvice contract.
+  override fun beforeBodyWrite(
+    body: Any?,
+    returnType: MethodParameter,
+    selectedContentType: MediaType,
+    selectedConverterType: Class<out HttpMessageConverter<*>>,
+    request: ServerHttpRequest,
+    response: ServerHttpResponse,
+  ): Any? = body
+
+  // Resolves the active JsonView from the caller's role and surfaces it as a write hint, which the Jackson
+  // message converter reads to determine which @JsonView-annotated fields to include in the response.
+  override fun determineWriteHints(
+    body: Any?,
+    returnType: MethodParameter,
+    contentType: MediaType,
+    converterType: Class<out HttpMessageConverter<*>>,
+  ): Map<String, Any> {
+    val authentication = SecurityContextHolder.getContext().authentication ?: return emptyMap()
+    val jsonViews = authentication.authorities
+      .mapNotNull(GrantedAuthority::getAuthority)
+      .filter { it == View.Role.ROLE_CRS_PROVIDER.name || it == View.Role.ROLE_PROBATION.name }
+      .map { View.Role.valueOf(it) }
+      .mapNotNull { View.roleMap[it] }
+    return if (jsonViews.size == 1) mapOf(JsonView::class.java.name to jsonViews[0]) else emptyMap()
   }
 }
