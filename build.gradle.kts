@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.9"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.10"
   id("org.jetbrains.kotlin.kapt") version "2.4.20"
   kotlin("plugin.spring") version "2.4.20"
   kotlin("plugin.jpa") version "2.4.20"
@@ -41,10 +41,10 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.security:spring-security-oauth2-client")
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.2")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
-  implementation("com.zaxxer:HikariCP:7.0.2")
+  implementation("com.zaxxer:HikariCP:7.1.0")
   implementation("com.beust:klaxon:5.6")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
@@ -60,7 +60,7 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
-  testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
+  testImplementation("com.tngtech.archunit:archunit-junit5:1.5.0")
 }
 
 kotlin {
