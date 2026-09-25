@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.config.RequestData
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.CommunityApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.OasysApiRestClient
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAssPredictorAssessmentDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 
 @Service
 class RiskPredictorService(
@@ -103,7 +104,7 @@ class RiskPredictorService(
       ?.maxByOrNull { it.completedDate ?: checkNotNull(it.initiationDate) { "Assessment with no initiation date" } }
       ?.let { oasysClient.getTierRiskPredictors(it.assessmentId, AssessmentType.valueOf(it.assessmentType)) }
       ?.let { AllPredictorVersionedDto.from(it) }
-      ?: throw NoSuchElementException("Tier risk predictors for assessment not found")
+      ?: throw EntityNotFoundException("Tier risk predictors for assessment not found")
   }
 
   fun getAllRiskScoresByAssessmentId(id: Long): AllPredictorVersioned<Any> {
