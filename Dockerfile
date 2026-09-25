@@ -26,5 +26,6 @@ WORKDIR /app
 COPY --from=build --chown=appuser:appgroup /app/build/libs/hmpps-assess-risks-and-needs*.jar /app/app.jar
 COPY --from=build --chown=appuser:appgroup /app/build/libs/applicationinsights-agent*.jar /app/agent.jar
 COPY --from=build --chown=appuser:appgroup /app/applicationinsights.json /app
+COPY --from=build --chown=appuser:appgroup /app/applicationinsights.dev.json /app
 USER 2000
 ENTRYPOINT ["java", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]

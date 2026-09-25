@@ -8,6 +8,7 @@ plugins {
   id("org.jetbrains.kotlin.kapt") version "2.4.20"
   kotlin("plugin.spring") version "2.4.20"
   kotlin("plugin.jpa") version "2.4.20"
+  id("org.jetbrains.kotlinx.kover") version "0.9.9"
 }
 
 sourceSets {
@@ -63,12 +64,12 @@ dependencies {
 }
 
 kotlin {
-  jvmToolchain(21)
+  jvmToolchain(25)
 }
 
 tasks {
   withType<KotlinCompile> {
-    compilerOptions.jvmTarget = JvmTarget.JVM_21
+    compilerOptions.jvmTarget = JvmTarget.JVM_25
   }
   withType<BootRun> {
     jvmArgs = listOf(

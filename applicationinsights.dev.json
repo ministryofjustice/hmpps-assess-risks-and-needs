@@ -1,6 +1,6 @@
 {
   "role": {
-    "name": "hmpps-arns-assessment-platform-api"
+    "name": "hmpps-assess-risks-and-needs"
   },
   "customDimensions": {
     "service.version": "${BUILD_NUMBER}"
