@@ -43,6 +43,7 @@ import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.RisksCrAs
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorAssessmentDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorScoresDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.TierPredictorsDto
+import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.EntityNotFoundException
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -612,7 +613,7 @@ class RiskPredictorServiceTest {
       every { oasysApiClient.getTierRiskPredictors(2, AssessmentType.STANDALONE) }.returns(null)
 
       // When
-      val exception = assertThrows<NoSuchElementException> {
+      val exception = assertThrows<EntityNotFoundException> {
         riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
       }
 
@@ -628,7 +629,7 @@ class RiskPredictorServiceTest {
       every { oasysApiClient.getAssessmentTimeline(PersonIdentifier.from("crn", crn)) }.returns(null)
 
       // When
-      val exception = assertThrows<NoSuchElementException> {
+      val exception = assertThrows<EntityNotFoundException> {
         riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
       }
 
@@ -655,7 +656,7 @@ class RiskPredictorServiceTest {
       )
 
       // When
-      val exception = assertThrows<NoSuchElementException> {
+      val exception = assertThrows<EntityNotFoundException> {
         riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
       }
 
