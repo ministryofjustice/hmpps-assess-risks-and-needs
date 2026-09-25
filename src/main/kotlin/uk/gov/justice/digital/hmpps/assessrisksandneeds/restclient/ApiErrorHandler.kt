@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientResponse
+import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiAuthorisationException
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.exceptions.ExternalApiDuplicateOffenderRecordException
@@ -16,25 +17,25 @@ fun handle4xxError(
   method: HttpMethod,
   url: String,
   client: ExternalService,
-): Mono<out Throwable?>? = when (clientResponse.statusCode()) {
+): Mono<out Throwable> = when (clientResponse.statusCode()) {
   HttpStatus.BAD_REQUEST -> {
-    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+    clientResponse.bodyToMono<ApiErrorResponse>()
       .map { error -> ExternalApiInvalidRequestException(error.developerMessage, method, url, client) }
   }
   HttpStatus.UNAUTHORIZED -> {
-    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+    clientResponse.bodyToMono<ApiErrorResponse>()
       .map { error -> ExternalApiAuthorisationException(error.developerMessage, method, url, client) }
   }
   HttpStatus.FORBIDDEN -> {
-    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+    clientResponse.bodyToMono<ApiErrorResponse>()
       .map { error -> ExternalApiForbiddenException(error.developerMessage, method, url, client) }
   }
   HttpStatus.NOT_FOUND -> {
-    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+    clientResponse.bodyToMono<ApiErrorResponse>()
       .map { error -> ExternalApiEntityNotFoundException(error.developerMessage, method, url, client) }
   }
   HttpStatus.CONFLICT -> {
-    clientResponse.bodyToMono(ApiErrorResponse::class.java)
+    clientResponse.bodyToMono<ApiErrorResponse>()
       .map { error -> ExternalApiDuplicateOffenderRecordException(error.developerMessage, method, url, client) }
   }
   else -> handleError(clientResponse, method, url, client)
@@ -45,7 +46,7 @@ fun handle5xxError(
   method: HttpMethod,
   path: String,
   service: ExternalService,
-): Mono<out Throwable?>? = throw ExternalApiUnknownException(
+): Mono<out Throwable> = throw ExternalApiUnknownException(
   message,
   method,
   path,
@@ -57,9 +58,9 @@ fun handleError(
   method: HttpMethod,
   url: String,
   client: ExternalService,
-): Mono<out Throwable?>? {
+): Mono<out Throwable> {
   val httpStatus = clientResponse.statusCode()
-  return clientResponse.bodyToMono(String::class.java).map { error ->
+  return clientResponse.bodyToMono<String>().map { error ->
     ExternalApiUnknownException(error, method, url, client)
   }.or(
     Mono.error(

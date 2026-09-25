@@ -16,6 +16,7 @@ generic-service:
     OASYS_API_BASE_URL: https://pp.oasys.service.justice.gov.uk/eor/oasys
     SPRING_PROFILES_ACTIVE: "logstash,postgres,oasys-rsr"
     WEB_CLIENT_READ_TIMEOUT_MS: 0
+    APPLICATIONINSIGHTS_CONFIGURATION_FILE: "applicationinsights.dev.json"
 
 generic-prometheus-alerts:
   enabled: false

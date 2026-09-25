@@ -10,10 +10,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
@@ -33,7 +29,7 @@ class WebClientConfig {
   private val authenticationEnabled = true
 
   @Value("\${web.client.connect-timeout-ms}")
-  private val connectTimeoutMs: Int? = null
+  private val connectTimeoutMs: Long = 0
 
   @Value("\${web.client.read-timeout-ms}")
   private val readTimeoutMs: Long = 0
@@ -42,37 +38,24 @@ class WebClientConfig {
   private val writeTimeoutMs: Long = 0
 
   @Value("\${web.client.byte-buffer-size}")
-  val bufferByteSize: Int = Int.MAX_VALUE
+  private val bufferByteSize: Int = Int.MAX_VALUE
 
   @Bean
-  fun authorizedClientManager(
-    clientRegistrationRepository: ClientRegistrationRepository?,
-    authorizedClientRepository: OAuth2AuthorizedClientRepository?,
-  ): OAuth2AuthorizedClientManager {
-    val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
-      .clientCredentials()
-      .build()
-
-    val authorizedClientManager = DefaultOAuth2AuthorizedClientManager(
-      clientRegistrationRepository,
-      authorizedClientRepository,
-    )
-
-    authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
-
-    return authorizedClientManager
-  }
-
-  @Bean
-  fun oasysApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient = AuthenticatingRestClient(
-    webClientFactory(oasysApiBaseUrl, authorizedClientManager, bufferByteSize),
+  fun oasysApiWebClient(
+    authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder,
+  ): AuthenticatingRestClient = AuthenticatingRestClient(
+    webClientFactory(oasysApiBaseUrl, authorizedClientManager, builder),
     "oasys-api-client",
     authenticationEnabled,
   )
 
   @Bean
-  fun communityApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient = AuthenticatingRestClient(
-    webClientFactory(communityApiBaseUrl, authorizedClientManager, bufferByteSize),
+  fun communityApiWebClient(
+    authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder,
+  ): AuthenticatingRestClient = AuthenticatingRestClient(
+    webClientFactory(communityApiBaseUrl, authorizedClientManager, builder),
     "community-api-client",
     authenticationEnabled,
   )
@@ -80,24 +63,28 @@ class WebClientConfig {
   private fun webClientFactory(
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,
-    bufferByteCount: Int,
+    builder: WebClient.Builder,
   ): WebClient {
-    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
-
     val httpClient = HttpClient.create()
-      .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMs)
+      .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMs.toInt())
       .doOnConnected {
         it.addHandlerLast(ReadTimeoutHandler(readTimeoutMs, TimeUnit.MILLISECONDS))
           .addHandlerLast(WriteTimeoutHandler(writeTimeoutMs, TimeUnit.MILLISECONDS))
       }
 
-    return WebClient
-      .builder()
+    val configuredBuilder = builder.clone()
+      .codecs { it.defaultCodecs().maxInMemorySize(bufferByteSize) }
       .clientConnector(ReactorClientHttpConnector(httpClient))
-      .codecs { it.defaultCodecs().maxInMemorySize(bufferByteCount) }
-      .baseUrl(baseUrl)
       .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-      .apply(oauth2Client.oauth2Configuration())
-      .build()
+
+    return if (authenticationEnabled) {
+      val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+      configuredBuilder
+        .baseUrl(baseUrl)
+        .apply(oauth2Client.oauth2Configuration())
+        .build()
+    } else {
+      configuredBuilder.baseUrl(baseUrl).build()
+    }
   }
 }

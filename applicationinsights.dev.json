@@ -7,7 +7,7 @@
   },
   "instrumentation": {
     "logging": {
-      "level": "WARN"
+      "level": "DEBUG"
     }
   },
   "selfDiagnostics": {
@@ -25,7 +25,7 @@
             "matchType": "regexp"
           }
         ],
-        "percentage": 10
+        "percentage": 100
       }
     ]
   }

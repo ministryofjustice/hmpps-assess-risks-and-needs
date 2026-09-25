@@ -13,10 +13,6 @@ enum class ScoreLevel(val type: String) {
   }
 }
 
-enum class PredictorType {
-  RSR,
-}
-
 enum class ScoreType(val type: String) {
   STATIC("STATIC"),
   DYNAMIC("DYNAMIC"),

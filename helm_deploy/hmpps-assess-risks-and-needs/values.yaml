@@ -22,7 +22,6 @@ generic-service:
   env:
     JAVA_OPTS: "-Xmx768m"
     SERVER_PORT: "8080"
-    APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY);IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     ONNX_PREDICTORS_ONNX_PATH: "file:/app/secrets/rsr.onnx"
     HMPPS_SQS_USE_WEB_TOKEN: "true"
@@ -48,7 +47,7 @@ generic-service:
       OASYS_API_CLIENT_SECRET: "ORDS_CLIENT_SECRET"
 
     hmpps-assess-risks-and-needs-application-insights:
-      APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
+      APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
 
     hmpps-sqs-audit-queue:
       HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: "sqs_queue_name"

@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
@@ -55,7 +55,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<RsrPredictorVersioned<Any>>>()
-      .returnResult().responseBody
+      .returnResult().responseBody!!
 
     assertThat(rsrScores).hasSize(6)
     assertThat(rsrScores[0].outputVersion).isEqualTo("2")
@@ -112,7 +112,7 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isEqualTo(HttpStatus.OK)
       .expectBody<List<RsrPredictorVersioned<Any>>>()
-      .returnResult().responseBody
+      .returnResult().responseBody!!
 
     assertThat(rsrScores).isEmpty()
   }

@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 
 @Configuration
 class OpenApiConfiguration(buildProperties: BuildProperties, clock: Clock) {
-  private val version: String = buildProperties.version
+  private val version: String = buildProperties.version ?: "unknown"
 
   init {
     val schema: Schema<LocalDateTime> = Schema<LocalDateTime>()
