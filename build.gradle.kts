@@ -41,7 +41,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.security:spring-security-oauth2-client")
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
   implementation("com.zaxxer:HikariCP:7.1.0")
@@ -60,7 +60,7 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
-  testImplementation("com.tngtech.archunit:archunit-junit5:1.5.0")
+  testImplementation("com.tngtech.archunit:archunit-junit5:1.5.1")
 }
 
 kotlin {
