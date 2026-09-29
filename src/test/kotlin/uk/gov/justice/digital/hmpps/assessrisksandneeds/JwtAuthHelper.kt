@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds
 
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.context.annotation.Bean
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
@@ -12,7 +11,6 @@ import java.security.interfaces.RSAPublicKey
 import java.time.Duration
 import java.util.Date
 import java.util.UUID
-import kotlin.collections.HashMap
 
 @Component
 class JwtAuthHelper {
@@ -34,17 +32,17 @@ class JwtAuthHelper {
     expiryTime: Duration = Duration.ofHours(1),
     jwtId: String = UUID.randomUUID().toString(),
   ): String {
-    val claims = HashMap<String, Any>()
-    claims["user_name"] = subject
-    claims["client_id"] = "hmpps-assess-risks-and-needs"
-    if (!roles.isNullOrEmpty()) claims["authorities"] = roles
-    if (!scope.isNullOrEmpty()) claims["scope"] = scope
     return Jwts.builder()
-      .setId(jwtId)
-      .setSubject(subject)
-      .addClaims(claims)
-      .setExpiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
-      .signWith(keyPair.private, SignatureAlgorithm.RS256)
+      .id(jwtId)
+      .subject(subject)
+      .claim("user_name", subject)
+      .claim("client_id", "hmpps-assess-risks-and-needs")
+      .apply {
+        if (!roles.isNullOrEmpty()) claim("authorities", roles)
+        if (!scope.isNullOrEmpty()) claim("scope", scope)
+      }
+      .expiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
+      .signWith(keyPair.private, Jwts.SIG.RS256)
       .compact()
   }
 }
