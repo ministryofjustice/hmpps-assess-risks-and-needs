@@ -2,48 +2,15 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersioned
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllPredictorVersionedLegacyDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDetailDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDetailsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSection
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentVersion
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.NeedStatus
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgpScoreDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OgrScoreDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OspScoreDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OvpScoreDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskScoresDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.AllPredictorDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.BasePredictorDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.StaticOrDynamicPredictorDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ogrs4.VersionedStaticOrDynamicPredictorDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
-import java.math.BigDecimal
-import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Assessment Tests")
@@ -66,68 +33,70 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          AllRoshRiskDto(
-            RoshRiskToSelfDto(
-              suicide = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns",
-              ),
-              selfHarm = RiskDto(
-                risk = ResponseDto.DK,
-              ),
-              custody = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.NA,
-              ),
-              hostelSetting = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.DK,
-                current = ResponseDto.NO,
-              ),
-              vulnerability = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Vulnerability previous concerns free text",
-                current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text",
-              ),
-              assessedOn = null,
-            ),
-            OtherRoshRisksDto(
-              ResponseDto.YES,
-              ResponseDto.YES,
-              ResponseDto.DK,
-              ResponseDto.YES,
-              assessedOn = null,
-            ),
-            RiskRoshSummaryDto(
-              "whoisAtRisk",
-              "natureOfRisk",
-              "riskImminence",
-              "riskIncreaseFactors",
-              "riskMitigationFactors",
-              "analysisOfRiskFactors",
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Known Adult"),
-                RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff"),
-              ),
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
-                RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff"),
-              ),
-              assessedOn = null,
-            ),
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-          ),
+        JSONAssert.assertEquals(
+          """
+            {
+              "riskToSelf": {
+                "suicide": {
+                  "risk": "YES",
+                  "previous": "YES",
+                  "current": "YES",
+                  "currentConcernsText": "Suicide and/or Self-harm current concerns"
+                },
+                "selfHarm": {
+                  "risk": "DK"
+                },
+                "custody": {
+                  "risk": "YES",
+                  "previous": "YES",
+                  "previousConcernsText": "Coping in custody / hostel setting previous concerns",
+                  "current": "NA"
+                },
+                "hostelSetting": {
+                  "risk": "YES",
+                  "previous": "DK",
+                  "current": "NO"
+                },
+                "vulnerability": {
+                  "risk": "YES",
+                  "previous": "YES",
+                  "previousConcernsText": "Vulnerability previous concerns free text",
+                  "current": "YES",
+                  "currentConcernsText": "Vulnerability current concerns free text"
+                }
+              },
+              "otherRisks": {
+                "escapeOrAbscond": "YES",
+                "controlIssuesDisruptiveBehaviour": "YES",
+                "breachOfTrust": "DK",
+                "riskToOtherPrisoners": "YES"
+              },
+              "summary": {
+                "whoIsAtRisk": "whoisAtRisk",
+                "natureOfRisk": "natureOfRisk",
+                "riskImminence": "riskImminence",
+                "riskIncreaseFactors": "riskIncreaseFactors",
+                "riskMitigationFactors": "riskMitigationFactors",
+                "analysisOfRiskFactors": "analysisOfRiskFactors",
+                "riskInCommunity": {
+                  "LOW": ["Children", "Known Adult"],
+                  "MEDIUM": ["Public"],
+                  "HIGH": ["Staff"]
+                },
+                "riskInCustody": {
+                  "LOW": ["Children", "Public", "Known Adult"],
+                  "HIGH": ["Prisoners"],
+                  "VERY_HIGH": ["Staff"]
+                },
+                "overallRiskLevel": "VERY_HIGH"
+              },
+              "assessedOn": "2024-12-19T16:57:25"
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -139,68 +108,64 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          AllRoshRiskDto(
-            RoshRiskToSelfDto(
-              suicide = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns",
-              ),
-              selfHarm = RiskDto(
-                risk = ResponseDto.DK,
-              ),
-              custody = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.NA,
-              ),
-              hostelSetting = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.DK,
-                current = ResponseDto.NO,
-              ),
-              vulnerability = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Vulnerability previous concerns free text",
-                current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text",
-              ),
-              assessedOn = null,
-            ),
-            OtherRoshRisksDto(
-              ResponseDto.YES,
-              ResponseDto.YES,
-              ResponseDto.DK,
-              ResponseDto.YES,
-              assessedOn = null,
-            ),
-            RiskRoshSummaryDto(
-              "whoisAtRisk",
-              "natureOfRisk",
-              "riskImminence",
-              "riskIncreaseFactors",
-              "riskMitigationFactors",
-              "analysisOfRiskFactors",
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Known Adult"),
-                RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff"),
-              ),
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
-                RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff"),
-              ),
-              assessedOn = null,
-            ),
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-          ),
+        JSONAssert.assertEquals(
+          """
+            {
+              "riskToSelf": {
+                "suicide": {
+                  "risk": "YES",
+                  "previous": "YES",
+                  "current": "YES",
+                  "currentConcernsText": "Suicide and/or Self-harm current concerns"
+                },
+                "selfHarm": {"risk": "DK"},
+                "custody": {
+                  "risk": "YES",
+                  "previous": "YES",
+                  "previousConcernsText": "Coping in custody / hostel setting previous concerns",
+                  "current": "NA"
+                },
+                "hostelSetting": {"risk": "YES", "previous": "DK", "current": "NO"},
+                "vulnerability": {
+                  "risk": "YES",
+                  "previous": "YES",
+                  "previousConcernsText": "Vulnerability previous concerns free text",
+                  "current": "YES",
+                  "currentConcernsText": "Vulnerability current concerns free text"
+                }
+              },
+              "otherRisks": {
+                "escapeOrAbscond": "YES",
+                "controlIssuesDisruptiveBehaviour": "YES",
+                "breachOfTrust": "DK",
+                "riskToOtherPrisoners": "YES"
+              },
+              "summary": {
+                "whoIsAtRisk": "whoisAtRisk",
+                "natureOfRisk": "natureOfRisk",
+                "riskImminence": "riskImminence",
+                "riskIncreaseFactors": "riskIncreaseFactors",
+                "riskMitigationFactors": "riskMitigationFactors",
+                "analysisOfRiskFactors": "analysisOfRiskFactors",
+                "riskInCommunity": {
+                  "LOW": ["Children", "Known Adult"],
+                  "MEDIUM": ["Public"],
+                  "HIGH": ["Staff"]
+                },
+                "riskInCustody": {
+                  "LOW": ["Children", "Public", "Known Adult"],
+                  "HIGH": ["Prisoners"],
+                  "VERY_HIGH": ["Staff"]
+                },
+                "overallRiskLevel": "VERY_HIGH"
+              },
+              "assessedOn": "2024-12-19T16:57:25"
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -212,73 +177,120 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/risks/rosh/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    JSONAssert.assertEquals(
+      checkNotNull(fromQueryParam),
+      checkNotNull(fromPath),
+      JSONCompareMode.STRICT,
+    )
   }
 
   @Test
   fun `get rosh by crn with a timeframe query param that excludes all assessments returns no assessed date`() {
     val timeframe = 2L
-    val roshRisk = webTestClient.get().uri("/risks/rosh/$crn?timeframe=$timeframe")
+    webTestClient.get().uri("/risks/rosh/$crn?timeframe=$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
-      .returnResult().responseBody
-
-    assertThat(roshRisk?.assessedOn).isNull()
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(
+          """{"riskToSelf":{},"otherRisks":{},"summary":{"riskInCommunity":{},"riskInCustody":{}}}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
+      }
   }
 
   @Test
   fun `get criminogenic needs by crn`() {
-    val needsDto = webTestClient.get().uri("/needs/$crn")
+    webTestClient.get().uri("/needs/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDetailsDto>()
-      .returnResult().responseBody
-
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
-    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetails())
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(
+          """
+            {
+              "needs": [
+                {"section":"EDUCATION_TRAINING_AND_EMPLOYABILITY","name":"Education, Training and Employability","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":3}},
+                {"section":"RELATIONSHIPS","name":"Relationships","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":2}},
+                {"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and Associates","needStatus":"IDENTIFIED_NEED","riskOfHarm":true,"riskOfReoffending":true,"score":3,"oasysThreshold":{"standard":2}},
+                {"section":"ALCOHOL_MISUSE","name":"Alcohol Misuse","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":true,"score":4,"oasysThreshold":{"standard":4}},
+                {"section":"THINKING_AND_BEHAVIOUR","name":"Thinking and Behaviour","needStatus":"IDENTIFIED_NEED","riskOfHarm":true,"riskOfReoffending":true,"score":7,"oasysThreshold":{"standard":4}},
+                {"section":"ACCOMMODATION","name":"Accommodation","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+                {"section":"DRUG_MISUSE","name":"Drug Misuse","needStatus":"NOT_IDENTIFIED_NEED","score":0,"oasysThreshold":{"standard":2}},
+                {"section":"ATTITUDE","name":"Attitudes","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+                {"section":"FINANCE","name":"Finance","needStatus":"UNSCORED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},
+                {"section":"EMOTIONAL_WELLBEING","name":"Emotional Well-being","needStatus":"UNSCORED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}}
+              ],
+              "assessmentVersion":"OASYS",
+              "assessedOn":"2024-12-19T16:57:25"
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
+      }
   }
 
   @Test
   fun `get criminogenic needs by crn for an incomplete assessment`() {
-    val needsDto = webTestClient.get().uri("/needs/$incompleteCrn?excludeIncomplete=false")
+    webTestClient.get().uri("/needs/$incompleteCrn?excludeIncomplete=false")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDetailsDto>()
-      .returnResult().responseBody
-
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
-    assertThat(needsDto?.assessedOn).isNull()
-    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetailsIncomplete())
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(
+          """
+            {
+              "needs": [
+                {"section":"ACCOMMODATION","name":"Accommodation","needStatus":"UNANSWERED_NEED","oasysThreshold":{}},
+                {"section":"EDUCATION_TRAINING_AND_EMPLOYABILITY","name":"Education, Training and Employability","needStatus":"UNANSWERED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},
+                {"section":"RELATIONSHIPS","name":"Relationships","needStatus":"UNANSWERED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},
+                {"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and Associates","needStatus":"UNANSWERED_NEED","riskOfHarm":true,"riskOfReoffending":true,"oasysThreshold":{}},
+                {"section":"DRUG_MISUSE","name":"Drug Misuse","needStatus":"UNANSWERED_NEED","oasysThreshold":{}},
+                {"section":"ALCOHOL_MISUSE","name":"Alcohol Misuse","needStatus":"UNANSWERED_NEED","riskOfHarm":false,"riskOfReoffending":true,"oasysThreshold":{}},
+                {"section":"THINKING_AND_BEHAVIOUR","name":"Thinking and Behaviour","needStatus":"UNANSWERED_NEED","oasysThreshold":{}},
+                {"section":"ATTITUDE","name":"Attitudes","needStatus":"UNANSWERED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},
+                {"section":"FINANCE","name":"Finance","needStatus":"UNSCORED_NEED","oasysThreshold":{}},
+                {"section":"EMOTIONAL_WELLBEING","name":"Emotional Well-being","needStatus":"UNSCORED_NEED","oasysThreshold":{}}
+              ],
+              "assessmentVersion":"OASYS"
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
+      }
   }
 
   @Test
   fun `get criminogenic needs by crn within timeframe`() {
     val timeframe = 60L
-    val needsDto = webTestClient.get().uri("/needs/$crn/$timeframe")
+    webTestClient.get().uri("/needs/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDetailsDto>()
-      .returnResult().responseBody
-
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
-    assertThat(needsDto?.needs).containsExactlyElementsOf(oasysNeedDetails())
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(
+          """{"needs":[{"section":"EDUCATION_TRAINING_AND_EMPLOYABILITY","name":"Education, Training and Employability","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":3}},{"section":"RELATIONSHIPS","name":"Relationships","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":2}},{"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and Associates","needStatus":"IDENTIFIED_NEED","riskOfHarm":true,"riskOfReoffending":true,"score":3,"oasysThreshold":{"standard":2}},{"section":"ALCOHOL_MISUSE","name":"Alcohol Misuse","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":true,"score":4,"oasysThreshold":{"standard":4}},{"section":"THINKING_AND_BEHAVIOUR","name":"Thinking and Behaviour","needStatus":"IDENTIFIED_NEED","riskOfHarm":true,"riskOfReoffending":true,"score":7,"oasysThreshold":{"standard":4}},{"section":"ACCOMMODATION","name":"Accommodation","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},{"section":"DRUG_MISUSE","name":"Drug Misuse","needStatus":"NOT_IDENTIFIED_NEED","score":0,"oasysThreshold":{"standard":2}},{"section":"ATTITUDE","name":"Attitudes","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},{"section":"FINANCE","name":"Finance","needStatus":"UNSCORED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},{"section":"EMOTIONAL_WELLBEING","name":"Emotional Well-being","needStatus":"UNSCORED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}}],"assessmentVersion":"OASYS","assessedOn":"2024-12-19T16:57:25"}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
+      }
   }
 
   @Test
@@ -297,17 +309,21 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDetailsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/needs/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDetailsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    JSONAssert.assertEquals(
+      checkNotNull(fromQueryParam),
+      checkNotNull(fromPath),
+      JSONCompareMode.STRICT,
+    )
   }
 
   @Test
@@ -321,460 +337,172 @@ class IntegrationControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get criminogenic needs by crn for a SAN assessment`() {
-    val needsDto = webTestClient.get().uri("/needs/X654321")
+    webTestClient.get().uri("/needs/X654321")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDetailsDto>()
-      .returnResult().responseBody
-
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 20, 10, 0, 0))
-    assertThat(needsDto?.needs).containsExactlyElementsOf(sanNeedDetails())
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(
+          """
+            {
+              "needs": [
+                {"section":"PERSONAL_RELATIONSHIPS_AND_COMMUNITY","name":"Personal relationships and community","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":2}},
+                {"section":"THINKING_ATTITUDES_AND_BEHAVIOUR","name":"Thinking, behaviours and attitudes","needStatus":"IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":6,"oasysThreshold":{"standard":2}},
+                {"section":"ACCOMMODATION","name":"Accommodation","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":1,"oasysThreshold":{"standard":2}},
+                {"section":"EMPLOYMENT_AND_EDUCATION","name":"Employment and education","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+                {"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and associates","needStatus":"NOT_IDENTIFIED_NEED","score":0,"oasysThreshold":{"standard":2}},
+                {"section":"DRUG_USE","name":"Drug use","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+                {"section":"ALCOHOL_USE","name":"Alcohol use","needStatus":"NOT_IDENTIFIED_NEED","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+                {"section":"FINANCE","name":"Finance","needStatus":"UNSCORED_NEED","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},
+                {"section":"HEALTH_AND_WELLBEING","name":"Health and wellbeing","needStatus":"UNSCORED_NEED","oasysThreshold":{}}
+              ],
+              "assessmentVersion":"SAN",
+              "assessedOn":"2024-12-20T10:00:00"
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
+      }
   }
 
   @Test
   fun `get risk management plans by crn`() {
-    val riskManagementPlanDetails = webTestClient.get().uri("/risks/risk-management-plan/$crn")
+    webTestClient.get().uri("/risks/risk-management-plan/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskManagementPlansDto>()
-      .returnResult().responseBody
-
-    assertThat(riskManagementPlanDetails!!.riskManagementPlan).hasSize(5)
-    with(riskManagementPlanDetails.riskManagementPlan[0]) {
-      assertThat(this.assessmentId).isEqualTo(667025L)
-      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 38, 57))
-      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 47, 17))
-      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
-      assertThat(this.assessmentType).isEqualTo("LAYER3")
-      assertThat(this.partcompStatus).isNull()
-      assertThat(this.keyInformationCurrentSituation).isEqualTo(null)
-      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
-      assertThat(this.supervision).isEqualTo(null)
-      assertThat(this.monitoringAndControl).isEqualTo(null)
-      assertThat(this.interventionsAndTreatment).isEqualTo(null)
-      assertThat(this.victimSafetyPlanning).isEqualTo(null)
-      assertThat(this.contingencyPlans).isEqualTo(null)
-    }
-    with(riskManagementPlanDetails.riskManagementPlan[3]) {
-      assertThat(this.assessmentId).isEqualTo(674025L)
-      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 6, 25, 13, 4, 56))
-      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 49, 39))
-      assertThat(this.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
-      assertThat(this.assessmentType).isEqualTo("LAYER3")
-      assertThat(this.partcompStatus).isEqualTo("Unsigned")
-      assertThat(this.keyInformationCurrentSituation).isEqualTo(null)
-      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
-      assertThat(this.supervision).isEqualTo(null)
-      assertThat(this.monitoringAndControl).isEqualTo(null)
-      assertThat(this.interventionsAndTreatment).isEqualTo(null)
-      assertThat(this.victimSafetyPlanning).isEqualTo(null)
-      assertThat(this.contingencyPlans).isEqualTo(null)
-    }
-    with(riskManagementPlanDetails.riskManagementPlan[4]) {
-      assertThat(this.assessmentId).isEqualTo(676026L)
-      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 50, 2))
-      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 5, 10, 56, 37))
-      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
-      assertThat(this.assessmentType).isEqualTo("LAYER3")
-      assertThat(this.keyInformationCurrentSituation).isEqualTo("Key considerations")
-      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo("Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.")
-      assertThat(this.supervision).isEqualTo(null)
-      assertThat(this.monitoringAndControl).isEqualTo("3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.")
-      assertThat(this.interventionsAndTreatment).isEqualTo("5. Additional conditions/requirements to manage the specific risks.")
-      assertThat(this.victimSafetyPlanning).isEqualTo("7. Contingency")
-      assertThat(this.contingencyPlans).isEqualTo(null)
-      assertThat(this.laterWIPAssessmentExists).isEqualTo(false)
-      assertThat(this.latestWIPDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 58))
-      assertThat(this.laterSignLockAssessmentExists).isEqualTo(false)
-      assertThat(this.latestSignLockDate).isNull()
-      assertThat(this.laterPartCompUnsignedAssessmentExists).isEqualTo(false)
-      assertThat(this.latestPartCompUnsignedDate).isEqualTo(LocalDateTime.of(2022, 5, 31, 10, 37, 5))
-      assertThat(this.laterPartCompSignedAssessmentExists).isEqualTo(false)
-      assertThat(this.latestPartCompSignedDate).isNull()
-      assertThat(this.laterCompleteAssessmentExists).isEqualTo(false)
-      assertThat(this.latestCompleteDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
-    }
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(
+          """
+            {
+              "crn": "X123456",
+              "limitedAccessOffender": false,
+              "riskManagementPlan": [
+                {"assessmentId":667025,"dateCompleted":"2020-03-26T12:47:17","initiationDate":"2020-03-26T12:38:57","assessmentStatus":"COMPLETE","assessmentType":"LAYER3"},
+                {"assessmentId":668025,"dateCompleted":"2020-03-26T13:00:00","initiationDate":"2020-03-26T12:50:34","assessmentStatus":"COMPLETE","assessmentType":"LAYER3"},
+                {"assessmentId":673025,"dateCompleted":"2020-04-03T11:42:01","initiationDate":"2020-04-03T11:33:00","assessmentStatus":"COMPLETE","assessmentType":"LAYER3"},
+                {"assessmentId":674025,"dateCompleted":"2020-11-02T14:49:39","partcompStatus":"Unsigned","initiationDate":"2020-06-25T13:04:56","assessmentStatus":"LOCKED_INCOMPLETE","assessmentType":"LAYER3"},
+                {
+                  "assessmentId":676026,
+                  "dateCompleted":"2020-11-05T10:56:37",
+                  "initiationDate":"2020-11-02T14:50:02",
+                  "assessmentStatus":"COMPLETE",
+                  "assessmentType":"LAYER3",
+                  "superStatus":"COMPLETE",
+                  "keyInformationCurrentSituation":"Key considerations",
+                  "furtherConsiderationsCurrentSituation":"Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.",
+                  "monitoringAndControl":"3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.",
+                  "interventionsAndTreatment":"5. Additional conditions/requirements to manage the specific risks.",
+                  "victimSafetyPlanning":"7. Contingency",
+                  "laterWIPAssessmentExists":false,
+                  "latestWIPDate":"2022-07-21T15:43:58",
+                  "laterSignLockAssessmentExists":false,
+                  "laterPartCompUnsignedAssessmentExists":false,
+                  "latestPartCompUnsignedDate":"2022-05-31T10:37:05",
+                  "laterPartCompSignedAssessmentExists":false,
+                  "laterCompleteAssessmentExists":false,
+                  "latestCompleteDate":"2022-07-21T15:43:12"
+                }
+              ]
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
+      }
   }
-
-  // Detailed needs are returned as a single list ordered by need status (identified, not-identified, unanswered,
-  // unscored) and, within each status, in canonical section order.
-  private fun oasysNeedDetails() = listOf(
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
-      name = "Education, Training and Employability",
-      needStatus = NeedStatus.IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 3,
-      oasysThreshold = OasysThreshold(3),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.RELATIONSHIPS.name,
-      name = "Relationships",
-      needStatus = NeedStatus.IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 3,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
-      name = "Lifestyle and Associates",
-      needStatus = NeedStatus.IDENTIFIED_NEED,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      score = 3,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ALCOHOL_MISUSE.name,
-      name = "Alcohol Misuse",
-      needStatus = NeedStatus.IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = true,
-      score = 4,
-      oasysThreshold = OasysThreshold(4),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.THINKING_AND_BEHAVIOUR.name,
-      name = "Thinking and Behaviour",
-      needStatus = NeedStatus.IDENTIFIED_NEED,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      score = 7,
-      oasysThreshold = OasysThreshold(4),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ACCOMMODATION.name,
-      name = "Accommodation",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.DRUG_MISUSE.name,
-      name = "Drug Misuse",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ATTITUDE.name,
-      name = "Attitudes",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.FINANCE.name,
-      name = "Finance",
-      needStatus = NeedStatus.UNSCORED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.EMOTIONAL_WELLBEING.name,
-      name = "Emotional Well-being",
-      needStatus = NeedStatus.UNSCORED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-  )
-
-  // Detailed needs are returned as a single list ordered by need status (identified, not-identified, unanswered,
-  // unscored) and, within each status, in canonical section order.
-  private fun oasysNeedDetailsIncomplete() = listOf(
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ACCOMMODATION.name,
-      name = "Accommodation",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
-      name = "Education, Training and Employability",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.RELATIONSHIPS.name,
-      name = "Relationships",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
-      name = "Lifestyle and Associates",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.DRUG_MISUSE.name,
-      name = "Drug Misuse",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ALCOHOL_MISUSE.name,
-      name = "Alcohol Misuse",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = true,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.THINKING_AND_BEHAVIOUR.name,
-      name = "Thinking and Behaviour",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ATTITUDE.name,
-      name = "Attitudes",
-      needStatus = NeedStatus.UNANSWERED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.FINANCE.name,
-      name = "Finance",
-      needStatus = NeedStatus.UNSCORED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.EMOTIONAL_WELLBEING.name,
-      name = "Emotional Well-being",
-      needStatus = NeedStatus.UNSCORED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-  )
-
-  private fun sanNeedDetails() = listOf(
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.PERSONAL_RELATIONSHIPS_AND_COMMUNITY.name,
-      name = "Personal relationships and community",
-      needStatus = NeedStatus.IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 3,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.THINKING_ATTITUDES_AND_BEHAVIOUR.name,
-      name = "Thinking, behaviours and attitudes",
-      needStatus = NeedStatus.IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 6,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ACCOMMODATION.name,
-      name = "Accommodation",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 1,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.EMPLOYMENT_AND_EDUCATION.name,
-      name = "Employment and education",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
-      name = "Lifestyle and associates",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.DRUG_USE.name,
-      name = "Drug use",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.ALCOHOL_USE.name,
-      name = "Alcohol use",
-      needStatus = NeedStatus.NOT_IDENTIFIED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.FINANCE.name,
-      name = "Finance",
-      needStatus = NeedStatus.UNSCORED_NEED,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-    AssessmentNeedDetailDto(
-      section = AssessmentSection.HEALTH_AND_WELLBEING.name,
-      name = "Health and wellbeing",
-      needStatus = NeedStatus.UNSCORED_NEED,
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = null,
-      oasysThreshold = OasysThreshold(null),
-    ),
-  )
 
   @Test
   fun `should return versioned risk data for valid crn`() {
-    // Given
     val identifierType = "crn"
     val identifierValue = "X123456"
 
-    // When
     webTestClient.get()
       .uri("/risks/predictors/unsafe/all/$identifierType/$identifierValue")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
-      // Then
       .expectStatus().isEqualTo(HttpStatus.OK)
-      .expectBody<List<AllPredictorVersioned<Any>>>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).hasSize(5)
-        assertThat(it.responseBody!![0]).usingRecursiveComparison()
-          .isEqualTo(
-            AllPredictorVersionedLegacyDto(
-              completedDate = LocalDateTime.of(2022, 6, 10, 18, 23, 20),
-              status = AssessmentStatus.COMPLETE,
-              assessmentType = AssessmentType.LAYER3,
-              outputVersion = "1",
-              output = RiskScoresDto(
-                groupReconvictionScore = OgrScoreDto(
-                  oneYear = BigDecimal.valueOf(3),
-                  twoYears = BigDecimal.valueOf(5),
-                  scoreLevel = ScoreLevel.LOW,
-                ),
-                violencePredictorScore = OvpScoreDto(
-                  ovpStaticWeightedScore = BigDecimal.valueOf(14),
-                  ovpDynamicWeightedScore = BigDecimal.valueOf(3),
-                  ovpTotalWeightedScore = BigDecimal.valueOf(17),
-                  oneYear = BigDecimal.valueOf(4),
-                  twoYears = BigDecimal.valueOf(7),
-                  ovpRisk = ScoreLevel.LOW,
-                ),
-                generalPredictorScore = OgpScoreDto(
-                  ogpStaticWeightedScore = BigDecimal.valueOf(3),
-                  ogpDynamicWeightedScore = BigDecimal.valueOf(7),
-                  ogpTotalWeightedScore = BigDecimal.valueOf(10),
-                  ogp1Year = BigDecimal.valueOf(4),
-                  ogp2Year = BigDecimal.valueOf(8),
-                  ogpRisk = ScoreLevel.LOW,
-                ),
-                riskOfSeriousRecidivismScore = RsrScoreDto(
-                  percentageScore = BigDecimal.valueOf(50.1234),
-                  staticOrDynamic = ScoreType.DYNAMIC,
-                  source = RsrScoreSource.OASYS,
-                  algorithmVersion = "5",
-                  ScoreLevel.MEDIUM,
-                ),
-                sexualPredictorScore = OspScoreDto(
-                  ospIndecentPercentageScore = BigDecimal.valueOf(2.81),
-                  ospContactPercentageScore = BigDecimal.valueOf(1.07),
-                  ospIndecentScoreLevel = ScoreLevel.MEDIUM,
-                  ospContactScoreLevel = ScoreLevel.MEDIUM,
-                ),
-              ),
-            ),
-          )
-        assertThat(it.responseBody!![4]).usingRecursiveComparison()
-          .isEqualTo(
-            AllPredictorVersionedDto(
-              completedDate = LocalDateTime.of(2022, 6, 12, 18, 23, 20),
-              status = AssessmentStatus.COMPLETE,
-              assessmentType = AssessmentType.LAYER3,
-              outputVersion = "2",
-              output = AllPredictorDto(
-                allReoffendingPredictor = StaticOrDynamicPredictorDto(
-                  staticOrDynamic = ScoreType.STATIC,
-                  score = BigDecimal.valueOf(1.23),
-                  band = ScoreLevel.LOW,
-                ),
-                violentReoffendingPredictor = StaticOrDynamicPredictorDto(
-                  staticOrDynamic = ScoreType.STATIC,
-                  score = BigDecimal.valueOf(1.23),
-                  band = ScoreLevel.LOW,
-                ),
-                seriousViolentReoffendingPredictor = StaticOrDynamicPredictorDto(
-                  staticOrDynamic = ScoreType.STATIC,
-                  score = BigDecimal.valueOf(1.23),
-                  band = ScoreLevel.LOW,
-                ),
-                directContactSexualReoffendingPredictor = BasePredictorDto(
-                  score = BigDecimal.valueOf(2.81),
-                  band = ScoreLevel.MEDIUM,
-                ),
-                indirectImageContactSexualReoffendingPredictor = BasePredictorDto(
-                  score = BigDecimal.valueOf(1.07),
-                  band = ScoreLevel.MEDIUM,
-                ),
-                combinedSeriousReoffendingPredictor = VersionedStaticOrDynamicPredictorDto(
-                  algorithmVersion = "6",
-                  staticOrDynamic = ScoreType.STATIC,
-                  score = BigDecimal.valueOf(1.23),
-                  band = ScoreLevel.LOW,
-                ),
-              ),
-            ),
-          )
+        JSONAssert.assertEquals(
+          """
+            [
+              {
+                "completedDate":"2022-06-10T18:23:20",
+                "status":"COMPLETE",
+                "assessmentType":"LAYER3",
+                "outputVersion":"1",
+                "output":{
+                  "groupReconvictionScore":{"oneYear":3,"twoYears":5,"scoreLevel":"LOW"},
+                  "violencePredictorScore":{"ovpStaticWeightedScore":14,"ovpDynamicWeightedScore":3,"ovpTotalWeightedScore":17,"oneYear":4,"twoYears":7,"ovpRisk":"LOW"},
+                  "generalPredictorScore":{"ogpStaticWeightedScore":3,"ogpDynamicWeightedScore":7,"ogpTotalWeightedScore":10,"ogp1Year":4,"ogp2Year":8,"ogpRisk":"LOW"},
+                  "riskOfSeriousRecidivismScore":{"percentageScore":50.1234,"staticOrDynamic":"DYNAMIC","source":"OASYS","algorithmVersion":"5","scoreLevel":"MEDIUM"},
+                  "sexualPredictorScore":{"ospIndecentPercentageScore":2.81,"ospContactPercentageScore":1.07,"ospIndecentScoreLevel":"MEDIUM","ospContactScoreLevel":"MEDIUM"}
+                }
+              },
+              {
+                "completedDate":"2022-04-27T12:46:39",
+                "status":"COMPLETE",
+                "assessmentType":"LAYER1",
+                "outputVersion":"1",
+                "output":{
+                  "groupReconvictionScore":{},
+                  "violencePredictorScore":{},
+                  "generalPredictorScore":{},
+                  "riskOfSeriousRecidivismScore":{"percentageScore":0.32,"staticOrDynamic":"STATIC","source":"OASYS","algorithmVersion":"3","scoreLevel":"LOW"},
+                  "sexualPredictorScore":{}
+                }
+              },
+              {
+                "completedDate":"2022-06-09T15:16:21",
+                "status":"COMPLETE",
+                "assessmentType":"LAYER3",
+                "outputVersion":"1",
+                "output":{
+                  "groupReconvictionScore":{"oneYear":6,"twoYears":12,"scoreLevel":"LOW"},
+                  "violencePredictorScore":{"ovpStaticWeightedScore":22,"ovpDynamicWeightedScore":13,"ovpTotalWeightedScore":35,"oneYear":12,"twoYears":21,"ovpRisk":"LOW"},
+                  "generalPredictorScore":{"ogpStaticWeightedScore":7,"ogpDynamicWeightedScore":4,"ogpTotalWeightedScore":11,"ogp1Year":5,"ogp2Year":8,"ogpRisk":"LOW"},
+                  "riskOfSeriousRecidivismScore":{"percentageScore":4.12,"staticOrDynamic":"DYNAMIC","source":"OASYS","algorithmVersion":"3","scoreLevel":"MEDIUM"},
+                  "sexualPredictorScore":{"ospIndecentPercentageScore":2.81,"ospContactPercentageScore":1.07,"ospIndecentScoreLevel":"MEDIUM","ospContactScoreLevel":"MEDIUM"}
+                }
+              },
+              {
+                "completedDate":"2022-06-11T18:23:20",
+                "status":"COMPLETE",
+                "assessmentType":"LAYER3",
+                "outputVersion":"2",
+                "output":{
+                  "allReoffendingPredictor":{"staticOrDynamic":"DYNAMIC","score":4.56,"band":"MEDIUM"},
+                  "violentReoffendingPredictor":{"staticOrDynamic":"DYNAMIC","score":4.56,"band":"MEDIUM"},
+                  "seriousViolentReoffendingPredictor":{"staticOrDynamic":"DYNAMIC","score":4.56,"band":"MEDIUM"},
+                  "directContactSexualReoffendingPredictor":{"score":2.81,"band":"MEDIUM"},
+                  "indirectImageContactSexualReoffendingPredictor":{"score":1.07,"band":"MEDIUM"},
+                  "combinedSeriousReoffendingPredictor":{"algorithmVersion":"6","staticOrDynamic":"DYNAMIC","score":50.1234,"band":"MEDIUM"}
+                }
+              },
+              {
+                "completedDate":"2022-06-12T18:23:20",
+                "status":"COMPLETE",
+                "assessmentType":"LAYER3",
+                "outputVersion":"2",
+                "output":{
+                  "allReoffendingPredictor":{"staticOrDynamic":"STATIC","score":1.23,"band":"LOW"},
+                  "violentReoffendingPredictor":{"staticOrDynamic":"STATIC","score":1.23,"band":"LOW"},
+                  "seriousViolentReoffendingPredictor":{"staticOrDynamic":"STATIC","score":1.23,"band":"LOW"},
+                  "directContactSexualReoffendingPredictor":{"score":2.81,"band":"MEDIUM"},
+                  "indirectImageContactSexualReoffendingPredictor":{"score":1.07,"band":"MEDIUM"},
+                  "combinedSeriousReoffendingPredictor":{"algorithmVersion":"6","staticOrDynamic":"STATIC","score":1.23,"band":"LOW"}
+                }
+              }
+            ]
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
       }
   }
 
@@ -804,36 +532,27 @@ class IntegrationControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isEqualTo(HttpStatus.OK)
-      .expectBody<AllPredictorVersionedDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).usingRecursiveComparison()
-          .isEqualTo(
-            AllPredictorVersionedDto(
-              completedDate = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-              assessmentType = AssessmentType.LAYER1,
-              outputVersion = "2",
-              output = AllPredictorDto(
-                allReoffendingPredictor = StaticOrDynamicPredictorDto(
-                  staticOrDynamic = ScoreType.DYNAMIC,
-                  score = BigDecimal.valueOf(26.88),
-                  band = ScoreLevel.LOW,
-                ),
-                violentReoffendingPredictor = StaticOrDynamicPredictorDto(),
-                seriousViolentReoffendingPredictor = StaticOrDynamicPredictorDto(),
-                directContactSexualReoffendingPredictor = BasePredictorDto(
-                  score = BigDecimal.valueOf(2.81),
-                  band = ScoreLevel.MEDIUM,
-                ),
-                indirectImageContactSexualReoffendingPredictor = BasePredictorDto(),
-                combinedSeriousReoffendingPredictor = VersionedStaticOrDynamicPredictorDto(
-                  algorithmVersion = "6",
-                  staticOrDynamic = ScoreType.DYNAMIC,
-                  score = BigDecimal.valueOf(0.93),
-                  band = ScoreLevel.LOW,
-                ),
-              ),
-            ),
-          )
+        JSONAssert.assertEquals(
+          """
+            {
+              "completedDate":"2024-12-19T16:57:25",
+              "assessmentType":"LAYER1",
+              "outputVersion":"2",
+              "output":{
+                "allReoffendingPredictor":{"staticOrDynamic":"DYNAMIC","score":26.88,"band":"LOW"},
+                "violentReoffendingPredictor":{},
+                "seriousViolentReoffendingPredictor":{},
+                "directContactSexualReoffendingPredictor":{"score":2.81,"band":"MEDIUM"},
+                "indirectImageContactSexualReoffendingPredictor":{},
+                "combinedSeriousReoffendingPredictor":{"algorithmVersion":"6","staticOrDynamic":"DYNAMIC","score":0.93,"band":"LOW"}
+              }
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
       }
   }
 

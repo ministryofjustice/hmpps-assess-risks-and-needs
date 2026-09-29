@@ -2,23 +2,15 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentStatus
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersioned
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrPredictorVersionedLegacyDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RsrScoreSource
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ScoreType
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
-import java.math.BigDecimal
-import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Risk Predictors Tests")
@@ -48,56 +40,16 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
     val identifierType = "crn"
     val identifierValue = "X123456"
 
-    val rsrScores = webTestClient.get()
+    webTestClient.get()
       .uri("/risks/predictors/rsr/$identifierType/$identifierValue")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isEqualTo(HttpStatus.OK)
-      .expectBody<List<RsrPredictorVersioned<Any>>>()
-      .returnResult().responseBody!!
-
-    assertThat(rsrScores).hasSize(6)
-    assertThat(rsrScores[0].outputVersion).isEqualTo("2")
-    val standaloneRsrScore = rsrScores[0] as RsrPredictorVersionedDto
-    with(standaloneRsrScore) {
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2026, 7, 27, 15, 40, 41))
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-      assertThat(output?.combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.79))
-      assertThat(output?.combinedSeriousReoffendingPredictor?.band).isEqualTo(ScoreLevel.MEDIUM)
-      assertThat(output?.combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
-    }
-    assertThat(rsrScores[1].outputVersion).isEqualTo("2")
-    val secondVersionedRsrScore = rsrScores[1] as RsrPredictorVersionedDto
-    with(secondVersionedRsrScore) {
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 12, 18, 23, 20))
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-      assertThat(output?.combinedSeriousReoffendingPredictor?.score).isEqualTo(BigDecimal.valueOf(1.23))
-      assertThat(output?.combinedSeriousReoffendingPredictor?.band).isEqualTo(ScoreLevel.LOW)
-      assertThat(output?.combinedSeriousReoffendingPredictor?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
-    }
-    assertThat(rsrScores[3].outputVersion).isEqualTo("1")
-    val fourthLegacyRsrScore = rsrScores[3] as RsrPredictorVersionedLegacyDto
-    with(fourthLegacyRsrScore) {
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-      assertThat(output?.rsrPercentageScore).isEqualTo(BigDecimal.valueOf(50.1234))
-      assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.MEDIUM)
-      assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.DYNAMIC)
-    }
-    assertThat(rsrScores[5].outputVersion).isEqualTo("1")
-    val sixthLegacyRsrScore = rsrScores[5] as RsrPredictorVersionedLegacyDto
-    with(sixthLegacyRsrScore) {
-      assertThat(completedDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
-      assertThat(source).isEqualTo(RsrScoreSource.OASYS)
-      assertThat(status).isEqualTo(AssessmentStatus.COMPLETE)
-      assertThat(output?.rsrPercentageScore).isEqualTo(BigDecimal.valueOf(0.32))
-      assertThat(output?.rsrScoreLevel).isEqualTo(ScoreLevel.LOW)
-      assertThat(output?.staticOrDynamic).isEqualTo(ScoreType.STATIC)
-    }
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(rsrScoresJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
+      }
   }
 
   @Test
@@ -105,16 +57,16 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
     val identifierType = "CRN"
     val identifierValue = "X234567"
 
-    val rsrScores = webTestClient.get()
+    webTestClient.get()
       .uri("/risks/predictors/rsr/$identifierType/$identifierValue")
       .header("Content-Type", "application/json")
       .headers(setAuthorisation(user = "assess-risks-needs", roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isEqualTo(HttpStatus.OK)
-      .expectBody<List<RsrPredictorVersioned<Any>>>()
-      .returnResult().responseBody!!
-
-    assertThat(rsrScores).isEmpty()
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals("[]", checkNotNull(it.responseBody), JSONCompareMode.STRICT)
+      }
   }
 
   @Test
@@ -126,5 +78,137 @@ class RiskPredictorsControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isBadRequest
+  }
+
+  private companion object {
+    val rsrScoresJson = """
+      [
+        {
+          "completedDate": "2026-07-27T15:40:41",
+          "source": "OASYS",
+          "status": "COMPLETE",
+          "outputVersion": "2",
+          "output": {
+            "seriousViolentReoffendingPredictor": {
+              "staticOrDynamic": "STATIC",
+              "score": 1.79,
+              "band": "MEDIUM"
+            },
+            "directContactSexualReoffendingPredictor": {
+              "score": 0,
+              "band": "NOT_APPLICABLE"
+            },
+            "indirectImageContactSexualReoffendingPredictor": {
+              "score": 0,
+              "band": "NOT_APPLICABLE"
+            },
+            "combinedSeriousReoffendingPredictor": {
+              "algorithmVersion": "6",
+              "staticOrDynamic": "STATIC",
+              "score": 1.79,
+              "band": "MEDIUM"
+            }
+          }
+        },
+        {
+          "completedDate": "2022-06-12T18:23:20",
+          "source": "OASYS",
+          "status": "COMPLETE",
+          "outputVersion": "2",
+          "output": {
+            "seriousViolentReoffendingPredictor": {
+              "staticOrDynamic": "STATIC",
+              "score": 1.23,
+              "band": "LOW"
+            },
+            "directContactSexualReoffendingPredictor": {
+              "score": 2.81,
+              "band": "MEDIUM"
+            },
+            "indirectImageContactSexualReoffendingPredictor": {
+              "score": 1.07,
+              "band": "MEDIUM"
+            },
+            "combinedSeriousReoffendingPredictor": {
+              "algorithmVersion": "6",
+              "staticOrDynamic": "STATIC",
+              "score": 1.23,
+              "band": "LOW"
+            }
+          }
+        },
+        {
+          "completedDate": "2022-06-11T18:23:20",
+          "source": "OASYS",
+          "status": "COMPLETE",
+          "outputVersion": "2",
+          "output": {
+            "seriousViolentReoffendingPredictor": {
+              "staticOrDynamic": "DYNAMIC",
+              "score": 4.56,
+              "band": "MEDIUM"
+            },
+            "directContactSexualReoffendingPredictor": {
+              "score": 2.81,
+              "band": "MEDIUM"
+            },
+            "indirectImageContactSexualReoffendingPredictor": {
+              "score": 1.07,
+              "band": "MEDIUM"
+            },
+            "combinedSeriousReoffendingPredictor": {
+              "algorithmVersion": "6",
+              "staticOrDynamic": "DYNAMIC",
+              "score": 50.1234,
+              "band": "MEDIUM"
+            }
+          }
+        },
+        {
+          "completedDate": "2022-06-10T18:23:20",
+          "source": "OASYS",
+          "status": "COMPLETE",
+          "outputVersion": "1",
+          "output": {
+            "rsrPercentageScore": 50.1234,
+            "rsrScoreLevel": "MEDIUM",
+            "ospcPercentageScore": 1.07,
+            "ospcScoreLevel": "MEDIUM",
+            "ospiPercentageScore": 2.81,
+            "ospiScoreLevel": "MEDIUM",
+            "staticOrDynamic": "DYNAMIC",
+            "algorithmVersion": "5"
+          }
+        },
+        {
+          "completedDate": "2022-06-09T15:16:21",
+          "source": "OASYS",
+          "status": "COMPLETE",
+          "outputVersion": "1",
+          "output": {
+            "rsrPercentageScore": 4.12,
+            "rsrScoreLevel": "MEDIUM",
+            "ospcPercentageScore": 1.07,
+            "ospcScoreLevel": "MEDIUM",
+            "ospiPercentageScore": 2.81,
+            "ospiScoreLevel": "MEDIUM",
+            "staticOrDynamic": "DYNAMIC",
+            "algorithmVersion": "3"
+          }
+        },
+        {
+          "completedDate": "2022-04-27T12:46:39",
+          "source": "OASYS",
+          "status": "COMPLETE",
+          "outputVersion": "1",
+          "output": {
+            "rsrPercentageScore": 0.32,
+            "rsrScoreLevel": "LOW",
+            "staticOrDynamic": "STATIC",
+            "algorithmVersion": "3"
+          }
+        }
+      ]
+    """.trimIndent()
   }
 }
