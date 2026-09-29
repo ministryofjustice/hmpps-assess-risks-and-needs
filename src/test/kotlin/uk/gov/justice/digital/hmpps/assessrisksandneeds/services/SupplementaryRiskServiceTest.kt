@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RedactedOasysRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
@@ -28,7 +28,7 @@ import java.util.UUID
 @DisplayName("Supplementary Risk Service Tests")
 class SupplementaryRiskServiceTest {
   private val supplementaryRiskRepository: SupplementaryRiskRepository = mockk()
-  private val objectMapper: ObjectMapper = mockk()
+  private val objectMapper: JsonMapper = mockk()
 
   private val supplementaryRiskService = SupplementaryRiskService(supplementaryRiskRepository, objectMapper)
 

@@ -1,11 +1,11 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.services
 
 import com.beust.klaxon.Klaxon
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.CreateSupplementaryRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RedactedOasysRiskDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Source
@@ -21,7 +21,7 @@ import java.util.UUID
 @Service
 class SupplementaryRiskService(
   private val supplementaryRiskRepository: SupplementaryRiskRepository,
-  @Qualifier("globalObjectMapper") private val objectMapper: ObjectMapper,
+  @Qualifier("globalObjectMapper") private val objectMapper: JsonMapper,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
