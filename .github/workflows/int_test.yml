@@ -39,7 +39,7 @@ jobs:
           AAP_CLIENT_ID: ${{ secrets.ARNS_ASSESSMENT_CLIENT_ID }}
           AAP_CLIENT_SECRET: ${{ secrets.ARNS_ASSESSMENT_CLIENT_SECRET }}
           ARNS_TEST_BASE_URL: ${{ fromJSON(vars.INT_TEST_DATA)[inputs.environment].url }}
-          ARNS_API_CRN: ${{ fromJSON(vars.INT_TEST_DATA)[inputs.environment].crn }}
+          ARNS_TEST_API_CRN: ${{ fromJSON(vars.INT_TEST_DATA)[inputs.environment].crn }}
 
       - name: Upload test results
         if: '!cancelled()'
