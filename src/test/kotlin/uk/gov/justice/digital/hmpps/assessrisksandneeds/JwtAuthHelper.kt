@@ -31,18 +31,16 @@ class JwtAuthHelper {
     roles: List<String>? = listOf(),
     expiryTime: Duration = Duration.ofHours(1),
     jwtId: String = UUID.randomUUID().toString(),
-  ): String {
-    return Jwts.builder()
-      .id(jwtId)
-      .subject(subject)
-      .claim("user_name", subject)
-      .claim("client_id", "hmpps-assess-risks-and-needs")
-      .apply {
-        if (!roles.isNullOrEmpty()) claim("authorities", roles)
-        if (!scope.isNullOrEmpty()) claim("scope", scope)
-      }
-      .expiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
-      .signWith(keyPair.private, Jwts.SIG.RS256)
-      .compact()
-  }
+  ): String = Jwts.builder()
+    .id(jwtId)
+    .subject(subject)
+    .claim("user_name", subject)
+    .claim("client_id", "hmpps-assess-risks-and-needs")
+    .apply {
+      if (!roles.isNullOrEmpty()) claim("authorities", roles)
+      if (!scope.isNullOrEmpty()) claim("scope", scope)
+    }
+    .expiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
+    .signWith(keyPair.private, Jwts.SIG.RS256)
+    .compact()
 }
