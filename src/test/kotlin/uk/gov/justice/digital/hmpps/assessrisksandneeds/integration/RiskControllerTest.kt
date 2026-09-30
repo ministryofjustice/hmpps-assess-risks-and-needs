@@ -2,24 +2,14 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AllRoshRiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ErrorResponse
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.OtherRoshRisksDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.ResponseDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskLevel
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskManagementPlansDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RiskRoshSummaryDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskToSelfDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
-import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @DisplayName("Risk Tests")
@@ -41,18 +31,9 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskRoshSummaryDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RiskRoshSummaryDto(
-            riskInCommunity = mapOf(
-              RiskLevel.LOW to listOf("Children", "Known Adult"),
-              RiskLevel.MEDIUM to listOf("Public"),
-              RiskLevel.HIGH to listOf("Staff"),
-            ),
-            assessedOn = null,
-          ),
-        )
+        JSONAssert.assertEquals(externalSummaryJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
@@ -63,18 +44,9 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskRoshSummaryDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RiskRoshSummaryDto(
-            riskInCommunity = mapOf(
-              RiskLevel.LOW to listOf("Children", "Known Adult"),
-              RiskLevel.MEDIUM to listOf("Public"),
-              RiskLevel.HIGH to listOf("Staff"),
-            ),
-            assessedOn = null,
-          ),
-        )
+        JSONAssert.assertEquals(externalSummaryJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
@@ -85,17 +57,17 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskRoshSummaryDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/risks/crn/$crn/summary/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskRoshSummaryDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    JSONAssert.assertEquals(checkNotNull(fromQueryParam), checkNotNull(fromPath), JSONCompareMode.STRICT)
   }
 
   @Test
@@ -105,17 +77,17 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/risks/crn/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    JSONAssert.assertEquals(checkNotNull(fromQueryParam), checkNotNull(fromPath), JSONCompareMode.STRICT)
   }
 
   @Test
@@ -125,30 +97,30 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/risks/crn/$crn/fulltext/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    JSONAssert.assertEquals(checkNotNull(fromQueryParam), checkNotNull(fromPath), JSONCompareMode.STRICT)
   }
 
   @Test
   fun `get all risks by crn with a timeframe query param that excludes all assessments returns no assessed date`() {
     val timeframe = 2L
-    val roshRisk = webTestClient.get().uri("/risks/crn/$crn?timeframe=$timeframe")
+    webTestClient.get().uri("/risks/crn/$crn?timeframe=$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
-      .returnResult().responseBody
-
-    assertThat(roshRisk?.assessedOn).isNull()
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(emptyAllRisksJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
+      }
   }
 
   @Test
@@ -157,29 +129,9 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskRoshSummaryDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RiskRoshSummaryDto(
-            "whoisAtRisk",
-            "natureOfRisk",
-            "riskImminence",
-            "riskIncreaseFactors",
-            "riskMitigationFactors",
-            "analysisOfRiskFactors",
-            mapOf(
-              RiskLevel.LOW to listOf("Children", "Known Adult"),
-              RiskLevel.MEDIUM to listOf("Public"),
-              RiskLevel.HIGH to listOf("Staff"),
-            ),
-            mapOf(
-              RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
-              RiskLevel.HIGH to listOf("Prisoners"),
-              RiskLevel.VERY_HIGH to listOf("Staff"),
-            ),
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-          ),
-        )
+        JSONAssert.assertEquals(probationSummaryJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
@@ -189,13 +141,12 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
-      .expectBody<ErrorResponse>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          ErrorResponse(
-            status = 404,
-            developerMessage = "No such offender for CRN: RANDOMCRN",
-          ),
+        JSONAssert.assertEquals(
+          """{"status":404,"developerMessage":"No such offender for CRN: RANDOMCRN"}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -206,69 +157,9 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          AllRoshRiskDto(
-            RoshRiskToSelfDto(
-              suicide = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns",
-              ),
-              selfHarm = RiskDto(
-                risk = ResponseDto.DK,
-              ),
-              custody = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.NA,
-              ),
-              hostelSetting = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.DK,
-                current = ResponseDto.NO,
-              ),
-              vulnerability = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Vulnerability previous concerns free text",
-                current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text",
-              ),
-              assessedOn = null,
-            ),
-            OtherRoshRisksDto(
-              ResponseDto.YES,
-              ResponseDto.YES,
-              ResponseDto.DK,
-              ResponseDto.YES,
-              assessedOn = null,
-            ),
-            RiskRoshSummaryDto(
-              "whoisAtRisk",
-              "natureOfRisk",
-              "riskImminence",
-              "riskIncreaseFactors",
-              "riskMitigationFactors",
-              "analysisOfRiskFactors",
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Known Adult"),
-                RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff"),
-              ),
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
-                RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff"),
-              ),
-              assessedOn = null,
-            ),
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-          ),
-        )
+        JSONAssert.assertEquals(allRisksJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
@@ -279,69 +170,9 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          AllRoshRiskDto(
-            RoshRiskToSelfDto(
-              suicide = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns",
-              ),
-              selfHarm = RiskDto(
-                risk = ResponseDto.DK,
-              ),
-              custody = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.NA,
-              ),
-              hostelSetting = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.DK,
-                current = ResponseDto.NO,
-              ),
-              vulnerability = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Vulnerability previous concerns free text",
-                current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text",
-              ),
-              assessedOn = null,
-            ),
-            OtherRoshRisksDto(
-              ResponseDto.YES,
-              ResponseDto.YES,
-              ResponseDto.DK,
-              ResponseDto.YES,
-              assessedOn = null,
-            ),
-            RiskRoshSummaryDto(
-              "whoisAtRisk",
-              "natureOfRisk",
-              "riskImminence",
-              "riskIncreaseFactors",
-              "riskMitigationFactors",
-              "analysisOfRiskFactors",
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Known Adult"),
-                RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff"),
-              ),
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
-                RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff"),
-              ),
-              assessedOn = null,
-            ),
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-          ),
-        )
+        JSONAssert.assertEquals(allRisksJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
@@ -351,69 +182,9 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          AllRoshRiskDto(
-            RoshRiskToSelfDto(
-              suicide = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns",
-              ),
-              selfHarm = RiskDto(
-                risk = ResponseDto.DK,
-              ),
-              custody = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.NA,
-              ),
-              hostelSetting = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.DK,
-                current = ResponseDto.NO,
-              ),
-              vulnerability = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Vulnerability previous concerns free text",
-                current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text",
-              ),
-              assessedOn = null,
-            ),
-            OtherRoshRisksDto(
-              ResponseDto.YES,
-              ResponseDto.YES,
-              ResponseDto.DK,
-              ResponseDto.YES,
-              assessedOn = null,
-            ),
-            RiskRoshSummaryDto(
-              "whoisAtRisk",
-              "natureOfRisk",
-              "riskImminence",
-              "riskIncreaseFactors",
-              "riskMitigationFactors",
-              "analysisOfRiskFactors",
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Known Adult"),
-                RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff"),
-              ),
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
-                RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff"),
-              ),
-              assessedOn = null,
-            ),
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-          ),
-        )
+        JSONAssert.assertEquals(allRisksJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
@@ -424,69 +195,9 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          AllRoshRiskDto(
-            RoshRiskToSelfDto(
-              suicide = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                current = ResponseDto.YES,
-                currentConcernsText = "Suicide and/or Self-harm current concerns",
-              ),
-              selfHarm = RiskDto(
-                risk = ResponseDto.DK,
-              ),
-              custody = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Coping in custody / hostel setting previous concerns",
-                current = ResponseDto.NA,
-              ),
-              hostelSetting = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.DK,
-                current = ResponseDto.NO,
-              ),
-              vulnerability = RiskDto(
-                risk = ResponseDto.YES,
-                previous = ResponseDto.YES,
-                previousConcernsText = "Vulnerability previous concerns free text",
-                current = ResponseDto.YES,
-                currentConcernsText = "Vulnerability current concerns free text",
-              ),
-              assessedOn = null,
-            ),
-            OtherRoshRisksDto(
-              ResponseDto.YES,
-              ResponseDto.YES,
-              ResponseDto.DK,
-              ResponseDto.YES,
-              assessedOn = null,
-            ),
-            RiskRoshSummaryDto(
-              "whoisAtRisk",
-              "natureOfRisk",
-              "riskImminence",
-              "riskIncreaseFactors",
-              "riskMitigationFactors",
-              "analysisOfRiskFactors",
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Known Adult"),
-                RiskLevel.MEDIUM to listOf("Public"),
-                RiskLevel.HIGH to listOf("Staff"),
-              ),
-              mapOf(
-                RiskLevel.LOW to listOf("Children", "Public", "Known Adult"),
-                RiskLevel.HIGH to listOf("Prisoners"),
-                RiskLevel.VERY_HIGH to listOf("Staff"),
-              ),
-              assessedOn = null,
-            ),
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-          ),
-        )
+        JSONAssert.assertEquals(allRisksJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
@@ -497,93 +208,22 @@ class RiskControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AllRoshRiskDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody?.summary).isEqualTo(
-          RiskRoshSummaryDto(
-            "whoisAtRisk",
-            "natureOfRisk",
-            "riskImminence",
-            "riskIncreaseFactors",
-            "riskMitigationFactors",
-            "analysisOfRiskFactors",
-            mapOf(
-              RiskLevel.MEDIUM to listOf("Public"),
-              RiskLevel.LOW to listOf("Known Adult"),
-            ),
-            mapOf(
-              RiskLevel.LOW to listOf("Public", "Known Adult"),
-            ),
-            assessedOn = null,
-          ),
-        )
+        JSONAssert.assertEquals(nullRoshScoresJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
       }
   }
 
   @Test
   fun `get risk management plans by crn`() {
-    val riskManagementPlanDetails = webTestClient.get().uri("/risks/crn/$crn/risk-management-plan")
+    webTestClient.get().uri("/risks/crn/$crn/risk-management-plan")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RiskManagementPlansDto>()
-      .returnResult().responseBody
-
-    assertThat(riskManagementPlanDetails!!.riskManagementPlan).hasSize(5)
-    with(riskManagementPlanDetails.riskManagementPlan[0]) {
-      assertThat(this.assessmentId).isEqualTo(667025L)
-      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 38, 57))
-      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 3, 26, 12, 47, 17))
-      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
-      assertThat(this.assessmentType).isEqualTo("LAYER3")
-      assertThat(this.partcompStatus).isNull()
-      assertThat(this.keyInformationCurrentSituation).isEqualTo(null)
-      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
-      assertThat(this.supervision).isEqualTo(null)
-      assertThat(this.monitoringAndControl).isEqualTo(null)
-      assertThat(this.interventionsAndTreatment).isEqualTo(null)
-      assertThat(this.victimSafetyPlanning).isEqualTo(null)
-      assertThat(this.contingencyPlans).isEqualTo(null)
-    }
-    with(riskManagementPlanDetails.riskManagementPlan[3]) {
-      assertThat(this.assessmentId).isEqualTo(674025L)
-      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 6, 25, 13, 4, 56))
-      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 49, 39))
-      assertThat(this.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
-      assertThat(this.assessmentType).isEqualTo("LAYER3")
-      assertThat(this.partcompStatus).isEqualTo("Unsigned")
-      assertThat(this.keyInformationCurrentSituation).isEqualTo(null)
-      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo(null)
-      assertThat(this.supervision).isEqualTo(null)
-      assertThat(this.monitoringAndControl).isEqualTo(null)
-      assertThat(this.interventionsAndTreatment).isEqualTo(null)
-      assertThat(this.victimSafetyPlanning).isEqualTo(null)
-      assertThat(this.contingencyPlans).isEqualTo(null)
-    }
-    with(riskManagementPlanDetails.riskManagementPlan[4]) {
-      assertThat(this.assessmentId).isEqualTo(676026L)
-      assertThat(this.initiationDate).isEqualTo(LocalDateTime.of(2020, 11, 2, 14, 50, 2))
-      assertThat(this.dateCompleted).isEqualTo(LocalDateTime.of(2020, 11, 5, 10, 56, 37))
-      assertThat(this.assessmentStatus).isEqualTo("COMPLETE")
-      assertThat(this.assessmentType).isEqualTo("LAYER3")
-      assertThat(this.keyInformationCurrentSituation).isEqualTo("Key considerations")
-      assertThat(this.furtherConsiderationsCurrentSituation).isEqualTo("Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.")
-      assertThat(this.supervision).isEqualTo(null)
-      assertThat(this.monitoringAndControl).isEqualTo("3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.")
-      assertThat(this.interventionsAndTreatment).isEqualTo("5. Additional conditions/requirements to manage the specific risks.")
-      assertThat(this.victimSafetyPlanning).isEqualTo("7. Contingency")
-      assertThat(this.contingencyPlans).isEqualTo(null)
-      assertThat(this.laterWIPAssessmentExists).isEqualTo(false)
-      assertThat(this.latestWIPDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 58))
-      assertThat(this.laterSignLockAssessmentExists).isEqualTo(false)
-      assertThat(this.latestSignLockDate).isNull()
-      assertThat(this.laterPartCompUnsignedAssessmentExists).isEqualTo(false)
-      assertThat(this.latestPartCompUnsignedDate).isEqualTo(LocalDateTime.of(2022, 5, 31, 10, 37, 5))
-      assertThat(this.laterPartCompSignedAssessmentExists).isEqualTo(false)
-      assertThat(this.latestPartCompSignedDate).isNull()
-      assertThat(this.laterCompleteAssessmentExists).isEqualTo(false)
-      assertThat(this.latestCompleteDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
-    }
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(riskManagementPlansJson, checkNotNull(it.responseBody), JSONCompareMode.STRICT)
+      }
   }
 
   @Test
@@ -596,13 +236,202 @@ class RiskControllerTest : IntegrationTestBase() {
 
   @Test
   fun `should return not found when Delius cannot find crn`() {
-    val response = webTestClient.get().uri("/risks/crn/USER_ACCESS_NOT_FOUND/risk-management-plan")
+    webTestClient.get().uri("/risks/crn/USER_ACCESS_NOT_FOUND/risk-management-plan")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
-      .expectBody<ApiErrorResponse>()
-      .returnResult().responseBody
+      .expectBody<String>()
+      .consumeWith {
+        JSONAssert.assertEquals(
+          """{"status":404,"developerMessage":"No such offender for CRN: USER_ACCESS_NOT_FOUND"}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
+        )
+      }
+  }
 
-    assertThat(response?.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+  private companion object {
+    val externalSummaryJson = """
+      {
+        "riskInCommunity": {
+          "LOW": ["Children", "Known Adult"],
+          "MEDIUM": ["Public"],
+          "HIGH": ["Staff"]
+        },
+        "overallRiskLevel": "VERY_HIGH"
+      }
+    """.trimIndent()
+
+    val probationSummaryJson = """
+      {
+        "whoIsAtRisk": "whoisAtRisk",
+        "natureOfRisk": "natureOfRisk",
+        "riskImminence": "riskImminence",
+        "riskIncreaseFactors": "riskIncreaseFactors",
+        "riskMitigationFactors": "riskMitigationFactors",
+        "analysisOfRiskFactors": "analysisOfRiskFactors",
+        "riskInCommunity": {
+          "LOW": ["Children", "Known Adult"],
+          "MEDIUM": ["Public"],
+          "HIGH": ["Staff"]
+        },
+        "riskInCustody": {
+          "LOW": ["Children", "Public", "Known Adult"],
+          "HIGH": ["Prisoners"],
+          "VERY_HIGH": ["Staff"]
+        },
+        "overallRiskLevel": "VERY_HIGH",
+        "assessedOn": "2024-12-19T16:57:25"
+      }
+    """.trimIndent()
+
+    val emptyAllRisksJson = """{"riskToSelf":{},"otherRisks":{},"summary":{"riskInCommunity":{},"riskInCustody":{}}}"""
+
+    val nullRoshScoresJson = """
+      {
+        "riskToSelf": {
+          "suicide": {},
+          "selfHarm": {},
+          "custody": {},
+          "hostelSetting": {},
+          "vulnerability": {}
+        },
+        "otherRisks": {},
+        "summary": {
+          "whoIsAtRisk": "whoisAtRisk",
+          "natureOfRisk": "natureOfRisk",
+          "riskImminence": "riskImminence",
+          "riskIncreaseFactors": "riskIncreaseFactors",
+          "riskMitigationFactors": "riskMitigationFactors",
+          "analysisOfRiskFactors": "analysisOfRiskFactors",
+          "riskInCommunity": {
+            "MEDIUM": ["Public"],
+            "LOW": ["Known Adult"]
+          },
+          "riskInCustody": {
+            "LOW": ["Public", "Known Adult"]
+          },
+          "overallRiskLevel": "MEDIUM"
+        },
+        "assessedOn": "2024-12-19T16:57:25"
+      }
+    """.trimIndent()
+
+    val allRisksJson = """
+      {
+        "riskToSelf": {
+          "suicide": {
+            "risk": "YES",
+            "previous": "YES",
+            "current": "YES",
+            "currentConcernsText": "Suicide and/or Self-harm current concerns"
+          },
+          "selfHarm": {"risk": "DK"},
+          "custody": {
+            "risk": "YES",
+            "previous": "YES",
+            "previousConcernsText": "Coping in custody / hostel setting previous concerns",
+            "current": "NA"
+          },
+          "hostelSetting": {
+            "risk": "YES",
+            "previous": "DK",
+            "current": "NO"
+          },
+          "vulnerability": {
+            "risk": "YES",
+            "previous": "YES",
+            "previousConcernsText": "Vulnerability previous concerns free text",
+            "current": "YES",
+            "currentConcernsText": "Vulnerability current concerns free text"
+          }
+        },
+        "otherRisks": {
+          "escapeOrAbscond": "YES",
+          "controlIssuesDisruptiveBehaviour": "YES",
+          "breachOfTrust": "DK",
+          "riskToOtherPrisoners": "YES"
+        },
+        "summary": {
+          "whoIsAtRisk": "whoisAtRisk",
+          "natureOfRisk": "natureOfRisk",
+          "riskImminence": "riskImminence",
+          "riskIncreaseFactors": "riskIncreaseFactors",
+          "riskMitigationFactors": "riskMitigationFactors",
+          "analysisOfRiskFactors": "analysisOfRiskFactors",
+          "riskInCommunity": {
+            "LOW": ["Children", "Known Adult"],
+            "MEDIUM": ["Public"],
+            "HIGH": ["Staff"]
+          },
+          "riskInCustody": {
+            "LOW": ["Children", "Public", "Known Adult"],
+            "HIGH": ["Prisoners"],
+            "VERY_HIGH": ["Staff"]
+          },
+          "overallRiskLevel": "VERY_HIGH"
+        },
+        "assessedOn": "2024-12-19T16:57:25"
+      }
+    """.trimIndent()
+
+    val riskManagementPlansJson = """
+      {
+        "crn": "X123456",
+        "limitedAccessOffender": false,
+        "riskManagementPlan": [
+          {
+            "assessmentId": 667025,
+            "dateCompleted": "2020-03-26T12:47:17",
+            "initiationDate": "2020-03-26T12:38:57",
+            "assessmentStatus": "COMPLETE",
+            "assessmentType": "LAYER3"
+          },
+          {
+            "assessmentId": 668025,
+            "dateCompleted": "2020-03-26T13:00:00",
+            "initiationDate": "2020-03-26T12:50:34",
+            "assessmentStatus": "COMPLETE",
+            "assessmentType": "LAYER3"
+          },
+          {
+            "assessmentId": 673025,
+            "dateCompleted": "2020-04-03T11:42:01",
+            "initiationDate": "2020-04-03T11:33:00",
+            "assessmentStatus": "COMPLETE",
+            "assessmentType": "LAYER3"
+          },
+          {
+            "assessmentId": 674025,
+            "dateCompleted": "2020-11-02T14:49:39",
+            "partcompStatus": "Unsigned",
+            "initiationDate": "2020-06-25T13:04:56",
+            "assessmentStatus": "LOCKED_INCOMPLETE",
+            "assessmentType": "LAYER3"
+          },
+          {
+            "assessmentId": 676026,
+            "dateCompleted": "2020-11-05T10:56:37",
+            "initiationDate": "2020-11-02T14:50:02",
+            "assessmentStatus": "COMPLETE",
+            "assessmentType": "LAYER3",
+            "superStatus": "COMPLETE",
+            "keyInformationCurrentSituation": "Key considerations",
+            "furtherConsiderationsCurrentSituation": "Kelvin Brown is currently in the community having received a Adjourned - Other Report on the 01/01/2010 for 12 months\r\rThe end of their sentence is currently unknown. \r\rThey have no areas linked to harm. \r\rKelvin Brown has been assessed as medium risk to the public.\r\rKelvin Brown will have contact with a child on the protection register or in local authority care.\rThey are quite motivated to address offending behaviour.",
+            "monitoringAndControl": "3. Added measures for specific risks. Include here all activity aimed at addressing victim perspective and contact.",
+            "interventionsAndTreatment": "5. Additional conditions/requirements to manage the specific risks.",
+            "victimSafetyPlanning": "7. Contingency",
+            "laterWIPAssessmentExists": false,
+            "latestWIPDate": "2022-07-21T15:43:58",
+            "laterSignLockAssessmentExists": false,
+            "laterPartCompUnsignedAssessmentExists": false,
+            "latestPartCompUnsignedDate": "2022-05-31T10:37:05",
+            "laterPartCompSignedAssessmentExists": false,
+            "laterCompleteAssessmentExists": false,
+            "latestCompleteDate": "2022-07-21T15:43:12"
+          }
+        ]
+      }
+    """.trimIndent()
   }
 }

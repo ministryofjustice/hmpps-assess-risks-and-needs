@@ -2,30 +2,20 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentNeedsDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentOffenceDto
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentSection
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.AssessmentVersion
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.BasicAssessmentSummary
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SanIndicatorResponse
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.SexualOffenceDto
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.Timeline
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.ApiErrorResponse
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.MappsAssessmentTimeline
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.restclient.api.oasys.section.OasysThreshold
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.AuditService
 import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.DEFAULT_TIMEFRAME_WEEKS
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.services.NeedsSection
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient(timeout = "360000000")
@@ -48,33 +38,27 @@ class AssessmentControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get criminogenic needs by crn`() {
-    val needsDto = webTestClient.get().uri("/needs/crn/$crn")
+    val response = webTestClient.get().uri("/needs/crn/$crn")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+    assertJson(oasysNeedsJson, response)
   }
 
   @Test
   fun `get criminogenic needs by crn within timeframe`() {
     val timeframe = 70L
-    val needsDto = webTestClient.get().uri("/needs/crn/$crn/$timeframe")
+    val response = webTestClient.get().uri("/needs/crn/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 19, 16, 57, 25))
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(identifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(scoredNotNeeds())
+    assertJson(oasysNeedsJson, response)
   }
 
   @Test
@@ -84,17 +68,17 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/needs/crn/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    assertJson(checkNotNull(fromQueryParam), checkNotNull(fromPath))
   }
 
   @Test
@@ -112,17 +96,17 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromExplicitDefault = webTestClient.get().uri("/needs/crn/$crn?timeframe=$DEFAULT_TIMEFRAME_WEEKS")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromDefault).isEqualTo(fromExplicitDefault)
+    assertJson(checkNotNull(fromDefault), checkNotNull(fromExplicitDefault))
   }
 
   @Test
@@ -135,49 +119,38 @@ class AssessmentControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get criminogenic needs by crn for a SAN assessment`() {
-    val needsDto = webTestClient.get().uri("/needs/crn/X654321")
+    val response = webTestClient.get().uri("/needs/crn/X654321")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
-    assertThat(needsDto?.assessedOn).isEqualTo(LocalDateTime.of(2024, 12, 20, 10, 0, 0))
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(sanNotIdentifiedNeeds())
-    assertThat(needsDto?.unansweredNeeds).isEmpty()
+    assertJson(sanNeedsJson, response)
   }
 
   @Test
   fun `get criminogenic needs by crn for an incomplete assessment`() {
-    val needsDto = webTestClient.get().uri("/needs/crn/$incompleteCrn?excludeIncomplete=false")
+    val response = webTestClient.get().uri("/needs/crn/$incompleteCrn?excludeIncomplete=false")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.OASYS)
-    assertThat(needsDto?.assessedOn).isNull()
-    assertThat(needsDto?.unansweredNeeds).isNotEmpty()
-    assertThat(needsDto?.identifiedNeeds).isEmpty()
+    assertJson(incompleteOasysNeedsJson, response)
   }
 
   @Test
   fun `get criminogenic needs by crn for a SAN assessment that is not yet signed off`() {
-    val needsDto = webTestClient.get().uri("/needs/crn/$incompleteSanCrn?excludeIncomplete=false")
+    val response = webTestClient.get().uri("/needs/crn/$incompleteSanCrn?excludeIncomplete=false")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
-    assertThat(needsDto?.assessedOn).isNull()
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
-    assertThat(needsDto?.notIdentifiedNeeds).containsExactlyInAnyOrderElementsOf(sanNotIdentifiedNeeds())
-    assertThat(needsDto?.unansweredNeeds).isEmpty()
+    assertJson(incompleteSanNeedsJson, response)
   }
 
   @Test
@@ -191,16 +164,14 @@ class AssessmentControllerTest : IntegrationTestBase() {
   @Test
   fun `get criminogenic needs by crn within timeframe for an assessment that is not yet signed off`() {
     val timeframe = 70L
-    val needsDto = webTestClient.get().uri("/needs/crn/$incompleteSanCrn/$timeframe?excludeIncomplete=false")
+    val response = webTestClient.get().uri("/needs/crn/$incompleteSanCrn/$timeframe?excludeIncomplete=false")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentNeedsDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(needsDto?.assessmentVersion).isEqualTo(AssessmentVersion.SAN)
-    assertThat(needsDto?.assessedOn).isNull()
-    assertThat(needsDto?.identifiedNeeds).containsExactlyInAnyOrderElementsOf(sanIdentifiedNeeds())
+    assertJson(incompleteSanNeedsJson, response)
   }
 
   // An assessment that is still open has no completedDate, so recency is measured from its
@@ -241,139 +212,26 @@ class AssessmentControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get assessment offence details by crn`() {
-    val assessmentOffenceDto = webTestClient.get().uri("/assessments/crn/$crn/offence")
+    val response = webTestClient.get().uri("/assessments/crn/$crn/offence")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentOffenceDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(assessmentOffenceDto?.crn).isEqualTo(crn)
-    assertThat(assessmentOffenceDto?.limitedAccessOffender).isEqualTo(false)
-    val assessment1 = assessmentOffenceDto?.assessments?.get(0)
-    assertThat(assessment1?.assessmentId).isEqualTo(9630348)
-    assertThat(assessment1?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 46, 39))
-    assertThat(assessment1?.initiationDate).isEqualTo(LocalDateTime.of(2022, 4, 27, 12, 42, 25))
-    assertThat(assessment1?.assessmentStatus).isEqualTo("COMPLETE")
-    assertThat(assessment1?.assessmentType).isEqualTo("LAYER1")
-    assertThat(assessment1?.partcompStatus).isNull()
-
-    val assessment2 = assessmentOffenceDto?.assessments?.get(1)
-    assertThat(assessment2?.assessmentId).isEqualTo(9632348)
-    assertThat(assessment2?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 6, 9, 15, 13, 18))
-    assertThat(assessment2?.initiationDate).isEqualTo(LocalDateTime.of(2022, 5, 31, 10, 37, 5))
-    assertThat(assessment2?.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
-    assertThat(assessment2?.assessmentType).isEqualTo("LAYER3")
-    assertThat(assessment2?.partcompStatus).isEqualTo("Unsigned")
-
-    val assessment3 = assessmentOffenceDto?.assessments?.get(2)
-    assertThat(assessment3?.assessmentId).isEqualTo(9634348)
-    assertThat(assessment3?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 6, 9, 15, 16, 21))
-    assertThat(assessment3?.initiationDate).isEqualTo(LocalDateTime.of(2022, 6, 9, 15, 13, 55))
-    assertThat(assessment3?.assessmentStatus).isEqualTo("COMPLETE")
-    assertThat(assessment3?.assessmentType).isEqualTo("LAYER3")
-    assertThat(assessment3?.partcompStatus).isNull()
-
-    val assessment4 = assessmentOffenceDto?.assessments?.get(3)
-    assertThat(assessment4?.assessmentId).isEqualTo(9635350)
-    assertThat(assessment4?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 20))
-    assertThat(assessment4?.initiationDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 22, 2))
-    assertThat(assessment4?.assessmentStatus).isEqualTo("COMPLETE")
-    assertThat(assessment4?.assessmentType).isEqualTo("LAYER3")
-    assertThat(assessment4?.partcompStatus).isNull()
-
-    val assessment5 = assessmentOffenceDto?.assessments?.get(4)
-    assertThat(assessment5?.assessmentId).isEqualTo(9635351)
-    assertThat(assessment5?.assessmentType).isEqualTo("LAYER3")
-    assertThat(assessment5?.dateCompleted).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
-    assertThat(assessment5?.initiationDate).isEqualTo(LocalDateTime.of(2022, 6, 10, 18, 23, 51))
-    assertThat(assessment5?.assessorSignedDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
-
-    assertThat(assessment5?.laterWIPAssessmentExists).isEqualTo(true)
-    assertThat(assessment5?.latestWIPDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 58))
-    assertThat(assessment5?.laterSignLockAssessmentExists).isEqualTo(false)
-    assertThat(assessment5?.latestSignLockDate).isNull()
-    assertThat(assessment5?.laterPartCompUnsignedAssessmentExists).isEqualTo(false)
-    assertThat(assessment5?.latestPartCompUnsignedDate).isEqualTo(LocalDateTime.of(2022, 5, 31, 10, 37, 5))
-    assertThat(assessment5?.laterPartCompSignedAssessmentExists).isEqualTo(false)
-    assertThat(assessment5?.latestPartCompSignedDate).isNull()
-    assertThat(assessment5?.laterCompleteAssessmentExists).isEqualTo(false)
-    assertThat(assessment5?.latestCompleteDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 12))
-
-    assertThat(assessment5?.offence).isEqualTo("TBA")
-    assertThat(assessment5?.assessmentStatus).isEqualTo("COMPLETE")
-    assertThat(assessment5?.superStatus).isEqualTo("COMPLETE")
-    assertThat(assessment5?.disinhibitors?.get(0)).isEqualTo("Alcohol")
-    assertThat(assessment5?.patternOfOffending).isEqualTo("TBA")
-    assertThat(assessment5?.disinhibitors?.get(0)).isEqualTo("Alcohol")
-    assertThat(assessment5?.offenceInvolved?.get(0)).isEqualTo("Carrying or using a weapon")
-    assertThat(assessment5?.specificWeapon).isEqualTo("TBA")
-    assertThat(assessment5?.victimPerpetratorRelationship).isEqualTo("blah")
-    assertThat(assessment5?.victimOtherInfo).isEqualTo("mmmmmm")
-    assertThat(assessment5?.evidencedMotivations?.get(0)).isEqualTo("Sexual motivation")
-
-    assertThat(assessment5?.offenceDetails?.get(0)?.type).isEqualTo("CONCURRENT")
-    assertThat(assessment5?.offenceDetails?.get(0)?.offenceDate).isEqualTo(
-      LocalDateTime.of(2021, 11, 1, 0, 0, 0),
-    )
-    assertThat(assessment5?.offenceDetails?.get(0)?.offenceCode).isEqualTo("028")
-    assertThat(assessment5?.offenceDetails?.get(0)?.offenceSubCode).isEqualTo("00")
-    assertThat(assessment5?.offenceDetails?.get(0)?.offence).isEqualTo("Burglary in a dwelling")
-    assertThat(assessment5?.offenceDetails?.get(0)?.subOffence).isEqualTo(
-      "Burglary in a dwelling    [Use this code only if you are unable to determine which subcoded Offence applies]",
-    )
-
-    assertThat(assessment5?.offenceDetails?.get(1)?.type).isEqualTo("CURRENT")
-    assertThat(assessment5?.offenceDetails?.get(1)?.offenceDate).isEqualTo(
-      LocalDateTime.of(2021, 12, 25, 0, 0, 0),
-    )
-    assertThat(assessment5?.offenceDetails?.get(1)?.offenceCode).isEqualTo("020")
-    assertThat(assessment5?.offenceDetails?.get(1)?.offenceSubCode).isEqualTo("05")
-    assertThat(assessment5?.offenceDetails?.get(1)?.offence).isEqualTo("Sexual assault on a female")
-    assertThat(assessment5?.offenceDetails?.get(1)?.subOffence).isEqualTo("Sexual assault on a female")
-
-    assertThat(assessment5?.victimDetails?.get(0)?.age).isEqualTo("26-49")
-    assertThat(assessment5?.victimDetails?.get(0)?.gender).isEqualTo("Male")
-    assertThat(assessment5?.victimDetails?.get(0)?.ethnicCategory).isEqualTo("White - Irish")
-    assertThat(assessment5?.victimDetails?.get(0)?.victimRelation).isEqualTo("Stranger")
-
-    assertThat(assessment5?.victimDetails?.get(1)?.age).isEqualTo("50-64")
-    assertThat(assessment5?.victimDetails?.get(1)?.gender).isEqualTo("Male")
-    assertThat(assessment5?.victimDetails?.get(1)?.ethnicCategory).isEqualTo("Chinese or other ethnic group - Chinese TEST 080212")
-    assertThat(assessment5?.victimDetails?.get(1)?.victimRelation).isEqualTo("Spouse/Partner - live in")
-
-    assertThat(assessment5?.partcompStatus).isNull()
-
-    val assessment6 = assessmentOffenceDto?.assessments?.get(5)
-    assertThat(assessment6?.assessmentId).isEqualTo(9639348)
-    assertThat(assessment6?.dateCompleted).isNull()
-    assertThat(assessment6?.initiationDate).isEqualTo(LocalDateTime.of(2022, 7, 21, 15, 43, 58))
-    assertThat(assessment6?.assessmentStatus).isEqualTo("OPEN")
-    assertThat(assessment6?.assessmentType).isEqualTo("LAYER3")
-    assertThat(assessment6?.partcompStatus).isNull()
+    assertJson(assessmentOffenceJson, response)
   }
 
   @Test
   fun `get assessment offence details with no complete assessments`() {
-    val assessmentOffenceDto = webTestClient.get().uri("/assessments/crn/X654321/offence")
+    val response = webTestClient.get().uri("/assessments/crn/X654321/offence")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<AssessmentOffenceDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(assessmentOffenceDto?.crn).isEqualTo("X654321")
-    assertThat(assessmentOffenceDto?.assessments?.size).isEqualTo(2)
-
-    val assessment1 = assessmentOffenceDto?.assessments?.get(0)
-    assertThat(assessment1?.dateCompleted).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 9, 7))
-    assertThat(assessment1?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 1, 15, 37, 9))
-    assertThat(assessment1?.assessmentStatus).isEqualTo("LOCKED_INCOMPLETE")
-
-    val assessment2 = assessmentOffenceDto?.assessments?.get(1)
-    assertThat(assessment2?.dateCompleted).isNull()
-    assertThat(assessment2?.initiationDate).isEqualTo(LocalDateTime.of(2011, 2, 7, 17, 10, 17))
-    assertThat(assessment2?.assessmentStatus).isEqualTo("SIGNED")
+    assertJson(assessmentOffenceNoCompleteJson, response)
   }
 
   @Test
@@ -398,22 +256,22 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
-      .expectBody<ApiErrorResponse>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(response?.developerMessage).isEqualTo("No such offender for CRN: USER_ACCESS_NOT_FOUND")
+    assertJson("""{"status":404,"developerMessage":"No such offender for CRN: USER_ACCESS_NOT_FOUND"}""", response)
   }
 
   @Test
   fun `get sexually motivated offence details by crn`() {
-    val sexualOffenceDto = webTestClient.get().uri("/assessments/crn/$crn/sexually-motivated-offence")
+    val response = webTestClient.get().uri("/assessments/crn/$crn/sexually-motivated-offence")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__RISKS__RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<SexualOffenceDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(sexualOffenceDto).isEqualTo(SexualOffenceDto(true))
+    assertJson("""{"everCommittedSexualOffence":true}""", response)
   }
 
   @Test
@@ -435,10 +293,10 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<Timeline>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(response).isEqualTo(timeline)
+    assertJson(timelineJson, response)
   }
 
   @Test
@@ -447,10 +305,10 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<SanIndicatorResponse>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(response).isEqualTo(SanIndicatorResponse(crn, false))
+    assertJson("""{"crn":"X123456","sanIndicator":false}""", response)
   }
 
   @Test
@@ -460,16 +318,16 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<SanIndicatorResponse>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(response).isEqualTo(SanIndicatorResponse(crn, false))
+    assertJson("""{"crn":"X123456","sanIndicator":false}""", response)
   }
 
   @Test
   fun `get san signal within timeframe not found`() {
     val timeframe = 5L
-    val response = webTestClient.get().uri("/san-indicator/crn/$crn/$timeframe")
+    webTestClient.get().uri("/san-indicator/crn/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isNotFound
@@ -482,17 +340,17 @@ class AssessmentControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<SanIndicatorResponse>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/san-indicator/crn/$crn/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<SanIndicatorResponse>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    assertJson(checkNotNull(fromQueryParam), checkNotNull(fromPath))
   }
 
   @Test
@@ -506,102 +364,80 @@ class AssessmentControllerTest : IntegrationTestBase() {
 
   @Test
   fun `GET mapps endpoint returns 200 with complete assessment data`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        val body = response.responseBody!!
-        assertThat(body.assessments).isNotEmpty
-        assertThat(body.assessments).hasSizeGreaterThanOrEqualTo(2)
-      }
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    assertJson(mappsJson, response)
   }
 
   @Test
   fun `Returns all required MAPPS fields, if possible`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        val assessment = response.responseBody!!.assessments[0]
+      .expectBody<String>()
+      .returnResult().responseBody
 
-        // AC2: All required fields
-        assertThat(assessment.assessmentId).isNotNull()
-        assertThat(assessment.initiationDate).isNotNull()
-        assertThat(assessment.dateCompleted).isNotNull()
-        assertThat(assessment.assessmentType).isIn("LAYER1", "LAYER3")
-        assertThat(assessment.assessmentStatus).isEqualTo("COMPLETE")
-        assertThat(assessment.assessorName).isNotNull()
-          .isEqualTo("LevelTwo CentralSupport") // From wiremock data
-      }
+    assertJson(mappsJson, response)
   }
 
   @Test
   fun `Countersigner name is optional`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        val assessments = response.responseBody!!.assessments
-        // Some assessments may have null countersigner
-        assertThat(assessments).anySatisfy { assessment ->
-          // At least one has countersigner
-          assertThat(assessment.countersignerName).isNotNull()
-        }
-      }
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    assertJson(mappsJson, response)
   }
 
   @Test
   fun `Assessment without countersigner returns null for countersignerName`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/X654321")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        val assessment = response.responseBody!!.assessments[0]
-        assertThat(assessment.countersignerName).isNull()
-      }
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    assertJson(mappsSanJson, response)
   }
 
   @Test
   fun `Returns all complete assessments sorted by date descending`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        val assessments = response.responseBody!!.assessments
-        assertThat(assessments.size).isGreaterThanOrEqualTo(2)
+      .expectBody<String>()
+      .returnResult().responseBody
 
-        // Verify all COMPLETE
-        assertThat(assessments).allMatch { it.assessmentStatus == "COMPLETE" }
-
-        // Verify sorted descending by completion date
-        val dates = assessments.mapNotNull { it.dateCompleted }
-        assertThat(dates).isSortedAccordingTo(compareByDescending { it })
-      }
+    assertJson(mappsJson, response)
   }
 
   @Test
   fun `MAPPS endpoint returns 404 when no assessment exists`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/NOT_FOUND")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isNotFound
-      .expectBody<ApiErrorResponse>()
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    assertJson("""{"status":404}""", response)
   }
 
   @Test
@@ -623,174 +459,194 @@ class AssessmentControllerTest : IntegrationTestBase() {
 
   @Test
   fun `Endpoint accepts nomisId as identifier type`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/nomisId/A1234YZ")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        assertThat(response.responseBody!!.assessments).isNotEmpty
-      }
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    assertJson(mappsJson, response)
   }
 
   @Test
   fun `Does not return OPEN or other incomplete statuses`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        assertThat(response.responseBody!!.assessments)
-          .allMatch { it.assessmentStatus == "COMPLETE" }
-      }
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    assertJson(mappsJson, response)
   }
 
   @Test
   fun `Does not return STANDALONE assessment types`() {
-    webTestClient.get()
+    val response = webTestClient.get()
       .uri("/assessments/mapps/crn/X123456")
       .headers(setAuthorisation(roles = listOf("ROLE_ARNS__EXTERNAL_API_RO")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<MappsAssessmentTimeline>()
-      .consumeWith { response ->
-        assertThat(response.responseBody!!.assessments)
-          .allMatch { it.assessmentType in listOf("LAYER1", "LAYER3") }
-      }
+      .expectBody<String>()
+      .returnResult().responseBody
+
+    assertJson(mappsJson, response)
   }
 
-  private fun scoredNotNeeds() = listOf(
-    AssessmentNeedDto(
-      section = NeedsSection.ACCOMMODATION.name,
-      name = NeedsSection.ACCOMMODATION.description,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.DRUG_MISUSE.name,
-      name = NeedsSection.DRUG_MISUSE.description,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.ATTITUDE.name,
-      name = NeedsSection.ATTITUDE.description,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-  )
+  private val oasysNeedsJson = """
+    {
+      "identifiedNeeds": [
+        {"section":"EDUCATION_TRAINING_AND_EMPLOYABILITY","name":"Education, Training and Employability","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":3}},
+        {"section":"RELATIONSHIPS","name":"Relationships","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":2}},
+        {"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and Associates","riskOfHarm":true,"riskOfReoffending":true,"score":3,"oasysThreshold":{"standard":2}},
+        {"section":"ALCOHOL_MISUSE","name":"Alcohol Misuse","riskOfHarm":false,"riskOfReoffending":true,"score":4,"oasysThreshold":{"standard":4}},
+        {"section":"THINKING_AND_BEHAVIOUR","name":"Thinking and Behaviour","riskOfHarm":true,"riskOfReoffending":true,"score":7,"oasysThreshold":{"standard":4}}
+      ],
+      "notIdentifiedNeeds": [
+        {"section":"ACCOMMODATION","name":"Accommodation","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+        {"section":"DRUG_MISUSE","name":"Drug Misuse","score":0,"oasysThreshold":{"standard":2}},
+        {"section":"ATTITUDE","name":"Attitudes","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}}
+      ],
+      "unansweredNeeds": [],
+      "assessmentVersion":"OASYS",
+      "assessedOn":"2024-12-19T16:57:25"
+    }
+  """.trimIndent()
 
-  private fun identifiedNeeds() = listOf(
-    AssessmentNeedDto(
-      section = NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.name,
-      name = NeedsSection.EDUCATION_TRAINING_AND_EMPLOYABILITY.description,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 3,
-      oasysThreshold = OasysThreshold(3),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.RELATIONSHIPS.name,
-      name = NeedsSection.RELATIONSHIPS.description,
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 3,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.LIFESTYLE_AND_ASSOCIATES.name,
-      name = NeedsSection.LIFESTYLE_AND_ASSOCIATES.description,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      score = 3,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.ALCOHOL_MISUSE.name,
-      name = NeedsSection.ALCOHOL_MISUSE.description,
-      riskOfHarm = false,
-      riskOfReoffending = true,
-      score = 4,
-      oasysThreshold = OasysThreshold(4),
-    ),
-    AssessmentNeedDto(
-      section = NeedsSection.THINKING_AND_BEHAVIOUR.name,
-      name = NeedsSection.THINKING_AND_BEHAVIOUR.description,
-      riskOfHarm = true,
-      riskOfReoffending = true,
-      score = 7,
-      oasysThreshold = OasysThreshold(4),
-    ),
-  )
+  private val incompleteOasysNeedsJson = """
+    {
+      "identifiedNeeds": [],
+      "notIdentifiedNeeds": [],
+      "unansweredNeeds": [
+        {"section":"ACCOMMODATION","name":"Accommodation","oasysThreshold":{}},
+        {"section":"EDUCATION_TRAINING_AND_EMPLOYABILITY","name":"Education, Training and Employability","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},
+        {"section":"RELATIONSHIPS","name":"Relationships","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}},
+        {"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and Associates","riskOfHarm":true,"riskOfReoffending":true,"oasysThreshold":{}},
+        {"section":"DRUG_MISUSE","name":"Drug Misuse","oasysThreshold":{}},
+        {"section":"ALCOHOL_MISUSE","name":"Alcohol Misuse","riskOfHarm":false,"riskOfReoffending":true,"oasysThreshold":{}},
+        {"section":"THINKING_AND_BEHAVIOUR","name":"Thinking and Behaviour","oasysThreshold":{}},
+        {"section":"ATTITUDE","name":"Attitudes","riskOfHarm":false,"riskOfReoffending":false,"oasysThreshold":{}}
+      ],
+      "assessmentVersion":"OASYS"
+    }
+  """.trimIndent()
 
-  private fun sanIdentifiedNeeds() = listOf(
-    AssessmentNeedDto(
-      section = AssessmentSection.PERSONAL_RELATIONSHIPS_AND_COMMUNITY.name,
-      name = "Personal relationships and community",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 3,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = AssessmentSection.THINKING_ATTITUDES_AND_BEHAVIOUR.name,
-      name = "Thinking, behaviours and attitudes",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 6,
-      oasysThreshold = OasysThreshold(2),
-    ),
-  )
+  private val sanNeedsJson = """
+    {
+      "identifiedNeeds": [
+        {"section":"PERSONAL_RELATIONSHIPS_AND_COMMUNITY","name":"Personal relationships and community","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":2}},
+        {"section":"THINKING_ATTITUDES_AND_BEHAVIOUR","name":"Thinking, behaviours and attitudes","riskOfHarm":false,"riskOfReoffending":false,"score":6,"oasysThreshold":{"standard":2}}
+      ],
+      "notIdentifiedNeeds": [
+        {"section":"ACCOMMODATION","name":"Accommodation","riskOfHarm":false,"riskOfReoffending":false,"score":1,"oasysThreshold":{"standard":2}},
+        {"section":"EMPLOYMENT_AND_EDUCATION","name":"Employment and education","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+        {"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and associates","score":0,"oasysThreshold":{"standard":2}},
+        {"section":"DRUG_USE","name":"Drug use","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+        {"section":"ALCOHOL_USE","name":"Alcohol use","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}}
+      ],
+      "unansweredNeeds": [],
+      "assessmentVersion":"SAN",
+      "assessedOn":"2024-12-20T10:00:00"
+    }
+  """.trimIndent()
 
-  private fun sanNotIdentifiedNeeds() = listOf(
-    AssessmentNeedDto(
-      section = AssessmentSection.ACCOMMODATION.name,
-      name = "Accommodation",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 1,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = AssessmentSection.EMPLOYMENT_AND_EDUCATION.name,
-      name = "Employment and education",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = AssessmentSection.LIFESTYLE_AND_ASSOCIATES.name,
-      name = "Lifestyle and associates",
-      riskOfHarm = null,
-      riskOfReoffending = null,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = AssessmentSection.DRUG_USE.name,
-      name = "Drug use",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-    AssessmentNeedDto(
-      section = AssessmentSection.ALCOHOL_USE.name,
-      name = "Alcohol use",
-      riskOfHarm = false,
-      riskOfReoffending = false,
-      score = 0,
-      oasysThreshold = OasysThreshold(2),
-    ),
-  )
+  private val incompleteSanNeedsJson = """
+    {
+      "identifiedNeeds": [
+        {"section":"PERSONAL_RELATIONSHIPS_AND_COMMUNITY","name":"Personal relationships and community","riskOfHarm":false,"riskOfReoffending":false,"score":3,"oasysThreshold":{"standard":2}},
+        {"section":"THINKING_ATTITUDES_AND_BEHAVIOUR","name":"Thinking, behaviours and attitudes","riskOfHarm":false,"riskOfReoffending":false,"score":6,"oasysThreshold":{"standard":2}}
+      ],
+      "notIdentifiedNeeds": [
+        {"section":"ACCOMMODATION","name":"Accommodation","riskOfHarm":false,"riskOfReoffending":false,"score":1,"oasysThreshold":{"standard":2}},
+        {"section":"EMPLOYMENT_AND_EDUCATION","name":"Employment and education","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+        {"section":"LIFESTYLE_AND_ASSOCIATES","name":"Lifestyle and associates","score":0,"oasysThreshold":{"standard":2}},
+        {"section":"DRUG_USE","name":"Drug use","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}},
+        {"section":"ALCOHOL_USE","name":"Alcohol use","riskOfHarm":false,"riskOfReoffending":false,"score":0,"oasysThreshold":{"standard":2}}
+      ],
+      "unansweredNeeds": [],
+      "assessmentVersion":"SAN"
+    }
+  """.trimIndent()
+
+  private val assessmentOffenceJson = """
+    {
+      "crn":"X123456",
+      "limitedAccessOffender":false,
+      "assessments":[
+        {"assessmentId":9630348,"assessmentType":"LAYER1","dateCompleted":"2022-04-27T12:46:39","initiationDate":"2022-04-27T12:42:25","assessmentStatus":"COMPLETE"},
+        {"assessmentId":9632348,"assessmentType":"LAYER3","partcompStatus":"Unsigned","dateCompleted":"2022-06-09T15:13:18","initiationDate":"2022-05-31T10:37:05","assessmentStatus":"LOCKED_INCOMPLETE"},
+        {"assessmentId":9634348,"assessmentType":"LAYER3","dateCompleted":"2022-06-09T15:16:21","initiationDate":"2022-06-09T15:13:55","assessmentStatus":"COMPLETE"},
+        {"assessmentId":9635350,"assessmentType":"LAYER3","dateCompleted":"2022-06-10T18:23:20","initiationDate":"2022-06-10T18:22:02","assessmentStatus":"COMPLETE"},
+        {
+          "assessmentId":9635351,"assessmentType":"LAYER3","dateCompleted":"2022-07-21T15:43:12","initiationDate":"2022-06-10T18:23:51",
+          "assessorSignedDate":"2022-07-21T15:43:12","assessmentStatus":"COMPLETE","superStatus":"COMPLETE",
+          "offence":"TBA","disinhibitors":["Alcohol"],"patternOfOffending":"TBA","offenceInvolved":["Carrying or using a weapon"],
+          "specificWeapon":"TBA","victimPerpetratorRelationship":"blah","victimOtherInfo":"mmmmmm","evidencedMotivations":["Sexual motivation"],
+          "offenceDetails":[
+            {"type":"CONCURRENT","offenceDate":"2021-11-01T00:00:00","offenceCode":"028","offenceSubCode":"00","offence":"Burglary in a dwelling","subOffence":"Burglary in a dwelling    [Use this code only if you are unable to determine which subcoded Offence applies]"},
+            {"type":"CURRENT","offenceDate":"2021-12-25T00:00:00","offenceCode":"020","offenceSubCode":"05","offence":"Sexual assault on a female","subOffence":"Sexual assault on a female"}
+          ],
+          "victimDetails":[
+            {"age":"26-49","gender":"Male","ethnicCategory":"White - Irish","victimRelation":"Stranger"},
+            {"age":"50-64","gender":"Male","ethnicCategory":"Chinese or other ethnic group - Chinese TEST 080212","victimRelation":"Spouse/Partner - live in"}
+          ],
+          "laterWIPAssessmentExists":true,"latestWIPDate":"2022-07-21T15:43:58","laterSignLockAssessmentExists":false,
+          "laterPartCompUnsignedAssessmentExists":false,"latestPartCompUnsignedDate":"2022-05-31T10:37:05",
+          "laterPartCompSignedAssessmentExists":false,"laterCompleteAssessmentExists":false,"latestCompleteDate":"2022-07-21T15:43:12"
+        },
+        {"assessmentId":9639348,"assessmentType":"LAYER3","initiationDate":"2022-07-21T15:43:58","assessmentStatus":"OPEN"}
+      ]
+    }
+  """.trimIndent()
+
+  private val assessmentOffenceNoCompleteJson = """
+    {
+      "crn":"X654321",
+      "limitedAccessOffender":false,
+      "assessments":[
+        {"assessmentId":2998,"assessmentType":"LAYER1","dateCompleted":"2011-02-07T17:09:07","initiationDate":"2011-02-01T15:37:09","assessmentStatus":"LOCKED_INCOMPLETE"},
+        {"assessmentId":3432,"assessmentType":"LAYER1","initiationDate":"2011-02-07T17:10:17","assessmentStatus":"SIGNED"}
+      ]
+    }
+  """.trimIndent()
+
+  private val timelineJson = """
+    {"timeline":[
+      {"assessmentId":9630348,"initiationDate":"2023-12-17T16:57:25","completedDate":"2024-12-19T16:57:25","assessmentType":"LAYER3","status":"COMPLETE"},
+      {"assessmentId":9632348,"initiationDate":"2022-05-31T10:37:05","completedDate":"2022-06-09T15:13:18","assessmentType":"LAYER3","status":"LOCKED_INCOMPLETE"},
+      {"assessmentId":9634348,"initiationDate":"2022-06-09T15:13:55","completedDate":"2022-06-09T15:16:21","assessmentType":"LAYER3","status":"COMPLETE"},
+      {"assessmentId":9635350,"initiationDate":"2022-06-10T18:22:02","completedDate":"2022-06-10T18:23:20","assessmentType":"LAYER3","status":"COMPLETE"},
+      {"assessmentId":9635351,"initiationDate":"2022-06-10T18:23:51","completedDate":"2022-07-21T15:43:12","assessmentType":"LAYER3","status":"COMPLETE"},
+      {"assessmentId":9639348,"initiationDate":"2022-07-21T15:43:58","completedDate":"2022-07-27T12:09:41","assessmentType":"LAYER3","status":"COMPLETE"},
+      {"assessmentId":9641348,"initiationDate":"2022-07-27T12:10:58","assessmentType":"LAYER3","status":"OPEN"},
+      {"assessmentId":6661348,"completedDate":"2003-07-27T12:10:58","assessmentType":"LAYER3","status":"COMPLETE"},
+      {"assessmentId":6661347,"assessmentType":"LAYER3","status":"OPEN"}
+    ]}
+  """.trimIndent()
+
+  private val mappsJson = """
+    {"assessments":[
+      {"assessmentId":9630348,"initiationDate":"2023-12-17T16:57:25","dateCompleted":"2024-12-19T16:57:25","assessmentType":"LAYER3","assessmentStatus":"COMPLETE","assessorName":"LevelTwo CentralSupport"},
+      {"assessmentId":9639348,"initiationDate":"2022-07-21T15:43:58","dateCompleted":"2022-07-27T12:09:41","assessmentType":"LAYER3","assessmentStatus":"COMPLETE","assessorName":"Lisa Chen"},
+      {"assessmentId":9635351,"initiationDate":"2022-06-10T18:23:51","dateCompleted":"2022-07-21T15:43:12","assessmentType":"LAYER3","assessmentStatus":"COMPLETE","assessorName":"David Garcia","countersignerName":"Emma Martinez"},
+      {"assessmentId":9635350,"initiationDate":"2022-06-10T18:22:02","dateCompleted":"2022-06-10T18:23:20","assessmentType":"LAYER3","assessmentStatus":"COMPLETE","assessorName":"Sarah Williams","countersignerName":"Robert Brown"},
+      {"assessmentId":9634348,"initiationDate":"2022-06-09T15:13:55","dateCompleted":"2022-06-09T15:16:21","assessmentType":"LAYER3","assessmentStatus":"COMPLETE","assessorName":"Mike Johnson"},
+      {"assessmentId":6661348,"dateCompleted":"2003-07-27T12:10:58","assessmentType":"LAYER3","assessmentStatus":"COMPLETE","assessorName":"Mike Johnson","countersignerName":"John Smith"}
+    ]}
+  """.trimIndent()
+
+  private val mappsSanJson = """
+    {"assessments":[
+      {"assessmentId":9700001,"initiationDate":"2024-12-17T16:57:25","dateCompleted":"2024-12-20T10:00:00","assessmentType":"LAYER3","assessmentStatus":"COMPLETE","assessorName":"Mike Johnson"}
+    ]}
+  """.trimIndent()
+
+  private fun assertJson(expected: String, actual: String?) {
+    JSONAssert.assertEquals(expected, checkNotNull(actual), JSONCompareMode.STRICT)
+  }
 
   companion object {
     val timeline = Timeline(

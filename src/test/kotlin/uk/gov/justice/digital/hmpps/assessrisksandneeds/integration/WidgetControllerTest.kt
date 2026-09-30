@@ -1,12 +1,11 @@
 package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import uk.gov.justice.digital.hmpps.assessrisksandneeds.api.model.RoshRiskWidgetDto
-import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @DisplayName("Risk widget Tests")
@@ -20,19 +19,12 @@ class WidgetControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskWidgetDto(
-            overallRisk = "VERY_HIGH",
-            assessedOn = null,
-            riskInCommunity = mapOf(
-              "Children" to "LOW",
-              "Public" to "MEDIUM",
-              "Known Adult" to "LOW",
-              "Staff" to "HIGH",
-            ),
-          ),
+        JSONAssert.assertEquals(
+          """{"overallRisk":"VERY_HIGH","riskInCommunity":{"Children":"LOW","Public":"MEDIUM","Known Adult":"LOW","Staff":"HIGH"}}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -44,19 +36,12 @@ class WidgetControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskWidgetDto(
-            overallRisk = "VERY_HIGH",
-            assessedOn = null,
-            riskInCommunity = mapOf(
-              "Children" to "LOW",
-              "Public" to "MEDIUM",
-              "Known Adult" to "LOW",
-              "Staff" to "HIGH",
-            ),
-          ),
+        JSONAssert.assertEquals(
+          """{"overallRisk":"VERY_HIGH","riskInCommunity":{"Children":"LOW","Public":"MEDIUM","Known Adult":"LOW","Staff":"HIGH"}}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -68,14 +53,12 @@ class WidgetControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskWidgetDto(
-            overallRisk = null,
-            assessedOn = null,
-            riskInCommunity = mapOf(),
-          ),
+        JSONAssert.assertEquals(
+          """{"riskInCommunity":{}}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -87,15 +70,12 @@ class WidgetControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskWidgetDto(
-            overallRisk = null,
-            assessedOn = null,
-            riskInCommunity = mapOf(),
-            riskInCustody = mapOf(),
-          ),
+        JSONAssert.assertEquals(
+          """{"riskInCommunity":{}}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -107,17 +87,21 @@ class WidgetControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
     val fromPath = webTestClient.get().uri("/risks/crn/$crn/widget/$timeframe")
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .returnResult().responseBody
 
-    assertThat(fromQueryParam).isEqualTo(fromPath)
+    JSONAssert.assertEquals(
+      checkNotNull(fromQueryParam),
+      checkNotNull(fromPath),
+      JSONCompareMode.STRICT,
+    )
   }
 
   @Test
@@ -127,14 +111,12 @@ class WidgetControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_CRS_PROVIDER")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskWidgetDto(
-            overallRisk = null,
-            assessedOn = null,
-            riskInCommunity = mapOf(),
-          ),
+        JSONAssert.assertEquals(
+          """{"riskInCommunity":{}}""",
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
@@ -145,26 +127,30 @@ class WidgetControllerTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_PROBATION")))
       .exchange()
       .expectStatus().isOk
-      .expectBody<RoshRiskWidgetDto>()
+      .expectBody<String>()
       .consumeWith {
-        assertThat(it.responseBody).isEqualTo(
-          RoshRiskWidgetDto(
-            overallRisk = "VERY_HIGH",
-            assessedOn = LocalDateTime.of(2024, 12, 19, 16, 57, 25),
-            riskInCommunity = mapOf(
-              "Children" to "LOW",
-              "Public" to "MEDIUM",
-              "Known Adult" to "LOW",
-              "Staff" to "HIGH",
-            ),
-            riskInCustody = mapOf(
-              "Children" to "LOW",
-              "Public" to "LOW",
-              "Known Adult" to "LOW",
-              "Staff" to "VERY_HIGH",
-              "Prisoners" to "HIGH",
-            ),
-          ),
+        JSONAssert.assertEquals(
+          """
+            {
+              "overallRisk": "VERY_HIGH",
+              "assessedOn": "2024-12-19T16:57:25",
+              "riskInCommunity": {
+                "Children": "LOW",
+                "Public": "MEDIUM",
+                "Known Adult": "LOW",
+                "Staff": "HIGH"
+              },
+              "riskInCustody": {
+                "Children": "LOW",
+                "Public": "LOW",
+                "Known Adult": "LOW",
+                "Staff": "VERY_HIGH",
+                "Prisoners": "HIGH"
+              }
+            }
+          """.trimIndent(),
+          checkNotNull(it.responseBody),
+          JSONCompareMode.STRICT,
         )
       }
   }
