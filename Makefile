@@ -42,7 +42,10 @@ test: ## Runs all the test suites.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle test --parallel
 
 int-test-dev: ## Runs all integration tests
-	docker compose ${TEST_COMPOSE_FILES} run --rm --env AAP_CLIENT_ID="${AAP_UI_CLIENT_ID}" --env AAP_CLIENT_SECRET="${AAP_UI_CLIENT_SECRET}" int gradle integrationTest
+	docker compose ${TEST_COMPOSE_FILES} run --rm int gradle integrationTest
+
+int-test-test: ## Runs on test environment
+	docker compose ${TEST_COMPOSE_FILES} run --rm --env ARNS_TEST_BASE_URL="https://assess-risks-and-needs-test.hmpps.service.justice.gov.uk" --env ARNS_API_CRN="X752024" int gradle integrationTest
 
 test-coverage: ## Runs the test suite and outputs a code coverage report.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle koverHtmlReport --parallel

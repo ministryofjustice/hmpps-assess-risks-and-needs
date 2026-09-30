@@ -12,3 +12,8 @@ services:
       - ./src:/app/src
       - ./build.gradle.kts:/app/build.gradle.kts
       - ./settings.gradle.kts:/app/settings.gradle.kts
+    environment:
+      - AAP_CLIENT_ID
+      - AAP_CLIENT_SECRET
+      - ARNS_TEST_BASE_URL
+      - ARNS_TEST_API_CRN

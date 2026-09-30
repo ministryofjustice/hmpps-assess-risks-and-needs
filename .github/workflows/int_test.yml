@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   inttest:
-    if: ${{ inputs.environment == 'dev' }}
+    if: ${{ inputs.environment == 'dev' || inputs.environment == 'test' }}
     runs-on: [ self-hosted, hmpps-github-actions-runner ]
     steps:
       - uses: actions/checkout@v6
@@ -38,6 +38,8 @@ jobs:
         env:
           AAP_CLIENT_ID: ${{ secrets.ARNS_ASSESSMENT_CLIENT_ID }}
           AAP_CLIENT_SECRET: ${{ secrets.ARNS_ASSESSMENT_CLIENT_SECRET }}
+          ARNS_TEST_BASE_URL: ${{ fromJSON(vars.INT_TEST_DATA)[inputs.environment].url }}
+          ARNS_API_CRN: ${{ fromJSON(vars.INT_TEST_DATA)[inputs.environment].crn }}
 
       - name: Upload test results
         if: '!cancelled()'

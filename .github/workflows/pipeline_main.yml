@@ -65,6 +65,13 @@ jobs:
       environment: 'dev'
       app_version: '${{ needs.build_docker.outputs.app_version }}'
 
+  int_test:
+    needs: deploy_dev
+    uses: ./.github/workflows/int_test.yml
+    with:
+      environment: 'dev'
+    secrets: inherit
+
   deploy_preprod:
     name: Deploy to the preproduction environment
     needs:
