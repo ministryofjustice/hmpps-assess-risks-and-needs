@@ -12,7 +12,7 @@ class ArnsApiTest : IntegrationTestBase() {
 
   @Test
   fun `get assessment needs by crn`() {
-    val needsResponse = webTestClient.get().uri("/needs/$crn")
+    val needsResponse = webTestClient.get().uri("/needs/$crn/200")
       .accept(MediaType.APPLICATION_JSON)
       .exchange()
       .expectStatus().isOk

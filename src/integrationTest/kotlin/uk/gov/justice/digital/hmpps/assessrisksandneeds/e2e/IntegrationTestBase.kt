@@ -14,13 +14,13 @@ abstract class IntegrationTestBase {
   protected lateinit var webTestClient: WebTestClient
   protected lateinit var authTestClient: WebTestClient
 
-  protected val crn: String = System.getenv("ARNS_API_CRN") ?: "X643390"
+  protected val crn: String = System.getenv("ARNS_TEST_API_CRN") ?: "X643390"
 
   @BeforeAll
   fun setup() {
     val authBaseUrl = System.getenv("AUTH_BASE_URL")
       ?: "https://sign-in-dev.hmpps.service.justice.gov.uk"
-    val apiBaseUrl = System.getenv("BASE_URL")
+    val apiBaseUrl = System.getenv("ARNS_TEST_BASE_URL")
       ?: "https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk"
 
     authTestClient = WebTestClient.bindToServer()
