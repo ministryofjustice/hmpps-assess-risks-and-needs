@@ -34,3 +34,9 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
     secrets: inherit
+  e2e_tests:
+    needs: deploy_to_env
+    uses: ./.github/workflows/trigger_e2e_test.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}

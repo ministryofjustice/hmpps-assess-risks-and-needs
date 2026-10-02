@@ -1,0 +1,47 @@
+name: Trigger E2E Test
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment
+        type: string
+        required: true
+        default: 'dev'
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  dev: 'playwright-action.yml'
+  test: 'playwright-action-test.yml'
+
+jobs:
+  trigger_e2e_tests:
+    name: Trigger e2e tests
+    if: contains(fromJSON('["dev", "test"]'), inputs.environment)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Token
+        uses: actions/create-github-app-token@v3
+        id: generate-token
+        with:
+          app-id: ${{ secrets.INTEGRATION_TESTS_TRIGGER_APP_ID }}
+          private-key: ${{ secrets.INTEGRATION_TESTS_TRIGGER_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-actions: write
+          repositories:
+            hmpps-arns-integrations-test-playwright
+      - name: Run e2e tests
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: 'hmpps-arns-integrations-test-playwright',
+              workflow_id: '${{ env[inputs.environment] }}',
+              ref: 'main',
+              inputs: { "source":"arns" }
+            })
