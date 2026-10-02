@@ -72,6 +72,13 @@ jobs:
       environment: 'dev'
     secrets: inherit
 
+  e2e_tests:
+    needs: deploy_dev
+    uses: ./.github/workflows/trigger_e2e_test.yml
+    secrets: inherit
+    with:
+      environment: 'dev'
+
   deploy_preprod:
     name: Deploy to the preproduction environment
     needs:
