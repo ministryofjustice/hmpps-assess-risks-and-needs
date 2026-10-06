@@ -19,6 +19,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 jobs:
   trigger_e2e_tests:
