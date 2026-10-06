@@ -42,7 +42,7 @@ jobs:
           repository: ministryofjustice/hmpps-arns-integrations-test-playwright
           path: e2e-tests
       - name: Run E2E Tests
-        uses: e2e-tests/.github/workflows/playwright-e2e.yml
+        uses: ministryofjustice/hmpps-arns-integrations-test-playwright/.github/workflows/playwright-e2e.yml@ci-playwright-e2e
         with:
           environment: ${{ inputs.environment }}
           source: arns
