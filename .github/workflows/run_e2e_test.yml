@@ -33,7 +33,6 @@ jobs:
           persist-credentials: false
           token: ${{ steps.octo_sts.outputs.token }}
           repository: ministryofjustice/hmpps-arns-integrations-test-playwright
-          ref: 'ci-playwright-e2e'
           path: e2e-tests
       - uses: ./e2e-tests/.github/actions/playwright_setup
         with:
