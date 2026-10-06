@@ -26,6 +26,8 @@ jobs:
     name: Trigger e2e tests
     if: contains(fromJSON('["dev", "test"]'), inputs.environment)
     runs-on: [ self-hosted, hmpps-github-actions-runner ]
+    outputs:
+      token: ${{ steps.octo_sts.outputs.token }}
     steps:
       - name: Obtain Octo STS Token
         uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05
@@ -50,4 +52,4 @@ jobs:
       environment: ${{ inputs.environment }}
       source: arns
     secrets:
-      token: ${{ needs.checkout_e2e_tests.outputs.octo_token }}
+      token: ${{ needs.checkout_e2e_tests.outputs.token }}
