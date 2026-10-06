@@ -43,7 +43,6 @@ jobs:
           path: e2e-tests
       - name: Run E2E Tests
         uses: ministryofjustice/hmpps-arns-integrations-test-playwright/.github/workflows/playwright-e2e.yml@ci-playwright-e2e
-        secrets: inherit
         with:
           environment: ${{ inputs.environment }}
           source: arns
