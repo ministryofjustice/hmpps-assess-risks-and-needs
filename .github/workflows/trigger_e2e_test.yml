@@ -33,14 +33,14 @@ jobs:
         with:
           scope: ministryofjustice/hmpps-arns-integrations-test-playwright
           identity: moj-hmpps-assess-risks-and-needs
-      - name: Checkout arns e2e tests
-        id: checkout_e2e_repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          persist-credentials: false
-          token: ${{ steps.octo_sts.outputs.token }}
-          repository: ministryofjustice/hmpps-arns-integrations-test-playwright
-          path: e2e-tests
+      # - name: Checkout arns e2e tests
+      #   id: checkout_e2e_repo
+      #   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      #   with:
+      #     persist-credentials: false
+      #     token: ${{ steps.octo_sts.outputs.token }}
+      #     repository: ministryofjustice/hmpps-arns-integrations-test-playwright
+      #     path: e2e-tests
 
   run_e2e_tests:
     name: Run e2e tests
@@ -49,4 +49,5 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       source: arns
-      directory: './e2e-tests'
+    secrets:
+      token: ${{ needs.checkout_e2e_tests.outputs.octo_token }}
