@@ -74,7 +74,7 @@ jobs:
 
   e2e_tests:
     needs: deploy_dev
-    uses: ./.github/workflows/trigger_e2e_test.yml
+    uses: ./.github/workflows/run_e2e_test.yml
     secrets: inherit
     with:
       environment: 'dev'
@@ -83,7 +83,8 @@ jobs:
     name: Deploy to the preproduction environment
     needs:
       - build_docker
-      - deploy_dev
+      - int_test
+      - e2e_tests
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
     secrets: inherit
     with:

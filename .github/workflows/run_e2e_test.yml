@@ -1,13 +1,6 @@
 name: Trigger E2E Test
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: Environment
-        type: string
-        required: true
-        default: 'dev'
   workflow_call:
     inputs:
       environment:
@@ -22,8 +15,8 @@ permissions:
   id-token: write
 
 jobs:
-  trigger_e2e_tests:
-    name: Trigger e2e tests
+  run_e2e_tests:
+    name: Rune e2e tests
     if: contains(fromJSON('["dev", "test"]'), inputs.environment)
     runs-on: [ self-hosted, hmpps-github-actions-runner ]
     steps:
