@@ -68,7 +68,7 @@ jobs:
       - name: Publish Test Summary
         uses: ctrf-io/github-test-reporter@v1
         with:
-          report-path: 'ctrf/ctrf-report.json'
+          report-path: 'e2e-tests/ctrf/ctrf-report.json'
         if: always()
       
       - name: Archive screenshots & trace
@@ -77,4 +77,4 @@ jobs:
         with:
           name: screenshots-playwright
           path: |
-            test-results/**/*
+            e2e-tests/test-results/**/*
