@@ -61,5 +61,6 @@ jobs:
           DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
 
       - uses: ./e2e-tests/.github/actions/playwright_artefacts
+        if: always()
         with:
           directory: e2e-tests
