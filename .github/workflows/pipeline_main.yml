@@ -74,6 +74,10 @@ jobs:
 
   e2e_tests:
     needs: deploy_dev
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     uses: ./.github/workflows/run_e2e_test.yml
     secrets: inherit
     with:
