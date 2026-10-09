@@ -1,0 +1,58 @@
+name: Trigger E2E Test
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment
+        type: string
+        required: true
+        default: 'dev'
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  run_e2e_tests:
+    name: Run e2e tests
+    if: contains(fromJSON('["dev", "test"]'), inputs.environment)
+    runs-on: [ self-hosted, hmpps-github-actions-runner ]
+    steps:
+      - name: Obtain Octo STS Token
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05
+        id: octo_sts
+        with:
+          scope: ministryofjustice/hmpps-arns-integrations-test-playwright
+          identity: moj-hmpps-assess-risks-and-needs
+      - name: Checkout arns e2e tests
+        id: checkout_e2e_repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          token: ${{ steps.octo_sts.outputs.token }}
+          repository: ministryofjustice/hmpps-arns-integrations-test-playwright
+          path: e2e-tests
+      - uses: ./e2e-tests/.github/actions/playwright_setup
+        with:
+          directory: './e2e-tests'
+      - name: Run Playwright tests
+        id: playwright-tests
+        run: npm run ${{ inputs.environment }}:arns:ci
+        working-directory: ./e2e-tests
+        env:
+          AAP_CLIENT_ID: ${{ secrets.AAP_CLIENT_ID }}
+          AAP_CLIENT_SECRET: ${{ secrets.AAP_CLIENT_SECRET }}
+          ARNS_ASSESSMENT_CLIENT_ID: ${{ secrets.VIEW_API_CLIENT_ID }}
+          ARNS_ASSESSMENT_CLIENT_SECRET: ${{ secrets.VIEW_API_CLIENT_SECRET }}
+          # URLs
+          TOKEN_URL: ${{ secrets.TOKEN_URL }}
+          # Credentials
+          MPOP_USERNAME: ${{ secrets.E2E_MPOP_USERNAME }}
+          DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
+
+      - uses: ./e2e-tests/.github/actions/playwright_artefacts
+        if: always()
+        with:
+          directory: e2e-tests
