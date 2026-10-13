@@ -1,13 +1,6 @@
 name: Trigger E2E Test
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: Environment
-        type: string
-        required: true
-        default: 'dev'
   workflow_call:
     inputs:
       environment:
