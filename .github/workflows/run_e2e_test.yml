@@ -1,6 +1,13 @@
 name: Trigger E2E Test
 
 on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        type: string
+        required: true
+        default: 'dev'
   workflow_call:
     inputs:
       environment:
@@ -42,13 +49,7 @@ jobs:
         run: npm run ${{ inputs.environment }}:arns:ci
         working-directory: ./e2e-tests
         env:
-          AAP_CLIENT_ID: ${{ secrets.AAP_CLIENT_ID }}
-          AAP_CLIENT_SECRET: ${{ secrets.AAP_CLIENT_SECRET }}
-          ARNS_ASSESSMENT_CLIENT_ID: ${{ secrets.VIEW_API_CLIENT_ID }}
-          ARNS_ASSESSMENT_CLIENT_SECRET: ${{ secrets.VIEW_API_CLIENT_SECRET }}
-          # URLs
           TOKEN_URL: ${{ secrets.TOKEN_URL }}
-          # Credentials
           MPOP_USERNAME: ${{ secrets.E2E_MPOP_USERNAME }}
           DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
 
