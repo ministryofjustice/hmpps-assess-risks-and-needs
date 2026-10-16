@@ -17,7 +17,6 @@ generic-service:
     SPRING_PROFILES_ACTIVE: "logstash,postgres,oasys-rsr"
 generic-prometheus-alerts:
   enabled: true
-  alertSeverity: hmpps-assess-risks-and-needs
 
 dataExtractor:
   enabled: true
