@@ -542,6 +542,12 @@ class RiskPredictorServiceTest {
             assessment,
             assessment.copy(assessmentId = 3, completedDate = completedDate.plusDays(1), assessmentType = "LAYER2"),
             assessment.copy(assessmentId = 4, completedDate = completedDate.plusDays(2), status = "LOCKED_INCOMPLETE"),
+            assessment.copy(
+              assessmentId = 5,
+              completedDate = completedDate.plusDays(3),
+              assessmentType = "STANDALONE",
+              status = "OPEN",
+            ),
           ),
         ),
       )
@@ -596,7 +602,7 @@ class RiskPredictorServiceTest {
     }
 
     @Test
-    fun `should throw not found when the latest open standalone assessment has no tier risk predictors`() {
+    fun `should throw not found when the latest eligible assessment has no tier risk predictors`() {
       // Given
       val crn = "X12345"
       val initiationDate = LocalDateTime.of(2025, 1, 1, 12, 0)
@@ -610,7 +616,7 @@ class RiskPredictorServiceTest {
           ),
         ),
       )
-      every { oasysApiClient.getTierRiskPredictors(2, AssessmentType.STANDALONE) }.returns(null)
+      every { oasysApiClient.getTierRiskPredictors(1, AssessmentType.LAYER3) }.returns(null)
 
       // When
       val exception = assertThrows<EntityNotFoundException> {
@@ -619,7 +625,7 @@ class RiskPredictorServiceTest {
 
       // Then
       assertThat(exception.message).isEqualTo("Tier risk predictors for assessment not found")
-      verify(exactly = 1) { oasysApiClient.getTierRiskPredictors(2, AssessmentType.STANDALONE) }
+      verify(exactly = 1) { oasysApiClient.getTierRiskPredictors(1, AssessmentType.LAYER3) }
     }
 
     @Test
