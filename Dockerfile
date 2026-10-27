@@ -1,6 +1,6 @@
 FROM gradle:9-jdk25-alpine AS builder
 
-FROM eclipse-temurin:25.0.4_7-jre-alpine AS runtime
+FROM ghcr.io/ministryofjustice/hmpps-eclipse-temurin:25-jre-jammy AS runtime
 
 FROM builder AS build
 WORKDIR /app
@@ -16,13 +16,11 @@ FROM runtime AS production
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER=${BUILD_NUMBER:-1_0_0}
-RUN apk upgrade --no-cache && \
-    apk add --no-cache tzdata curl
-ENV TZ=Europe/London
-RUN cp "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
-RUN addgroup --gid 2000 --system appgroup && \
-    adduser --uid 2000 --system appuser --ingroup appgroup
-WORKDIR /app
+# curl is used by the docker-compose healthchecks
+USER root
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
 COPY --from=build --chown=appuser:appgroup /app/build/libs/hmpps-assess-risks-and-needs*.jar /app/app.jar
 COPY --from=build --chown=appuser:appgroup /app/build/libs/applicationinsights-agent*.jar /app/agent.jar
 COPY --from=build --chown=appuser:appgroup /app/applicationinsights.json /app
