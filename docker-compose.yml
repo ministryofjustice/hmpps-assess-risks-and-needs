@@ -92,7 +92,7 @@ services:
       - oasys-api
       - community-api
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://api:8080/health" ]
+      test: [ "CMD", "bash", "-c", "exec 3<>/dev/tcp/api/8080 && printf 'GET /health HTTP/1.0\\r\\n\\r\\n' >&3 && head -1 <&3 | grep -qw 200" ]
       interval: 5s
       retries: 100
     environment:
