@@ -94,12 +94,11 @@ class RiskPredictorService(
     auditService.sendEvent(EventType.ACCESSED_RISK_PREDICTORS, mapOf(identifierType.value to identifierValue))
     return oasysClient.getAssessmentTimeline(PersonIdentifier.from(identifierType.value, identifierValue))?.timeline
       ?.filter {
-        it.status != AssessmentStatus.LOCKED_INCOMPLETE.name &&
-          it.assessmentType in listOfNotNull(
-            AssessmentType.LAYER3.name,
-            AssessmentType.LAYER1.name,
-            AssessmentType.STANDALONE.name,
-          )
+        when (it.assessmentType) {
+          AssessmentType.LAYER1.name, AssessmentType.LAYER3.name -> it.status != AssessmentStatus.LOCKED_INCOMPLETE.name
+          AssessmentType.STANDALONE.name -> it.status == AssessmentStatus.COMPLETE.name
+          else -> false
+        }
       }
       ?.maxByOrNull { it.completedDate ?: checkNotNull(it.initiationDate) { "Assessment with no initiation date" } }
       ?.let { oasysClient.getTierRiskPredictors(it.assessmentId, AssessmentType.valueOf(it.assessmentType)) }

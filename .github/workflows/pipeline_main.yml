@@ -22,7 +22,7 @@ jobs:
     name: Helm lint
     strategy:
       matrix:
-        environments: [ 'dev', 'preprod', 'prod' ]
+        environments: [ 'dev', 'test', 'preprod', 'prod' ]
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2
     secrets: inherit
     with:
@@ -72,24 +72,13 @@ jobs:
       environment: 'dev'
     secrets: inherit
 
-  deploy_preprod:
-    name: Deploy to the preproduction environment
-    needs:
-      - build_docker
-      - deploy_dev
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+  e2e_tests:
+    needs: deploy_dev
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/run_e2e_test.yml
     secrets: inherit
     with:
-      environment: 'preprod'
-      app_version: '${{ needs.build_docker.outputs.app_version }}'
-
-  deploy_prod:
-    name: Deploy to the production environment
-    needs:
-      - build_docker
-      - deploy_preprod
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
-    secrets: inherit
-    with:
-      environment: 'prod'
-      app_version: '${{ needs.build_docker.outputs.app_version }}'
+      environment: 'dev'
