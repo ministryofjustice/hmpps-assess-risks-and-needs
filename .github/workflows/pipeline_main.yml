@@ -41,6 +41,16 @@ jobs:
       upload_image_artifact: true
       image_artifact_retention_days: 2
 
+  pact_test:
+    name: Run pact Tests
+    uses: ./.github/workflows/pact_provider_verification.yml
+    needs:
+      - build_docker
+    secrets: inherit
+    with:
+     publishResults: true
+     providerAppVersion: ${{ needs.build_docker.outputs.app_version }}
+
   publish_docker:
     name: Publish docker image
     needs:
@@ -59,7 +69,8 @@ jobs:
     needs:
       - build_docker
       - publish_docker
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+      - pact_test
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/pact_deploy_env.yml@1cd277cf487926d2f86fa68c87049e62a461d55e
     secrets: inherit
     with:
       environment: 'dev'
@@ -77,7 +88,7 @@ jobs:
     needs:
       - build_docker
       - deploy_dev
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/pact_deploy_env.yml@1cd277cf487926d2f86fa68c87049e62a461d55e
     secrets: inherit
     with:
       environment: 'preprod'
@@ -88,7 +99,7 @@ jobs:
     needs:
       - build_docker
       - deploy_preprod
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/pact_deploy_env.yml@1cd277cf487926d2f86fa68c87049e62a461d55e
     secrets: inherit
     with:
       environment: 'prod'

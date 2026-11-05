@@ -61,6 +61,7 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("com.tngtech.archunit:archunit-junit5:1.5.0")
+  testImplementation("au.com.dius.pact.provider:junit5spring:4.7.5")
 }
 
 kotlin {
@@ -80,6 +81,7 @@ tasks {
 
 tasks.test {
   exclude("**/src/integrationTest/**")
+  exclude("**/integration/pact/**")
 }
 
 tasks.register<Test>("integrationTest") {
@@ -103,6 +105,48 @@ tasks.named("integrationTest") {
 
 tasks.check {
   dependsOn(tasks.named("integrationTest"))
+}
+
+tasks.register<Test>("pactTest") {
+  description = "Run and publish Pact provider tests"
+  group = "verification"
+
+  val testSourceSet = sourceSets["test"]
+
+  testClassesDirs = testSourceSet.output.classesDirs
+  classpath = testSourceSet.runtimeClasspath
+
+  filter {
+      includeTestsMatching("*PactTest")
+  }
+
+  systemProperty("pactbroker.url", System.getenv("PACT_BROKER_URL"))
+  systemProperty("pactbroker.auth.username", System.getenv("PACT_BROKER_USERNAME") ?: "")
+  systemProperty("pactbroker.auth.password", System.getenv("PACT_BROKER_PASSWORD") ?: "")
+//  val consumerBranch = System.getenv("PACT_CONSUMER_BRANCH") ?: ""
+//  val requestedConsumerName = System.getenv("PACT_CONSUMER_NAME") ?: ""
+//  val selectors = when {
+//    consumerBranch.isNotEmpty() && requestedConsumerName.isEmpty() ->
+//      throw GradleException("PACT_CONSUMER_NAME must be set when PACT_CONSUMER_BRANCH is provided so only the matching Pact consumer verification runs.")
+//    consumerBranch.isNotEmpty() && requestedConsumerName.isNotEmpty() ->
+//      """[{"consumer":"$requestedConsumerName","branch":"$consumerBranch"}]"""
+//    requestedConsumerName.isNotEmpty() ->
+//      """[{"consumer":"$requestedConsumerName","mainBranch":true},{"consumer":"$requestedConsumerName","deployed":true}]"""
+//    else ->
+//      """[{"deployed":true}]"""
+//  }
+//  systemProperty("pactbroker.consumerversionselectors.rawjson", selectors)
+
+  systemProperty("pactbroker.providerBranch", System.getenv("GITHUB_BRANCH") ?: "local")
+  systemProperty("pact.verifier.publishResults", System.getenv("PACT_PUBLISH_RESULTS") ?: "false")
+  systemProperty("pact.provider.version", System.getenv("PACT_PROVIDER_APP_VERSION") ?: "local")
+  systemProperty("pact.provider.branch", System.getenv("GITHUB_BRANCH") ?: "local")
+}
+
+tasks.named("pactTest") {
+  onlyIf {
+    !gradle.startParameter.taskNames.any { it.contains("koverHtmlReport") }
+  }
 }
 
 // this is to address JLLeitschuh/ktlint-gradle#809

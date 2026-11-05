@@ -41,6 +41,13 @@ watch: ## Watches for file changes and live-reloads the API. To be used in conju
 test: ## Runs all the test suites.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle test --parallel
 
+test-pact: ## Runs all the test suites.
+	docker compose ${DEV_COMPOSE_FILES} exec \
+	   --env HMPPS_AUTH_URL=http://localhost:9090/auth \
+	   --env PACT_BROKER_URL=https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk \
+      api \
+      gradle pactTest --parallel
+
 int-test-dev: ## Runs all integration tests
 	docker compose ${TEST_COMPOSE_FILES} run --rm int gradle integrationTest
 

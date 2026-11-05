@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessrisksandneeds.integration
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.TestingAuthenticationToken
@@ -22,6 +23,9 @@ import java.time.Duration
 )
 @ActiveProfiles("test")
 abstract class IntegrationTestBase {
+  @LocalServerPort
+  var port: Int = 0
+
   @Autowired
   lateinit var webTestClient: WebTestClient
 

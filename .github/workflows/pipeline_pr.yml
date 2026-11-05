@@ -33,3 +33,13 @@ jobs:
       docker_multiplatform: false
       upload_image_artifact: true
       image_artifact_retention_days: 2
+
+  pact_test:
+    name: Run pact Tests
+    uses: ./.github/workflows/pact_provider_verification.yml
+    needs:
+      - build_docker
+    secrets: inherit
+    with:
+     publishResults: true
+     providerAppVersion: ${{ needs.build_docker.outputs.app_version }}
