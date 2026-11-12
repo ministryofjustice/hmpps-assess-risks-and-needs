@@ -20,7 +20,7 @@ generic-service:
 
   # Environment variables to load into the deployment
   env:
-    JAVA_OPTS: "-Xmx768m"
+    JDK_JAVA_OPTIONS: "-Xmx250m"
     SERVER_PORT: "8080"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     ONNX_PREDICTORS_ONNX_PATH: "file:/app/secrets/rsr.onnx"
