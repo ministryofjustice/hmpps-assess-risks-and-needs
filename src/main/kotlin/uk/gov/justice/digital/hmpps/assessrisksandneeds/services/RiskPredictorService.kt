@@ -95,7 +95,7 @@ class RiskPredictorService(
     return oasysClient.getAssessmentTimeline(PersonIdentifier.from(identifierType.value, identifierValue))?.timeline
       ?.filter {
         when (it.assessmentType) {
-          AssessmentType.LAYER1.name, AssessmentType.LAYER3.name -> it.status != AssessmentStatus.LOCKED_INCOMPLETE.name
+          AssessmentType.LAYER1.name, AssessmentType.LAYER3.name -> true
           AssessmentType.STANDALONE.name -> it.status == AssessmentStatus.COMPLETE.name
           else -> false
         }

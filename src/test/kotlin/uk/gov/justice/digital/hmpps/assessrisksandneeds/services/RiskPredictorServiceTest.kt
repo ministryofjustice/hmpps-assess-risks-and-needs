@@ -525,13 +525,19 @@ class RiskPredictorServiceTest {
     }
 
     @Test
-    fun `should return tier risk predictors for the latest eligible assessment`() {
+    fun `should return tier risk predictors for the latest eligible assessment including locked incomplete`() {
       // Given
       val crn = "X12345"
       val initiationDate = LocalDateTime.of(2025, 1, 1, 12, 0)
       val completedDate = LocalDateTime.of(2025, 1, 4, 12, 0)
       val assessment = BasicAssessmentSummary(2, initiationDate, completedDate, "LAYER3", "COMPLETE")
-      val providedOutput = provideOutput(completedDate, "6", true)
+      val lockedIncompleteAssessment = assessment.copy(
+        assessmentId = 4,
+        completedDate = completedDate.plusDays(2),
+        status = "LOCKED_INCOMPLETE",
+      )
+      val lockedIncompleteCompletedDate = checkNotNull(lockedIncompleteAssessment.completedDate)
+      val providedOutput = provideOutput(lockedIncompleteCompletedDate, "6", true)
 
       every {
         oasysApiClient.getAssessmentTimeline(PersonIdentifier.from("crn", crn))
@@ -541,7 +547,7 @@ class RiskPredictorServiceTest {
             BasicAssessmentSummary(1, initiationDate.plusDays(1), completedDate.minusDays(1), "LAYER1", "COMPLETE"),
             assessment,
             assessment.copy(assessmentId = 3, completedDate = completedDate.plusDays(1), assessmentType = "LAYER2"),
-            assessment.copy(assessmentId = 4, completedDate = completedDate.plusDays(2), status = "LOCKED_INCOMPLETE"),
+            lockedIncompleteAssessment,
             assessment.copy(
               assessmentId = 5,
               completedDate = completedDate.plusDays(3),
@@ -552,7 +558,7 @@ class RiskPredictorServiceTest {
         ),
       )
       every {
-        oasysApiClient.getTierRiskPredictors(assessment.assessmentId, AssessmentType.LAYER3)
+        oasysApiClient.getTierRiskPredictors(lockedIncompleteAssessment.assessmentId, AssessmentType.LAYER3)
       }.returns(
         TierPredictorsDto(
           TierPredictorScoresDto(
@@ -561,7 +567,13 @@ class RiskPredictorServiceTest {
             checkNotNull(providedOutput.newAllPredictorScoresDto),
           ),
           listOf(
-            TierPredictorAssessmentDto(assessment.assessmentId, "OPEN", "LAYER3", initiationDate, completedDate),
+            TierPredictorAssessmentDto(
+              lockedIncompleteAssessment.assessmentId,
+              "LOCKED_INCOMPLETE",
+              "LAYER3",
+              initiationDate,
+              lockedIncompleteCompletedDate,
+            ),
           ),
         ),
       )
@@ -570,7 +582,7 @@ class RiskPredictorServiceTest {
       val result = riskPredictorsService.getTierRiskScoresWithoutLaoCheck(IdentifierType.CRN, crn)
 
       // Then
-      assertThat(result.completedDate).isEqualTo(completedDate)
+      assertThat(result.completedDate).isEqualTo(lockedIncompleteCompletedDate)
       assertThat(result.assessmentType).isEqualTo(AssessmentType.LAYER3)
       assertThat(result.outputVersion).isEqualTo("2")
       with(checkNotNull(result.output)) {
@@ -655,7 +667,7 @@ class RiskPredictorServiceTest {
       }.returns(
         Timeline(
           listOf(
-            BasicAssessmentSummary(1, initiationDate, completedDate, "LAYER3", "LOCKED_INCOMPLETE"),
+            BasicAssessmentSummary(1, initiationDate, completedDate, "LAYER2", "LOCKED_INCOMPLETE"),
             BasicAssessmentSummary(2, initiationDate, completedDate, "LAYER2", "COMPLETE"),
           ),
         ),
