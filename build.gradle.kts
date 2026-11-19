@@ -51,7 +51,7 @@ dependencies {
   implementation("org.postgresql:postgresql:42.7.14")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+  testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0") {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(module = "mockito-core")
   }
